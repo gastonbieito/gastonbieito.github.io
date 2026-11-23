@@ -51,11 +51,17 @@ input[type=text],input[type=password],input[type=search],select{width:100%;box-s
 .idea.hecha .t{color:#3d5a4b}
 .est{padding:2px 10px;border-radius:10px;font-weight:800;color:#fff}
 .est.proceso{background:#e0a200}.est.hecha{background:#22b583}
-.acc{display:flex;gap:8px;margin-top:14px;align-items:center}
+.acc{display:flex;gap:8px;margin-top:14px;align-items:center;flex-wrap:wrap}
+.est.complejo{background:#8a5cf6}
+.acc button.on.complejo{background:#8a5cf6;color:#fff;box-shadow:none}
+#barraPap{display:none;margin:0 0 14px;text-align:right}
+#barraPap button{background:#d6365a;color:#fff;padding:10px 18px}
 .acc button{padding:7px 12px;border-radius:11px;font-size:14px;background:rgba(255,255,255,.75);box-shadow:inset 0 0 0 1px var(--line)}
 .acc button.on.proceso{background:#e0a200;color:#fff;box-shadow:none}
 .acc button.on.hecha{background:#22b583;color:#fff;box-shadow:none}
-.acc .tacho{margin-left:auto;width:38px;height:34px;padding:0;display:grid;place-items:center}
+.idea{position:relative}
+.idea .t{padding-right:34px}
+.acc .tacho{position:absolute;top:12px;right:12px;width:36px;height:34px;padding:0;display:grid;place-items:center}
 .acc .tacho:hover{background:#ffe1e7}
 .acc .peligro{background:#d6365a;color:#fff;box-shadow:none}
 .idea.ocupada{opacity:.5;pointer-events:none}
@@ -88,10 +94,11 @@ input[type=text],input[type=password],input[type=search],select{width:100%;box-s
   <div class="tabs" id="tabs"></div>
   <div class="filtros">
     <select id="fClase"></select>
-    <select id="fEst"><option value="">Todos los estados</option><option value="nueva">Nuevas</option><option value="proceso">En proceso</option><option value="hecha">Hechas</option></select>
+    <select id="fEst"><option value="">Todos los estados</option><option value="nueva">Nuevas</option><option value="proceso">En proceso</option><option value="hecha">Hechas</option><option value="complejo">Complejas</option></select>
     <input type="search" id="fTxt" placeholder="Buscar en las ideas">
   </div>
   <div id="aviso"></div>
+  <div id="barraPap"><button id="vaciar">Vaciar papelera</button></div>
   <div id="lista"></div>
   <div id="vacio">No hay ideas con estos filtros.</div>
 </div>
@@ -112,7 +119,7 @@ input[type=text],input[type=password],input[type=search],select{width:100%;box-s
   }
   function norm(o) {
     var tipo = campo(o.r, /tipo/i, 0), clase = campo(o.r, /clase|grupo/i, 1), idea = campo(o.r, /idea/i, 2);
-    return { id: o.id, estado: o.estado || '', tipo: /juego/i.test(tipo) ? 'juego' : 'aprender', clase: clase || 'Sin clase', idea: idea, fecha: new Date(o.fecha) };
+    return { id: o.id, estado: o.estado || '', complejo: !!o.complejo, tipo: /juego/i.test(tipo) ? 'juego' : 'aprender', clase: clase || 'Sin clase', idea: idea, fecha: new Date(o.fecha) };
   }
 
   function pedir(cred, ok, mal, extra) {
@@ -151,7 +158,7 @@ input[type=text],input[type=password],input[type=search],select{width:100%;box-s
     var cl = $('fClase').value, fe = $('fEst').value, q = $('fTxt').value.trim().toLowerCase();
     var base = IDEAS.filter(function (x) {
       return (!cl || x.clase === cl) && (!q || x.idea.toLowerCase().indexOf(q) >= 0) &&
-        (!fe || (fe === 'nueva' ? !x.estado : x.estado === fe) || x.estado === 'papelera');
+        (!fe || (fe === 'nueva' ? !x.estado : fe === 'complejo' ? x.complejo : x.estado === fe) || x.estado === 'papelera');
     });
     var n = { todas: 0, juego: 0, aprender: 0, papelera: 0 };
     base.forEach(function (x) { if (x.estado === 'papelera') n.papelera++; else { n.todas++; n[x.tipo]++; } });
@@ -167,40 +174,52 @@ input[type=text],input[type=password],input[type=search],select{width:100%;box-s
       if (e === 'papelera') acc = '<button data-a="restaurar">Restaurar</button><button class="peligro" data-a="borrar">Borrar para siempre</button>';
       else acc = '<button class="proceso' + (e === 'proceso' ? ' on' : '') + '" data-a="proceso">En proceso</button>' +
         '<button class="hecha' + (e === 'hecha' ? ' on' : '') + '" data-a="hecha">' + (e === 'hecha' ? '✓ Hecha' : 'Hecha') + '</button>' +
+        '<button class="complejo' + (x.complejo ? ' on' : '') + '" data-a="complejo">Complejo</button>' +
         '<button class="tacho" data-a="papelera" title="Mandar a la papelera">' + TACHO + '</button>';
       return '<div class="idea vidrio ' + x.tipo + ' ' + e + '" data-id="' + esc(x.id) + '"><div class="t">' + esc(x.idea) + '</div><div class="m">' +
         '<span class="chip ' + x.tipo + '">' + (x.tipo === 'juego' ? 'Juego' : 'Aprender') + '</span>' +
         (e === 'proceso' ? '<span class="est proceso">En proceso</span>' : e === 'hecha' ? '<span class="est hecha">Hecha</span>' : '') +
+        (x.complejo ? '<span class="est complejo">Complejo</span>' : '') +
         '<span class="clase">' + esc(x.clase) + '</span>' +
         '<span class="fecha">' + x.fecha.toLocaleDateString('es-UY', { day: 'numeric', month: 'short' }) + '</span></div>' +
         '<div class="acc">' + acc + '</div></div>';
     }).join('');
+    var enPap = IDEAS.filter(function (x) { return x.estado === 'papelera'; }).length;
+    $('barraPap').style.display = TAB === 'papelera' && enPap ? 'block' : 'none';
     $('vacio').textContent = TAB === 'papelera' ? 'La papelera está vacía.' : 'No hay ideas con estos filtros.';
     $('vacio').style.display = vis.length ? 'none' : 'block';
   }
 
   function aviso(m) { $('aviso').textContent = m; $('aviso').style.display = m ? 'block' : 'none'; }
+  // Cambia al instante y guarda por detrás; si Google falla, vuelve a como estaba.
+  function enviar(extra, deshacer) {
+    aviso(''); pintar(); PEND++;
+    pedir(CRED, function (ideas) { if (--PEND === 0) mostrar(ideas); },
+      function () { PEND--; deshacer(); pintar(); aviso('No se pudo guardar el cambio. Probá de nuevo.'); }, extra);
+  }
   $('lista').onclick = function (ev) {
     var b = ev.target.closest('[data-a]'); if (!b) return;
     var card = b.closest('[data-id]'), id = card.getAttribute('data-id'), a = b.getAttribute('data-a');
     var x = IDEAS.filter(function (i) { return i.id === id; })[0]; if (!x) return;
-    var extra, antes = x.estado, pos = IDEAS.indexOf(x);
+    var antes = x.estado, antesC = x.complejo, pos = IDEAS.indexOf(x);
     if (a === 'borrar') {
       if (!confirm('¿Borrar esta idea para siempre? También se borra del formulario y no se puede deshacer.')) return;
-      extra = { accion: 'borrar', id: id };
       IDEAS.splice(pos, 1);
+      enviar({ accion: 'borrar', id: id }, function () { IDEAS.splice(pos, 0, x); });
+    } else if (a === 'complejo') {
+      x.complejo = !x.complejo;
+      enviar({ accion: 'complejo', id: id, valor: x.complejo }, function () { x.complejo = antesC; });
     } else {
-      extra = { accion: 'estado', id: id, estado: a === 'restaurar' ? '' : (x.estado === a ? '' : a) };
-      x.estado = extra.estado;
+      x.estado = a === 'restaurar' ? '' : (x.estado === a ? '' : a);
+      enviar({ accion: 'estado', id: id, estado: x.estado }, function () { x.estado = antes; });
     }
-    aviso(''); pintar(); PEND++;
-    pedir(CRED, function (ideas) {
-      if (--PEND === 0) mostrar(ideas);
-    }, function () {
-      PEND--;
-      if (a === 'borrar') IDEAS.splice(pos, 0, x); else x.estado = antes;
-      pintar(); aviso('No se pudo guardar el cambio. Probá de nuevo.');
-    }, extra);
+  };
+  $('vaciar').onclick = function () {
+    var n = IDEAS.filter(function (x) { return x.estado === 'papelera'; }).length;
+    if (!n || !confirm('¿Borrar para siempre ' + (n === 1 ? 'la idea' : 'las ' + n + ' ideas') + ' de la papelera? También se borran del formulario y no se puede deshacer.')) return;
+    var copia = IDEAS.slice();
+    IDEAS = IDEAS.filter(function (x) { return x.estado !== 'papelera'; });
+    enviar({ accion: 'vaciar' }, function () { IDEAS = copia; });
   };
   var PEND = 0;
 
