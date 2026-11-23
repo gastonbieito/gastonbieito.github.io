@@ -1,8 +1,8 @@
-﻿// Ideas de los chicos: van a un Formulario de Google del profe (privado). Mientras "form" sea null,
-// el botón de ideas no aparece.
+﻿// Ideas de los chicos: van al Formulario de Google "Ideas de los chicos" del profe (privado).
+// Si "form" es null, el botón de ideas no aparece.
 // form: el código del link del formulario, entre /forms/d/e/ y /viewform
-// campos: el número "entry.XXXX" de cada pregunta (respuesta corta), en el orden Tipo, Clase, Idea.
+// campos: el número "entry.XXXX" de cada pregunta (respuesta corta): Tipo, Clase, Idea.
 window.RINCON = window.RINCON || {
-  form: null,
-  campos: { tipo: '', clase: '', idea: '' },
+  form: '1FAIpQLSedkr09_PlgfIZ8Sg_6HbyOtNwhVQC4DNHuVAD84Lywo2CiXw',
+  campos: { tipo: '696955078', clase: '173008090', idea: '2042298588' },
 };

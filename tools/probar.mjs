@@ -49,9 +49,5 @@ for (const [w, h] of [[1366, 768], [1024, 600], [390, 844]]) {
   await p.goto(base.split('#')[0] + '#/scjm/6'); await p.waitForTimeout(500);
   if (await p.isVisible('#ideaBtn')) fail('ideas: el botón aparece fuera del inicio');
   await ctx.close();
-  const c2 = await b.newContext({ viewport: { width: 1366, height: 768 } }); const p2 = await c2.newPage();
-  await p2.goto(base.split('#')[0]); await p2.waitForTimeout(800);
-  if (await p2.locator('#ideaBtn').count()) fail('ideas: aparece sin formulario configurado');
-  await c2.close();
 }
 await b.close(); console.log(fails ? fails + ' problema(s)' : 'Todo en orden.'); process.exit(fails ? 1 : 0);
