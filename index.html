@@ -118,6 +118,9 @@ h2{font-size:clamp(22px,3vw,28px);margin:30px 0 12px;font-weight:800}
 footer{position:relative;z-index:1;text-align:center;color:var(--dim);font-size:14px;padding:0 20px 30px}
 @media (max-width:560px){header{padding:10px 12px}.logo span{display:none}.school{min-height:220px}.search kbd{display:none}}
 /* ---------- Liquid glass ---------- */
+.thanks.warn{color:#d6456a}
+.modal textarea.shake{animation:shake .45s ease;border-color:#ef8aa3}
+@keyframes shake{20%{transform:translateX(-8px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(3px)}}
 .search svg,.search kbd{z-index:2}
 :root{--glass:linear-gradient(135deg,rgba(255,255,255,.62),rgba(255,255,255,.28));--rim:inset 0 1px 0 rgba(255,255,255,.95),inset 0 -1px 0 rgba(255,255,255,.35),inset 0 0 0 1px rgba(255,255,255,.45);--soft:0 10px 30px rgba(36,32,74,.12),0 2px 6px rgba(36,32,74,.06)}
 body{background:#e9eefc}
@@ -335,7 +338,7 @@ header{background:rgba(233,238,252,.35);backdrop-filter:blur(22px) saturate(180%
     var wrap = document.createElement('div');
     wrap.innerHTML = '<button class="ideaBtn" id="ideaBtn" type="button"><svg viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.7.5 1.1 1.3 1.1 2.2h5c0-.9.4-1.7 1.1-2.2A6 6 0 0 0 12 3z" fill="#ffd23f" stroke="#24204a" stroke-width="1.8" stroke-linejoin="round"/></svg><span>¿Tenés una idea?</span></button>' +
       '<div class="toast" id="ideaToast" hidden><b>¿Se te ocurre un juego nuevo o algo que te gustaría aprender?</b><div class="row"><button class="send" type="button" data-open>Contar mi idea</button><button class="ghost" type="button" data-close>Ahora no</button></div></div>' +
-      '<div class="modal" id="ideaModal" hidden><form class="box" id="fIdea"><button class="x" type="button" data-close aria-label="Cerrar">×</button><h3>Tengo una idea</h3>' +
+      '<div class="modal" id="ideaModal" hidden><form class="box" id="fIdea" novalidate><button class="x" type="button" data-close aria-label="Cerrar">×</button><h3>Tengo una idea</h3>' +
       '<div class="seg"><label><input type="radio" name="tipo" value="Juego nuevo" checked><span>Un juego nuevo</span></label><label><input type="radio" name="tipo" value="Algo para aprender"><span>Algo para aprender</span></label></div>' +
       '<textarea name="idea" maxlength="500" required placeholder="Contá tu idea: de qué se trata, qué habría que hacer…"></textarea>' +
       '<div class="row"><button class="send" type="submit">Mandar idea</button><span class="thanks" aria-live="polite"></span></div><p class="note">La lee el profe. No hace falta que pongas tu nombre.</p>' +
@@ -356,7 +359,12 @@ header{background:rgba(233,238,252,.35);backdrop-filter:blur(22px) saturate(180%
       if (q.n >= 5) { out.textContent = 'Por hoy ya está. ¡Gracias!'; return; }
       var fd = new FormData(), last = ls.get('portalClase', '');
       var val = { tipo: form.querySelector('input[name=tipo]:checked').value, clase: last ? last.replace('/', ' ') : 'sin elegir', idea: form.idea.value.trim() };
-      if (!val.idea) return;
+      if (!val.idea) {
+        out.textContent = 'Escribí tu idea antes de mandarla.'; out.className = 'thanks warn'; Snd.no();
+        form.idea.classList.remove('shake'); void form.idea.offsetWidth; form.idea.classList.add('shake'); form.idea.focus();
+        return;
+      }
+      out.className = 'thanks';
       Object.keys(R.campos).forEach(function (k) { if (R.campos[k]) fd.append('entry.' + R.campos[k], val[k] || ''); });
       send.disabled = true; out.textContent = 'Mandando…';
       fetch('https://docs.google.com/forms/d/e/' + R.form + '/formResponse', { method: 'POST', mode: 'no-cors', body: fd }).then(function () {

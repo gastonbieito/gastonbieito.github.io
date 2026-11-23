@@ -42,6 +42,10 @@ for (const [w, h] of [[1366, 768], [1024, 600], [390, 844]]) {
   if (!(await p.isVisible('#ideaToast'))) fail('ideas: no aparece la invitación');
   await p.screenshot({ path: path.join(out, 'ideas-invitacion.png') });
   await p.click('#ideaToast [data-open]'); await p.waitForTimeout(400);
+  await p.click('#fIdea .send'); await p.waitForTimeout(400);
+  if (!(await p.textContent('#fIdea .thanks')).includes('Escribí tu idea')) fail('ideas: no aparece el aviso propio con la idea vacía');
+  if (body) fail('ideas: mandó una idea vacía');
+  await p.screenshot({ path: path.join(out, 'ideas-vacia.png') });
   await p.fill('#fIdea textarea', 'Un juego de detectives en el espacio');
   await p.screenshot({ path: path.join(out, 'ideas-ventana.png') });
   await p.click('#fIdea .send'); await p.waitForTimeout(500);
