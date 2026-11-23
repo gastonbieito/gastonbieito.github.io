@@ -57,6 +57,20 @@ window.JUEGOS = {
      "color": "#4fc3f7",
      "juegos": [
       {
+       "slug": "fabrica-luces",
+       "titulo": "La fábrica de luces",
+       "desc": "Interruptores, AND, OR y NOT: cómo piensa una compu.",
+       "href": "j/fabrica-luces/",
+       "nuevo": true
+      },
+      {
+       "slug": "mi-canal",
+       "titulo": "Mi Canal",
+       "desc": "Tu canal de videos: portadas, contraseñas y estafas.",
+       "href": "j/mi-canal/",
+       "nuevo": true
+      },
+      {
        "slug": "rumor",
        "titulo": "El rumor",
        "desc": "Cómo se difunde un mensaje y cómo se frena.",
