@@ -48,7 +48,11 @@ for (const [w, h] of [[1366, 768], [1024, 600], [390, 844]]) {
   await p.screenshot({ path: path.join(out, 'ideas-vacia.png') });
   await p.fill('#fIdea textarea', 'Un juego de detectives en el espacio');
   await p.screenshot({ path: path.join(out, 'ideas-ventana.png') });
-  await p.click('#fIdea .send'); await p.waitForTimeout(500);
+  await p.route('https://docs.google.com/**', async r => { body = r.request().postData() || ''; await new Promise(x => setTimeout(x, 900)); await r.fulfill({ status: 200, body: 'ok' }); });
+  await p.click('#fIdea .send'); await p.waitForTimeout(700);
+  if (!(await p.isVisible('#fIdea .viaje'))) fail('ideas: no aparece el viaje de la idea');
+  await p.screenshot({ path: path.join(out, 'ideas-viajando.png') });
+  await p.waitForTimeout(2600);
   if (!(await p.isVisible('#fIdea .done'))) fail('ideas: no aparece la animación de enviado');
   await p.screenshot({ path: path.join(out, 'ideas-enviada.png') }); await p.waitForTimeout(400);
   if (!body || !body.includes('Un juego de detectives') || !body.includes('entry.222') || !body.includes('scjm 6')) fail('ideas: no se envió bien: ' + body);
