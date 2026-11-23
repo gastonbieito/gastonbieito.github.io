@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Ideas de los chicos</title>
+<style>
+@font-face{font-family:Nunito;font-weight:600;font-display:swap;src:url(../fonts/nunito-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:Nunito;font-weight:800;font-display:swap;src:url(../fonts/nunito-latin-800-normal.woff2) format('woff2')}
+:root{--ink:#24204a;--dim:#6b6790;--line:#d6def5;--juego:#ff7a59;--aprender:#4fc3f7}
+html,body{margin:0;min-height:100%}
+body{background:#e9eefc;color:var(--ink);font:600 16px/1.4 Nunito,'Segoe UI',system-ui,sans-serif}
+body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-gradient(40% 50% at 10% 10%,rgba(255,122,89,.25),transparent),radial-gradient(40% 50% at 90% 20%,rgba(79,195,247,.25),transparent),radial-gradient(50% 50% at 60% 100%,rgba(155,123,255,.2),transparent)}
+a{color:inherit}
+.vidrio{background:linear-gradient(135deg,rgba(255,255,255,.75),rgba(255,255,255,.45));box-shadow:inset 0 0 0 1px rgba(255,255,255,.6),0 10px 30px rgba(36,32,74,.12);border-radius:24px;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer;border:0;border-radius:14px;font-weight:800}
+.prim{background:var(--ink);color:#fff;padding:12px 22px}
+.sec{background:rgba(255,255,255,.7);padding:9px 16px;box-shadow:inset 0 0 0 1px var(--line)}
+#login{max-width:380px;margin:12vh auto 0;padding:34px 30px}
+h1{font-weight:800;font-size:30px;margin:0 0 6px}
+.dim{color:var(--dim)}
+label{display:block;margin:18px 0 6px;font-weight:800}
+input[type=text],input[type=password],input[type=search],select{width:100%;box-sizing:border-box;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:#fff}
+#login .prim{width:100%;margin-top:22px;font-size:18px}
+#err{color:#d6365a;min-height:22px;margin-top:12px;font-weight:800}
+#volver{display:inline-block;margin-top:18px;font-size:14px}
+#panel{display:none;max-width:1100px;margin:0 auto;padding:28px 20px 60px}
+.cab{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.cab h1{flex:1}
+.tabs{display:flex;gap:10px;margin:22px 0 14px;flex-wrap:wrap}
+.tab{padding:12px 20px;border-radius:16px;background:rgba(255,255,255,.55);font-size:17px;box-shadow:inset 0 0 0 1px var(--line)}
+.tab b{display:inline-block;min-width:26px;padding:1px 8px;margin-left:6px;border-radius:10px;background:rgba(36,32,74,.08)}
+.tab.on{background:var(--ink);color:#fff}
+.tab.on b{background:rgba(255,255,255,.2)}
+.filtros{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+.filtros select{width:auto;min-width:220px}
+.filtros input{flex:1;min-width:200px}
+#lista{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.idea{padding:18px 20px 16px;border-left:6px solid var(--aprender)}
+.idea.juego{border-left-color:var(--juego)}
+.idea .t{font-size:19px;font-weight:800;white-space:pre-wrap;word-wrap:break-word}
+.idea .m{display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap;font-size:14px}
+.chip{padding:2px 10px;border-radius:10px;color:#fff;font-weight:800}
+.chip.juego{background:var(--juego)}.chip.aprender{background:#1e9fd8}
+.clase{padding:2px 10px;border-radius:10px;background:rgba(36,32,74,.08)}
+.fecha{margin-left:auto;color:var(--dim)}
+#vacio{display:none;text-align:center;padding:50px 0;color:var(--dim);font-size:18px}
+</style>
+</head>
+<body>
+
+<form id="login" class="vidrio" autocomplete="on">
+  <h1>Ideas de los chicos</h1>
+  <div class="dim">Solo para el profe.</div>
+  <label for="u">Usuario</label>
+  <input type="text" id="u" autocomplete="username" required>
+  <label for="c">Contraseña</label>
+  <input type="password" id="c" autocomplete="current-password" required>
+  <button class="prim" type="submit" id="entrar">Entrar</button>
+  <div id="err" aria-live="polite"></div>
+  <a id="volver" href="../">Volver a los juegos</a>
+</form>
+
+<div id="panel">
+  <div class="cab">
+    <h1>Ideas de los chicos</h1>
+    <span class="dim" id="total"></span>
+    <button class="sec" id="act">Actualizar</button>
+    <button class="sec" id="salir">Salir</button>
+  </div>
+  <div class="tabs" id="tabs"></div>
+  <div class="filtros">
+    <select id="fClase"></select>
+    <input type="search" id="fTxt" placeholder="Buscar en las ideas">
+  </div>
+  <div id="lista"></div>
+  <div id="vacio">No hay ideas con estos filtros.</div>
+</div>
+
+<script src="../config.js"></script>
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var URL_R = (window.RINCON || {}).respuestas;
+  var IDEAS = [], TAB = 'todas', CRED = null;
+
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function campo(r, re, n) {
+    var k, ks = Object.keys(r);
+    for (k = 0; k < ks.length; k++) if (re.test(ks[k])) return r[ks[k]];
+    return r[ks[n]] || '';
+  }
+  function norm(o) {
+    var tipo = campo(o.r, /tipo/i, 0), clase = campo(o.r, /clase|grupo/i, 1), idea = campo(o.r, /idea/i, 2);
+    return { tipo: /juego/i.test(tipo) ? 'juego' : 'aprender', clase: clase || 'Sin clase', idea: idea, fecha: new Date(o.fecha) };
+  }
+
+  function pedir(cred, ok, mal) {
+    if (!URL_R) { mal('Falta conectar las respuestas: poné la dirección del script en config.js.'); return; }
+    fetch(URL_R, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(cred) })
+      .then(function (r) { return r.json(); })
+      .then(function (d) { if (d && d.ok) ok(d.ideas || []); else mal('Usuario o contraseña incorrectos.'); })
+      .catch(function () { mal('No se pudo conectar. Probá de nuevo.'); });
+  }
+
+  $('login').onsubmit = function (e) {
+    e.preventDefault();
+    var cred = { usuario: $('u').value.trim(), clave: $('c').value };
+    $('err').textContent = ''; $('entrar').disabled = true; $('entrar').textContent = 'Entrando...';
+    pedir(cred, function (ideas) {
+      CRED = cred; try { sessionStorage.setItem('ideasProfe', JSON.stringify(cred)); } catch (x) { }
+      mostrar(ideas);
+    }, function (m) { $('err').textContent = m; $('entrar').disabled = false; $('entrar').textContent = 'Entrar'; });
+  };
+
+  function mostrar(ideas) {
+    IDEAS = ideas.map(norm).filter(function (x) { return x.idea; }).sort(function (a, b) { return b.fecha - a.fecha; });
+    $('login').style.display = 'none'; $('panel').style.display = 'block';
+    var clases = {};
+    IDEAS.forEach(function (x) { clases[x.clase] = (clases[x.clase] || 0) + 1; });
+    var sel = $('fClase'), prev = sel.value;
+    sel.innerHTML = '<option value="">Todas las clases</option>' + Object.keys(clases).sort().map(function (c) { return '<option value="' + esc(c) + '">' + esc(c) + ' (' + clases[c] + ')</option>'; }).join('');
+    sel.value = clases[prev] ? prev : '';
+    $('total').textContent = IDEAS.length + (IDEAS.length === 1 ? ' idea' : ' ideas');
+    pintar();
+  }
+
+  function pintar() {
+    var cl = $('fClase').value, q = $('fTxt').value.trim().toLowerCase();
+    var base = IDEAS.filter(function (x) { return (!cl || x.clase === cl) && (!q || x.idea.toLowerCase().indexOf(q) >= 0); });
+    var n = { todas: base.length, juego: 0, aprender: 0 };
+    base.forEach(function (x) { n[x.tipo]++; });
+    $('tabs').innerHTML = [['todas', 'Todas'], ['juego', 'Juegos para hacer'], ['aprender', 'Cosas para aprender']].map(function (t) {
+      return '<button class="tab' + (TAB === t[0] ? ' on' : '') + '" data-t="' + t[0] + '">' + t[1] + '<b>' + n[t[0]] + '</b></button>';
+    }).join('');
+    var vis = base.filter(function (x) { return TAB === 'todas' || x.tipo === TAB; });
+    $('lista').innerHTML = vis.map(function (x) {
+      return '<div class="idea vidrio ' + x.tipo + '"><div class="t">' + esc(x.idea) + '</div><div class="m">' +
+        '<span class="chip ' + x.tipo + '">' + (x.tipo === 'juego' ? 'Juego' : 'Aprender') + '</span>' +
+        '<span class="clase">' + esc(x.clase) + '</span>' +
+        '<span class="fecha">' + x.fecha.toLocaleDateString('es-UY', { day: 'numeric', month: 'short' }) + '</span></div></div>';
+    }).join('');
+    $('vacio').style.display = vis.length ? 'none' : 'block';
+  }
+
+  $('tabs').onclick = function (e) { var b = e.target.closest('[data-t]'); if (b) { TAB = b.getAttribute('data-t'); pintar(); } };
+  $('fClase').onchange = pintar;
+  $('fTxt').oninput = pintar;
+  $('act').onclick = function () {
+    $('act').disabled = true; $('act').textContent = 'Actualizando...';
+    pedir(CRED, function (ideas) { mostrar(ideas); fin(); }, function () { fin(); });
+    function fin() { $('act').disabled = false; $('act').textContent = 'Actualizar'; }
+  };
+  $('salir').onclick = function () {
+    try { sessionStorage.removeItem('ideasProfe'); } catch (x) { }
+    location.reload();
+  };
+
+  var guard = null;
+  try { guard = JSON.parse(sessionStorage.getItem('ideasProfe') || 'null'); } catch (x) { }
+  if (guard) { CRED = guard; pedir(guard, mostrar, function () { try { sessionStorage.removeItem('ideasProfe'); } catch (x) { } }); }
+})();
+</script>
+</body>
+</html>

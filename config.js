@@ -5,4 +5,6 @@
 window.RINCON = window.RINCON || {
   form: '1FAIpQLSedkr09_PlgfIZ8Sg_6HbyOtNwhVQC4DNHuVAD84Lywo2CiXw',
   campos: { tipo: '696955078', clase: '173008090', idea: '2042298588' },
+  // respuestas: la URL /exec del script del formulario (tools/ideas-apps-script.gs). La usa la página ideas/ del profe.
+  respuestas: '',
 };

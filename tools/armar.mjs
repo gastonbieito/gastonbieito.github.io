@@ -25,7 +25,7 @@ for (const c of M.colegios) for (const k of c.clases) for (const j of k.juegos) 
   } else { j.href = j.url; j.file = path.join(root, local[j.slug]); }
   juegos.push(j);
 }
-const datos = { colegios: M.colegios.map(c => ({ ...c, clases: c.clases.map(k => ({ ...k, juegos: k.juegos.map(({ slug, titulo, desc, href, nuevo }) => ({ slug, titulo, desc, href, nuevo: !!nuevo })) })) })) };
+const datos = { colegios: M.colegios.map(c => ({ ...c, clases: c.clases.map(k => ({ ...k, juegos: k.juegos.map(({ slug, titulo, desc, href, nuevo }) => ({ slug, titulo, desc, href, nuevo: nuevo || false })) })) })) };
 fs.writeFileSync(path.join(root, 'datos.js'), '// Generado por tools/armar.mjs a partir de tools/juegos.json\nwindow.JUEGOS = ' + JSON.stringify(datos, null, 1) + ';\n');
 console.log(`${juegos.length} juegos copiados y datos.js generado.`);
 

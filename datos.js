@@ -18,14 +18,14 @@ window.JUEGOS = {
        "titulo": "Lumi y el faro dormido",
        "desc": "Encendé el faro: doble clic, teclado y caminos.",
        "href": "/lumi/2/",
-       "nuevo": true
+       "nuevo": "2026-11-23"
       },
       {
        "slug": "lumi",
        "titulo": "Lumi y la isla dormida",
        "desc": "Despertá la isla con clics y arrastres.",
        "href": "/lumi/",
-       "nuevo": true
+       "nuevo": "2026-11-22"
       },
       {
        "slug": "robotito-rescate",
@@ -61,14 +61,14 @@ window.JUEGOS = {
        "titulo": "La fábrica de luces",
        "desc": "Interruptores, AND, OR y NOT: cómo piensa una compu.",
        "href": "j/fabrica-luces/",
-       "nuevo": true
+       "nuevo": "2026-11-23"
       },
       {
        "slug": "rumor",
        "titulo": "El rumor",
        "desc": "Cómo se difunde un mensaje y cómo se frena.",
        "href": "/rumor/",
-       "nuevo": true
+       "nuevo": "2026-11-23"
       },
       {
        "slug": "mi-canal",
@@ -118,7 +118,7 @@ window.JUEGOS = {
        "titulo": "El rumor",
        "desc": "Cómo se difunde un mensaje y cómo se frena.",
        "href": "/rumor/",
-       "nuevo": true
+       "nuevo": "2026-11-22"
       },
       {
        "slug": "bucle",
@@ -183,7 +183,7 @@ window.JUEGOS = {
        "titulo": "Detective Pixel",
        "desc": "Casos para resolver con filtros.",
        "href": "j/detective-pixel-mta/",
-       "nuevo": true
+       "nuevo": "2026-11-22"
       },
       {
        "slug": "helvecio-decide",
@@ -219,7 +219,7 @@ window.JUEGOS = {
        "titulo": "Detective Pixel",
        "desc": "Casos con corazonadas y diagramas.",
        "href": "j/detective-pixel-mta6/",
-       "nuevo": true
+       "nuevo": "2026-11-22"
       },
       {
        "slug": "helvecio-perdido",
