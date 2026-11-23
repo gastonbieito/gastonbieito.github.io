@@ -163,6 +163,13 @@ window.JUEGOS = {
        "desc": "Programá con la orden SI.",
        "href": "j/helvecio-decide/",
        "nuevo": false
+      },
+      {
+       "slug": "helvecio-boveda",
+       "titulo": "Helvecio 2: La bóveda",
+       "desc": "Abrí la bóveda programando al robot.",
+       "href": "j/helvecio-boveda/",
+       "nuevo": false
       }
      ]
     },
@@ -177,6 +184,13 @@ window.JUEGOS = {
        "titulo": "Helvecio y la fábrica cerrada",
        "desc": "Pisos de colores y decisiones.",
        "href": "j/helvecio-fabrica/",
+       "nuevo": false
+      },
+      {
+       "slug": "detective-pixel-mta6",
+       "titulo": "Detective Pixel: edición MTA",
+       "desc": "Casos con corazonadas y diagramas.",
+       "href": "j/detective-pixel-mta6/",
        "nuevo": true
       },
       {

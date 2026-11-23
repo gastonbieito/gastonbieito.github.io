@@ -9,55 +9,96 @@
 <style>
 @font-face{font-family:Nunito;font-weight:600;font-display:swap;src:url(fonts/nunito-latin-600-normal.woff2) format('woff2')}
 @font-face{font-family:Nunito;font-weight:800;font-display:swap;src:url(fonts/nunito-latin-800-normal.woff2) format('woff2')}
-:root{--ink:#24204a;--dim:#6b6790;--bg:#eef3ff;--card:#fff}
+:root{--ink:#24204a;--dim:#6b6790;--bg:#eef3ff;--card:#fff;--line:#d6def5}
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%}
 body{background:var(--bg);color:var(--ink);font:600 16px/1.35 Nunito,'Segoe UI',system-ui,sans-serif;overflow-x:hidden}
 .blobs{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
 .blobs i{position:absolute;border-radius:50%;filter:blur(2px);opacity:.55;animation:drift 18s ease-in-out infinite alternate}
 @keyframes drift{to{transform:translate(40px,-30px) scale(1.08)}}
-header{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:12px;padding:12px 20px;background:rgba(238,243,255,.85);backdrop-filter:blur(8px)}
-.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:22px;color:var(--ink);text-decoration:none;background:#fff;padding:8px 16px 8px 10px;border-radius:999px;box-shadow:0 4px 0 #d6def5}
+header{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:12px;padding:12px 20px;background:rgba(238,243,255,.85);backdrop-filter:blur(8px);flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:22px;color:var(--ink);text-decoration:none;background:#fff;padding:8px 16px 8px 10px;border-radius:999px;box-shadow:0 4px 0 var(--line)}
 .logo svg{width:38px;height:38px}
 .crumbs{display:flex;gap:8px;flex-wrap:wrap}
-.crumb{font-weight:800;font-size:16px;padding:9px 16px;border-radius:999px;background:#fff;color:var(--ink);text-decoration:none;box-shadow:0 4px 0 #d6def5}
+.crumb{font-weight:800;font-size:16px;padding:9px 16px;border-radius:999px;background:#fff;color:var(--ink);text-decoration:none;box-shadow:0 4px 0 var(--line)}
 .crumb.on{background:var(--ink);color:#fff;box-shadow:0 4px 0 #0f0c26}
 main{position:relative;z-index:1;max-width:1240px;margin:0 auto;padding:18px 20px 60px}
 h1{font-size:clamp(28px,4.5vw,46px);margin:10px 0 4px;font-weight:800;letter-spacing:-.5px}
-.sub{color:var(--dim);margin:0 0 22px;font-size:18px}
-.resume{display:inline-flex;align-items:center;gap:10px;margin:0 0 22px;padding:10px 18px;border-radius:999px;background:#fff;color:var(--ink);font-weight:800;text-decoration:none;box-shadow:0 4px 0 #d6def5}
-.resume b{background:#ffd23f;border-radius:999px;padding:2px 10px}
+h2{font-size:clamp(22px,3vw,28px);margin:30px 0 12px;font-weight:800}
+.sub{color:var(--dim);margin:0 0 18px;font-size:18px}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:0 0 22px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:999px;background:#fff;color:var(--ink);font-weight:800;text-decoration:none;box-shadow:0 4px 0 var(--line);transition:transform .15s}
+.chip:hover{transform:translateY(-2px)}
+.chip i{width:12px;height:12px;border-radius:50%;display:inline-block}
+.search{flex:1 1 260px;max-width:420px;position:relative}
+.search input{width:100%;font:800 17px Nunito,'Segoe UI',sans-serif;color:var(--ink);padding:12px 18px 12px 46px;border:0;border-radius:999px;background:#fff;box-shadow:0 4px 0 var(--line);outline:none}
+.search input:focus{box-shadow:0 4px 0 #9b7bff,0 0 0 3px #e3d9ff}
+.search svg{position:absolute;left:16px;top:50%;width:20px;height:20px;transform:translateY(-50%)}
+.search kbd{position:absolute;right:14px;top:50%;transform:translateY(-50%);font:800 13px Nunito,sans-serif;color:var(--dim);background:#eef3ff;border-radius:6px;padding:2px 8px}
 .grid{display:grid;gap:22px}
 .schools{grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr))}
 .classes{grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}
 .games{grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr))}
+.recent{grid-template-columns:repeat(auto-fill,minmax(min(100%,220px),1fr))}
 .tile{position:relative;display:block;border-radius:28px;text-decoration:none;color:#fff;overflow:hidden;transition:transform .18s cubic-bezier(.34,1.56,.64,1),box-shadow .18s;box-shadow:0 8px 0 rgba(0,0,0,.14)}
 .tile:hover,.tile:focus-visible{transform:translateY(-6px) rotate(-.6deg);box-shadow:0 14px 0 rgba(0,0,0,.14);outline:none}
 .tile:active{transform:translateY(2px) scale(.98)}
-.school{min-height:300px;padding:28px}
+.school{min-height:280px;padding:28px}
 .school .big{font-size:clamp(56px,8vw,86px);font-weight:800;line-height:1;letter-spacing:-1px;text-shadow:0 4px 0 rgba(0,0,0,.12)}
 .school .place{font-size:22px;opacity:.95}
-.school .count{position:absolute;left:28px;bottom:24px;background:rgba(255,255,255,.25);padding:6px 14px;border-radius:999px;font-weight:800}
+.school .count,.klass .count{position:absolute;left:24px;bottom:20px;background:rgba(255,255,255,.25);padding:6px 14px;border-radius:999px;font-weight:800}
 .school svg.art{position:absolute;right:-6px;bottom:-6px;width:58%;max-width:300px}
 .klass{min-height:230px;padding:22px}
 .klass .big{font-size:clamp(40px,6vw,58px);font-weight:800;line-height:1.05;text-shadow:0 3px 0 rgba(0,0,0,.12)}
 .klass .det{font-size:18px;opacity:.95}
 .klass .stack{position:absolute;right:16px;bottom:16px;display:flex}
-.klass .stack img{width:96px;height:54px;object-fit:cover;border-radius:10px;border:3px solid #fff;margin-left:-38px;box-shadow:0 4px 10px rgba(0,0,0,.2)}
-.klass .stack img:nth-child(1){transform:rotate(-8deg)}.klass .stack img:nth-child(3){transform:rotate(7deg)}
-.klass .count{position:absolute;left:22px;bottom:18px;background:rgba(255,255,255,.25);padding:5px 12px;border-radius:999px;font-weight:800}
-.game{background:var(--card);color:var(--ink);border-radius:22px;box-shadow:0 7px 0 #d6def5}
+.klass .stack i{display:grid;place-items:center;width:64px;height:64px;border-radius:16px;border:3px solid #fff;margin-left:-22px;box-shadow:0 4px 10px rgba(0,0,0,.2);color:#fff;font:800 32px Nunito,'Segoe UI',sans-serif;font-style:normal}
+.klass .stack i:nth-child(1){transform:rotate(-8deg)}.klass .stack i:nth-child(3){transform:rotate(7deg)}
+.game{background:var(--card);color:var(--ink);border-radius:22px;box-shadow:0 7px 0 var(--line)}
 .game:hover,.game:focus-visible{box-shadow:0 12px 0 #c9d3f0}
-.game .shot{aspect-ratio:16/9;background:#dfe6fa center/cover no-repeat;border-radius:22px 22px 0 0}
-.game .info{padding:12px 16px 16px}
+.game .shot{position:relative;aspect-ratio:16/9;background:#dfe6fa center/cover no-repeat;border-radius:22px 22px 0 0;filter:saturate(1.12) contrast(1.03);transition:background-size .3s}
+.game .shot::after{content:'';position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 1px rgba(0,0,0,.06),inset 0 -40px 40px -30px rgba(20,16,60,.35)}
+.game .frame{overflow:hidden;border-radius:22px 22px 0 0}
+.game .frame .shot{transition:transform .35s ease}
+.game:hover .frame .shot{transform:scale(1.06)}
+.game .cover{position:relative;aspect-ratio:16/9;border-radius:22px 22px 0 0;overflow:hidden;display:grid;place-items:center;padding:0 8%;container-type:inline-size;background:radial-gradient(circle at 18% 12%,rgba(255,255,255,.28),transparent 46%),linear-gradient(140deg,var(--c),color-mix(in srgb,var(--c) 70%,#1e1550))}
+.game .cover::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.16) 2px,transparent 2.5px);background-size:22px 22px}
+.game .cover::after{content:'';position:absolute;right:-12%;bottom:-38%;width:55%;aspect-ratio:1;border-radius:50%;background:rgba(255,255,255,.12)}
+.game .ct{position:relative;z-index:1;color:#fff;font-weight:800;text-align:center;line-height:1.04;letter-spacing:-.02em;font-size:calc(var(--k) * 1cqw);text-shadow:0 .07em 0 rgba(0,0,0,.2);transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
+.game:hover .ct{transform:scale(1.07) rotate(-2deg)}
+.game .info .d{color:var(--ink);font-size:16px;margin-top:0}.game .info{padding:12px 16px 16px}
 .game .t{font-weight:800;font-size:19px;line-height:1.2}
 .game .d{color:var(--dim);font-size:15px;margin-top:3px}
+.game .where{display:inline-block;margin-top:8px;font-size:13px;font-weight:800;color:#fff;padding:2px 10px;border-radius:999px}
+.game .key{position:absolute;bottom:12px;right:12px;font:800 13px Nunito,sans-serif;color:var(--dim);background:#eef3ff;border-radius:6px;padding:1px 7px}
 .badge{position:absolute;top:12px;left:12px;background:#ffd23f;color:var(--ink);font-weight:800;font-size:13px;padding:4px 10px;border-radius:999px;box-shadow:0 3px 0 #d6a800;letter-spacing:.5px}
-.play{position:absolute;top:calc((100% - 0px) * 0);right:12px;margin-top:12px;width:44px;height:44px;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 3px 0 rgba(0,0,0,.15);opacity:0;transform:scale(.6);transition:.18s}
+.badge.go{background:#2fbf8f;color:#fff;box-shadow:0 3px 0 #1d8a66}
+.play{position:absolute;top:12px;right:12px;width:44px;height:44px;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 3px 0 rgba(0,0,0,.15);opacity:0;transform:scale(.6);transition:.18s}
 .game:hover .play{opacity:1;transform:scale(1)}
 .play svg{width:20px;height:20px;margin-left:3px}
+.empty{color:var(--dim);font-size:18px;padding:20px 0}
+.rin{grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr))}
+.panel{background:#fff;border-radius:24px;padding:20px 22px;box-shadow:0 7px 0 var(--line);display:flex;flex-direction:column;gap:12px}
+.panel h3{margin:0;font-size:22px;font-weight:800}
+.panel select,.panel textarea{font:600 16px Nunito,'Segoe UI',sans-serif;color:var(--ink);border:2px solid var(--line);border-radius:14px;padding:10px 12px;background:#f7f9ff;outline:none;width:100%}
+.panel select:focus,.panel textarea:focus{border-color:#9b7bff}
+.panel textarea{min-height:96px;resize:vertical}
+.stars{display:flex;gap:6px}
+.stars button{border:0;background:none;padding:0;cursor:pointer;width:42px;height:42px;transition:transform .15s}
+.stars button:hover{transform:scale(1.15)}
+.stars svg{width:100%;height:100%}
+.seg{display:flex;gap:8px;flex-wrap:wrap}
+.seg label{cursor:pointer}
+.seg input{position:absolute;opacity:0}
+.seg span{display:inline-block;padding:8px 14px;border-radius:999px;background:#eef3ff;font-weight:800}
+.seg input:checked+span{background:#9b7bff;color:#fff}
+.send{align-self:flex-start;font:800 17px Nunito,'Segoe UI',sans-serif;border:0;border-radius:999px;padding:11px 22px;background:#ff7a59;color:#fff;cursor:pointer;box-shadow:0 4px 0 #d9532f;transition:transform .15s}
+.send:hover{transform:translateY(-2px)}
+.send:disabled{opacity:.5;cursor:default;transform:none}
+.thanks{font-weight:800;color:#1d8a66;min-height:1.3em}
+.note{color:var(--dim);font-size:14px}
 footer{position:relative;z-index:1;text-align:center;color:var(--dim);font-size:14px;padding:0 20px 30px}
-@media (max-width:560px){header{padding:10px 12px}.logo span{display:none}.school{min-height:230px}}
+@media (max-width:560px){header{padding:10px 12px}.logo span{display:none}.school{min-height:220px}.search kbd{display:none}}
 </style>
 </head>
 <body>
@@ -67,60 +108,165 @@ footer{position:relative;z-index:1;text-align:center;color:var(--dim);font-size:
   <nav class="crumbs" id="crumbs"></nav>
 </header>
 <main id="app"></main>
-<footer>Juegos hechos para las clases de Informática. No guardan nada en internet: el avance queda en cada compu.</footer>
+<footer>Juegos hechos para las clases de Informática. El avance de cada juego queda guardado en cada compu.</footer>
 <script src="datos.js"></script>
+<script src="config.js"></script>
 <script>
 (function () {
   'use strict';
-  var D = window.JUEGOS, app = document.getElementById('app'), crumbs = document.getElementById('crumbs');
+  var D = window.JUEGOS, R = window.RINCON || {}, app = document.getElementById('app'), crumbs = document.getElementById('crumbs');
   var esc = function (s) { return String(s).replace(/[<>&"]/g, function (c) { return { '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[c]; }); };
-  var count = function (c) { return c.clases.reduce(function (n, k) { return n + k.juegos.length; }, 0); };
   var plural = function (n) { return n + (n === 1 ? ' juego' : ' juegos'); };
-  var store = { get: function () { try { return localStorage.getItem('portalClase'); } catch (e) { return null; } }, set: function (v) { try { localStorage.setItem('portalClase', v); } catch (e) { } } };
-  var school = function (color) {
+  var ls = { get: function (k, d) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }, set: function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } } };
+  // Índice de todos los juegos con su colegio y clase.
+  var ALL = [];
+  D.colegios.forEach(function (c) { c.clases.forEach(function (k) { k.juegos.forEach(function (j) { ALL.push({ j: j, c: c, k: k }); }); }); });
+  var find = function (slug, where) { return ALL.filter(function (x) { return x.j.slug === slug && (!where || x.c.id + '/' + x.k.id === where); })[0]; };
+  var norm = function (s) { return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); };
+  var schoolArt = function (color) {
     return '<svg class="art" viewBox="0 0 300 220" aria-hidden="true"><rect x="40" y="90" width="220" height="130" rx="10" fill="rgba(255,255,255,.9)"/><path d="M28 98 L150 26 L272 98Z" fill="rgba(255,255,255,.75)"/><rect x="128" y="150" width="44" height="70" rx="8" fill="' + color + '" opacity=".55"/>' +
       [70, 110, 190, 230].map(function (x) { return '<rect x="' + (x - 14) + '" y="118" width="28" height="26" rx="6" fill="' + color + '" opacity=".4"/>'; }).join('') +
       '<circle cx="150" cy="76" r="15" fill="' + color + '" opacity=".5"/><path d="M150 26 V4 M150 4 h26 v14 h-26" stroke="rgba(255,255,255,.9)" stroke-width="5" fill="rgba(255,255,255,.75)"/></svg>';
   };
-  var card = function (j) {
-    return '<a class="tile game" href="' + esc(j.href) + '" data-slug="' + esc(j.slug) + '"><div class="shot" style="background-image:url(img/' + esc(j.slug) + '.jpg)"></div>' +
-      (j.nuevo ? '<span class="badge">NUEVO</span>' : '') + '<span class="play"><svg viewBox="0 0 20 20"><path d="M4 2 L18 10 L4 18Z" fill="#24204a"/></svg></span>' +
-      '<div class="info"><div class="t">' + esc(j.titulo) + '</div><div class="d">' + esc(j.desc) + '</div></div></a>';
-  };
-  function setCrumbs(list) {
-    crumbs.innerHTML = list.map(function (c, i) { return '<a class="crumb' + (i === list.length - 1 ? ' on' : '') + '" href="' + c[1] + '">' + esc(c[0]) + '</a>'; }).join('');
+  var STAR = function (on) { return '<svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6 6.6.8-4.9 4.6 1.3 6.6L12 17.3 6.1 20.5l1.3-6.6L2.5 9.3l6.6-.8z" fill="' + (on ? '#ffd23f' : '#e3e8f7') + '" stroke="' + (on ? '#d6a800' : '#c9d3f0') + '" stroke-width="1.5" stroke-linejoin="round"/></svg>'; };
+  function card(x, o) {
+    o = o || {};
+    var j = x.j;
+    return '<a class="tile game" href="' + esc(j.href) + '" data-slug="' + esc(j.slug) + '" data-where="' + x.c.id + '/' + x.k.id + '">' + cover(j) +
+      (o.go ? '<span class="badge go">SEGUIR</span>' : j.nuevo ? '<span class="badge">NUEVO</span>' : '') + '<span class="play"><svg viewBox="0 0 20 20"><path d="M4 2 L18 10 L4 18Z" fill="#24204a"/></svg></span>' +
+      '<div class="info"><div class="d">' + esc(j.desc) + '</div>' +
+      (o.where ? '<span class="where" style="background:' + x.k.color + '">' + esc(x.c.nombre + ' · ' + x.k.nombre) + '</span>' : '') + '</div>' +
+      (o.key ? '<span class="key">' + o.key + '</span>' : '') + '</a>';
   }
+  // Portada tipográfica: un color fuerte por juego y el título lo más grande que entre en la tarjeta.
+  var PAL = ['#ef476f', '#f3722c', '#5f4bd8', '#06a77d', '#3a86ff', '#c2185b', '#e76f51', '#8e44ad', '#118ab2', '#2a9d8f', '#d6457a', '#6a4c93', '#0096c7', '#43aa8b'];
+  ALL.forEach(function (x, i) { x.j.color = PAL[i % PAL.length]; });
+  function fitK(t) {
+    var words = t.split(' '), longest = Math.max.apply(null, words.map(function (w) { return w.length; }));
+    for (var k = 17; k > 6; k -= .5) {
+      if (k * .58 * longest > 84) continue;
+      var cpl = Math.floor(84 / (k * .58)), lines = 1, cur = 0;
+      words.forEach(function (w) { if (cur && cur + 1 + w.length > cpl) { lines++; cur = w.length; } else cur += (cur ? 1 : 0) + w.length; });
+      if (lines * k * 1.04 <= 40) return k;
+    }
+    return 6;
+  }
+  function cover(j) {
+    return '<div class="cover" style="--c:' + j.color + '"><span class="ct" style="--k:' + fitK(j.titulo) + '">' + esc(j.titulo) + '</span></div>';
+  }
+  function setCrumbs(list) { crumbs.innerHTML = list.map(function (c, i) { return '<a class="crumb' + (i === list.length - 1 ? ' on' : '') + '" href="' + c[1] + '">' + esc(c[0]) + '</a>'; }).join(''); }
+  function pop() {
+    var tiles = app.querySelectorAll('.tile,.chip,.panel');
+    for (var i = 0; i < tiles.length; i++) tiles[i].animate && tiles[i].animate([{ opacity: 0, transform: 'translateY(16px) scale(.96)' }, { opacity: 1, transform: 'none' }], { duration: 380, delay: Math.min(i, 14) * 35, easing: 'cubic-bezier(.34,1.56,.64,1)', fill: 'backwards' });
+  }
+
+  // Al abrir un juego se anota en "Seguir jugando".
+  app.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a.game'); if (!a) return;
+    var list = ls.get('portalRecientes', []).filter(function (r) { return !(r.s === a.dataset.slug && r.w === a.dataset.where); });
+    list.unshift({ s: a.dataset.slug, w: a.dataset.where, t: Date.now() });
+    ls.set('portalRecientes', list.slice(0, 8));
+  });
+
+  function home() {
+    setCrumbs([['Inicio', '#/']]);
+    var rec = ls.get('portalRecientes', []).map(function (r) { return find(r.s, r.w); }).filter(Boolean).slice(0, 4);
+    var html = '<h1>¡Hola! ¿A qué jugamos?</h1><p class="sub">Elegí tu colegio y tu clase, o seguí donde lo dejaste.</p>';
+    if (rec.length) html += '<h2 style="margin-top:6px">Seguir jugando</h2><div class="grid recent">' + rec.map(function (x) { return card(x, { go: true, where: true }); }).join('') + '</div><h2>Atajos</h2>';
+    html += '<div class="bar"><label class="search"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="#6b6790" stroke-width="2.6"/><path d="M15.5 15.5 L21 21" stroke="#6b6790" stroke-width="2.6" stroke-linecap="round"/></svg><input id="q" type="search" placeholder="Buscar un juego" autocomplete="off" aria-label="Buscar un juego"><kbd>/</kbd></label>' +
+      D.colegios.map(function (c) { return c.clases.map(function (k) { return '<a class="chip" href="#/' + c.id + '/' + k.id + '" data-clase="' + c.id + '/' + k.id + '"><i style="background:' + k.color + '"></i>' + esc(c.nombre + ' · ' + k.nombre) + '</a>'; }).join(''); }).join('') + '</div>';
+    html += '<div id="results"></div><div id="schools" class="grid schools">' + D.colegios.map(function (c) {
+      var n = c.clases.reduce(function (s, k) { return s + k.juegos.length; }, 0);
+      return '<a class="tile school" href="#/' + c.id + '" data-colegio="' + c.id + '" style="background:' + c.color + '"><div class="big">' + esc(c.nombre) + '</div><div class="place">' + esc(c.lugar) + '</div><span class="count">' + plural(n) + '</span>' + schoolArt(c.color) + '</a>';
+    }).join('') + '</div>';
+    if (R.form) html += rincon();
+    app.innerHTML = html;
+    var q = document.getElementById('q'), res = document.getElementById('results'), sch = document.getElementById('schools');
+    q.addEventListener('input', function () {
+      var t = norm(q.value.trim());
+      if (!t) { res.innerHTML = ''; sch.style.display = ''; return; }
+      var hits = ALL.filter(function (x) { return norm(x.j.titulo + ' ' + x.j.desc + ' ' + x.c.nombre + ' ' + x.k.nombre).indexOf(t) >= 0; });
+      sch.style.display = 'none';
+      res.innerHTML = hits.length ? '<div class="grid games" style="margin-bottom:22px">' + hits.map(function (x) { return card(x, { where: true }); }).join('') + '</div>' : '<p class="empty">No hay juegos con ese nombre.</p>';
+    });
+    if (R.form) wireRincon();
+    document.title = 'Juegos de Informática';
+  }
+  function school(c) {
+    setCrumbs([['Inicio', '#/'], [c.nombre, '#/' + c.id]]);
+    app.innerHTML = '<h1>' + esc(c.nombre) + '</h1><p class="sub">' + esc(c.lugar) + ' · Elegí tu clase</p><div class="grid classes">' + c.clases.map(function (k) {
+      return '<a class="tile klass" href="#/' + c.id + '/' + k.id + '" data-clase="' + c.id + '/' + k.id + '" style="background:' + k.color + '"><div class="big">' + esc(k.nombre) + '</div><div class="det">' + esc(k.detalle) + '</div>' +
+        '<span class="count">' + plural(k.juegos.length) + '</span><div class="stack">' + k.juegos.slice(0, 3).map(function (j) { return '<i style="background:' + j.color + '">' + esc(j.titulo.charAt(0)) + '</i>'; }).join('') + '</div></a>';
+    }).join('') + '</div>';
+    document.title = c.nombre + ' · Juegos de Informática';
+  }
+  function klass(c, k) {
+    ls.set('portalClase', c.id + '/' + k.id);
+    setCrumbs([['Inicio', '#/'], [c.nombre, '#/' + c.id], [k.nombre, '#/' + c.id + '/' + k.id]]);
+    app.innerHTML = '<h1>' + esc(c.nombre) + ' · ' + esc(k.nombre) + '</h1><p class="sub">' + esc(k.detalle) + ' · ' + plural(k.juegos.length) + ' · con las teclas 1 a ' + Math.min(9, k.juegos.length) + ' se abre cada juego</p><div class="grid games">' +
+      k.juegos.map(function (j, i) { return card({ j: j, c: c, k: k }, { key: i < 9 ? String(i + 1) : '' }); }).join('') + '</div>';
+    document.title = c.nombre + ' ' + k.nombre + ' · Juegos de Informática';
+  }
+
+  // ----- Rincón de reseñas e ideas (va a un formulario privado del profe).
+  function rincon() {
+    var opts = D.colegios.map(function (c) { return c.clases.map(function (k) { return '<optgroup label="' + esc(c.nombre + ' · ' + k.nombre) + '">' + k.juegos.map(function (j) { return '<option value="' + esc(j.titulo + ' (' + c.nombre + ' ' + k.nombre + ')') + '">' + esc(j.titulo) + '</option>'; }).join('') + '</optgroup>'; }).join(''); }).join('');
+    return '<h2 id="rincon">Rincón de reseñas e ideas</h2><p class="sub">Lo lee el profe. No hace falta que pongas tu nombre.</p><div class="grid rin">' +
+      '<form class="panel" id="fRes"><h3>¿Qué te pareció un juego?</h3><select name="juego" required><option value="">Elegí el juego</option>' + opts + '</select>' +
+      '<div class="stars" id="stars">' + [1, 2, 3, 4, 5].map(function (n) { return '<button type="button" data-n="' + n + '" aria-label="' + n + ' estrellas">' + STAR(false) + '</button>'; }).join('') + '</div>' +
+      '<textarea name="mensaje" maxlength="300" placeholder="Lo que más te gustó, lo que cambiarías…"></textarea><button class="send" type="submit">Enviar reseña</button><div class="thanks" aria-live="polite"></div></form>' +
+      '<form class="panel" id="fIdea"><h3>Tengo una idea</h3><div class="seg"><label><input type="radio" name="tipo" value="Idea de juego" checked><span>Un juego nuevo</span></label><label><input type="radio" name="tipo" value="Algo para aprender"><span>Algo para aprender</span></label></div>' +
+      '<textarea name="mensaje" maxlength="400" required placeholder="Contá tu idea…"></textarea><button class="send" type="submit">Enviar idea</button><div class="thanks" aria-live="polite"></div></form></div>' +
+      '<p class="note">Se pueden mandar hasta 5 mensajes por día desde cada compu.</p>';
+  }
+  function send(fields, form) {
+    var today = new Date().toDateString(), q = ls.get('portalEnvios', { d: today, n: 0 });
+    if (q.d !== today) q = { d: today, n: 0 };
+    var out = form.querySelector('.thanks'), btn = form.querySelector('.send');
+    if (q.n >= 5) { out.textContent = 'Por hoy ya está. ¡Gracias!'; return; }
+    var fd = new FormData(), last = ls.get('portalClase', '');
+    fields.clase = last ? last.replace('/', ' ') : '';
+    Object.keys(R.campos).forEach(function (k) { if (R.campos[k] && fields[k] != null) fd.append('entry.' + R.campos[k], fields[k]); });
+    btn.disabled = true; out.textContent = 'Enviando…';
+    fetch('https://docs.google.com/forms/d/e/' + R.form + '/formResponse', { method: 'POST', mode: 'no-cors', body: fd }).then(function () {
+      q.n++; ls.set('portalEnvios', q);
+      out.textContent = '¡Gracias! Le llegó al profe.'; form.reset(); setStars(0);
+      setTimeout(function () { btn.disabled = false; out.textContent = ''; }, 6000);
+    }, function () { btn.disabled = false; out.textContent = 'No se pudo enviar. Probá de nuevo.'; });
+  }
+  var stars = 0;
+  function setStars(n) { stars = n; var b = document.querySelectorAll('#stars button'); for (var i = 0; i < b.length; i++) b[i].innerHTML = STAR(i < n); }
+  function wireRincon() {
+    var s = document.getElementById('stars');
+    s.addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) setStars(+b.dataset.n); });
+    document.getElementById('fRes').addEventListener('submit', function (e) {
+      e.preventDefault(); var f = e.target, out = f.querySelector('.thanks');
+      if (!stars) { out.textContent = 'Tocá las estrellas para puntuar.'; return; }
+      send({ tipo: 'Reseña', juego: f.juego.value, estrellas: String(stars), mensaje: f.mensaje.value.trim() }, f);
+    });
+    document.getElementById('fIdea').addEventListener('submit', function (e) {
+      e.preventDefault(); var f = e.target;
+      send({ tipo: f.querySelector('input[name=tipo]:checked').value, juego: '', estrellas: '', mensaje: f.mensaje.value.trim() }, f);
+    });
+  }
+
   function render() {
     var parts = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
     var c = D.colegios.filter(function (x) { return x.id === parts[0]; })[0];
     var k = c && c.clases.filter(function (x) { return x.id === parts[1]; })[0];
     window.scrollTo(0, 0);
-    if (k) {
-      store.set(c.id + '/' + k.id);
-      setCrumbs([['Inicio', '#/'], [c.nombre, '#/' + c.id], [k.nombre, '#/' + c.id + '/' + k.id]]);
-      app.innerHTML = '<h1>' + esc(c.nombre) + ' · ' + esc(k.nombre) + '</h1><p class="sub">' + esc(k.detalle) + ' · ' + plural(k.juegos.length) + '</p><div class="grid games">' + k.juegos.map(card).join('') + '</div>';
-      document.title = c.nombre + ' ' + k.nombre + ' · Juegos de Informática';
-    } else if (c) {
-      setCrumbs([['Inicio', '#/'], [c.nombre, '#/' + c.id]]);
-      app.innerHTML = '<h1>' + esc(c.nombre) + '</h1><p class="sub">' + esc(c.lugar) + ' · Elegí tu clase</p><div class="grid classes">' + c.clases.map(function (k) {
-        return '<a class="tile klass" href="#/' + c.id + '/' + k.id + '" data-clase="' + c.id + '/' + k.id + '" style="background:' + k.color + '"><div class="big">' + esc(k.nombre) + '</div><div class="det">' + esc(k.detalle) + '</div>' +
-          '<span class="count">' + plural(k.juegos.length) + '</span><div class="stack">' + k.juegos.slice(0, 3).map(function (j) { return '<img src="img/' + esc(j.slug) + '.jpg" alt="">'; }).join('') + '</div></a>';
-      }).join('') + '</div>';
-      document.title = c.nombre + ' · Juegos de Informática';
-    } else {
-      setCrumbs([['Inicio', '#/']]);
-      var last = store.get(), lc = null, lk = null;
-      if (last) { lc = D.colegios.filter(function (x) { return x.id === last.split('/')[0]; })[0]; lk = lc && lc.clases.filter(function (x) { return x.id === last.split('/')[1]; })[0]; }
-      app.innerHTML = '<h1>¡Hola! ¿De qué colegio sos?</h1><p class="sub">Elegí tu colegio y después tu clase.</p>' +
-        (lk ? '<a class="resume" href="#/' + lc.id + '/' + lk.id + '" data-resume="1">Seguir en <b>' + esc(lc.nombre) + ' · ' + esc(lk.nombre) + '</b></a>' : '') +
-        '<div class="grid schools">' + D.colegios.map(function (c) {
-          return '<a class="tile school" href="#/' + c.id + '" data-colegio="' + c.id + '" style="background:' + c.color + '"><div class="big">' + esc(c.nombre) + '</div><div class="place">' + esc(c.lugar) + '</div><span class="count">' + plural(count(c)) + '</span>' + school(c.color) + '</a>';
-        }).join('') + '</div>';
-      document.title = 'Juegos de Informática';
-    }
-    var tiles = app.querySelectorAll('.tile');
-    for (var i = 0; i < tiles.length; i++) tiles[i].animate && tiles[i].animate([{ opacity: 0, transform: 'translateY(16px) scale(.96)' }, { opacity: 1, transform: 'none' }], { duration: 380, delay: i * 45, easing: 'cubic-bezier(.34,1.56,.64,1)', fill: 'backwards' });
+    if (k) klass(c, k); else if (c) school(c); else home();
+    pop();
   }
+  // Atajos de teclado: "/" busca; en una clase, 1 a 9 abren cada juego; Escape vuelve atrás.
+  document.addEventListener('keydown', function (e) {
+    var tag = (e.target.tagName || '').toLowerCase();
+    if (tag === 'input' || tag === 'textarea' || tag === 'select') { if (e.key === 'Escape') e.target.blur(); return; }
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (e.key === '/') { var q = document.getElementById('q'); if (q) { e.preventDefault(); q.focus(); } }
+    else if (/^[1-9]$/.test(e.key)) { var g = app.querySelectorAll('a.game')[+e.key - 1]; if (g && location.hash.split('/').length > 2) g.click(); }
+    else if (e.key === 'Escape') { var parts = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean); parts.pop(); location.hash = '#/' + parts.join('/'); }
+  });
   window.addEventListener('hashchange', render);
   render();
 })();

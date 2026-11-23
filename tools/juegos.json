@@ -32,10 +32,12 @@
       "clases": [
         { "id": "5", "nombre": "5.º", "detalle": "Taller de programación", "color": "#ff9f43", "juegos": [
           { "slug": "detective-pixel-mta", "titulo": "Detective Pixel", "desc": "Casos para resolver con filtros.", "src": "2026-11-04_MTA_5to_Detective_Pixel/Detective_Pixel.html", "nuevo": true },
-          { "slug": "helvecio-decide", "titulo": "Helvecio, el robot que decide", "desc": "Programá con la orden SI.", "src": "2026-10-20_MTA_5to_Helvecio_El_Robot_Que_Decide/Helvecio_2_El_Robot_Que_Decide.html" }
+          { "slug": "helvecio-decide", "titulo": "Helvecio, el robot que decide", "desc": "Programá con la orden SI.", "src": "2026-10-20_MTA_5to_Helvecio_El_Robot_Que_Decide/Helvecio_2_El_Robot_Que_Decide.html" },
+          { "slug": "helvecio-boveda", "titulo": "Helvecio 2: La bóveda", "desc": "Abrí la bóveda programando al robot.", "src": "Helvecio_2_La_Boveda.html" }
         ] },
         { "id": "6", "nombre": "6.º", "detalle": "Taller de programación", "color": "#ff6b9a", "juegos": [
-          { "slug": "helvecio-fabrica", "titulo": "Helvecio y la fábrica cerrada", "desc": "Pisos de colores y decisiones.", "src": "2026-10-27_MTA_6to_Helvecio_3_La_Fabrica_Cerrada/Helvecio_3_La_Fabrica_Cerrada.html", "nuevo": true },
+          { "slug": "helvecio-fabrica", "titulo": "Helvecio y la fábrica cerrada", "desc": "Pisos de colores y decisiones.", "src": "2026-10-27_MTA_6to_Helvecio_3_La_Fabrica_Cerrada/Helvecio_3_La_Fabrica_Cerrada.html" },
+          { "slug": "detective-pixel-mta6", "titulo": "Detective Pixel: edición MTA", "desc": "Casos con corazonadas y diagramas.", "src": "2026-11-11_MTA_6to_Detective_Pixel/Detective_Pixel_MTA.html", "nuevo": true },
           { "slug": "helvecio-perdido", "titulo": "Helvecio, el robot perdido", "desc": "20 niveles para llevarlo a casa.", "src": "Juegos Colla y Helvecio/Helvecio_Sexto_MTA.html" }
         ] }
       ]

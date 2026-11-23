@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<title>Helvecio 2: La Bóveda</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#17102b;color:#f4eefc;font-family:"Segoe UI",Arial,sans-serif;font-size:16px}
+h1,h2,h3{margin:0}
+#wrap{max-width:1100px;margin:0 auto;padding:12px}
+.top{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;background:#241a45;border-radius:10px;border-bottom:3px solid #ffb000}
+.top .ttl{font-size:20px;font-weight:bold;color:#ffb000}
+.top .info{font-size:14px;color:#cdbcf5}
+.screen{display:none;margin-top:12px}
+.screen.on{display:block}
+.card{background:#241a45;border-radius:12px;padding:18px;border:1px solid #3b2d6b}
+.btn{display:inline-block;border:0;border-radius:8px;padding:9px 14px;font-size:15px;font-weight:bold;cursor:pointer;font-family:inherit;margin:3px 4px 3px 0}
+.btn.amb{background:#ffb000;color:#2a1a00}
+.btn.vio{background:#8b5cf6;color:#fff}
+.btn.gry{background:#3b2d6b;color:#f4eefc}
+.btn.red{background:#e0476b;color:#fff}
+.btn:disabled{opacity:.4;cursor:default}
+.btn:hover:not(:disabled){filter:brightness(1.12)}
+input[type=text]{font-size:18px;padding:8px 10px;border-radius:8px;border:2px solid #8b5cf6;background:#17102b;color:#fff;font-family:inherit}
+.lvgrid{margin-top:10px}
+.lv{display:inline-block;width:92px;height:84px;margin:0 8px 8px 0;border-radius:10px;background:#31235c;border:2px solid #4a3a85;text-align:center;cursor:pointer;vertical-align:top;padding-top:6px}
+.lv:hover{border-color:#ffb000}
+.lv .n{font-size:24px;font-weight:bold;color:#ffb000}
+.lv .t{font-size:11px;color:#cdbcf5;padding:0 3px;height:26px;overflow:hidden}
+.lv .m{font-size:12px;font-weight:bold}
+.lv.done{background:#3c2f73}
+.m.g{color:#ffd24a}.m.s{color:#d6dbe6}.m.b{color:#e29a5c}
+.stage{background:#1d1438;border-radius:10px;padding:8px;border:1px solid #3b2d6b}
+canvas{display:block;margin:0 auto;background:#120b25;border-radius:8px;max-width:100%}
+.gamebox{display:flex;flex-wrap:wrap}
+.gcol{flex:1 1 520px;min-width:300px;margin-right:12px}
+.ecol{flex:1 1 360px;min-width:300px}
+.tabs{margin-bottom:6px}
+.tab{display:inline-block;padding:6px 14px;border-radius:8px 8px 0 0;background:#31235c;cursor:pointer;font-weight:bold;margin-right:3px}
+.tab.on{background:#ffb000;color:#2a1a00}
+.prog{background:#120b25;border:2px solid #4a3a85;border-radius:8px;min-height:220px;max-height:330px;overflow:auto;padding:6px}
+.ln{padding:3px 6px;margin:2px 0;border-radius:6px;background:#31235c;font-size:14px;font-weight:bold;cursor:pointer;position:relative}
+.ln.cur{outline:2px dashed #ffb000}
+.ln .x{float:right;color:#e0476b;cursor:pointer;padding:0 6px}
+.ln .sel{color:#ffb000;text-decoration:underline}
+.k-mv{border-left:5px solid #ffb000}.k-ctl{border-left:5px solid #8b5cf6}.k-pr{border-left:5px solid #3ec6a8}
+.pal{margin:8px 0}
+.pal .btn{padding:7px 10px;font-size:14px}
+.msg{margin-top:8px;padding:10px;border-radius:8px;background:#31235c;min-height:44px;font-size:15px}
+.msg.ok{background:#1f5d46}.msg.bad{background:#6a2338}
+.chip{display:inline-block;padding:3px 9px;border-radius:12px;background:#31235c;margin-right:5px;font-size:13px;font-weight:bold}
+.chip.ok{background:#1f5d46}.chip.bad{background:#6a2338}
+.small{font-size:13px;color:#cdbcf5}
+.opt{display:block;width:100%;text-align:left;margin:6px 0;padding:11px 14px;border-radius:8px;border:2px solid #4a3a85;background:#31235c;color:#fff;font-size:16px;cursor:pointer;font-family:inherit}
+.opt:hover{border-color:#ffb000}
+.opt.good{background:#1f5d46;border-color:#3ec68a}.opt.wrong{background:#6a2338;border-color:#e0476b}
+.digit{width:64px;height:72px;font-size:38px;text-align:center;margin-right:8px;border-radius:10px}
+.clue{padding:7px 10px;margin:5px 0;border-radius:8px;background:#31235c}
+.clue.ok{background:#1f5d46}.clue.bad{background:#6a2338}
+.bar{height:10px;background:#120b25;border-radius:5px;overflow:hidden;margin:6px 0}
+.bar div{height:10px;background:#ffb000}
+table.res{border-collapse:collapse;width:100%}table.res td,table.res th{padding:5px 8px;border-bottom:1px solid #3b2d6b;text-align:left;font-size:14px}
+</style></head><body>
+<div id="wrap">
+<div class="top"><div class="ttl">HELVECIO 2 &middot; La Bóveda</div><div class="info" id="info"></div></div>
+<div id="s-start" class="screen"></div>
+<div id="s-map" class="screen"></div>
+<div id="s-game" class="screen"></div>
+<div id="s-quiz" class="screen"></div>
+<div id="s-vault" class="screen"></div>
+<div id="s-end" class="screen"></div>
+</div>
+<script>
+/* ENGINE_START */
+var DX = [0, 1, 0, -1], DY = [-1, 0, 1, 0];
+function parseSol(str) {
+  var out = [], p = str.split(/\s+/), i, w;
+  for (i = 0; i < p.length; i++) {
+    w = p[i]; if (!w) continue;
+    if (w === 'F' || w === 'L' || w === 'R' || w === 'ELSE' || w === 'END' || w === 'P1' || w === 'P2') out.push({t: w});
+    else if (w.indexOf('REP') === 0) out.push({t: 'REP', n: parseInt(w.substring(3), 10)});
+    else if (w === 'IF' || w === 'WHILE') { out.push({t: w, s: p[++i]}); }
+  }
+  return out;
+}
+function parseMaze(rows, dir) {
+  var m = {w: rows[0].length, h: rows.length, wall: [], keys: {}, nkeys: 0, sx: 0, sy: 0, gx: 0, gy: 0, dir: dir}, x, y, c;
+  for (y = 0; y < m.h; y++) { m.wall[y] = [];
+    for (x = 0; x < m.w; x++) { c = rows[y].charAt(x); m.wall[y][x] = (c === '#');
+      if (c === 'S') { m.sx = x; m.sy = y; }
+      if (c === 'G') { m.gx = x; m.gy = y; }
+      if (c === 'K') { m.keys[x + ',' + y] = 1; m.nkeys++; } } }
+  return m;
+}
+function isFree(m, x, y) { return x >= 0 && y >= 0 && x < m.w && y < m.h && !m.wall[y][x]; }
+function sense(m, st, s) {
+  var d = st.d, fx = st.x + DX[d], fy = st.y + DY[d], l = (d + 3) % 4, r = (d + 1) % 4;
+  switch (s) {
+    case 'LIBRE': return isFree(m, fx, fy);
+    case 'PARED': return !isFree(m, fx, fy);
+    case 'LIBRE_IZQ': return isFree(m, st.x + DX[l], st.y + DY[l]);
+    case 'PARED_IZQ': return !isFree(m, st.x + DX[l], st.y + DY[l]);
+    case 'LIBRE_DER': return isFree(m, st.x + DX[r], st.y + DY[r]);
+    case 'PARED_DER': return !isFree(m, st.x + DX[r], st.y + DY[r]);
+    case 'NO_META': return !(st.x === m.gx && st.y === m.gy);
+    case 'EN_META': return st.x === m.gx && st.y === m.gy;
+    case 'HAY_LLAVE': return m.keys[st.x + ',' + st.y] === 1 && !st.got[st.x + ',' + st.y];
+  }
+  return false;
+}
+/* Convierte tokens planos en arbol. Devuelve {ok, tree, err} */
+function buildTree(tokens) {
+  var root = [], stack = [{list: root, owner: null}], i, tk, top, node;
+  for (i = 0; i < tokens.length; i++) {
+    tk = tokens[i]; top = stack[stack.length - 1];
+    if (tk.t === 'END') {
+      if (stack.length === 1) return {ok: false, err: 'Hay un FIN que no cierra nada.'};
+      stack.pop();
+    } else if (tk.t === 'ELSE') {
+      if (!top.owner || top.owner.t !== 'IF' || top.owner.inElse) return {ok: false, err: 'SINO solo va dentro de un SI.'};
+      top.owner.inElse = true; top.list = top.owner.no;
+    } else if (tk.t === 'REP' || tk.t === 'IF' || tk.t === 'WHILE') {
+      node = {t: tk.t, n: tk.n, s: tk.s, body: [], no: [], inElse: false};
+      top.list.push(node); stack.push({list: node.body, owner: node});
+    } else top.list.push({t: tk.t});
+  }
+  if (stack.length > 1) return {ok: false, err: 'Falta cerrar un bloque con FIN.'};
+  return {ok: true, tree: root};
+}
+function checkProcs(P1, P2, main) {
+  var i;
+  for (i = 0; i < P1.length; i++) if (P1[i].t === 'P1' || P1[i].t === 'P2') return 'P1 no puede llamar a otros procedimientos.';
+  for (i = 0; i < P2.length; i++) if (P2[i].t === 'P2') return 'P2 no puede llamarse a si mismo.';
+  return null;
+}
+/* Ejecuta. Devuelve {trace:[estados], result:'ok'|'bump'|'loop'|'nogoal'|'nokeys', steps} */
+function run(m, trees, budget) {
+  var st = {x: m.sx, y: m.sy, d: m.dir, keys: m.keys, got: {}, ngot: 0}, trace = [], count = 0, res = null;
+  trace.push({x: st.x, y: st.y, d: st.d, got: 0});
+  function snap(kind) { trace.push({x: st.x, y: st.y, d: st.d, got: st.ngot, kind: kind}); }
+  function exec(list) {
+    var i, k, node, nx, ny;
+    for (i = 0; i < list.length && !res; i++) {
+      node = list[i];
+      if (++count > budget) { res = 'loop'; return; }
+      switch (node.t) {
+        case 'F':
+          nx = st.x + DX[st.d]; ny = st.y + DY[st.d];
+          if (!isFree(m, nx, ny)) { snap('bump'); res = 'bump'; return; }
+          st.x = nx; st.y = ny;
+          if (m.keys[nx + ',' + ny] && !st.got[nx + ',' + ny]) { st.got[nx + ',' + ny] = 1; st.ngot++; }
+          snap('move'); break;
+        case 'L': st.d = (st.d + 3) % 4; snap('turn'); break;
+        case 'R': st.d = (st.d + 1) % 4; snap('turn'); break;
+        case 'P1': exec(trees.P1); break;
+        case 'P2': exec(trees.P2); break;
+        case 'REP': for (k = 0; k < node.n && !res; k++) exec(node.body); break;
+        case 'IF': if (sense(m, st, node.s)) exec(node.body); else exec(node.no); break;
+        case 'WHILE': while (!res && sense(m, st, node.s)) { if (++count > budget) { res = 'loop'; return; } exec(node.body); } break;
+      }
+    }
+  }
+  exec(trees.main);
+  if (!res) {
+    if (st.x !== m.gx || st.y !== m.gy) res = 'nogoal';
+    else if (st.ngot < m.nkeys) res = 'nokeys';
+    else res = 'ok';
+  }
+  return {trace: trace, result: res, steps: count};
+}
+function countBlocks(tokens) { var n = 0, i; for (i = 0; i < tokens.length; i++) if (tokens[i].t !== 'END') n++; return n; }
+/* Evalua un programa {main,P1,P2} (listas de tokens) contra todos los laberintos de un nivel */
+function evaluate(level, prog) {
+  var tm = buildTree(prog.main), t1 = buildTree(prog.P1), t2 = buildTree(prog.P2), err, i, r, out = [];
+  if (!tm.ok) return {ok: false, err: tm.err};
+  if (!t1.ok) return {ok: false, err: 'En P1: ' + t1.err};
+  if (!t2.ok) return {ok: false, err: 'En P2: ' + t2.err};
+  err = checkProcs(prog.P1, prog.P2, prog.main); if (err) return {ok: false, err: err};
+  for (i = 0; i < level.mazes.length; i++) {
+    r = run(level.mazes[i], {main: tm.tree, P1: t1.tree, P2: t2.tree}, 4000);
+    out.push(r);
+  }
+  return {ok: true, runs: out};
+}
+/* ENGINE_END */
+/* LEVELS_START */
+function movesOf(sol) {
+  var P = {main: buildTree(parseSol(sol.main)).tree, P1: sol.P1 ? buildTree(parseSol(sol.P1)).tree : [], P2: sol.P2 ? buildTree(parseSol(sol.P2)).tree : []}, out = '';
+  function ex(l) { var i, k, n; for (i = 0; i < l.length; i++) { n = l[i];
+    if (n.t === 'F' || n.t === 'L' || n.t === 'R') out += n.t; else if (n.t === 'P1') ex(P.P1); else if (n.t === 'P2') ex(P.P2);
+    else if (n.t === 'REP') for (k = 0; k < n.n; k++) ex(n.body); } }
+  ex(P.main); return out;
+}
+function mk(spec) {
+  var cells = {}, x = spec.s[0], y = spec.s[1], hist = [[x, y, spec.d]], i, c, h, minx = x, maxx = x, miny = y, maxy = y, keys = {}, k, rows = [], r, row, end, pos;
+  function put(px, py) { cells[px + ',' + py] = 1; if (px < minx) minx = px; if (px > maxx) maxx = px; if (py < miny) miny = py; if (py > maxy) maxy = py; }
+  function carve(px, py, pd, moves, rec) {
+    var j, ch;
+    for (j = 0; j < moves.length; j++) { ch = moves.charAt(j);
+      if (ch === 'L') pd = (pd + 3) % 4; else if (ch === 'R') pd = (pd + 1) % 4;
+      else { px += DX[pd]; py += DY[pd]; put(px, py); if (rec) hist.push([px, py, pd]); } }
+    return [px, py];
+  }
+  put(x, y);
+  end = carve(x, y, spec.d, spec.m || movesOf(spec.sol), true);
+  for (i = 0; spec.br && i < spec.br.length; i++) { h = hist[spec.br[i][0]]; carve(h[0], h[1], h[2], spec.br[i][1], false); }
+  for (i = 0; spec.keys && i < spec.keys.length; i++) { c = spec.keys[i];
+    if (typeof c === 'number') { h = hist[c]; keys[h[0] + ',' + h[1]] = 1; }
+    else { h = hist[c[0]]; pos = carve(h[0], h[1], h[2], c[1], false); keys[pos[0] + ',' + pos[1]] = 1; } }
+  for (r = miny - 1; r <= maxy + 1; r++) { row = '';
+    for (k = minx - 1; k <= maxx + 1; k++) {
+      if (k === spec.s[0] && r === spec.s[1]) row += 'S';
+      else if (k === end[0] && r === end[1]) row += 'G';
+      else if (keys[k + ',' + r]) row += 'K';
+      else row += cells[k + ',' + r] ? '.' : '#'; }
+    rows.push(row); }
+  return rows;
+}
+var LEVELS = [];
+function add(o) { var i, a = []; for (i = 0; i < o.specs.length; i++) { if (o.sol && !o.specs[i].m) o.specs[i].sol = o.sol; a.push(parseMaze(mk(o.specs[i]), o.specs[i].d)); } o.mazes = a; LEVELS.push(o); }
+var CORR = 'WHILE NO_META IF LIBRE F ELSE IF LIBRE_IZQ L ELSE R END END END';
+var LH = 'WHILE NO_META IF LIBRE_IZQ L F ELSE IF LIBRE F ELSE R END END END';
+var RH = 'WHILE NO_META IF LIBRE_DER R F ELSE IF LIBRE F ELSE L END END END';
+/* LEVELS_DATA */
+add({title:'Primer pulso', fact:'La palabra algoritmo viene de al-Juarismi, un matemático persa que vivió hace más de mil años.', tools:'basic', total:3,
+ specs:[{s:[0,0],d:1}], sol:{main:'REP4 F END',P1:'',P2:''}});
+add({title:'La esquina', fact:'Ada Lovelace escribió en 1843 lo que se considera el primer programa pensado para una máquina.', tools:'basic', total:5,
+ specs:[{s:[0,0],d:1}], sol:{main:'REP3 F END R REP2 F END',P1:'',P2:''}});
+add({title:'La escalera', fact:'En 1947 una polilla se atascó en la computadora Harvard Mark II. Desde entonces a los errores se los llama bugs.', tools:'basic', total:5,
+ specs:[{s:[0,0],d:1}], sol:{main:'REP3 F R F L END',P1:'',P2:''}});
+add({title:'La U', fact:'Una computadora solo entiende dos símbolos: 0 y 1. Todo lo demás se arma combinándolos.', tools:'basic', total:9,
+ specs:[{s:[0,0],d:1}], sol:{main:'REP2 F F F R END F F F',P1:'',P2:''}});
+add({title:'La llave', fact:'Un byte son 8 bits. Con un byte se pueden escribir 256 números distintos.', tools:'basic', total:12,
+ specs:[{s:[0,0],d:1,m:'FFFF',br:[[2,'LF']],keys:[[2,'LF']]}], sol:{main:'F F L F R R F L F F',P1:'',P2:''}});
+add({title:'Dos llaves', fact:'El primer sitio web se publicó en 1991 en el CERN, un laboratorio de Europa.', tools:'proc', total:15,
+ specs:[{s:[0,0],d:1,m:'FFFFFF',br:[[0,'LFF'],[6,'LFF']],keys:[[0,'LFF'],[6,'LFF']]}], sol:{main:'L P1 L REP6 F END L P1',P1:'REP2 F END R R REP2 F END',P2:''}});
+add({title:'Receta con nombre', fact:'Un procedimiento es como una receta con nombre: se escribe una vez y se usa tantas veces como haga falta.', tools:'proc', total:10,
+ specs:[{s:[0,0],d:1,keys:[2,8]}], sol:{main:'P1 L P1',P1:'REP3 F END R F R',P2:''}});
+add({title:'Tres escalones', fact:'En Uruguay, el Plan Ceibal entregó una computadora a cada niño de escuela pública a partir de 2007.', tools:'proc', total:13,
+ specs:[{s:[0,0],d:1,keys:[4,8]}], sol:{main:'P1 L P1 R P1',P1:'REP2 F END R F L F',P2:''}});
+add({title:'Receta dentro de receta', fact:'Tim Berners-Lee inventó la web en 1989. Internet es la red; la web es lo que viaja por ella.', tools:'proc2', total:9,
+ specs:[{s:[0,0],d:1,keys:[3,6]}], sol:{main:'P2 P2 P2',P1:'REP3 F END',P2:'P1 R'}});
+add({title:'El laberinto largo', fact:'La primera computadora electrónica de uso general, ENIAC, ocupaba una sala entera y pesaba unas 27 toneladas.', tools:'proc2', total:11,
+ specs:[{s:[0,0],d:1,keys:[4,8]}], sol:{main:'REP3 P1 P2 END',P1:'F F R',P2:'F F L'}});
+add({title:'Si hay pared...', fact:'George Boole, un matemático inglés, inventó en 1854 la lógica de verdadero y falso con la que hoy funcionan todos los SI de la programación.', tools:'si', total:6,
+ specs:[{s:[0,0],d:1,m:'FFFRFFFF'},{s:[0,0],d:1,m:'FRFFFFFF'},{s:[0,0],d:1,m:'FFFFFFRF'}], sol:{main:'REP8 IF LIBRE F ELSE R END END',P1:'',P2:''}});
+add({title:'Izquierda o derecha', fact:'Una condición solo puede dar dos resultados: verdadero o falso. Con eso alcanza para decidir cualquier cosa.', tools:'si', total:9,
+ specs:[{s:[0,0],d:1,m:'FFLFFRFF'},{s:[0,0],d:1,m:'FRFFLFFF'},{s:[0,0],d:1,m:'LFFFRFFF'}], sol:{main:'REP8 IF LIBRE F ELSE IF LIBRE_IZQ L ELSE R END END END',P1:'',P2:''}});
+add({title:'Hasta llegar', fact:'MIENTRAS repite algo sin saber cuántas veces: se detiene recién cuando la condición deja de cumplirse.', tools:'si', total:3,
+ specs:[{s:[0,0],d:1,m:'FFF'},{s:[0,0],d:2,m:'FFFFFFF'},{s:[0,0],d:0,m:'FFFFF'}], sol:{main:'WHILE NO_META F END',P1:'',P2:''}});
+add({title:'El pasillo sinuoso', fact:'Cuando un programa nunca termina se dice que está en un bucle infinito. Hasta las computadoras de la NASA tuvieron que reiniciarse por eso.', tools:'si', total:9,
+ specs:[{s:[0,0],d:1,m:'FFLFFFRFFLFF'},{s:[0,0],d:1,m:'FRFFLFFRFFFF'},{s:[0,0],d:1,m:'LFFRFFFLFFRFF'}], sol:{main:CORR,P1:'',P2:''}});
+add({title:'La regla de la mano', fact:'Los laberintos de seto se resuelven pegando una mano a la pared y caminando: es un algoritmo de más de cien años.', tools:'si', total:10,
+ specs:[{s:[0,0],d:1,m:'FFFFFFFF',br:[[2,'RFF']],keys:[[2,'RFF']]},{s:[0,0],d:1,m:'FFFFFFFFFF',br:[[4,'RFFF']],keys:[[4,'RFFF']]}], sol:{main:RH,P1:'',P2:''}});
+add({title:'Del otro lado', fact:'Margaret Hamilton lideró el equipo que escribió el software de las misiones Apolo a la Luna.', tools:'si', total:10,
+ specs:[{s:[0,0],d:1,m:'FFFFFFFFFF',br:[[2,'LFF'],[5,'RFF'],[8,'LFFF']],keys:[[2,'LFF'],[8,'LFFF']]},
+        {s:[0,0],d:1,m:'FFFFFFFFFFFF',br:[[3,'LFFF'],[6,'RFFF'],[9,'LFF']],keys:[[3,'LFFF'],[9,'LFF']]},
+        {s:[0,0],d:1,m:'FFFFFFFFFFF',br:[[1,'LFF'],[4,'LFFFF'],[7,'RFF']],keys:[[1,'LFF'],[4,'LFFFF']]}], sol:{main:LH,P1:'',P2:''}});
+add({title:'El laberinto de tres vueltas', fact:'Python, un lenguaje muy usado hoy, se llama así por el grupo humorístico Monty Python, no por la serpiente.', tools:'si', total:10,
+ specs:[{s:[0,0],d:1,m:'FFFFRFFFFRFFFFLFFFF',br:[[2,'RFF'],[8,'RFF']],keys:[[2,'RFF'],[8,'RFF']]},
+        {s:[0,0],d:1,m:'FFFRFFFFRFFFFRFFF',br:[[3,'RFFF'],[7,'LFF']],keys:[[3,'RFFF']]}], sol:{main:RH,P1:'',P2:''}});
+add({title:'Cada cosa en su lugar', fact:'Los programadores dividen los problemas grandes en partes chicas, cada una con su nombre. Eso se llama descomponer.', tools:'si', total:11, maxMain:3,
+ specs:[{s:[0,0],d:1,m:'FFFFFFFFFFFF',br:[[2,'RFF'],[6,'RFFF'],[10,'LFF']],keys:[[2,'RFF'],[6,'RFFF']]},
+        {s:[0,0],d:1,m:'FFRFFFLFFFRFFF',br:[[3,'RFF'],[7,'LFFF'],[9,'RFF']],keys:[[3,'RFF'],[9,'RFF']]}], sol:{main:'WHILE NO_META P1 END',P1:'IF LIBRE_DER R F ELSE IF LIBRE F ELSE L END END',P2:''}});
+add({title:'Bosque de pasillos', fact:'El primer videojuego conocido, Tennis for Two, se jugaba en 1958 en la pantalla de un osciloscopio.', tools:'si', total:10,
+ specs:[{s:[0,0],d:1,m:'FFFFFFFFFFFFFF',br:[[2,'RFFF'],[5,'RFF'],[8,'LFF'],[11,'RFFFF']],keys:[[2,'RFFF'],[5,'RFF'],[11,'RFFFF']]},
+        {s:[0,0],d:1,m:'FFFFFFFFFFRFFFF',br:[[2,'RFF'],[5,'LFF'],[8,'RFFF']],keys:[[2,'RFF'],[8,'RFFF']]},
+        {s:[0,0],d:1,m:'FFFFFFFFFFFF',br:[[1,'RFF'],[3,'LFF'],[6,'RFFFF'],[9,'RFF']],keys:[[1,'RFF'],[6,'RFFFF'],[9,'RFF']]}], sol:{main:RH,P1:'',P2:''}});
+add({title:'La gran prueba', fact:'Un algoritmo bueno no es solo uno que funciona: es uno que funciona siempre, para cualquier laberinto.', tools:'si', total:9,
+ specs:[{s:[0,0],d:1,m:'FFFFFFFFFFFFFFFF',br:[[2,'RFFF'],[5,'LFF'],[8,'RFFFF'],[12,'RFF']],keys:[[2,'RFFF'],[8,'RFFFF'],[12,'RFF']]},
+        {s:[0,0],d:1,m:'FFRFFFFLFFFFRFFFF',br:[[3,'RFF'],[7,'LFF'],[10,'RFFF'],[13,'LFF']],keys:[[3,'RFF'],[10,'RFFF']]},
+        {s:[0,0],d:1,m:'FFFLFFFFRFFFFFRFFF',br:[[2,'RFFF'],[6,'RFF'],[11,'RFFF']],keys:[[2,'RFFF'],[6,'RFF'],[11,'RFFF']]},
+        {s:[0,0],d:1,m:'FFFFFFFFFFFFFF',br:[[1,'RFF'],[4,'RFFF'],[7,'RFF'],[10,'RFFFF']],keys:[[1,'RFF'],[4,'RFFF'],[7,'RFF'],[10,'RFFFF']]}], sol:{main:RH,P1:'',P2:''}});
+/* LEVELS_END */
+/* EXTRA_START */
+var QUIZ = [
+ {q:'Un programa dice: REPETIR 4 veces [AVANZAR]. ¿Cuántas casillas avanza el robot?', o:['4','1','8','No avanza'], a:0, e:'REPETIR ejecuta lo que tiene adentro tantas veces como indique el número.'},
+ {q:'¿Para qué sirve un procedimiento (P1, P2)?', o:['Para darle un nombre a un grupo de órdenes y poder reutilizarlo','Para que el robot corra más rápido','Para borrar órdenes','Para cambiar el color del robot'], a:0, e:'Un procedimiento se escribe una vez y se llama las veces que haga falta, como una receta con nombre.'},
+ {q:'El robot ejecuta: SI hay pared adelante ENTONCES girar a la derecha, SINO avanzar. Hay pared adelante. ¿Qué hace?', o:['Gira a la derecha','Avanza','Las dos cosas','Ninguna'], a:0, e:'Si la condición es verdadera se hace lo del SI; lo del SINO solo se hace cuando es falsa.'},
+ {q:'¿Cuándo se ejecuta la parte SINO de un bloque SI?', o:['Cuando la condición es falsa','Cuando la condición es verdadera','Siempre','Nunca'], a:0, e:'SINO es el camino alternativo: solo se recorre si la condición no se cumple.'},
+ {q:'MIENTRAS NO ESTÉ EN LA META [AVANZAR]. ¿Cuándo se detiene el robot?', o:['Cuando llega a la meta','Después de 10 pasos','Nunca se detiene','Apenas empieza'], a:0, e:'MIENTRAS repite hasta que la condición deja de cumplirse. No se sabe de antemano cuántas vueltas serán.'},
+ {q:'Un programa que se repite para siempre y nunca termina tiene…', o:['Un bucle infinito','Una condición verdadera','Un procedimiento','Un byte de más'], a:0, e:'Cuando la condición de un MIENTRAS nunca deja de cumplirse, el programa queda dando vueltas sin parar.'},
+ {q:'Una condición como "hay pared adelante" solo puede tener dos resultados. ¿Cuáles?', o:['Verdadero o falso','Rojo o azul','Grande o chico','Uno, dos o tres'], a:0, e:'Toda condición se responde con verdadero o falso. Eso es lo que inventó George Boole.'},
+ {q:'Tu programa no llega a la meta aunque parece correcto. ¿Cuál es el mejor primer paso?', o:['Seguirlo paso a paso para ver dónde se desvía','Borrar todo y empezar de nuevo','Agregar bloques al azar','Apagar la computadora'], a:0, e:'Buscar y corregir errores se llama depurar. Se hace siguiendo el programa como lo seguiría la máquina.'},
+ {q:'Dividir un problema grande en partes chicas, cada una con su nombre, se llama…', o:['Descomponer','Compilar','Reiniciar','Comprimir'], a:0, e:'Descomponer es la idea detrás de los procedimientos: partes chicas que se combinan para resolver algo grande.'},
+ {q:'Un programa resuelve tres laberintos distintos sin cambiarle nada. ¿Qué necesita sí o sí?', o:['Condiciones (SI) que decidan según lo que el robot ve','Más bloques AVANZAR','Un número de repeticiones distinto para cada laberinto','Ninguna condición'], a:0, e:'Sin condiciones, el programa hace siempre lo mismo. Con condiciones, se adapta a lo que encuentra.'}
+];
+var CLUES = [
+ {t:'La suma de las cuatro cifras es 20.', f:function(a,b,c,d){return a+b+c+d===20;}},
+ {t:'La primera cifra es menor que la segunda.', f:function(a,b,c,d){return a<b;}},
+ {t:'La segunda cifra es el doble de la primera.', f:function(a,b,c,d){return b===2*a;}},
+ {t:'La tercera cifra es impar.', f:function(a,b,c,d){return c%2===1;}},
+ {t:'La última cifra es par Y no es 0.', f:function(a,b,c,d){return d%2===0&&d!==0;}},
+ {t:'La tercera cifra menos la última da 3.', f:function(a,b,c,d){return c-d===3;}}
+];
+var DEBUG_MAZES = [
+ {s:[0,0],d:1,m:'FFFFFFFFFFFFFF',br:[[2,'RFFF'],[5,'LFF'],[9,'RFFF']],keys:[[2,'RFFF'],[9,'RFFF']]},
+ {s:[0,0],d:1,m:'FFRFFFFLFFFFRFFFF',br:[[3,'RFF'],[7,'LFF'],[10,'RFFF']],keys:[[3,'RFF'],[10,'RFFF']]},
+ {s:[0,0],d:1,m:'FFFFFFFFFFFF',br:[[1,'RFF'],[4,'RFFFF'],[8,'RFF']],keys:[[1,'RFF'],[4,'RFFFF'],[8,'RFF']]}
+];
+var DEBUG_BUGGY = 'WHILE EN_META IF LIBRE_IZQ R ELSE IF LIBRE F ELSE R END END END';
+/* EXTRA_END */
+/* UI_START */
+var KEY = 'helvecio2_bóveda_v1'.replace('ó', 'o');
+var S = {name: '', color: 'amber', done: {}, quiz: null, vault: {lock: false, debug: false, lockTries: 0, debugRuns: 0}};
+var storeOK = true;
+function $(id) { return document.getElementById(id); }
+function save() { try { window.localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { storeOK = false; } }
+function load() {
+  try { var raw = window.localStorage.getItem(KEY); if (raw) { var o = JSON.parse(raw); if (o && o.done) { S = o; if (!S.vault) S.vault = {lock: false, debug: false, lockTries: 0, debugRuns: 0}; } } } catch (e) { storeOK = false; }
+}
+function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+var audioCtx = null;
+function beep(freq, dur, type, vol) {
+  try {
+    if (!audioCtx) { var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return; audioCtx = new AC(); }
+    var o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.type = type || 'square'; o.frequency.value = freq; g.gain.value = vol || 0.04;
+    o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime + dur);
+  } catch (e) {}
+}
+function sndStep() { beep(330, 0.05, 'square', 0.03); }
+function sndKey() { beep(880, 0.09, 'triangle', 0.06); setTimeout(function () { beep(1175, 0.12, 'triangle', 0.06); }, 90); }
+function sndBump() { beep(110, 0.25, 'sawtooth', 0.07); }
+function sndWin() { var n = [523, 659, 784, 1046], i; for (i = 0; i < n.length; i++) { (function (k) { setTimeout(function () { beep(n[k], 0.16, 'triangle', 0.07); }, k * 130); })(i); } }
+function show(id) {
+  var ids = ['start', 'map', 'game', 'quiz', 'vault', 'end'], i, el;
+  for (i = 0; i < ids.length; i++) { el = $('s-' + ids[i]); el.className = 'screen' + (ids[i] === id ? ' on' : ''); }
+  updInfo(); window.scrollTo(0, 0);
+}
+function countDone() { var n = 0, k; for (k in S.done) if (S.done.hasOwnProperty(k)) n++; return n; }
+function refBlocks(lv) { return countBlocks(parseSol(lv.sol.main)) + countBlocks(parseSol(lv.sol.P1)) + countBlocks(parseSol(lv.sol.P2)); }
+function medalFor(lv, n) { var r = refBlocks(lv); return n <= r ? 'g' : (n <= r + 2 ? 's' : 'b'); }
+var MEDTXT = {g: 'Oro', s: 'Plata', b: 'Bronce'};
+function updInfo() { $('info').innerHTML = S.name ? esc(S.name) + ' &middot; niveles ' + countDone() + '/' + LEVELS.length : ''; }
+/* Robot dibujado en canvas */
+function drawRobot(ctx, cx, cy, size, dir, color, glow) {
+  var body = color === 'violet' ? '#8b5cf6' : '#ffb000', dark = color === 'violet' ? '#4c2aa8' : '#b77a00', s = size / 2;
+  ctx.save(); ctx.translate(cx, cy); ctx.rotate(dir * Math.PI / 2);
+  if (glow) { ctx.fillStyle = 'rgba(255,176,0,0.25)'; ctx.beginPath(); ctx.arc(0, 0, s * 1.15, 0, 6.3); ctx.fill(); }
+  ctx.fillStyle = dark; ctx.fillRect(-s * 0.62, -s * 0.5, s * 0.16, s * 0.34); ctx.fillRect(s * 0.46, -s * 0.5, s * 0.16, s * 0.34);
+  ctx.fillRect(-s * 0.62, s * 0.18, s * 0.16, s * 0.34); ctx.fillRect(s * 0.46, s * 0.18, s * 0.16, s * 0.34);
+  ctx.fillStyle = body; ctx.fillRect(-s * 0.5, -s * 0.62, s, s * 1.24);
+  ctx.fillStyle = '#1a0f33'; ctx.fillRect(-s * 0.36, -s * 0.52, s * 0.72, s * 0.34);
+  ctx.fillStyle = '#ffe28a'; ctx.fillRect(-s * 0.26, -s * 0.46, s * 0.16, s * 0.2); ctx.fillRect(s * 0.1, -s * 0.46, s * 0.16, s * 0.2);
+  ctx.fillStyle = dark; ctx.fillRect(-s * 0.3, s * 0.0, s * 0.6, s * 0.12); ctx.fillRect(-s * 0.3, s * 0.26, s * 0.6, s * 0.12);
+  ctx.restore();
+}
+/* Pantalla de inicio */
+function renderStart() {
+  var h = '<div class="card"><h2>Bienvenidos de nuevo</h2><p>Helvecio ya les enseñó a moverse, a repetir y a usar procedimientos. Hoy la Bóveda es más difícil: el robot tiene que <b>decidir solo</b> lo que ve.</p>';
+  if (!storeOK) h += '<p class="small">Esta computadora no permite guardar el avance. El juego funciona igual, pero si cerrás la ventana se pierde.</p>';
+  if (S.name) {
+    h += '<p>Operario guardado: <b>' + esc(S.name) + '</b> &middot; ' + countDone() + ' niveles superados.</p><button class="btn amb" id="b-cont">Continuar</button> <button class="btn gry" id="b-new">Empezar de cero</button><div id="b-sure"></div>';
+  } else {
+    h += '<p>¿Cómo te llamás?</p><input type="text" id="in-name" maxlength="16" placeholder="Tu nombre"> <p>Color de tu Helvecio:</p><button class="btn amb" id="c-amber">Ámbar</button> <button class="btn vio" id="c-violet">Violeta</button><br><canvas id="cv-prev" width="140" height="120"></canvas><button class="btn amb" id="b-go">Comenzar</button><div class="small" id="st-err"></div>';
+  }
+  h += '</div>';
+  $('s-start').innerHTML = h;
+  if (S.name) {
+    $('b-cont').onclick = function () { renderMap(); show('map'); };
+    $('b-new').onclick = function () { $('b-sure').innerHTML = '<p>Se borra todo el avance. ¿Seguro?</p><button class="btn red" id="b-yes">Sí, borrar</button>'; $('b-yes').onclick = function () { S = {name: '', color: 'amber', done: {}, quiz: null, vault: {lock: false, debug: false, lockTries: 0, debugRuns: 0}}; save(); renderStart(); }; };
+  } else {
+    var prev = function () { var c = $('cv-prev').getContext('2d'); c.clearRect(0, 0, 140, 120); drawRobot(c, 70, 60, 90, 1, S.color, true); };
+    prev(); $('c-amber').onclick = function () { S.color = 'amber'; prev(); }; $('c-violet').onclick = function () { S.color = 'violet'; prev(); };
+    $('b-go').onclick = function () { var v = $('in-name').value.replace(/^\s+|\s+$/g, ''); if (!v) { $('st-err').innerHTML = 'Escribí tu nombre para empezar.'; return; } S.name = v; save(); renderMap(); show('map'); };
+  }
+}
+/* Mapa de niveles */
+function renderMap() {
+  var h = '<div class="card"><h2>Elegí un nivel</h2><p class="small">Todos los niveles están abiertos. Con 16 niveles superados se abre el cuestionario, y después la Bóveda.</p><div class="lvgrid">', i, d, q = S.quiz && S.quiz.finished;
+  for (i = 0; i < LEVELS.length; i++) {
+    d = S.done[i];
+    h += '<div class="lv' + (d ? ' done' : '') + '" data-i="' + i + '"><div class="n">' + (i + 1) + '</div><div class="t">' + esc(LEVELS[i].title) + '</div><div class="m ' + (d ? d.medal : '') + '">' + (d ? MEDTXT[d.medal] : '&nbsp;') + '</div></div>';
+  }
+  h += '</div><div class="bar"><div style="width:' + Math.round(countDone() * 100 / LEVELS.length) + '%"></div></div>';
+  h += '<button class="btn vio" id="b-quiz"' + (countDone() >= 16 ? '' : ' disabled') + '>Cuestionario' + (q ? ' (hecho)' : '') + '</button> ';
+  h += '<button class="btn amb" id="b-vault"' + (q ? '' : ' disabled') + '>La Bóveda</button> <button class="btn gry" id="b-home">Inicio</button>';
+  if (countDone() < 16) h += '<p class="small">Te faltan ' + (16 - countDone()) + ' niveles para el cuestionario.</p>';
+  h += '</div>';
+  $('s-map').innerHTML = h;
+  var tiles = $('s-map').getElementsByTagName('div'), j;
+  for (j = 0; j < tiles.length; j++) if (tiles[j].getAttribute('data-i') !== null) tiles[j].onclick = function () { openLevel(parseInt(this.getAttribute('data-i'), 10)); };
+  $('b-quiz').onclick = function () { startQuiz(); };
+  $('b-vault').onclick = function () { startVault(); };
+  $('b-home').onclick = function () { renderStart(); show('start'); };
+}
+/* UI_PART1_END */
+/* UI2_START */
+var SENS = {LIBRE: 'hay camino adelante', PARED: 'hay pared adelante', LIBRE_IZQ: 'libre a la izquierda', PARED_IZQ: 'pared a la izquierda', LIBRE_DER: 'libre a la derecha', PARED_DER: 'pared a la derecha', NO_META: 'no estoy en la meta', EN_META: 'estoy en la meta'};
+var SENS_ORDER = ['LIBRE', 'PARED', 'LIBRE_IZQ', 'PARED_IZQ', 'LIBRE_DER', 'PARED_DER', 'NO_META', 'EN_META'];
+var WB = null;
+function palOf(lv) {
+  var all = lv.sol.main + ' ' + lv.sol.P1 + ' ' + lv.sol.P2, sens;
+  if (lv.sens) sens = lv.sens; else sens = SENS_ORDER;
+  return {p1: !!lv.sol.P1, p2: !!lv.sol.P2, iff: all.indexOf('IF') >= 0, whl: all.indexOf('WHILE') >= 0, sens: sens};
+}
+function sensFor(idx) {
+  if (idx <= 10) return ['LIBRE', 'PARED'];
+  if (idx === 11) return SENS_ORDER.slice(0, 6);
+  return SENS_ORDER;
+}
+function openLevel(i) {
+  var lv = LEVELS[i]; lv.sens = sensFor(i);
+  WB = {mode: 'level', idx: i, lv: lv, prog: {main: [], P1: [], P2: []}, tab: 'main', cur: {main: null, P1: null, P2: null}, mazeIdx: 0, running: false, fast: false, timer: null, results: [], pal: palOf(lv)};
+  renderGame(); show('game');
+}
+function openDebug() {
+  var mz = [], i, lv;
+  for (i = 0; i < DEBUG_MAZES.length; i++) mz.push(parseMaze(mk(DEBUG_MAZES[i]), DEBUG_MAZES[i].d));
+  lv = {title: 'El programa roto', mazes: mz, total: 12, sol: {main: RH, P1: '', P2: ''}, fact: ''};
+  lv.sens = SENS_ORDER;
+  WB = {mode: 'debug', idx: -1, lv: lv, prog: {main: parseSol(DEBUG_BUGGY), P1: [], P2: []}, tab: 'main', cur: {main: null, P1: null, P2: null}, mazeIdx: 0, running: false, fast: false, timer: null, results: [], pal: palOf(lv)};
+  renderGame(); show('game');
+}
+function tokLabel(t) {
+  switch (t.t) {
+    case 'F': return 'AVANZAR'; case 'L': return 'GIRAR A LA IZQUIERDA <span class="sel" data-a="t">[invertir]</span>'; case 'R': return 'GIRAR A LA DERECHA <span class="sel" data-a="t">[invertir]</span>';
+    case 'REP': return 'REPETIR <span class="sel" data-a="n">' + t.n + '</span> veces';
+    case 'IF': return 'SI <span class="sel" data-a="s">' + SENS[t.s] + '</span>';
+    case 'WHILE': return 'MIENTRAS <span class="sel" data-a="s">' + SENS[t.s] + '</span>';
+    case 'ELSE': return 'SINO'; case 'END': return 'FIN'; case 'P1': return 'Procedimiento P1'; case 'P2': return 'Procedimiento P2';
+  }
+  return '?';
+}
+function tokKind(t) { return (t.t === 'F' || t.t === 'L' || t.t === 'R') ? 'k-mv' : (t.t === 'P1' || t.t === 'P2') ? 'k-pr' : 'k-ctl'; }
+function totalBlocks() { return countBlocks(WB.prog.main) + countBlocks(WB.prog.P1) + countBlocks(WB.prog.P2); }
+function renderGame() {
+  var lv = WB.lv, p = WB.pal, h, i, tabs = '';
+  h = '<div class="card"><div class="gamebox"><div class="gcol">';
+  h += '<h2>' + (WB.mode === 'level' ? 'Nivel ' + (WB.idx + 1) + ' &middot; ' : 'Bóveda &middot; ') + esc(lv.title) + '</h2>';
+  h += '<p class="small" id="g-goal">' + (WB.mode === 'debug' ? 'Este programa debería llegar a la meta en los tres laberintos, pero tiene errores. Encontralos y corregilos.' : 'Llevá a Helvecio hasta la meta. Si hay llaves, juntalas todas antes de llegar.') + (lv.mazes.length > 1 ? ' <b>El mismo programa tiene que funcionar en los ' + lv.mazes.length + ' laberintos.</b>' : '') + '</p>';
+  h += '<div id="g-chips"></div><div class="stage"><canvas id="cv" width="640" height="340"></canvas></div>';
+  h += '<div class="msg" id="g-msg">Armá tu programa y apretá EJECUTAR.</div></div><div class="ecol">';
+  tabs += '<span class="tab on" data-t="main">PRINCIPAL</span>';
+  if (p.p1) tabs += '<span class="tab" data-t="P1">P1</span>';
+  if (p.p2) tabs += '<span class="tab" data-t="P2">P2</span>';
+  h += '<div class="tabs" id="g-tabs">' + tabs + '</div><div class="prog" id="g-prog"></div>';
+  h += '<div class="small" id="g-count"></div><div class="pal" id="g-pal"></div>';
+  h += '<button class="btn amb" id="b-run">EJECUTAR</button><button class="btn gry" id="b-fast">Velocidad: normal</button><button class="btn gry" id="b-clear">Borrar todo</button><button class="btn gry" id="b-menu">Salir</button>';
+  h += '</div></div></div>';
+  $('s-game').innerHTML = h;
+  var tl = $('g-tabs').getElementsByTagName('span');
+  for (i = 0; i < tl.length; i++) tl[i].onclick = function () { WB.tab = this.getAttribute('data-t'); refreshTabs(); renderProg(); };
+  $('b-run').onclick = runProgram;
+  $('b-fast').onclick = function () { WB.fast = !WB.fast; this.innerHTML = 'Velocidad: ' + (WB.fast ? 'rápida' : 'normal'); };
+  $('b-clear').onclick = function () { if (WB.running) return; WB.prog = {main: [], P1: [], P2: []}; WB.cur = {main: null, P1: null, P2: null}; renderProg(); };
+  $('b-menu').onclick = function () { stopRun(); if (WB.mode === 'debug') { renderVault(); show('vault'); } else { renderMap(); show('map'); } };
+  buildPalette(); renderProg(); renderChips(); drawMaze(WB.mazeIdx, null, 0);
+}
+function refreshTabs() {
+  var tl = $('g-tabs').getElementsByTagName('span'), i;
+  for (i = 0; i < tl.length; i++) tl[i].className = 'tab' + (tl[i].getAttribute('data-t') === WB.tab ? ' on' : '');
+}
+function buildPalette() {
+  var p = WB.pal, h = '', i, o = '';
+  h += '<button class="btn amb" data-add="F">AVANZAR</button><button class="btn amb" data-add="L">GIRAR IZQ</button><button class="btn amb" data-add="R">GIRAR DER</button><br>';
+  h += '<button class="btn vio" data-add="REP">REPETIR</button> <select id="sel-n">';
+  for (i = 2; i <= 9; i++) h += '<option value="' + i + '"' + (i === 3 ? ' selected' : '') + '>' + i + '</option>';
+  h += '</select> ';
+  if (p.iff || p.whl) {
+    for (i = 0; i < p.sens.length; i++) o += '<option value="' + p.sens[i] + '">' + SENS[p.sens[i]] + '</option>';
+    h += '<br>';
+    if (p.iff) h += '<button class="btn vio" data-add="IF">SI</button><button class="btn vio" data-add="ELSE">SINO</button>';
+    if (p.whl) h += '<button class="btn vio" data-add="WHILE">MIENTRAS</button>';
+    h += ' <select id="sel-s">' + o + '</select>';
+  }
+  h += '<br><button class="btn vio" data-add="END">FIN</button>';
+  if (p.p1) h += '<button class="btn gry" data-add="P1">P1</button>';
+  if (p.p2) h += '<button class="btn gry" data-add="P2">P2</button>';
+  h += '<button class="btn gry" id="b-end">Poner al final</button>';
+  $('g-pal').innerHTML = h;
+  var bs = $('g-pal').getElementsByTagName('button');
+  for (i = 0; i < bs.length; i++) if (bs[i].getAttribute('data-add')) bs[i].onclick = function () { addTok(this.getAttribute('data-add')); };
+  $('b-end').onclick = function () { WB.cur[WB.tab] = null; renderProg(); };
+}
+function addTok(t) {
+  if (WB.running) return;
+  var list = WB.prog[WB.tab], tok = {t: t}, pos, cap = (WB.tab === 'main' && WB.lv.maxMain) ? WB.lv.maxMain : 14;
+  if (t !== 'END' && totalBlocks() >= WB.lv.total) { setMsg('Llegaste al máximo de ' + WB.lv.total + ' bloques. Usá menos para resolverlo.', 'bad'); return; }
+  if (t !== 'END' && countBlocks(list) >= cap) { setMsg(WB.tab === 'main' ? 'El programa principal admite hasta ' + cap + ' bloques.' : 'Este procedimiento está lleno.', 'bad'); return; }
+  if (t === 'REP') tok.n = parseInt($('sel-n').value, 10);
+  if (t === 'IF' || t === 'WHILE') tok.s = $('sel-s').value;
+  pos = (WB.cur[WB.tab] === null) ? list.length : WB.cur[WB.tab] + 1;
+  list.splice(pos, 0, tok); WB.cur[WB.tab] = (WB.cur[WB.tab] === null) ? null : pos;
+  renderProg();
+}
+function matchEnd(list, i) {
+  var d = 0, j, t;
+  for (j = i; j < list.length; j++) { t = list[j].t;
+    if (t === 'REP' || t === 'IF' || t === 'WHILE') d++; else if (t === 'END') { d--; if (d === 0) return j; } }
+  return -1;
+}
+function delTok(i) {
+  if (WB.running) return;
+  var list = WB.prog[WB.tab], t = list[i].t, e;
+  if (t === 'REP' || t === 'IF' || t === 'WHILE') { e = matchEnd(list, i); list.splice(i, 1); if (e > 0) list.splice(e - 1, 1); } else list.splice(i, 1);
+  WB.cur[WB.tab] = null; renderProg();
+}
+function renderProg() {
+  var list = WB.prog[WB.tab], h = '', d = 0, i, t, ind, cs = ['F', 'R'];
+  for (i = 0; i < list.length; i++) {
+    t = list[i];
+    if (t.t === 'END') d = Math.max(0, d - 1);
+    ind = (t.t === 'ELSE') ? Math.max(0, d - 1) : d;
+    h += '<div class="ln ' + tokKind(t) + (WB.cur[WB.tab] === i ? ' cur' : '') + '" data-i="' + i + '" style="margin-left:' + (ind * 20) + 'px">' + tokLabel(t) + '<span class="x" data-x="1">&#10005;</span></div>';
+    if (t.t === 'REP' || t.t === 'IF' || t.t === 'WHILE') d++;
+  }
+  if (!list.length) h = '<div class="small">Vacío. Tocá los bloques de abajo para armar el programa.</div>';
+  $('g-prog').innerHTML = h;
+  var ls = $('g-prog').getElementsByTagName('div');
+  for (i = 0; i < ls.length; i++) if (ls[i].getAttribute('data-i') !== null) ls[i].onclick = lineClick;
+  $('g-count').innerHTML = 'Bloques usados: <b>' + totalBlocks() + '</b> de ' + WB.lv.total + (WB.lv.maxMain && WB.tab === 'main' ? ' (principal: máximo ' + WB.lv.maxMain + ')' : '') + '. Tocá una línea para insertar después de ella.';
+}
+function lineClick(ev) {
+  if (WB.running) return;
+  var e = ev || window.event, tg = e.target || e.srcElement, i = parseInt(this.getAttribute('data-i'), 10), list = WB.prog[WB.tab], tk = list[i], a, k, order, ix;
+  if (tg.getAttribute && tg.getAttribute('data-x')) { delTok(i); return; }
+  a = tg.getAttribute ? tg.getAttribute('data-a') : null;
+  if (a === 't') { tk.t = (tk.t === 'L') ? 'R' : 'L'; renderProg(); return; }
+  if (a === 'n') { tk.n = tk.n >= 9 ? 2 : tk.n + 1; renderProg(); return; }
+  if (a === 's') { order = WB.pal.sens; ix = 0; for (k = 0; k < order.length; k++) if (order[k] === tk.s) ix = k; tk.s = order[(ix + 1) % order.length]; renderProg(); return; }
+  WB.cur[WB.tab] = i; renderProg();
+}
+function setMsg(t, kind) { var m = $('g-msg'); m.innerHTML = t; m.className = 'msg' + (kind ? ' ' + kind : ''); }
+function renderChips() {
+  var lv = WB.lv, h = '', i;
+  if (lv.mazes.length < 2) { $('g-chips').innerHTML = ''; return; }
+  for (i = 0; i < lv.mazes.length; i++) {
+    h += '<span class="chip' + (WB.results[i] ? (WB.results[i] === 'ok' ? ' ok' : ' bad') : '') + '" style="' + (i === WB.mazeIdx ? 'outline:2px solid #ffb000' : '') + '">Laberinto ' + (i + 1) + (WB.results[i] ? (WB.results[i] === 'ok' ? ' &#10003;' : ' &#10007;') : '') + '</span>';
+  }
+  $('g-chips').innerHTML = h;
+}
+/* UI2_END */
+/* UI3_START */
+function drawMaze(mi, trace, t, flash) {
+  var cv = $('cv'), ctx, m = WB.lv.mazes[mi], cs, ox, oy, x, y, k, got = {}, st, i, pulse = (new Date().getTime() % 1000) / 1000;
+  if (!cv) return; ctx = cv.getContext('2d');
+  cs = Math.min(Math.floor((cv.width - 20) / m.w), Math.floor((cv.height - 20) / m.h), 58);
+  ox = Math.floor((cv.width - cs * m.w) / 2); oy = Math.floor((cv.height - cs * m.h) / 2);
+  ctx.fillStyle = '#120b25'; ctx.fillRect(0, 0, cv.width, cv.height);
+  st = trace ? trace[Math.min(t, trace.length - 1)] : {x: m.sx, y: m.sy, d: m.dir};
+  if (trace) for (i = 0; i <= Math.min(t, trace.length - 1); i++) { k = trace[i].x + ',' + trace[i].y; if (m.keys[k]) got[k] = 1; }
+  for (y = 0; y < m.h; y++) for (x = 0; x < m.w; x++) {
+    if (m.wall[y][x]) { ctx.fillStyle = '#2c2058'; ctx.fillRect(ox + x * cs, oy + y * cs, cs, cs); ctx.fillStyle = '#3a2a75'; ctx.fillRect(ox + x * cs + 2, oy + y * cs + 2, cs - 4, cs - 4); }
+    else { ctx.fillStyle = '#e9defc'; ctx.fillRect(ox + x * cs, oy + y * cs, cs, cs); ctx.strokeStyle = '#cdbcf5'; ctx.strokeRect(ox + x * cs + 0.5, oy + y * cs + 0.5, cs - 1, cs - 1); }
+  }
+  /* meta */
+  ctx.fillStyle = '#ffb000'; ctx.fillRect(ox + m.gx * cs + cs * 0.12, oy + m.gy * cs + cs * 0.12, cs * 0.76, cs * 0.76);
+  ctx.fillStyle = '#2a1a00'; ctx.font = 'bold ' + Math.floor(cs * 0.38) + 'px Arial'; ctx.textAlign = 'center'; ctx.fillText('META', ox + m.gx * cs + cs / 2, oy + m.gy * cs + cs * 0.6);
+  /* llaves */
+  for (k in m.keys) if (m.keys.hasOwnProperty(k) && !got[k]) {
+    var p = k.split(','), kx = ox + parseInt(p[0], 10) * cs + cs / 2, ky = oy + parseInt(p[1], 10) * cs + cs / 2;
+    ctx.fillStyle = '#8b5cf6'; ctx.beginPath(); ctx.arc(kx - cs * 0.1, ky, cs * 0.17, 0, 6.3); ctx.fill();
+    ctx.fillRect(kx, ky - cs * 0.04, cs * 0.28, cs * 0.08); ctx.fillRect(kx + cs * 0.18, ky, cs * 0.06, cs * 0.14);
+    ctx.fillStyle = '#e9defc'; ctx.beginPath(); ctx.arc(kx - cs * 0.1, ky, cs * 0.06, 0, 6.3); ctx.fill();
+  }
+  if (flash) { ctx.fillStyle = 'rgba(224,71,107,0.55)'; ctx.fillRect(ox + (st.x + DX[st.d]) * cs, oy + (st.y + DY[st.d]) * cs, cs, cs); }
+  drawRobot(ctx, ox + st.x * cs + cs / 2, oy + st.y * cs + cs / 2, cs * 0.92, st.d, S.color, false);
+  ctx.textAlign = 'left';
+}
+function stopRun() { if (WB && WB.timer) { clearTimeout(WB.timer); WB.timer = null; } if (WB) WB.running = false; }
+var FAILTXT = {
+  bump: 'Helvecio chocó contra una pared. Revisá en qué momento giró o avanzó.',
+  loop: 'El programa nunca termina: hay un bucle infinito o demasiadas repeticiones.',
+  nogoal: 'El programa terminó, pero Helvecio no está en la meta.',
+  nokeys: 'Llegó a la meta sin todas las llaves. Faltó juntar alguna.'
+};
+function runProgram() {
+  if (WB.running) return;
+  var ev = evaluate(WB.lv, WB.prog);
+  if (!ev.ok) { setMsg(esc(ev.err), 'bad'); return; }
+  if (!WB.prog.main.length) { setMsg('El programa principal está vacío.', 'bad'); return; }
+  WB.running = true; WB.results = []; WB.runs = ev.runs; WB.mazeIdx = 0; renderChips();
+  $('b-run').disabled = true; setMsg('Ejecutando...');
+  playMaze(0);
+}
+function playMaze(mi) {
+  var run = WB.runs[mi], t = 0, delay = WB.fast ? 60 : 240, lastGot = 0;
+  if (run.result === 'loop' && run.trace.length > 90) run = {trace: run.trace.slice(0, 90), result: run.result};
+  WB.mazeIdx = mi; renderChips();
+  function tick() {
+    if (!WB.running) return;
+    var st = run.trace[t];
+    var isBump = st.kind === 'bump';
+    drawMaze(mi, run.trace, t, isBump);
+    if (st.got > lastGot) { sndKey(); lastGot = st.got; } else if (isBump) sndBump(); else if (t > 0) sndStep();
+    if (t >= run.trace.length - 1) {
+      WB.results[mi] = run.result;
+      renderChips();
+      WB.timer = setTimeout(function () { if (mi + 1 < WB.runs.length) playMaze(mi + 1); else finishRun(); }, WB.fast ? 250 : 700);
+      return;
+    }
+    t++; WB.timer = setTimeout(tick, delay);
+  }
+  tick();
+}
+function finishRun() {
+  var i, bad = -1, n = totalBlocks(), med, prev, lv = WB.lv, h;
+  WB.running = false; $('b-run').disabled = false;
+  for (i = 0; i < WB.results.length; i++) if (WB.results[i] !== 'ok') { bad = i; break; }
+  if (bad >= 0) {
+    setMsg((WB.lv.mazes.length > 1 ? 'Falló en el laberinto ' + (bad + 1) + '. ' : '') + FAILTXT[WB.results[bad]], 'bad');
+    WB.mazeIdx = bad; renderChips(); drawMaze(bad, WB.runs[bad].trace, WB.runs[bad].trace.length - 1, false);
+    if (WB.mode === 'debug') { S.vault.debugRuns++; save(); }
+    return;
+  }
+  sndWin();
+  if (WB.mode === 'debug') {
+    S.vault.debugRuns++; S.vault.debug = true; save();
+    setMsg('<b>¡Programa reparado!</b> Helvecio llegó a la meta en los tres laberintos.<br><button class="btn amb" id="b-after">Abrir la Bóveda</button>', 'ok');
+    $('b-after').onclick = function () { renderEnd(); show('end'); };
+    return;
+  }
+  med = medalFor(lv, n); prev = S.done[WB.idx];
+  if (!prev || n < prev.blocks) S.done[WB.idx] = {blocks: n, medal: med}; else if (prev && prev.medal > med) { /* conserva el mejor */ }
+  save(); updInfo();
+  h = '<b>¡Nivel superado!</b> Usaste ' + n + ' bloques &middot; medalla de ' + MEDTXT[med].toLowerCase() + ' (la solución más corta usa ' + refBlocks(lv) + ').<br><span class="small"><b>Dato:</b> ' + esc(lv.fact) + '</span><br>';
+  if (WB.idx + 1 < LEVELS.length) h += '<button class="btn amb" id="b-next">Siguiente nivel</button>';
+  else h += '<button class="btn amb" id="b-next">Volver al mapa</button>';
+  setMsg(h, 'ok');
+  $('b-next').onclick = function () { if (WB.idx + 1 < LEVELS.length) openLevel(WB.idx + 1); else { renderMap(); show('map'); } };
+}
+/* UI3_END */
+/* UI4_START */
+function shuffle(a) { var i, j, t; for (i = a.length - 1; i > 0; i--) { j = Math.floor(Math.random() * (i + 1)); t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+function startQuiz() {
+  if (!S.quiz || !S.quiz.finished) S.quiz = S.quiz && S.quiz.answers ? S.quiz : {idx: 0, answers: [], score: 0, finished: false};
+  save(); renderQuiz(); show('quiz');
+}
+function renderQuiz() {
+  var Q = S.quiz, q, h, i, ord, k;
+  if (Q.finished) { renderQuizEnd(); return; }
+  q = QUIZ[Q.idx]; ord = []; for (i = 0; i < q.o.length; i++) ord.push(i); shuffle(ord);
+  h = '<div class="card"><h2>Cuestionario &middot; pregunta ' + (Q.idx + 1) + ' de ' + QUIZ.length + '</h2><div class="bar"><div style="width:' + Math.round(Q.idx * 100 / QUIZ.length) + '%"></div></div><p style="font-size:19px">' + esc(q.q) + '</p><div id="q-opts">';
+  for (i = 0; i < ord.length; i++) h += '<button class="opt" data-o="' + ord[i] + '">' + esc(q.o[ord[i]]) + '</button>';
+  h += '</div><div class="msg" id="q-fb" style="display:none"></div></div>';
+  $('s-quiz').innerHTML = h;
+  var bs = $('q-opts').getElementsByTagName('button');
+  for (k = 0; k < bs.length; k++) bs[k].onclick = function () { answerQuiz(parseInt(this.getAttribute('data-o'), 10)); };
+}
+function answerQuiz(o) {
+  var Q = S.quiz, q = QUIZ[Q.idx], bs = $('q-opts').getElementsByTagName('button'), i, v, good = (o === q.a), fb = $('q-fb');
+  if (Q.locked) return; Q.locked = true;
+  for (i = 0; i < bs.length; i++) { v = parseInt(bs[i].getAttribute('data-o'), 10); if (v === q.a) bs[i].className = 'opt good'; else if (v === o) bs[i].className = 'opt wrong'; }
+  Q.answers.push(good ? 1 : 0); if (good) Q.score++;
+  fb.style.display = 'block'; fb.className = 'msg ' + (good ? 'ok' : 'bad');
+  fb.innerHTML = '<b>' + (good ? 'Correcto.' : 'No era esa.') + '</b> ' + esc(q.e) + '<br><button class="btn amb" id="q-next">' + (Q.idx + 1 < QUIZ.length ? 'Siguiente' : 'Ver resultado') + '</button>';
+  if (good) beep(784, 0.12, 'triangle', 0.06); else beep(160, 0.2, 'sawtooth', 0.05);
+  $('q-next').onclick = function () { Q.locked = false; Q.idx++; if (Q.idx >= QUIZ.length) Q.finished = true; save(); renderQuiz(); };
+}
+function renderQuizEnd() {
+  var Q = S.quiz, h, i;
+  h = '<div class="card"><h2>Resultado del cuestionario</h2><p style="font-size:30px;color:#ffb000;font-weight:bold">' + Q.score + ' / ' + QUIZ.length + '</p><table class="res">';
+  for (i = 0; i < QUIZ.length; i++) h += '<tr><td>' + (i + 1) + '</td><td>' + esc(QUIZ[i].q) + '</td><td>' + (Q.answers[i] ? '&#10003;' : '&#10007; <span class="small">' + esc(QUIZ[i].o[QUIZ[i].a]) + '</span>') + '</td></tr>';
+  h += '</table><p>Se abrió la Bóveda. Es lo último, y es lo más difícil.</p><button class="btn amb" id="q-vault">Ir a la Bóveda</button> <button class="btn gry" id="q-map">Volver al mapa</button></div>';
+  $('s-quiz').innerHTML = h;
+  $('q-vault').onclick = function () { startVault(); };
+  $('q-map').onclick = function () { renderMap(); show('map'); };
+}
+/* Boveda */
+function startVault() { if (S.vault.lock && S.vault.debug) { renderEnd(); show('end'); return; } renderVault(); show('vault'); }
+function renderVault() {
+  var h, i, V = S.vault;
+  h = '<div class="card"><h2>La Bóveda de Helvecio</h2>';
+  if (!V.lock) {
+    h += '<p>Al final del último pasillo hay una puerta con un candado de <b>4 cifras</b>. Ninguna cifra se repite. Las pistas son verdaderas todas a la vez: hay un solo código que las cumple.</p><div id="v-clues">';
+    for (i = 0; i < CLUES.length; i++) h += '<div class="clue" data-c="' + i + '">' + (i + 1) + '. ' + esc(CLUES[i].t) + '</div>';
+    h += '</div><p><input type="text" class="digit" maxlength="1" id="d0"><input type="text" class="digit" maxlength="1" id="d1"><input type="text" class="digit" maxlength="1" id="d2"><input type="text" class="digit" maxlength="1" id="d3"></p>';
+    h += '<button class="btn amb" id="v-try">Probar código</button> <button class="btn gry" id="v-back">Volver al mapa</button><div class="msg" id="v-msg">Escribí un código y fijate qué pistas cumple. Intentos hasta ahora: ' + V.lockTries + '.</div>';
+  } else {
+    h += '<p>El candado se abrió. Pero detrás de la puerta está el sistema de control de Helvecio, y su programa tiene <b>errores</b>. Tiene que poder atravesar tres laberintos distintos sin tocarle nada entre uno y otro.</p><p class="small">Tocá un sensor para cambiarlo, tocá una orden de giro para invertirla, tocá una línea para insertar después de ella.</p><button class="btn amb" id="v-debug">Reparar el programa</button> <button class="btn gry" id="v-back">Volver al mapa</button>';
+  }
+  h += '</div>';
+  $('s-vault').innerHTML = h;
+  $('v-back').onclick = function () { renderMap(); show('map'); };
+  if (!V.lock) $('v-try').onclick = tryLock; else $('v-debug').onclick = openDebug;
+}
+function tryLock() {
+  var d = [], i, j, c, ok = 0, els = $('v-clues').getElementsByTagName('div'), dup = false, v;
+  for (i = 0; i < 4; i++) { v = $('d' + i).value; if (!/^[0-9]$/.test(v)) { $('v-msg').className = 'msg bad'; $('v-msg').innerHTML = 'Cada casillero lleva una sola cifra, de 0 a 9.'; return; } d.push(parseInt(v, 10)); }
+  for (i = 0; i < 4; i++) for (j = i + 1; j < 4; j++) if (d[i] === d[j]) dup = true;
+  if (dup) { $('v-msg').className = 'msg bad'; $('v-msg').innerHTML = 'Ninguna cifra se repite.'; return; }
+  S.vault.lockTries++;
+  for (i = 0; i < CLUES.length; i++) { c = CLUES[i].f(d[0], d[1], d[2], d[3]); if (c) ok++; els[i].className = 'clue ' + (c ? 'ok' : 'bad'); }
+  save();
+  if (ok === CLUES.length) { S.vault.lock = true; save(); sndWin(); $('v-msg').className = 'msg ok'; $('v-msg').innerHTML = '<b>Clic.</b> El candado se abrió en el intento ' + S.vault.lockTries + '.<br><button class="btn amb" id="v-go">Seguir</button>'; $('v-go').onclick = function () { renderVault(); }; }
+  else { sndBump(); $('v-msg').className = 'msg bad'; $('v-msg').innerHTML = 'Ese código cumple ' + ok + ' de ' + CLUES.length + ' pistas. Las rojas son las que no cumple. Intentos: ' + S.vault.lockTries + '.'; }
+}
+function renderEnd() {
+  var g = 0, s = 0, b = 0, k, tb = 0, tr = 0, h, i, d, Q = S.quiz || {score: 0};
+  for (k in S.done) if (S.done.hasOwnProperty(k)) { d = S.done[k]; if (d.medal === 'g') g++; else if (d.medal === 's') s++; else b++; tb += d.blocks; tr += refBlocks(LEVELS[parseInt(k, 10)]); }
+  h = '<div class="card" style="text-align:center"><canvas id="cv-end" width="200" height="160"></canvas><h1 style="color:#ffb000">Bóveda abierta</h1><p style="font-size:20px">' + esc(S.name) + ' completó el sistema de Helvecio.</p>';
+  h += '<table class="res" style="max-width:520px;margin:0 auto"><tr><td>Niveles superados</td><td><b>' + countDone() + ' / ' + LEVELS.length + '</b></td></tr><tr><td>Medallas</td><td>Oro ' + g + ' &middot; Plata ' + s + ' &middot; Bronce ' + b + '</td></tr><tr><td>Bloques usados / mínimo</td><td>' + tb + ' / ' + tr + '</td></tr><tr><td>Cuestionario</td><td>' + Q.score + ' / ' + QUIZ.length + '</td></tr><tr><td>Intentos en el candado</td><td>' + S.vault.lockTries + '</td></tr><tr><td>Ejecuciones del programa roto</td><td>' + S.vault.debugRuns + '</td></tr></table>';
+  h += '<p class="small">Mostrale esta pantalla al profe antes de cerrar.</p><button class="btn gry" id="e-map">Volver al mapa</button></div>';
+  $('s-end').innerHTML = h;
+  var c = $('cv-end').getContext('2d'); drawRobot(c, 100, 80, 130, 1, S.color, true);
+  $('e-map').onclick = function () { renderMap(); show('map'); };
+}
+/* Inicio */
+function init() { load(); renderStart(); show('start'); }
+try { init(); } catch (err) { document.body.innerHTML = '<pre style="color:#fff">Error: ' + err + '</pre>'; }
+/* UI4_END */
+</script></body></html>
