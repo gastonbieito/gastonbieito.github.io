@@ -2,7 +2,7 @@
   "origen": "C:/Users/gasto/OneDrive/Escritorio/Clases de Informatica",
   "colegios": [
     {
-      "id": "scjm", "nombre": "SCJM", "lugar": "Rosario", "color": "#ff7a59",
+      "id": "scjm", "nombre": "SCJM", "lugar": "Rosario", "color": "#2a5fc4",
       "clases": [
         { "id": "inicial", "nombre": "Inicial", "detalle": "Inicial, 1.º y 2.º", "color": "#ffc93c", "juegos": [
           { "slug": "lumi2", "titulo": "Lumi y el faro dormido", "desc": "Encendé el faro: doble clic, teclado y caminos.", "url": "/lumi/2/", "nuevo": "2026-11-23" },
@@ -32,7 +32,7 @@
       ]
     },
     {
-      "id": "mta", "nombre": "MTA", "lugar": "Nueva Helvecia", "color": "#2fbf8f",
+      "id": "mta", "nombre": "MTA", "lugar": "Nueva Helvecia", "color": "#e0731f",
       "clases": [
         { "id": "5", "nombre": "5.º", "detalle": "Taller de programación", "color": "#ff9f43", "juegos": [
           { "slug": "detective-pixel-mta", "titulo": "Detective Pixel", "desc": "Casos para resolver con filtros.", "src": "2026-11-04_MTA_5to_Detective_Pixel/Detective_Pixel.html", "nuevo": "2026-11-22" },

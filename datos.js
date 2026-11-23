@@ -5,7 +5,7 @@ window.JUEGOS = {
    "id": "scjm",
    "nombre": "SCJM",
    "lugar": "Rosario",
-   "color": "#ff7a59",
+   "color": "#2a5fc4",
    "clases": [
     {
      "id": "inicial",
@@ -170,7 +170,7 @@ window.JUEGOS = {
    "id": "mta",
    "nombre": "MTA",
    "lugar": "Nueva Helvecia",
-   "color": "#2fbf8f",
+   "color": "#e0731f",
    "clases": [
     {
      "id": "5",
