@@ -64,18 +64,18 @@ window.JUEGOS = {
        "nuevo": true
       },
       {
-       "slug": "mi-canal",
-       "titulo": "Mi Canal",
-       "desc": "Tu canal de videos: portadas, contraseñas y estafas.",
-       "href": "j/mi-canal/",
-       "nuevo": true
-      },
-      {
        "slug": "rumor",
        "titulo": "El rumor",
        "desc": "Cómo se difunde un mensaje y cómo se frena.",
        "href": "/rumor/",
        "nuevo": true
+      },
+      {
+       "slug": "mi-canal",
+       "titulo": "Mi Canal",
+       "desc": "Tu canal de videos: portadas, contraseñas y estafas.",
+       "href": "j/mi-canal/",
+       "nuevo": false
       },
       {
        "slug": "ciber-don-atajo",
