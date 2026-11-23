@@ -57,6 +57,13 @@ window.JUEGOS = {
      "color": "#4fc3f7",
      "juegos": [
       {
+       "slug": "rumor",
+       "titulo": "El rumor",
+       "desc": "Cómo se difunde un mensaje y cómo se frena.",
+       "href": "/rumor/",
+       "nuevo": true
+      },
+      {
        "slug": "ciber-don-atajo",
        "titulo": "El ciber de Don Atajo",
        "desc": "Atajos de teclado y trucos de compu.",
