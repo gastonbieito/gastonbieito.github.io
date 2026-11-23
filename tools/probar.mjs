@@ -48,6 +48,8 @@ for (const [w, h] of [[1366, 768], [1024, 600], [390, 844]]) {
   const r = await p.evaluate(() => { const b = document.querySelector('.pfb').getBoundingClientRect(); return { b: Math.round(b.bottom - innerHeight), r: Math.round(b.right - innerWidth), l: b.left, t: b.top, sx: document.documentElement.scrollWidth - innerWidth }; });
   if (r.b > 0 || r.r > 0 || r.l < 0 || r.t < 0 || r.sx > 0) fail(v + ': el editor no entra en la pantalla ' + JSON.stringify(r));
   if (await p.locator('#pf .opts img').count() < 4) fail(v + ': faltan las miniaturas de estilos');
+  if (!(await p.isVisible('#pf .cred a[href="avatar/LICENCIAS.txt"]'))) fail(v + ': no se ven los créditos de los dibujos en el editor');
+  if ((await p.textContent('footer')).includes('DiceBear')) fail(v + ': los créditos siguen en el pie');
   await shot('nuevo');
   await p.click('#pf [data-ok]'); await p.waitForTimeout(300);
   if (!(await p.textContent('#pf .thanks')).includes('nombre')) fail(v + ': deja guardar sin nombre');
