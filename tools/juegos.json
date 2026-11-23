@@ -22,7 +22,7 @@
           { "slug": "detective-pixel", "titulo": "Detective Pixel", "desc": "Casos disparatados para resolver con lógica.", "src": "2026-11-05_Rosario_6_Detective_Pixel/Detective_Pixel_Casos_Disparatados.html" },
           { "slug": "venganza-polilla", "titulo": "La venganza de Polilla", "desc": "Sala de escape con acertijos de compu.", "src": "2026-10-22_Rosario_6_La_Venganza_De_Polilla/La_Venganza_De_Polilla.html" },
           { "slug": "colla-mira", "titulo": "Colla, el robot que mira", "desc": "Programá con sensores.", "src": "Juegos Colla y Helvecio/Colla_El_Robot_Que_Mira.html" },
-          { "slug": "colla-sexto", "titulo": "Colla · 6.º año", "desc": "20 paredes y la orden REPETIR.", "src": "Juegos Colla y Helvecio/El_Mural_de_Colla_Sexto.html" },
+          { "slug": "colla-sexto", "titulo": "Colla y la orden REPETIR", "desc": "20 paredes nuevas para pintar.", "src": "Juegos Colla y Helvecio/El_Mural_de_Colla_Sexto.html" },
           { "slug": "yo-futuro", "titulo": "Yo, en el futuro", "desc": "Qué quiero ser de grande.", "src": "2026-10-26_Rosario_6_Yo_En_El_Futuro/Yo_En_El_Futuro.html" }
         ] }
       ]

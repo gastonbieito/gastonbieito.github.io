@@ -122,8 +122,8 @@ window.JUEGOS = {
       },
       {
        "slug": "colla-sexto",
-       "titulo": "Colla · 6.º año",
-       "desc": "20 paredes y la orden REPETIR.",
+       "titulo": "Colla y la orden REPETIR",
+       "desc": "20 paredes nuevas para pintar.",
        "href": "j/colla-sexto/",
        "nuevo": false
       },
