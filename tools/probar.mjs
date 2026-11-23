@@ -44,7 +44,9 @@ for (const [w, h] of [[1366, 768], [1024, 600], [390, 844]]) {
   await p.click('#ideaToast [data-open]'); await p.waitForTimeout(400);
   await p.fill('#fIdea textarea', 'Un juego de detectives en el espacio');
   await p.screenshot({ path: path.join(out, 'ideas-ventana.png') });
-  await p.click('#fIdea .send'); await p.waitForTimeout(800);
+  await p.click('#fIdea .send'); await p.waitForTimeout(500);
+  if (!(await p.isVisible('#fIdea .done'))) fail('ideas: no aparece la animación de enviado');
+  await p.screenshot({ path: path.join(out, 'ideas-enviada.png') }); await p.waitForTimeout(400);
   if (!body || !body.includes('Un juego de detectives') || !body.includes('entry.222') || !body.includes('scjm 6')) fail('ideas: no se envió bien: ' + body);
   await p.goto(base.split('#')[0] + '#/scjm/6'); await p.waitForTimeout(500);
   if (await p.isVisible('#ideaBtn')) fail('ideas: el botón aparece fuera del inicio');
