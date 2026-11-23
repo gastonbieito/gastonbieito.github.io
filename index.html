@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Juegos de Informática</title>
+<title>Rincón Digital</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='6' y='14' width='52' height='36' rx='14' fill='%23ff7a59'/%3E%3Ccircle cx='22' cy='32' r='5' fill='%23fff'/%3E%3Ccircle cx='44' cy='27' r='4' fill='%23ffd23f'/%3E%3Ccircle cx='44' cy='37' r='4' fill='%234fc3f7'/%3E%3C/svg%3E">
 <style>
 @font-face{font-family:Nunito;font-weight:600;font-display:swap;src:url(fonts/nunito-latin-600-normal.woff2) format('woff2')}
@@ -241,7 +241,7 @@ footer a{color:inherit}
 <body>
 <div class="blobs" aria-hidden="true"><i style="width:420px;height:420px;background:#ffd6c9;left:-120px;top:-80px"></i><i style="width:360px;height:360px;background:#cfe9ff;right:-100px;top:120px;animation-delay:-6s"></i><i style="width:300px;height:300px;background:#e3d9ff;left:30%;bottom:-120px;animation-delay:-12s"></i><i style="width:220px;height:220px;background:#d4f5e6;right:20%;top:-60px;animation-delay:-3s"></i></div>
 <header>
-  <a class="logo" href="#/" aria-label="Inicio"><svg viewBox="0 0 64 64"><rect x="4" y="14" width="56" height="36" rx="16" fill="#ff7a59"/><rect x="14" y="29" width="16" height="6" rx="3" fill="#fff"/><rect x="19" y="24" width="6" height="16" rx="3" fill="#fff"/><circle cx="44" cy="27" r="4.5" fill="#ffd23f"/><circle cx="44" cy="38" r="4.5" fill="#4fc3f7"/><circle cx="50" cy="32.5" r="4.5" fill="#9b7bff"/></svg><span>Juegos de Informática</span></a>
+  <a class="logo" href="#/" aria-label="Inicio"><svg viewBox="0 0 64 64"><rect x="4" y="14" width="56" height="36" rx="16" fill="#ff7a59"/><rect x="14" y="29" width="16" height="6" rx="3" fill="#fff"/><rect x="19" y="24" width="6" height="16" rx="3" fill="#fff"/><circle cx="44" cy="27" r="4.5" fill="#ffd23f"/><circle cx="44" cy="38" r="4.5" fill="#4fc3f7"/><circle cx="50" cy="32.5" r="4.5" fill="#9b7bff"/></svg><span>Rincón Digital</span></a>
   <nav class="crumbs" id="crumbs"></nav>
 </header>
 <main id="app"></main>
@@ -325,7 +325,7 @@ footer a{color:inherit}
       sch.style.display = 'none';
       res.innerHTML = hits.length ? '<div class="grid games" style="margin-bottom:22px">' + hits.map(function (x) { return card(x, { where: true }); }).join('') + '</div>' : '<p class="empty">No hay juegos con ese nombre.</p>';
     });
-    document.title = 'Juegos de Informática';
+    document.title = 'Rincón Digital';
   }
   function school(c) {
     setCrumbs([['Inicio', '#/'], [c.nombre, '#/' + c.id, escudo(c, 'ce')]]);
@@ -333,14 +333,14 @@ footer a{color:inherit}
       return '<a class="tile klass" href="#/' + c.id + '/' + k.id + '" data-clase="' + c.id + '/' + k.id + '" style="background:' + k.color + '"><div class="big">' + esc(k.nombre) + '</div><div class="det">' + esc(k.detalle) + '</div>' +
         '<span class="count">' + plural(k.juegos.length) + '</span><div class="stack">' + k.juegos.slice(0, 3).map(function (j) { return '<i style="background:' + j.color + '">' + esc(j.titulo.charAt(0)) + '</i>'; }).join('') + '</div></a>';
     }).join('') + '</div>';
-    document.title = c.nombre + ' · Juegos de Informática';
+    document.title = c.nombre + ' · Rincón Digital';
   }
   function klass(c, k) {
     ls.set('portalClase', c.id + '/' + k.id);
     setCrumbs([['Inicio', '#/'], [c.nombre, '#/' + c.id, escudo(c, 'ce')], [k.nombre, '#/' + c.id + '/' + k.id]]);
     app.innerHTML = '<h1 class="tit">' + escudo(c, 'te') + esc(c.nombre) + ' · ' + esc(k.nombre) + '</h1><p class="sub">' + esc(k.detalle) + ' · ' + plural(k.juegos.length) + ' · con las teclas 1 a ' + Math.min(9, k.juegos.length) + ' se abre cada juego</p><div class="grid games">' +
       k.juegos.map(function (j, i) { return card({ j: j, c: c, k: k }, { key: i < 9 ? String(i + 1) : '' }); }).join('') + '</div>';
-    document.title = c.nombre + ' ' + k.nombre + ' · Juegos de Informática';
+    document.title = c.nombre + ' ' + k.nombre + ' · Rincón Digital';
   }
 
   // Sonidos propios del portal, cortos y suaves: un "tic" de vidrio al tocar, un deslizamiento al abrir

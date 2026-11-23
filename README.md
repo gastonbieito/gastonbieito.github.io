@@ -1,4 +1,4 @@
-﻿# Juegos de Informática
+﻿# Rincón Digital
 
 Portal de juegos de clase en https://gastonbieito.github.io/
 
