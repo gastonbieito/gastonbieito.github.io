@@ -82,7 +82,7 @@ window.JUEGOS = {
        "titulo": "El ciber de Don Atajo",
        "desc": "Atajos de teclado y trucos de compu.",
        "href": "j/ciber-don-atajo/",
-       "nuevo": true
+       "nuevo": false
       },
       {
        "slug": "bucle-historia",

@@ -15,7 +15,7 @@
           { "slug": "fabrica-luces", "titulo": "La fábrica de luces", "desc": "Interruptores, AND, OR y NOT: cómo piensa una compu.", "src": "2026-11-24_Rosario_345_La_Fabrica_De_Luces/La_Fabrica_De_Luces.html", "nuevo": true },
           { "slug": "rumor", "titulo": "El rumor", "desc": "Cómo se difunde un mensaje y cómo se frena.", "url": "/rumor/", "nuevo": true },
           { "slug": "mi-canal", "titulo": "Mi Canal", "desc": "Tu canal de videos: portadas, contraseñas y estafas.", "src": "Mi Canal/Mi_Canal.html" },
-          { "slug": "ciber-don-atajo", "volverY": 50, "titulo": "El ciber de Don Atajo", "desc": "Atajos de teclado y trucos de compu.", "src": "2026-11-11_Rosario_345_El_Ciber_De_Don_Atajo/Ciber_Don_Atajo.html", "nuevo": true },
+          { "slug": "ciber-don-atajo", "volverY": 50, "titulo": "El ciber de Don Atajo", "desc": "Atajos de teclado y trucos de compu.", "src": "2026-11-11_Rosario_345_El_Ciber_De_Don_Atajo/Ciber_Don_Atajo.html" },
           { "slug": "bucle-historia", "volverY": 50, "titulo": "bucle", "desc": "Cómo te elige videos un algoritmo.", "src": "2026-11-10_Rosario_3_4_5_Bucle_Modo_Historia/Bucle_Modo_Historia.html" },
           { "slug": "colla-2", "titulo": "Colla 2", "desc": "Programá al robot muralista.", "src": "Juegos Colla y Helvecio/El_Mural_de_Colla_2.html" },
           { "slug": "atrapados", "titulo": "Atrapados en la compu", "desc": "Sala de escape con Polilla.", "src": "Polilla/Polilla.html" }
