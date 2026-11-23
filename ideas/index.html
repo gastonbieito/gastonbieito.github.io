@@ -184,15 +184,25 @@ input[type=text],input[type=password],input[type=search],select{width:100%;box-s
     var b = ev.target.closest('[data-a]'); if (!b) return;
     var card = b.closest('[data-id]'), id = card.getAttribute('data-id'), a = b.getAttribute('data-a');
     var x = IDEAS.filter(function (i) { return i.id === id; })[0]; if (!x) return;
-    var extra;
+    var extra, antes = x.estado, pos = IDEAS.indexOf(x);
     if (a === 'borrar') {
       if (!confirm('¿Borrar esta idea para siempre? También se borra del formulario y no se puede deshacer.')) return;
       extra = { accion: 'borrar', id: id };
-    } else if (a === 'restaurar') extra = { accion: 'estado', id: id, estado: '' };
-    else extra = { accion: 'estado', id: id, estado: x.estado === a ? '' : a };
-    card.className += ' ocupada'; aviso('');
-    pedir(CRED, mostrar, function () { card.className = card.className.replace(' ocupada', ''); aviso('No se pudo guardar el cambio. Probá de nuevo.'); }, extra);
+      IDEAS.splice(pos, 1);
+    } else {
+      extra = { accion: 'estado', id: id, estado: a === 'restaurar' ? '' : (x.estado === a ? '' : a) };
+      x.estado = extra.estado;
+    }
+    aviso(''); pintar(); PEND++;
+    pedir(CRED, function (ideas) {
+      if (--PEND === 0) mostrar(ideas);
+    }, function () {
+      PEND--;
+      if (a === 'borrar') IDEAS.splice(pos, 0, x); else x.estado = antes;
+      pintar(); aviso('No se pudo guardar el cambio. Probá de nuevo.');
+    }, extra);
   };
+  var PEND = 0;
 
   $('tabs').onclick = function (e) { var b = e.target.closest('[data-t]'); if (b) { TAB = b.getAttribute('data-t'); pintar(); } };
   $('fClase').onchange = pintar;
