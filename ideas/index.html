@@ -46,6 +46,21 @@ input[type=text],input[type=password],input[type=search],select{width:100%;box-s
 .chip.juego{background:var(--juego)}.chip.aprender{background:#1e9fd8}
 .clase{padding:2px 10px;border-radius:10px;background:rgba(36,32,74,.08)}
 .fecha{margin-left:auto;color:var(--dim)}
+.idea.proceso{background:linear-gradient(135deg,#fff3cf,#ffe9a8);border-left-color:#f5b400}
+.idea.hecha{background:linear-gradient(135deg,#e2f8e9,#c9f0d6);border-left-color:#22b583}
+.idea.hecha .t{color:#3d5a4b}
+.est{padding:2px 10px;border-radius:10px;font-weight:800;color:#fff}
+.est.proceso{background:#e0a200}.est.hecha{background:#22b583}
+.acc{display:flex;gap:8px;margin-top:14px;align-items:center}
+.acc button{padding:7px 12px;border-radius:11px;font-size:14px;background:rgba(255,255,255,.75);box-shadow:inset 0 0 0 1px var(--line)}
+.acc button.on.proceso{background:#e0a200;color:#fff;box-shadow:none}
+.acc button.on.hecha{background:#22b583;color:#fff;box-shadow:none}
+.acc .tacho{margin-left:auto;width:38px;height:34px;padding:0;display:grid;place-items:center}
+.acc .tacho:hover{background:#ffe1e7}
+.acc .peligro{background:#d6365a;color:#fff;box-shadow:none}
+.idea.ocupada{opacity:.5;pointer-events:none}
+.tab.pap{margin-left:auto}
+#aviso{display:none;margin:0 0 14px;padding:10px 14px;border-radius:12px;background:#ffe1e7;color:#a3203f;font-weight:800}
 #vacio{display:none;text-align:center;padding:50px 0;color:var(--dim);font-size:18px}
 </style>
 </head>
@@ -73,8 +88,10 @@ input[type=text],input[type=password],input[type=search],select{width:100%;box-s
   <div class="tabs" id="tabs"></div>
   <div class="filtros">
     <select id="fClase"></select>
+    <select id="fEst"><option value="">Todos los estados</option><option value="nueva">Nuevas</option><option value="proceso">En proceso</option><option value="hecha">Hechas</option></select>
     <input type="search" id="fTxt" placeholder="Buscar en las ideas">
   </div>
+  <div id="aviso"></div>
   <div id="lista"></div>
   <div id="vacio">No hay ideas con estos filtros.</div>
 </div>
@@ -95,12 +112,12 @@ input[type=text],input[type=password],input[type=search],select{width:100%;box-s
   }
   function norm(o) {
     var tipo = campo(o.r, /tipo/i, 0), clase = campo(o.r, /clase|grupo/i, 1), idea = campo(o.r, /idea/i, 2);
-    return { tipo: /juego/i.test(tipo) ? 'juego' : 'aprender', clase: clase || 'Sin clase', idea: idea, fecha: new Date(o.fecha) };
+    return { id: o.id, estado: o.estado || '', tipo: /juego/i.test(tipo) ? 'juego' : 'aprender', clase: clase || 'Sin clase', idea: idea, fecha: new Date(o.fecha) };
   }
 
-  function pedir(cred, ok, mal) {
+  function pedir(cred, ok, mal, extra) {
     if (!URL_R) { mal('Falta conectar las respuestas: poné la dirección del script en config.js.'); return; }
-    fetch(URL_R, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(cred) })
+    fetch(URL_R, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(Object.assign({}, cred, extra || {})) })
       .then(function (r) { return r.json(); })
       .then(function (d) { if (d && d.ok) ok(d.ideas || []); else mal('Usuario o contraseña incorrectos.'); })
       .catch(function () { mal('No se pudo conectar. Probá de nuevo.'); });
@@ -124,30 +141,62 @@ input[type=text],input[type=password],input[type=search],select{width:100%;box-s
     var sel = $('fClase'), prev = sel.value;
     sel.innerHTML = '<option value="">Todas las clases</option>' + Object.keys(clases).sort().map(function (c) { return '<option value="' + esc(c) + '">' + esc(c) + ' (' + clases[c] + ')</option>'; }).join('');
     sel.value = clases[prev] ? prev : '';
-    $('total').textContent = IDEAS.length + (IDEAS.length === 1 ? ' idea' : ' ideas');
+    var nt = IDEAS.filter(function (x) { return x.estado !== 'papelera'; }).length;
+    $('total').textContent = nt + (nt === 1 ? ' idea' : ' ideas');
     pintar();
   }
 
+  var TACHO = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d6365a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg>';
   function pintar() {
-    var cl = $('fClase').value, q = $('fTxt').value.trim().toLowerCase();
-    var base = IDEAS.filter(function (x) { return (!cl || x.clase === cl) && (!q || x.idea.toLowerCase().indexOf(q) >= 0); });
-    var n = { todas: base.length, juego: 0, aprender: 0 };
-    base.forEach(function (x) { n[x.tipo]++; });
-    $('tabs').innerHTML = [['todas', 'Todas'], ['juego', 'Juegos para hacer'], ['aprender', 'Cosas para aprender']].map(function (t) {
-      return '<button class="tab' + (TAB === t[0] ? ' on' : '') + '" data-t="' + t[0] + '">' + t[1] + '<b>' + n[t[0]] + '</b></button>';
+    var cl = $('fClase').value, fe = $('fEst').value, q = $('fTxt').value.trim().toLowerCase();
+    var base = IDEAS.filter(function (x) {
+      return (!cl || x.clase === cl) && (!q || x.idea.toLowerCase().indexOf(q) >= 0) &&
+        (!fe || (fe === 'nueva' ? !x.estado : x.estado === fe) || x.estado === 'papelera');
+    });
+    var n = { todas: 0, juego: 0, aprender: 0, papelera: 0 };
+    base.forEach(function (x) { if (x.estado === 'papelera') n.papelera++; else { n.todas++; n[x.tipo]++; } });
+    $('tabs').innerHTML = [['todas', 'Todas'], ['juego', 'Juegos para hacer'], ['aprender', 'Cosas para aprender'], ['papelera', 'Papelera']].map(function (t) {
+      return '<button class="tab' + (t[0] === 'papelera' ? ' pap' : '') + (TAB === t[0] ? ' on' : '') + '" data-t="' + t[0] + '">' + t[1] + '<b>' + n[t[0]] + '</b></button>';
     }).join('');
-    var vis = base.filter(function (x) { return TAB === 'todas' || x.tipo === TAB; });
+    var vis = base.filter(function (x) {
+      if (TAB === 'papelera') return x.estado === 'papelera';
+      return x.estado !== 'papelera' && (TAB === 'todas' || x.tipo === TAB);
+    });
     $('lista').innerHTML = vis.map(function (x) {
-      return '<div class="idea vidrio ' + x.tipo + '"><div class="t">' + esc(x.idea) + '</div><div class="m">' +
+      var e = x.estado, acc;
+      if (e === 'papelera') acc = '<button data-a="restaurar">Restaurar</button><button class="peligro" data-a="borrar">Borrar para siempre</button>';
+      else acc = '<button class="proceso' + (e === 'proceso' ? ' on' : '') + '" data-a="proceso">En proceso</button>' +
+        '<button class="hecha' + (e === 'hecha' ? ' on' : '') + '" data-a="hecha">' + (e === 'hecha' ? '✓ Hecha' : 'Hecha') + '</button>' +
+        '<button class="tacho" data-a="papelera" title="Mandar a la papelera">' + TACHO + '</button>';
+      return '<div class="idea vidrio ' + x.tipo + ' ' + e + '" data-id="' + esc(x.id) + '"><div class="t">' + esc(x.idea) + '</div><div class="m">' +
         '<span class="chip ' + x.tipo + '">' + (x.tipo === 'juego' ? 'Juego' : 'Aprender') + '</span>' +
+        (e === 'proceso' ? '<span class="est proceso">En proceso</span>' : e === 'hecha' ? '<span class="est hecha">Hecha</span>' : '') +
         '<span class="clase">' + esc(x.clase) + '</span>' +
-        '<span class="fecha">' + x.fecha.toLocaleDateString('es-UY', { day: 'numeric', month: 'short' }) + '</span></div></div>';
+        '<span class="fecha">' + x.fecha.toLocaleDateString('es-UY', { day: 'numeric', month: 'short' }) + '</span></div>' +
+        '<div class="acc">' + acc + '</div></div>';
     }).join('');
+    $('vacio').textContent = TAB === 'papelera' ? 'La papelera está vacía.' : 'No hay ideas con estos filtros.';
     $('vacio').style.display = vis.length ? 'none' : 'block';
   }
 
+  function aviso(m) { $('aviso').textContent = m; $('aviso').style.display = m ? 'block' : 'none'; }
+  $('lista').onclick = function (ev) {
+    var b = ev.target.closest('[data-a]'); if (!b) return;
+    var card = b.closest('[data-id]'), id = card.getAttribute('data-id'), a = b.getAttribute('data-a');
+    var x = IDEAS.filter(function (i) { return i.id === id; })[0]; if (!x) return;
+    var extra;
+    if (a === 'borrar') {
+      if (!confirm('¿Borrar esta idea para siempre? También se borra del formulario y no se puede deshacer.')) return;
+      extra = { accion: 'borrar', id: id };
+    } else if (a === 'restaurar') extra = { accion: 'estado', id: id, estado: '' };
+    else extra = { accion: 'estado', id: id, estado: x.estado === a ? '' : a };
+    card.className += ' ocupada'; aviso('');
+    pedir(CRED, mostrar, function () { card.className = card.className.replace(' ocupada', ''); aviso('No se pudo guardar el cambio. Probá de nuevo.'); }, extra);
+  };
+
   $('tabs').onclick = function (e) { var b = e.target.closest('[data-t]'); if (b) { TAB = b.getAttribute('data-t'); pintar(); } };
   $('fClase').onchange = pintar;
+  $('fEst').onchange = pintar;
   $('fTxt').oninput = pintar;
   $('act').onclick = function () {
     $('act').disabled = true; $('act').textContent = 'Actualizando...';

@@ -1,11 +1,15 @@
-// Script para ver las respuestas de "Ideas de los chicos" en gastonbieito.github.io/ideas/
+// Ideas de los chicos: le pasa las respuestas a gastonbieito.github.io/ideas/
 // Va DENTRO del formulario: abrir el formulario para editar, menú ⋮ > Apps Script, pegar todo esto.
-// Cambiá el usuario y la contraseña de abajo (quedan guardados solo en tu cuenta de Google).
+// Cambiá el usuario y la contraseña de abajo (quedan solo en tu cuenta de Google).
 // Después: Implementar > Nueva implementación > Aplicación web
 //   Ejecutar como: Yo · Quién tiene acceso: Cualquier usuario > Implementar, y copiar la URL que termina en /exec.
+// Si cambiás algo acá: Implementar > Gestionar implementaciones > lápiz > Versión: nueva > Implementar.
 
 var USUARIO = 'gaston';
 var CLAVE = 'CAMBIAME';
+
+// Estados que guarda el profe: '' (nueva), 'proceso', 'hecha', 'papelera'.
+var ESTADOS = { '': 1, proceso: 1, hecha: 1, papelera: 1 };
 
 function doPost(e) {
   var d = {};
@@ -14,8 +18,17 @@ function doPost(e) {
     Utilities.sleep(1500);
     return salida({ ok: false });
   }
-  var ideas = FormApp.getActiveForm().getResponses().map(function (r) {
-    var o = { fecha: r.getTimestamp().toISOString(), r: {} };
+  var form = FormApp.getActiveForm(), props = PropertiesService.getScriptProperties();
+  if (d.accion === 'estado' && d.id && ESTADOS[d.estado || '']) {
+    if (d.estado) props.setProperty('e_' + d.id, d.estado); else props.deleteProperty('e_' + d.id);
+  }
+  if (d.accion === 'borrar' && d.id) {
+    form.deleteResponse(d.id);
+    props.deleteProperty('e_' + d.id);
+  }
+  var est = props.getProperties();
+  var ideas = form.getResponses().map(function (r) {
+    var o = { id: r.getId(), fecha: r.getTimestamp().toISOString(), estado: est['e_' + r.getId()] || '', r: {} };
     r.getItemResponses().forEach(function (ir) { o.r[ir.getItem().getTitle()] = String(ir.getResponse()); });
     return o;
   });
