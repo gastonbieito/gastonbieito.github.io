@@ -100,8 +100,8 @@ h2{font-size:clamp(22px,3vw,28px);margin:30px 0 12px;font-weight:800}
 .done .bulb{position:relative;width:110px;height:110px;animation:bulb .7s cubic-bezier(.34,1.56,.64,1)}
 .done .bulb svg{width:100%;height:100%}
 .done .bulb .chk{position:absolute;right:-6px;bottom:2px;width:44px;height:44px;animation:chk .5s .35s cubic-bezier(.34,1.56,.64,1) backwards}
-.done b{font-size:30px;font-weight:800;animation:up .45s .15s cubic-bezier(.34,1.56,.64,1) backwards}
-.done span{color:var(--dim);font-size:18px;animation:up .45s .25s cubic-bezier(.34,1.56,.64,1) backwards}
+.done>b{font-size:30px;font-weight:800;animation:up .45s .15s cubic-bezier(.34,1.56,.64,1) backwards}
+.done>span{color:var(--dim);font-size:18px;animation:up .45s .25s cubic-bezier(.34,1.56,.64,1) backwards}
 @keyframes bulb{0%{transform:scale(.2) rotate(-30deg);opacity:0}60%{transform:scale(1.15) rotate(8deg);opacity:1}100%{transform:scale(1) rotate(0)}}
 @keyframes chk{from{transform:scale(0) rotate(-90deg)}}
 .ideaBtn svg{animation:glow 2.6s ease-in-out infinite}
@@ -155,7 +155,70 @@ header{background:rgba(233,238,252,.35);backdrop-filter:blur(22px) saturate(180%
 .seg span{background:rgba(255,255,255,.6);box-shadow:var(--rim)}
 .send{box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 8px 18px rgba(255,122,89,.35);background:linear-gradient(180deg,#ff8f70,#ff6a45)}
 .x{background:rgba(255,255,255,.7);box-shadow:var(--rim)}
-.game .key,.search kbd{background:rgba(255,255,255,.6);box-shadow:var(--rim)}</style>
+.game .key,.search kbd{background:rgba(255,255,255,.6);box-shadow:var(--rim)}
+/* ---------- Perfil ---------- */
+.av{position:relative;display:block;width:100%;aspect-ratio:1;border-radius:50%;padding:var(--pad,6%);background:var(--ring,transparent);box-shadow:var(--glow,none)}
+.av>b{display:block;width:100%;height:100%;border-radius:50%;overflow:hidden;background:var(--bg,#fff);box-shadow:inset 0 2px 6px rgba(36,32,74,.12)}
+.av img{display:block;width:100%;height:100%}
+.av .ins{position:absolute;right:-6%;bottom:-4%;width:38%;aspect-ratio:1;border-radius:50%;background:linear-gradient(135deg,#fff,#f1f4ff);box-shadow:0 3px 8px rgba(36,32,74,.25),inset 0 1px 0 #fff;display:grid;place-items:center}
+.av .ins svg{width:68%;height:68%}
+.me{margin-left:auto;display:flex;align-items:center;gap:9px;border:0;cursor:pointer;font:800 17px Nunito,'Segoe UI',sans-serif;color:var(--ink);padding:4px 16px 4px 4px;border-radius:999px;background:var(--glass);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);box-shadow:var(--rim),var(--soft);transition:transform .18s cubic-bezier(.34,1.56,.64,1)}
+.me:hover{transform:translateY(-2px) rotate(-1.5deg)}
+.me .aw{width:40px;flex:none}
+.me .mn{max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.me+.mute{margin-left:0}
+.hola{display:flex;align-items:center;gap:16px}
+.hola .yo{flex:none;width:clamp(66px,9vw,96px);border:0;padding:0;background:none;cursor:pointer;animation:bob 3.2s ease-in-out infinite;transition:transform .2s cubic-bezier(.34,1.56,.64,1)}
+.hola .yo:hover{transform:scale(1.08) rotate(-4deg)}
+@keyframes bob{50%{translate:0 -5px}}
+.hola mark{color:inherit;background:linear-gradient(transparent 58%,color-mix(in srgb,var(--fav) 45%,transparent) 58%);border-radius:4px;padding:0 2px}
+.modal .box.pfb{width:min(980px,100%);height:min(660px,calc(100dvh - 32px));padding:0;gap:0;display:grid;grid-template-columns:310px 1fr;overflow:hidden}
+.pfl{display:flex;flex-direction:column;align-items:center;gap:12px;padding:26px 22px;background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,.2));border-right:1px solid rgba(255,255,255,.7);overflow:auto}
+.pfl h3{align-self:flex-start}
+.pfv{width:min(200px,100%);flex:none}
+.pfv .av{transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
+.pfv .av.salta{animation:salta .45s cubic-bezier(.34,1.56,.64,1)}
+@keyframes salta{30%{transform:scale(.9) rotate(-4deg)}70%{transform:scale(1.07) rotate(3deg)}}
+.pfn{width:100%}
+.pfn input{width:100%;font:800 20px Nunito,'Segoe UI',sans-serif;color:var(--ink);text-align:center;padding:11px 14px;border:2px solid rgba(255,255,255,.8);border-radius:16px;background:rgba(255,255,255,.65);box-shadow:inset 0 1px 3px rgba(36,32,74,.08);outline:none}
+.pfn input:focus{border-color:#9b7bff}
+.pfn input.shake{animation:shake .45s ease;border-color:#ef8aa3}
+.pfa{justify-content:center}
+.dado{display:inline-flex;align-items:center;gap:8px;font:800 17px Nunito,'Segoe UI',sans-serif;color:var(--ink);border:0;border-radius:999px;padding:9px 16px 9px 10px;cursor:pointer;background:var(--glass);box-shadow:var(--rim),var(--soft);transition:transform .15s}
+.dado:hover{transform:translateY(-2px)}
+.dado svg{width:28px;height:28px;transition:transform .5s cubic-bezier(.34,1.56,.64,1)}
+.dado.gira svg{transform:rotate(360deg)}
+.pfl .note{margin:auto 0 0;text-align:center}
+.pfr{display:flex;flex-direction:column;min-height:0;min-width:0;padding:22px 20px 0}
+.tabs{display:flex;flex-wrap:wrap;gap:7px;padding:0 44px 14px 0}
+.tabs button{font:800 15px Nunito,'Segoe UI',sans-serif;color:var(--ink);border:0;border-radius:999px;padding:7px 13px;cursor:pointer;background:rgba(255,255,255,.6);box-shadow:var(--rim);white-space:nowrap}
+.tabs button.on{background:linear-gradient(135deg,#9b7bff,#7b5cf0);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 4px 12px rgba(155,123,255,.4)}
+.opts{flex:1;min-height:0;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:12px;align-content:start;padding:4px 4px 20px}
+.opts button{position:relative;border:0;padding:6px;cursor:pointer;border-radius:20px;background:rgba(255,255,255,.55);box-shadow:var(--rim),0 3px 8px rgba(36,32,74,.08);transition:transform .15s cubic-bezier(.34,1.56,.64,1)}
+.opts button:hover{transform:translateY(-3px) scale(1.04)}
+.opts button.on{box-shadow:0 0 0 3px #9b7bff,0 6px 16px rgba(155,123,255,.35);background:#fff}
+.opts button.on::after{content:'';position:absolute;top:-6px;right:-6px;width:24px;height:24px;border-radius:50%;background:#9b7bff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6.5 12.5l3.5 3.5 7.5-8' stroke='%23fff' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/80% no-repeat;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.opts .th{display:block;width:100%;aspect-ratio:1;border-radius:15px;overflow:hidden;background:var(--bg)}
+.opts .th img{display:block;width:100%;height:100%}
+.opts .no{display:grid;place-items:center;width:100%;aspect-ratio:1;border-radius:15px;background:rgba(255,255,255,.6)}
+.opts .no svg{width:46%}
+.opts .sw{display:block;width:100%;aspect-ratio:1;border-radius:50%;background:var(--c);box-shadow:inset 0 -6px 12px rgba(0,0,0,.15),inset 0 4px 8px rgba(255,255,255,.45)}
+.opts .wide{padding:10px}
+.pfd{background:linear-gradient(135deg,rgba(255,255,255,.97),rgba(248,246,255,.94))}.pfd .pfbig{width:150px;animation:bulb .7s cubic-bezier(.34,1.56,.64,1)}
+.pfload{position:absolute;inset:0;display:grid;place-items:center;font-weight:800;font-size:20px;color:var(--dim);background:rgba(255,255,255,.7);z-index:4}
+.pfload[hidden]{display:none}
+footer a{color:inherit}
+@media (max-width:719px){
+  .modal .box.pfb{grid-template-columns:1fr;grid-template-rows:auto 1fr;height:calc(100dvh - 24px)}
+  .modal.pf{padding:12px}
+  .pfl{display:grid;grid-template-columns:96px 1fr;grid-template-areas:'v h' 'v n' 'a a' 'm m';gap:8px 12px;padding:16px 16px 12px;border-right:0;border-bottom:1px solid rgba(255,255,255,.7);align-items:center;overflow:visible}
+  .pfl h3{grid-area:h;font-size:21px;padding-right:40px}.pfv{grid-area:v;width:96px}.pfn{grid-area:n}.pfa{grid-area:a}.pfl .thanks{grid-area:m;text-align:center;min-height:0}.pfl .note{display:none}
+  .pfn input{font-size:17px;padding:8px 10px}
+  .pfr{padding:12px 12px 0}
+  .tabs{flex-wrap:nowrap;overflow-x:auto;padding:2px 2px 12px;scrollbar-width:none}
+  .opts{grid-template-columns:repeat(auto-fill,minmax(74px,1fr));gap:10px}
+}
+@media (max-width:560px){.me{padding:3px}.me .mn{display:none}.hola{gap:12px}}</style>
 </head>
 <body>
 <div class="blobs" aria-hidden="true"><i style="width:420px;height:420px;background:#ffd6c9;left:-120px;top:-80px"></i><i style="width:360px;height:360px;background:#cfe9ff;right:-100px;top:120px;animation-delay:-6s"></i><i style="width:300px;height:300px;background:#e3d9ff;left:30%;bottom:-120px;animation-delay:-12s"></i><i style="width:220px;height:220px;background:#d4f5e6;right:20%;top:-60px;animation-delay:-3s"></i></div>
@@ -164,7 +227,7 @@ header{background:rgba(233,238,252,.35);backdrop-filter:blur(22px) saturate(180%
   <nav class="crumbs" id="crumbs"></nav>
 </header>
 <main id="app"></main>
-<footer>Juegos hechos para las clases de Informática. El avance de cada juego queda guardado en cada compu.</footer>
+<footer>Juegos hechos para las clases de Informática. El avance de cada juego queda guardado en cada compu.<br>Avatares hechos con <a href="https://www.dicebear.com">DiceBear</a>: Adventurer y Lorelei de Lisa Wischofsky, Big Smile de Ashley Seo y Notionists de Zoish (licencias <a href="https://creativecommons.org/licenses/by/4.0/deed.es">CC BY 4.0</a> y <a href="https://creativecommons.org/publicdomain/zero/1.0/deed.es">CC0</a>, <a href="avatar/LICENCIAS.txt">detalle</a>).</footer>
 <script src="datos.js"></script>
 <script src="config.js"></script>
 <script>
@@ -227,7 +290,7 @@ header{background:rgba(233,238,252,.35);backdrop-filter:blur(22px) saturate(180%
   function home() {
     setCrumbs([['Inicio', '#/']]);
     var rec = ls.get('portalRecientes', []).map(function (r) { return find(r.s, r.w); }).filter(Boolean).slice(0, 4);
-    var html = '<h1>¡Hola! ¿A qué jugamos?</h1><p class="sub">Elegí tu colegio y tu clase, o seguí donde lo dejaste.</p>';
+    var html = (PERFIL && PERFIL.img ? '<h1 class="hola" style="--fav:' + PERFIL.color + '"><button class="yo" type="button" data-perfil aria-label="Cambiar mi perfil">' + avHTML(PERFIL) + '</button><span>¡Hola, <mark>' + esc(PERFIL.n) + '</mark>! ¿A qué jugamos?</span></h1>' : '<h1>¡Hola! ¿A qué jugamos?</h1>') + '<p class="sub">Elegí tu colegio y tu clase, o seguí donde lo dejaste.</p>';
     if (rec.length) html += '<h2 style="margin-top:6px">Seguir jugando</h2><div class="grid recent">' + rec.map(function (x) { return card(x, { go: true, where: true }); }).join('') + '</div><h2>Atajos</h2>';
     html += '<div class="bar"><label class="search"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="#6b6790" stroke-width="2.6"/><path d="M15.5 15.5 L21 21" stroke="#6b6790" stroke-width="2.6" stroke-linecap="round"/></svg><input id="q" type="search" placeholder="Buscar un juego" autocomplete="off" aria-label="Buscar un juego"><kbd>/</kbd></label>' +
       D.colegios.map(function (c) { return c.clases.map(function (k) { return '<a class="chip" href="#/' + c.id + '/' + k.id + '" data-clase="' + c.id + '/' + k.id + '"><i style="background:' + k.color + '"></i>' + esc(c.nombre + ' · ' + k.nombre) + '</a>'; }).join(''); }).join('') + '</div>';
@@ -236,6 +299,7 @@ header{background:rgba(233,238,252,.35);backdrop-filter:blur(22px) saturate(180%
       return '<a class="tile school" href="#/' + c.id + '" data-colegio="' + c.id + '" style="background:' + c.color + '"><div class="big">' + esc(c.nombre) + '</div><div class="place">' + esc(c.lugar) + '</div><span class="count">' + plural(n) + '</span>' + schoolArt(c.color) + '</a>';
     }).join('') + '</div>';
     app.innerHTML = html;
+    var yo = app.querySelector('[data-perfil]'); if (yo) yo.addEventListener('click', function () { abrirPerfil(); });
     var q = document.getElementById('q'), res = document.getElementById('results'), sch = document.getElementById('schools');
     q.addEventListener('input', function () {
       var t = norm(q.value.trim());
@@ -338,6 +402,213 @@ header{background:rgba(233,238,252,.35);backdrop-filter:blur(22px) saturate(180%
     }
   }
 
+  // ----- Perfil: nombre o apodo, avatar y estilos propios. Queda guardado solo en esta compu (localStorage);
+  // los avatares los dibuja DiceBear en la página (avatar/dicebear.js, se carga recién al abrir el editor).
+  var ESTILOS = {
+    adventurer: { zoom: { cara: { scale: 140, translateX: 4 }, ojos: { scale: 190, translateX: 6, translateY: 4 }, boca: { scale: 190, translateX: 6, translateY: -14 } },
+      partes: [['hair', 'Pelo', 'pelo'], ['hairColor', 'Color de pelo', 'pelo'], ['skinColor', 'Piel', 'cara'], ['eyes', 'Ojos', 'ojos'], ['eyebrows', 'Cejas', 'ojos'], ['mouth', 'Boca', 'boca'], ['glasses', 'Anteojos', 'ojos'], ['earrings', 'Aros', 'cara'], ['features', 'Detalles', 'cara']] },
+    bigSmile: { base: { scale: 90, translateX: -4 }, zoom: { cara: { scale: 125, translateX: -9 }, ojos: { scale: 170, translateX: -14, translateY: 6 }, boca: { scale: 170, translateX: -14, translateY: -14 } },
+      partes: [['hair', 'Pelo', 'pelo'], ['hairColor', 'Color de pelo', 'pelo'], ['skinColor', 'Piel', 'cara'], ['eyes', 'Ojos', 'ojos'], ['mouth', 'Boca', 'boca'], ['accessories', 'Accesorios', 'pelo']] },
+    lorelei: { zoom: { cara: { scale: 140 }, ojos: { scale: 200, translateY: 2 }, boca: { scale: 200, translateY: -22 } },
+      colores: { hairColor: ['2c1b18', '6a4e35', 'a55728', 'd6b370', 'e8e1e1', 'ef476f', 'ff9cc4', '9b7bff', '4fc3f7', '2fbf8f'], skinColor: ['ffffff', 'ffe4c0', 'f5d7b1', 'e2ba87', 'c99c62', 'a47539', '8c5a2b', '643d19'] },
+      partes: [['hair', 'Pelo', 'pelo'], ['hairColor', 'Color de pelo', 'pelo'], ['skinColor', 'Piel', 'cara'], ['eyes', 'Ojos', 'ojos'], ['eyebrows', 'Cejas', 'ojos'], ['mouth', 'Boca', 'boca'], ['nose', 'Nariz', 'boca'], ['glasses', 'Anteojos', 'ojos'], ['earrings', 'Aros', 'cara'], ['hairAccessories', 'Flores', 'pelo'], ['freckles', 'Pecas', 'ojos']] },
+    notionists: { zoom: { pelo: { scale: 130, translateX: 4, translateY: 12 }, cara: { scale: 160, translateX: 6, translateY: 10 }, ojos: { scale: 220, translateX: 10, translateY: 16 }, boca: { scale: 220, translateX: 8, translateY: 2 } },
+      partes: [['hair', 'Pelo', 'pelo'], ['eyes', 'Ojos', 'ojos'], ['brows', 'Cejas', 'ojos'], ['lips', 'Boca', 'boca'], ['nose', 'Nariz', 'boca'], ['glasses', 'Anteojos', 'ojos'], ['beard', 'Barba', 'cara'], ['body', 'Ropa', 'cuerpo'], ['bodyIcon', 'Dibujo', 'cuerpo'], ['gesture', 'Manos', 'cuerpo']] },
+  };
+  var FONDOS = {
+    cielo: 'linear-gradient(160deg,#e0f3ff,#8fd0ff)', durazno: 'linear-gradient(160deg,#ffe6da,#ffab8f)', lila: 'linear-gradient(160deg,#efe8ff,#b9a2ff)', menta: 'linear-gradient(160deg,#e2fbef,#8fe3c0)',
+    sol: 'linear-gradient(160deg,#fff6c9,#ffd23f)', chicle: 'linear-gradient(160deg,#ffe3ef,#ff94bf)', atardecer: 'linear-gradient(160deg,#ffe27a,#ff8a65 55%,#b392ff)', arcoiris: 'linear-gradient(135deg,#ffb3b3,#ffe08a,#b8f0c8,#a8d8ff,#d3bfff)',
+    noche: 'radial-gradient(#fff 1px,transparent 1.6px) 3px 5px/17px 17px,radial-gradient(rgba(255,255,255,.6) 1px,transparent 1.5px) 11px 13px/23px 23px,linear-gradient(160deg,#2b2766,#6a52e0)',
+    puntos: 'radial-gradient(rgba(255,255,255,.75) 2.5px,transparent 3px) 0 0/16px 16px,linear-gradient(160deg,#a8dcff,#6fb8ff)', rayas: 'repeating-linear-gradient(45deg,#ffe9dd 0 9px,#ffd3bf 9px 18px)', nube: 'linear-gradient(160deg,#ffffff,#e4e9f7)',
+  };
+  var MARCOS = {
+    nada: { pad: '0' }, vidrio: { ring: 'linear-gradient(135deg,rgba(255,255,255,.95),rgba(255,255,255,.5))', glow: 'inset 0 1px 0 #fff,0 4px 12px rgba(36,32,74,.18)' },
+    color: { ring: 'var(--fav)' }, arcoiris: { ring: 'conic-gradient(#ff7a59,#ffd23f,#2fbf8f,#4fc3f7,#9b7bff,#ef476f,#ff7a59)' },
+    oro: { ring: 'linear-gradient(135deg,#fff2b8,#e2b100 35%,#fff0a8 55%,#c99700)', glow: '0 3px 10px rgba(201,151,0,.35)' },
+    puntos: { ring: 'repeating-conic-gradient(var(--fav) 0 11.25deg,#fff 11.25deg 22.5deg)' },
+    neon: { ring: 'var(--fav)', glow: '0 0 0 2px #fff,0 0 16px var(--fav),0 0 4px var(--fav)', pad: '4.5%' },
+  };
+  var INSIGNIAS = {
+    estrella: '<path d="M12 2.5l2.9 6 6.6.8-4.9 4.6 1.3 6.6L12 17.3 6.1 20.5l1.3-6.6L2.5 9.3l6.6-.8z" fill="#ffd23f" stroke="#d6a800" stroke-width="1.4" stroke-linejoin="round"/>',
+    corazon: '<path d="M12 20.5 4.3 12.8a4.9 4.9 0 0 1 7-7l.7.7.7-.7a4.9 4.9 0 0 1 7 7z" fill="#ef476f" stroke="#c22f55" stroke-width="1.4" stroke-linejoin="round"/>',
+    rayo: '<path d="M13.5 2 5 13.5h6L10 22l9-12h-6z" fill="#ffc83f" stroke="#e08a00" stroke-width="1.4" stroke-linejoin="round"/>',
+    nota: '<path d="M9 17.5a3 3 0 1 1-2-2.8V5.5l11-2.5v12a3 3 0 1 1-2-2.8V6.9L9 8.5z" fill="#9b7bff" stroke="#6a4fd6" stroke-width="1.2" stroke-linejoin="round"/>',
+    corona: '<path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z" fill="#ffd23f" stroke="#d6a800" stroke-width="1.4" stroke-linejoin="round"/><circle cx="12" cy="15" r="1.6" fill="#ef476f"/>',
+    flor: '<g fill="#ff94bf" stroke="#e05a92" stroke-width="1"><circle cx="12" cy="6.5" r="3.6"/><circle cx="17.2" cy="10.3" r="3.6"/><circle cx="15.2" cy="16.4" r="3.6"/><circle cx="8.8" cy="16.4" r="3.6"/><circle cx="6.8" cy="10.3" r="3.6"/></g><circle cx="12" cy="12" r="3" fill="#ffd23f"/>',
+    pelota: '<circle cx="12" cy="12" r="9.5" fill="#fff" stroke="#24204a" stroke-width="1.4"/><path d="M12 7.5l4.2 3-1.6 5h-5.2l-1.6-5z" fill="#24204a"/><path d="M12 7.5V2.6M16.2 10.5l4.6-1.6M14.6 15.5l2.9 3.9M9.4 15.5l-2.9 3.9M7.8 10.5 3.2 8.9" stroke="#24204a" stroke-width="1.3"/>',
+    cohete: '<path d="M12 2.5c3.6 2.6 5 6.6 4.2 11.5H7.8C7 9.1 8.4 5.1 12 2.5z" fill="#4fc3f7" stroke="#1f8fbf" stroke-width="1.3" stroke-linejoin="round"/><circle cx="12" cy="9" r="2" fill="#fff" stroke="#1f8fbf" stroke-width="1.2"/><path d="M7.8 11.5 5 15l3 .5M16.2 11.5 19 15l-3 .5" fill="#ef476f" stroke="#c22f55" stroke-width="1.2" stroke-linejoin="round"/><path d="M10 14.5q2 5 4 0" fill="#ffc83f" stroke="#e08a00" stroke-width="1.1"/>',
+  };
+  var COLORES = ['#ef476f', '#ff7a59', '#ffc83f', '#2fbf8f', '#06a77d', '#4fc3f7', '#3a86ff', '#9b7bff', '#c2185b', '#24204a'];
+  var NINGUNO = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="#b9b5d6" stroke-width="2.4"/><path d="M5.8 18.2 18.2 5.8" stroke="#b9b5d6" stroke-width="2.4" stroke-linecap="round"/></svg>';
+  var pick = function (a) { return a[Math.floor(Math.random() * a.length)]; };
+  var keys = function (o) { return Object.keys(o); };
+  var DB = function () { return window.DiceBear; };
+  function cargarDB(cb) {
+    if (DB()) return cb();
+    var s = document.createElement('script'); s.src = 'avatar/dicebear.js'; s.onload = cb; document.head.appendChild(s);
+  }
+  // Opciones de cada parte, tomadas de la propia librería; las que pueden no estar empiezan con "ninguno".
+  function valores(e, k) {
+    var lib = DB().estilos[e], pr = lib.schema.properties[k], v = (ESTILOS[e].colores || {})[k] || (pr.items && pr.items.enum) || pr.default || [];
+    v = v.slice().sort(function (a, b) { return a.localeCompare(b, undefined, { numeric: true }); });
+    return lib.schema.properties[k + 'Probability'] ? [null].concat(v) : v;
+  }
+  function azarEstilo(e) {
+    var o = {};
+    ESTILOS[e].partes.forEach(function (p) { var v = valores(e, p[0]); o[p[0]] = v[0] === null ? (p[0] === 'hair' || Math.random() < .25 ? pick(v.slice(1)) : null) : pick(v); });
+    return o;
+  }
+  function dibujo(e, o, extra) {
+    var op = { seed: 'portal' }, lib = DB().estilos[e];
+    ESTILOS[e].partes.forEach(function (p) {
+      var k = p[0], v = o[k];
+      if (lib.schema.properties[k + 'Probability']) op[k + 'Probability'] = v ? 100 : 0;
+      if (v) op[k] = [v];
+    });
+    return DB().createAvatar(lib, Object.assign(op, ESTILOS[e].base, extra || {})).toDataUri();
+  }
+  function avHTML(p, cambio) {
+    var q = Object.assign({}, p, cambio || {}), m = MARCOS[q.marco] || MARCOS.vidrio;
+    return '<span class="av" style="--fav:' + q.color + ';--bg:' + (FONDOS[q.fondo] || FONDOS.cielo) + (m.ring ? ';--ring:' + m.ring : '') + (m.glow ? ';--glow:' + m.glow : '') + (m.pad ? ';--pad:' + m.pad : '') + '"><b><img src="' + q.img + '" alt=""></b>' +
+      (q.ins && INSIGNIAS[q.ins] ? '<i class="ins"><svg viewBox="0 0 24 24">' + INSIGNIAS[q.ins] + '</svg></i>' : '') + '</span>';
+  }
+  var PERFIL = ls.get('portalPerfil', null);
+  if (PERFIL && (!PERFIL.e || !ESTILOS[PERFIL.e])) PERFIL = null;
+  // Botón del perfil en el encabezado.
+  var meBtn = document.createElement('button');
+  meBtn.className = 'me'; meBtn.type = 'button'; meBtn.id = 'me';
+  function drawMe() {
+    if (PERFIL && PERFIL.img) meBtn.innerHTML = '<span class="aw">' + avHTML(PERFIL) + '</span><span class="mn">' + esc(PERFIL.n) + '</span>';
+    else meBtn.innerHTML = '<span class="aw"><span class="av" style="--ring:linear-gradient(135deg,#fff,rgba(255,255,255,.5))"><b style="background:linear-gradient(160deg,#efe8ff,#b9a2ff)"><svg viewBox="0 0 40 40" style="display:block"><circle cx="20" cy="16" r="7" fill="#fff"/><path d="M7 38c1.5-8 6.5-12 13-12s11.5 4 13 12" fill="#fff"/></svg></b></span></span><span class="mn">Mi perfil</span>';
+    meBtn.setAttribute('aria-label', PERFIL ? 'Mi perfil: ' + PERFIL.n : 'Armar mi perfil');
+  }
+  drawMe();
+  document.querySelector('header').insertBefore(meBtn, muteBtn);
+  meBtn.addEventListener('click', function () { abrirPerfil(); });
+  // Si el perfil quedó sin dibujo (por ejemplo, armado a mano), se dibuja al cargar.
+  if (PERFIL && !PERFIL.img) cargarDB(function () { PERFIL.img = dibujo(PERFIL.e, PERFIL.o[PERFIL.e] || (PERFIL.o[PERFIL.e] = azarEstilo(PERFIL.e))); ls.set('portalPerfil', PERFIL); drawMe(); if (!location.hash.replace(/^#\/?/, '')) render(); });
+
+  var pf = null, borr = null, tab = 0;
+  function nuevoPerfil(nombre) {
+    var e = pick(keys(ESTILOS)), o = {}; o[e] = azarEstilo(e);
+    var p = { v: 1, n: nombre || '', e: e, o: o, fondo: pick(keys(FONDOS)), marco: pick(['vidrio', 'color', 'arcoiris', 'oro', 'puntos', 'neon']), ins: Math.random() < .5 ? pick(keys(INSIGNIAS)) : '', color: pick(COLORES) };
+    p.img = dibujo(e, o[e]);
+    return p;
+  }
+  function pestanas() {
+    return [['estilo', 'Estilo']].concat(ESTILOS[borr.e].partes.map(function (p) { return ['parte', p[1], p]; }), [['fondo', 'Fondo'], ['marco', 'Marco'], ['ins', 'Insignia'], ['color', 'Mi color']]);
+  }
+  function armarEditor() {
+    var w = document.createElement('div');
+    w.innerHTML = '<div class="modal pf" id="pf" hidden><div class="box pfb" role="dialog" aria-modal="true" aria-label="Mi perfil"><button class="x" type="button" data-x aria-label="Cerrar">×</button>' +
+      '<div class="pfl"><h3>Mi perfil</h3><div class="pfv"></div><label class="pfn"><input id="pfNombre" maxlength="14" placeholder="Tu nombre o apodo" aria-label="Tu nombre o apodo" autocomplete="off" spellcheck="false"></label>' +
+      '<div class="row pfa"><button class="dado" type="button" data-azar><svg viewBox="0 0 32 32"><rect x="3" y="3" width="26" height="26" rx="7" fill="#fff" stroke="#9b7bff" stroke-width="2.4"/><g fill="#9b7bff"><circle cx="10" cy="10" r="2.6"/><circle cx="22" cy="10" r="2.6"/><circle cx="16" cy="16" r="2.6"/><circle cx="10" cy="22" r="2.6"/><circle cx="22" cy="22" r="2.6"/></g></svg>Sorprendeme</button><button class="send" type="button" data-ok>¡Listo!</button></div>' +
+      '<span class="thanks warn" aria-live="polite"></span><p class="note">Tu perfil queda guardado solo en esta compu.</p></div>' +
+      '<div class="pfr"><div class="tabs" role="tablist"></div><div class="opts"></div></div>' +
+      '<div class="done pfd" hidden><div class="pfbig"></div><b></b><span>Tu perfil quedó guardado en esta compu.</span></div><div class="pfload" hidden>Cargando…</div></div></div>';
+    document.body.appendChild(w.firstChild);
+    var m = document.getElementById('pf');
+    pf = { m: m, v: m.querySelector('.pfv'), n: m.querySelector('#pfNombre'), tabs: m.querySelector('.tabs'), opts: m.querySelector('.opts'), msg: m.querySelector('.thanks'), done: m.querySelector('.pfd'), load: m.querySelector('.pfload'), dado: m.querySelector('.dado') };
+    m.addEventListener('click', function (e) {
+      var t = e.target.closest('button');
+      if (e.target === m || (t && t.hasAttribute('data-x'))) return cerrarPerfil();
+      if (!t) return;
+      if (t.hasAttribute('data-azar')) return sorprender();
+      if (t.hasAttribute('data-ok')) return guardar();
+      if (t.dataset.t) { tab = +t.dataset.t; Snd.pop(); drawTabs(); drawOpts(); return; }
+      if (t.dataset.i) elegir(+t.dataset.i);
+    });
+    pf.n.addEventListener('input', function () { borr.n = pf.n.value; pf.msg.textContent = ''; });
+    pf.n.addEventListener('keydown', function (e) { if (e.key === 'Enter') guardar(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !m.hidden) { e.stopImmediatePropagation(); cerrarPerfil(); } }, true);
+  }
+  function abrirPerfil() {
+    if (!pf) armarEditor();
+    pf.m.hidden = false; pf.done.hidden = true; pf.msg.textContent = ''; Snd.open();
+    var listo = function () {
+      pf.load.hidden = true;
+      borr = PERFIL ? JSON.parse(JSON.stringify(PERFIL)) : nuevoPerfil('');
+      if (!borr.o[borr.e]) borr.o[borr.e] = azarEstilo(borr.e);
+      borr.img = dibujo(borr.e, borr.o[borr.e]);
+      pf.n.value = borr.n; tab = 0;
+      drawPrev(); drawTabs(); drawOpts();
+      if (!PERFIL && innerWidth > 719) setTimeout(function () { pf.n.focus(); }, 60);
+    };
+    if (DB()) listo(); else { pf.load.hidden = false; cargarDB(listo); }
+  }
+  function cerrarPerfil() {
+    if (!pf || pf.m.hidden) return;
+    pf.m.hidden = true; Snd.close();
+    if (!PERFIL) try { sessionStorage.setItem('portalPerfilLuego', '1'); } catch (e) { }
+  }
+  function drawPrev(salta) {
+    borr.img = dibujo(borr.e, borr.o[borr.e]);
+    pf.v.innerHTML = avHTML(borr);
+    if (salta) { var a = pf.v.firstChild; void a.offsetWidth; a.classList.add('salta'); }
+  }
+  function drawTabs() {
+    pf.tabs.innerHTML = pestanas().map(function (t, i) { return '<button type="button" role="tab" data-t="' + i + '" aria-selected="' + (i === tab) + '"' + (i === tab ? ' class="on"' : '') + '>' + t[1] + '</button>'; }).join('');
+    var on = pf.tabs.querySelector('.on'); if (on && on.scrollIntoView && innerWidth <= 719) on.scrollIntoView({ block: 'nearest', inline: 'center' });
+  }
+  // Cada opción se ve como miniatura: el mismo avatar con esa opción puesta.
+  var OPC = [];
+  function drawOpts() {
+    var t = pestanas()[tab], e = borr.e, o = borr.o[e], html = [];
+    OPC = [];
+    var th = function (img, fondo) { return '<span class="th" style="--bg:' + (FONDOS[fondo || borr.fondo] || FONDOS.cielo) + '"><img src="' + img + '" alt=""></span>'; };
+    if (t[0] === 'estilo') keys(ESTILOS).forEach(function (s) {
+      var so = borr.o[s] || (borr.o[s] = azarEstilo(s));
+      OPC.push({ on: s === e, html: th(dibujo(s, so)), set: function () { borr.e = s; } });
+    });
+    else if (t[0] === 'parte') {
+      var k = t[2][0], z = ESTILOS[e].zoom[t[2][2]] || {};
+      valores(e, k).forEach(function (v) {
+        var oo = Object.assign({}, o); oo[k] = v; if (/ojos|boca/.test(t[2][2])) ['glasses', 'accessories'].forEach(function (x) { if (x !== k) oo[x] = null; });
+        OPC.push({ on: (o[k] || null) === v, html: v === null ? '<span class="no">' + NINGUNO + '</span>' : th(dibujo(e, oo, z)), set: function () { o[k] = v; } });
+      });
+    }
+    else if (t[0] === 'fondo') keys(FONDOS).forEach(function (f) { OPC.push({ on: borr.fondo === f, wide: 1, html: avHTML(borr, { fondo: f }), set: function () { borr.fondo = f; } }); });
+    else if (t[0] === 'marco') keys(MARCOS).forEach(function (f) { OPC.push({ on: borr.marco === f, wide: 1, html: avHTML(borr, { marco: f }), set: function () { borr.marco = f; } }); });
+    else if (t[0] === 'ins') [''].concat(keys(INSIGNIAS)).forEach(function (f) { OPC.push({ on: borr.ins === f, wide: 1, html: avHTML(borr, { ins: f }), set: function () { borr.ins = f; } }); });
+    else COLORES.forEach(function (c) { OPC.push({ on: borr.color === c, wide: 1, html: '<span class="sw" style="--c:' + c + '"></span>', set: function () { borr.color = c; } }); });
+    pf.opts.innerHTML = OPC.map(function (x, i) { return '<button type="button" data-i="' + i + '" aria-label="' + t[1] + ' ' + (i + 1) + '" aria-pressed="' + x.on + '" class="' + (x.on ? 'on' : '') + (x.wide ? ' wide' : '') + '">' + x.html + '</button>'; }).join('');
+  }
+  function elegir(i) {
+    var x = OPC[i]; if (!x) return;
+    var antes = pf.opts.scrollTop;
+    x.set(); Snd.pop(); drawPrev(true);
+    if (pestanas()[tab][0] === 'estilo') drawTabs();
+    drawOpts(); pf.opts.scrollTop = antes;
+  }
+  // "Sorprendeme": baraja unos avatares al azar y frena en uno, como un dado.
+  function sorprender() {
+    if (pf.rodando) return;
+    pf.rodando = true; pf.dado.classList.toggle('gira');
+    var n = 0, paso = function () {
+      var nuevo = nuevoPerfil(borr.n); nuevo.o = Object.assign(borr.o, nuevo.o); borr = nuevo;
+      drawPrev(); Snd.bell(900 + n * 140, 0, .08, .03); Snd.air(0, .03, 3000 + n * 300, 2000, .12, 2.5);
+      if (++n < 7) setTimeout(paso, 60 + n * 18);
+      else { pf.rodando = false; drawPrev(true); Snd.ding(); tab = Math.min(tab, pestanas().length - 1); drawTabs(); drawOpts(); }
+    };
+    paso();
+  }
+  function guardar() {
+    var nombre = pf.n.value.trim().replace(/\s+/g, ' ');
+    if (!nombre) {
+      pf.msg.textContent = 'Escribí tu nombre o apodo.'; Snd.no();
+      pf.n.classList.remove('shake'); void pf.n.offsetWidth; pf.n.classList.add('shake'); pf.n.focus();
+      return;
+    }
+    borr.n = nombre; drawPrev();
+    // Solo se guardan los ajustes del estilo elegido.
+    var o = {}; o[borr.e] = borr.o[borr.e]; borr.o = o;
+    PERFIL = borr; ls.set('portalPerfil', PERFIL); drawMe();
+    pf.done.querySelector('.pfbig').innerHTML = avHTML(PERFIL);
+    pf.done.querySelector('.pfd>b').textContent = '¡Hola, ' + nombre + '!';
+    pf.done.hidden = false; Snd.ok(); confetti(pf.done.querySelector('.pfbig'));
+    setTimeout(function () { pf.m.hidden = true; if (!location.hash.replace(/^#\/?/, '')) render(); }, 2200);
+  }
+
   // ----- Ideas: ventana que aparece en el inicio. Las ideas van a un formulario privado del profe.
   var ideaUI = null;
   function ideas() {
@@ -432,7 +703,7 @@ header{background:rgba(233,238,252,.35);backdrop-filter:blur(22px) saturate(180%
     if (!onHome) { ideaUI.toast.hidden = true; ideaUI.modal.hidden = true; return; }
     // La invitación aparece sola una vez por día en cada compu.
     var today = new Date().toDateString();
-    if (ls.get('portalInvitacion', '') !== today) setTimeout(function () { if (!location.hash.replace(/^#\/?/, '') && ideaUI.modal.hidden) { ideaUI.toast.hidden = false; Snd.ding(); ls.set('portalInvitacion', today); } }, 3500);
+    if (ls.get('portalInvitacion', '') !== today) setTimeout(function () { if (!location.hash.replace(/^#\/?/, '') && !document.querySelector('.modal:not([hidden])')) { ideaUI.toast.hidden = false; Snd.ding(); ls.set('portalInvitacion', today); } }, 3500);
   }
 
   function render() {
@@ -448,13 +719,16 @@ header{background:rgba(233,238,252,.35);backdrop-filter:blur(22px) saturate(180%
   document.addEventListener('keydown', function (e) {
     var tag = (e.target.tagName || '').toLowerCase();
     if (tag === 'input' || tag === 'textarea' || tag === 'select') { if (e.key === 'Escape') e.target.blur(); return; }
-    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (e.ctrlKey || e.metaKey || e.altKey || document.querySelector('.modal:not([hidden])')) return;
     if (e.key === '/') { var q = document.getElementById('q'); if (q) { e.preventDefault(); q.focus(); } }
     else if (/^[1-9]$/.test(e.key)) { var g = app.querySelectorAll('a.game')[+e.key - 1]; if (g && location.hash.split('/').length > 2) g.click(); }
     else if (e.key === 'Escape') { var parts = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean); parts.pop(); location.hash = '#/' + parts.join('/'); }
   });
   window.addEventListener('hashchange', render);
   render();
+  // La primera vez que se entra en esta compu aparece el editor del perfil.
+  var luego = false; try { luego = !!sessionStorage.getItem('portalPerfilLuego'); } catch (e) { }
+  if (!PERFIL && !luego) setTimeout(abrirPerfil, 500);
 })();
 </script>
 </body>

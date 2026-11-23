@@ -1,1 +1,1 @@
-{"name":"portal-juegos","private":true,"type":"module","devDependencies":{"playwright-core":"^1.65.1"}}
+{"name":"portal-juegos","private":true,"type":"module","devDependencies":{"@dicebear/adventurer":"^9.4.3","@dicebear/big-smile":"^9.4.3","@dicebear/core":"^9.4.3","@dicebear/lorelei":"^9.4.3","@dicebear/notionists":"^9.4.3","esbuild":"^0.25.12","playwright-core":"^1.65.1"}}
