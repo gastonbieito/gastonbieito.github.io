@@ -12,8 +12,8 @@
         ] },
         { "id": "345", "nombre": "3.º, 4.º y 5.º", "detalle": "Martes y miércoles", "color": "#4fc3f7", "juegos": [
           { "slug": "ciber-don-atajo", "titulo": "El ciber de Don Atajo", "desc": "Atajos de teclado y trucos de compu.", "src": "2026-11-11_Rosario_345_El_Ciber_De_Don_Atajo/Ciber_Don_Atajo.html", "nuevo": true },
-          { "slug": "bucle-historia", "titulo": "bucle · modo historia", "desc": "Cómo te elige videos un algoritmo.", "src": "2026-11-10_Rosario_3_4_5_Bucle_Modo_Historia/Bucle_Modo_Historia.html" },
-          { "slug": "colla-2", "titulo": "Colla 2 · La pared del mundo", "desc": "Programá al robot muralista.", "src": "Juegos Colla y Helvecio/El_Mural_de_Colla_2.html" },
+          { "slug": "bucle-historia", "titulo": "bucle", "desc": "Cómo te elige videos un algoritmo.", "src": "2026-11-10_Rosario_3_4_5_Bucle_Modo_Historia/Bucle_Modo_Historia.html" },
+          { "slug": "colla-2", "titulo": "Colla 2", "desc": "Programá al robot muralista.", "src": "Juegos Colla y Helvecio/El_Mural_de_Colla_2.html" },
           { "slug": "atrapados", "titulo": "Atrapados en la compu", "desc": "Sala de escape con Polilla.", "src": "Polilla/Polilla.html" }
         ] },
         { "id": "6", "nombre": "6.º", "detalle": "Lunes y jueves", "color": "#9b7bff", "juegos": [
@@ -37,7 +37,7 @@
         ] },
         { "id": "6", "nombre": "6.º", "detalle": "Taller de programación", "color": "#ff6b9a", "juegos": [
           { "slug": "helvecio-fabrica", "titulo": "Helvecio y la fábrica cerrada", "desc": "Pisos de colores y decisiones.", "src": "2026-10-27_MTA_6to_Helvecio_3_La_Fabrica_Cerrada/Helvecio_3_La_Fabrica_Cerrada.html" },
-          { "slug": "detective-pixel-mta6", "titulo": "Detective Pixel: edición MTA", "desc": "Casos con corazonadas y diagramas.", "src": "2026-11-11_MTA_6to_Detective_Pixel/Detective_Pixel_MTA.html", "nuevo": true },
+          { "slug": "detective-pixel-mta6", "titulo": "Detective Pixel", "desc": "Casos con corazonadas y diagramas.", "src": "2026-11-11_MTA_6to_Detective_Pixel/Detective_Pixel_MTA.html", "nuevo": true },
           { "slug": "helvecio-perdido", "titulo": "Helvecio, el robot perdido", "desc": "20 niveles para llevarlo a casa.", "src": "Juegos Colla y Helvecio/Helvecio_Sexto_MTA.html" }
         ] }
       ]

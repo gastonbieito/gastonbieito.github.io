@@ -58,14 +58,14 @@ window.JUEGOS = {
       },
       {
        "slug": "bucle-historia",
-       "titulo": "bucle · modo historia",
+       "titulo": "bucle",
        "desc": "Cómo te elige videos un algoritmo.",
        "href": "j/bucle-historia/",
        "nuevo": false
       },
       {
        "slug": "colla-2",
-       "titulo": "Colla 2 · La pared del mundo",
+       "titulo": "Colla 2",
        "desc": "Programá al robot muralista.",
        "href": "j/colla-2/",
        "nuevo": false
@@ -188,7 +188,7 @@ window.JUEGOS = {
       },
       {
        "slug": "detective-pixel-mta6",
-       "titulo": "Detective Pixel: edición MTA",
+       "titulo": "Detective Pixel",
        "desc": "Casos con corazonadas y diagramas.",
        "href": "j/detective-pixel-mta6/",
        "nuevo": true
