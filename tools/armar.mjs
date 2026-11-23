@@ -8,7 +8,7 @@ import { chromium } from 'playwright-core';
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const M = JSON.parse(fs.readFileSync(path.join(root, 'tools', 'juegos.json'), 'utf8'));
-const local = { lumi: '../lumi-isla/dist/index.html', rumor: '../el-rumor/dist/index.html' };
+const local = { lumi: '../lumi-isla/dist/index.html', lumi2: '../lumi-isla/dist/2/index.html', rumor: '../el-rumor/dist/index.html' };
 const juegos = [];
 for (const c of M.colegios) for (const k of c.clases) for (const j of k.juegos) {
   if (j.src) {

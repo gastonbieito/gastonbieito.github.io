@@ -16,6 +16,8 @@ const box = await p.locator('#volver-portal').boundingBox(); if (!box || box.x <
 for (let i = 0; i < 3; i++) await p.mouse.click(12, 12);
 if (!(await p.isVisible('#panel'))) fail('lumi: el rincón docente dejó de andar'); await p.click('#pClose');
 await p.screenshot({ path: 'tests-out/volver-lumi.png' });
+await p.goto(BASE + '/lumi/2/'); await p.waitForTimeout(1500);
+const box2 = await p.locator('#volver-portal').boundingBox(); if (!box2 || box2.x < 56) fail('lumi 2: botón mal ubicado ' + JSON.stringify(box2));
 await p.goto(BASE + '/rumor/'); await p.waitForTimeout(1500);
 const bt = await p.evaluate(() => __rumor.button('portal')); if (!bt) fail('rumor: no está el botón Juegos'); else { await p.screenshot({ path: 'tests-out/volver-rumor.png' }); await p.mouse.click(bt.x, bt.y); await p.waitForURL('**/#/scjm/6', { timeout: 5000 }).catch(() => fail('rumor: no volvió')); }
 errs.forEach(e => fail('error: ' + e));

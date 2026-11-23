@@ -5,6 +5,7 @@
       "id": "scjm", "nombre": "SCJM", "lugar": "Rosario", "color": "#ff7a59",
       "clases": [
         { "id": "inicial", "nombre": "Inicial", "detalle": "Inicial, 1.º y 2.º", "color": "#ffc93c", "juegos": [
+          { "slug": "lumi2", "titulo": "Lumi y el faro dormido", "desc": "Encendé el faro: doble clic, teclado y caminos.", "url": "/lumi/2/", "nuevo": true },
           { "slug": "lumi", "titulo": "Lumi y la isla dormida", "desc": "Despertá la isla con clics y arrastres.", "url": "/lumi/", "nuevo": true },
           { "slug": "robotito-rescate", "volverY": 72, "titulo": "Robotito al rescate", "desc": "Guiá al robot y rescatá a los animales.", "src": "2026-11-09_Rosario_Inicial_1_2_Robotito_al_Rescate/Robotito_al_Rescate.html" },
           { "slug": "robotito-pintor", "volverY": 72, "titulo": "Robotito pintor", "desc": "Pintá dibujos moviendo al robot.", "src": "2026-11-10_Rosario_Inicial_1_2_Robotito_Pintor/Robotito_Pintor.html" },

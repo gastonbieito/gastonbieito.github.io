@@ -14,6 +14,13 @@ window.JUEGOS = {
      "color": "#ffc93c",
      "juegos": [
       {
+       "slug": "lumi2",
+       "titulo": "Lumi y el faro dormido",
+       "desc": "Encendé el faro: doble clic, teclado y caminos.",
+       "href": "/lumi/2/",
+       "nuevo": true
+      },
+      {
        "slug": "lumi",
        "titulo": "Lumi y la isla dormida",
        "desc": "Despertá la isla con clics y arrastres.",
