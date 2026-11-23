@@ -161,6 +161,16 @@ header{background:rgba(233,238,252,.35);backdrop-filter:blur(22px) saturate(180%
 .send{box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 8px 18px rgba(255,122,89,.35);background:linear-gradient(180deg,#ff8f70,#ff6a45)}
 .x{background:rgba(255,255,255,.7);box-shadow:var(--rim)}
 .game .key,.search kbd{background:rgba(255,255,255,.6);box-shadow:var(--rim)}
+/* ---------- Escudos ---------- */
+.school{padding-right:calc(min(40%,220px) + 36px)}
+.school .medal{position:absolute;right:26px;top:50%;width:min(40%,220px);aspect-ratio:1;border-radius:50%;display:grid;place-items:center;transform:translateY(-50%) rotate(5deg);background:radial-gradient(circle at 32% 24%,rgba(255,255,255,.97),rgba(255,255,255,.72) 60%,rgba(255,255,255,.5));backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:inset 0 2px 0 #fff,inset 0 0 0 1.5px rgba(255,255,255,.75),inset 0 -10px 24px rgba(36,32,74,.08),0 16px 34px rgba(0,0,0,.2);transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
+.school .medal::after{content:'';position:absolute;left:14%;top:7%;width:46%;height:22%;border-radius:50%;background:linear-gradient(180deg,rgba(255,255,255,.85),rgba(255,255,255,0));pointer-events:none}
+.school .esc{width:64%;height:64%;object-fit:contain;filter:drop-shadow(0 5px 8px rgba(36,32,74,.22))}
+.school:hover .medal,.school:focus-visible .medal{transform:translateY(-50%) rotate(-4deg) scale(1.07)}
+.tit{display:flex;align-items:center;gap:14px}
+.tit .te{height:1.25em;width:auto;filter:drop-shadow(0 4px 6px rgba(36,32,74,.2))}
+.crumb .ce,.seg .ce{height:1.25em;width:auto;vertical-align:-.3em;margin-right:6px}
+@media (max-width:560px){.school{padding-right:28px}.school .medal{width:112px;top:20px;right:18px;transform:rotate(5deg)}.school:hover .medal{transform:rotate(-4deg) scale(1.07)}}
 /* ---------- Perfil ---------- */
 .av{position:relative;display:block;width:100%;aspect-ratio:1;border-radius:50%;padding:var(--pad,6%);background:var(--ring,transparent);box-shadow:var(--glow,none)}
 .av>b{display:block;width:100%;height:100%;border-radius:50%;overflow:hidden;background:var(--bg,#fff);box-shadow:inset 0 2px 6px rgba(36,32,74,.12)}
@@ -247,11 +257,9 @@ footer a{color:inherit}
   D.colegios.forEach(function (c) { c.clases.forEach(function (k) { k.juegos.forEach(function (j) { ALL.push({ j: j, c: c, k: k }); }); }); });
   var find = function (slug, where) { return ALL.filter(function (x) { return x.j.slug === slug && (!where || x.c.id + '/' + x.k.id === where); })[0]; };
   var norm = function (s) { return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); };
-  var schoolArt = function (color) {
-    return '<svg class="art" viewBox="0 0 300 220" aria-hidden="true"><rect x="40" y="90" width="220" height="130" rx="10" fill="rgba(255,255,255,.9)"/><path d="M28 98 L150 26 L272 98Z" fill="rgba(255,255,255,.75)"/><rect x="128" y="150" width="44" height="70" rx="8" fill="' + color + '" opacity=".55"/>' +
-      [70, 110, 190, 230].map(function (x) { return '<rect x="' + (x - 14) + '" y="118" width="28" height="26" rx="6" fill="' + color + '" opacity=".4"/>'; }).join('') +
-      '<circle cx="150" cy="76" r="15" fill="' + color + '" opacity=".5"/><path d="M150 26 V4 M150 4 h26 v14 h-26" stroke="rgba(255,255,255,.9)" stroke-width="5" fill="rgba(255,255,255,.75)"/></svg>';
-  };
+  // Escudo de cada colegio (img/escudo-<id>.png).
+  var ESCUDOS = { scjm: 'Colegio del Sagrado Corazón de Jesús y de María', mta: 'Colegio MTA Schoenstatt' };
+  var escudo = function (c, cls) { return ESCUDOS[c.id] ? '<img class="' + cls + '" src="img/escudo-' + c.id + '.png" alt="Escudo del ' + esc(ESCUDOS[c.id]) + '">' : ''; };
   var STAR = function (on) { return '<svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6 6.6.8-4.9 4.6 1.3 6.6L12 17.3 6.1 20.5l1.3-6.6L2.5 9.3l6.6-.8z" fill="' + (on ? '#ffd23f' : '#e3e8f7') + '" stroke="' + (on ? '#d6a800' : '#c9d3f0') + '" stroke-width="1.5" stroke-linejoin="round"/></svg>'; };
   function card(x, o) {
     o = o || {};
@@ -278,7 +286,7 @@ footer a{color:inherit}
   function cover(j) {
     return '<div class="cover" style="--c:' + j.color + '"><span class="ct" style="--k:' + fitK(j.titulo) + '">' + esc(j.titulo) + '</span></div>';
   }
-  function setCrumbs(list) { crumbs.innerHTML = list.map(function (c, i) { return '<a class="crumb' + (i === list.length - 1 ? ' on' : '') + '" href="' + c[1] + '">' + esc(c[0]) + '</a>'; }).join(''); }
+  function setCrumbs(list) { crumbs.innerHTML = list.map(function (c, i) { return '<a class="crumb' + (i === list.length - 1 ? ' on' : '') + '" href="' + c[1] + '">' + (c[2] || '') + esc(c[0]) + '</a>'; }).join(''); }
   function pop() {
     var tiles = app.querySelectorAll('.tile,.chip,.panel');
     for (var i = 0; i < tiles.length; i++) tiles[i].animate && tiles[i].animate([{ opacity: 0, transform: 'translateY(16px) scale(.96)' }, { opacity: 1, transform: 'none' }], { duration: 380, delay: Math.min(i, 14) * 35, easing: 'cubic-bezier(.34,1.56,.64,1)', fill: 'backwards' });
@@ -301,7 +309,7 @@ footer a{color:inherit}
       D.colegios.map(function (c) { return c.clases.map(function (k) { return '<a class="chip" href="#/' + c.id + '/' + k.id + '" data-clase="' + c.id + '/' + k.id + '"><i style="background:' + k.color + '"></i>' + esc(c.nombre + ' · ' + k.nombre) + '</a>'; }).join(''); }).join('') + '</div>';
     html += '<div id="results"></div><div id="schools" class="grid schools">' + D.colegios.map(function (c) {
       var n = c.clases.reduce(function (s, k) { return s + k.juegos.length; }, 0);
-      return '<a class="tile school" href="#/' + c.id + '" data-colegio="' + c.id + '" style="background:' + c.color + '"><div class="big">' + esc(c.nombre) + '</div><div class="place">' + esc(c.lugar) + '</div><span class="count">' + plural(n) + '</span>' + schoolArt(c.color) + '</a>';
+      return '<a class="tile school" href="#/' + c.id + '" data-colegio="' + c.id + '" style="background:' + c.color + '"><div class="big">' + esc(c.nombre) + '</div><div class="place">' + esc(c.lugar) + '</div><span class="count">' + plural(n) + '</span>' + (ESCUDOS[c.id] ? '<span class="medal">' + escudo(c, 'esc') + '</span>' : '') + '</a>';
     }).join('') + '</div>';
     app.innerHTML = html;
     var yo = app.querySelector('[data-perfil]'); if (yo) yo.addEventListener('click', function () { abrirPerfil(); });
@@ -316,8 +324,8 @@ footer a{color:inherit}
     document.title = 'Juegos de Informática';
   }
   function school(c) {
-    setCrumbs([['Inicio', '#/'], [c.nombre, '#/' + c.id]]);
-    app.innerHTML = '<h1>' + esc(c.nombre) + '</h1><p class="sub">' + esc(c.lugar) + ' · Elegí tu clase</p><div class="grid classes">' + c.clases.map(function (k) {
+    setCrumbs([['Inicio', '#/'], [c.nombre, '#/' + c.id, escudo(c, 'ce')]]);
+    app.innerHTML = '<h1 class="tit">' + escudo(c, 'te') + esc(c.nombre) + '</h1><p class="sub">' + esc(c.lugar) + ' · Elegí tu clase</p><div class="grid classes">' + c.clases.map(function (k) {
       return '<a class="tile klass" href="#/' + c.id + '/' + k.id + '" data-clase="' + c.id + '/' + k.id + '" style="background:' + k.color + '"><div class="big">' + esc(k.nombre) + '</div><div class="det">' + esc(k.detalle) + '</div>' +
         '<span class="count">' + plural(k.juegos.length) + '</span><div class="stack">' + k.juegos.slice(0, 3).map(function (j) { return '<i style="background:' + j.color + '">' + esc(j.titulo.charAt(0)) + '</i>'; }).join('') + '</div></a>';
     }).join('') + '</div>';
@@ -325,8 +333,8 @@ footer a{color:inherit}
   }
   function klass(c, k) {
     ls.set('portalClase', c.id + '/' + k.id);
-    setCrumbs([['Inicio', '#/'], [c.nombre, '#/' + c.id], [k.nombre, '#/' + c.id + '/' + k.id]]);
-    app.innerHTML = '<h1>' + esc(c.nombre) + ' · ' + esc(k.nombre) + '</h1><p class="sub">' + esc(k.detalle) + ' · ' + plural(k.juegos.length) + ' · con las teclas 1 a ' + Math.min(9, k.juegos.length) + ' se abre cada juego</p><div class="grid games">' +
+    setCrumbs([['Inicio', '#/'], [c.nombre, '#/' + c.id, escudo(c, 'ce')], [k.nombre, '#/' + c.id + '/' + k.id]]);
+    app.innerHTML = '<h1 class="tit">' + escudo(c, 'te') + esc(c.nombre) + ' · ' + esc(k.nombre) + '</h1><p class="sub">' + esc(k.detalle) + ' · ' + plural(k.juegos.length) + ' · con las teclas 1 a ' + Math.min(9, k.juegos.length) + ' se abre cada juego</p><div class="grid games">' +
       k.juegos.map(function (j, i) { return card({ j: j, c: c, k: k }, { key: i < 9 ? String(i + 1) : '' }); }).join('') + '</div>';
     document.title = c.nombre + ' ' + k.nombre + ' · Juegos de Informática';
   }
@@ -630,7 +638,7 @@ footer a{color:inherit}
       '<div class="toast" id="ideaToast" hidden><b>¿Se te ocurre un juego nuevo o algo que te gustaría aprender?</b><div class="row"><button class="send" type="button" data-open>Contar mi idea</button><button class="ghost" type="button" data-close>Ahora no</button></div></div>' +
       '<div class="modal" id="ideaModal" hidden><form class="box" id="fIdea" novalidate><button class="x" type="button" data-close aria-label="Cerrar">×</button><h3>Tengo una idea</h3>' +
       '<div class="seg"><label><input type="radio" name="tipo" value="Juego nuevo" checked><span>Un juego nuevo</span></label><label><input type="radio" name="tipo" value="Algo para aprender"><span>Algo para aprender</span></label></div>' +
-      '<div class="cls"><b>¿De qué colegio y clase sos?</b><div class="seg">' + D.colegios.map(function (c) { return '<label><input type="radio" name="col" value="' + c.id + '"><span>' + esc(c.nombre) + '</span></label>'; }).join('') + '</div><div class="seg grados"></div></div>' +
+      '<div class="cls"><b>¿De qué colegio y clase sos?</b><div class="seg">' + D.colegios.map(function (c) { return '<label><input type="radio" name="col" value="' + c.id + '"><span>' + escudo(c, 'ce') + esc(c.nombre) + '</span></label>'; }).join('') + '</div><div class="seg grados"></div></div>' +
       '<textarea name="idea" maxlength="500" required placeholder="Contá tu idea: de qué se trata, qué habría que hacer…"></textarea>' +
       '<div class="row"><button class="send" type="submit">Mandar idea</button><span class="thanks" aria-live="polite"></span></div><p class="note">La lee el profe. No hace falta que pongas tu nombre.</p>' +
 '<div class="viaje" hidden><svg viewBox="0 0 360 150" aria-hidden="true"><path id="ruta" d="M58 66 Q180 -16 302 66" fill="none" stroke="#c9bdf5" stroke-width="3" stroke-dasharray="2 9" stroke-linecap="round"/>' +
