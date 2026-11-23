@@ -559,6 +559,8 @@ function festejar() {
     $('gTxt').textContent = nIdx < 0 ? 'Cada una es más difícil.' : (fin ? 'Se abrió la fábrica libre: máquinas sin fin.' : FRASES[nIdx % FRASES.length]);
     $('gSig').textContent = nIdx < 0 ? 'Otra' : (fin ? 'Fábrica libre' : 'Siguiente');
     $('capaGana').className = 'capa on';
+    // Aviso al portal: terminó la fábrica (o van 5 en la libre), puede ofrecer contar una idea.
+    if ((fin || libreN === 5) && window.portalIdea) window.portalIdea('fin');
   }, 1100);
 }
 var FRASES = ['La corriente llegó.', 'Así piensa la compu: prendido o apagado.', 'Una pieza más y ya sos ingeniero.', 'Las máquinas de tu casa tienen esto adentro.', 'Bien pensado.'];
@@ -612,5 +614,6 @@ window.__fab = { NIV: NIV, prep: prep, evalC: evalC, combos: combos, get R() { r
 })();
 </script>
 <script src="/volver.js" data-pos="bl"></script>
+<script src="/idea.js"></script>
 </body>
 </html>

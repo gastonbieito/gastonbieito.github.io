@@ -2256,6 +2256,7 @@ function finDesafio(gano) {
 /* ---------- cierre ---------- */
 function cierre() {
   S.fase = 'fin';
+  if (window.portalIdea) window.portalIdea('fin'); // aviso al portal: terminó la historia
   var o = $('otra');
   o.style.background = 'radial-gradient(900px 500px at 50% 0%,#2a1240,rgba(0,0,0,0)),#07070b';
   var cards = [['1', 'Cada segundo cuenta', 'No hace falta dar me gusta: con solo mirar, ya le estás enseñando.', '#ff5fa2'],
@@ -2292,4 +2293,5 @@ armarFeedEventos();
 requestAnimationFrame(tick);
 </script>
 <script src="/volver.js" data-pos="bl" data-y="50"></script>
+<script src="/idea.js"></script>
 </body></html>

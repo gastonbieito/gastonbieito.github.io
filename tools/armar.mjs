@@ -15,7 +15,9 @@ for (const c of M.colegios) for (const k of c.clases) for (const j of k.juegos) 
     const from = path.join(M.origen, j.src);
     fs.mkdirSync(path.join(root, 'j', j.slug), { recursive: true });
     // Copia el juego y le agrega el botón para volver al portal (esquina elegida en juegos.json, "volver").
-    const tag = `<script src="/volver.js" data-pos="${j.volver || 'bl'}"${j.volverY ? ` data-y="${j.volverY}"` : ''}></script>`;
+    const tag = `<script src="/volver.js" data-pos="${j.volver || 'bl'}"${j.volverY ? ` data-y="${j.volverY}"` : ''}></script>` +
+      // Lamparita para mandar ideas y opiniones sin volver al portal (idea.js). En Inicial no, porque todavía no escriben.
+      (k.id === 'inicial' ? '' : `\n<script src="/idea.js"></script>`);
     let html = fs.readFileSync(from, 'utf8');
     const at = html.lastIndexOf('</body>');
     html = at >= 0 ? html.slice(0, at) + tag + '\n' + html.slice(at) : html + '\n' + tag + '\n';

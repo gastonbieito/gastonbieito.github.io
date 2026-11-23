@@ -771,6 +771,7 @@ function salir(){
   S.salida = {bat: pct(), usado: TOTAL - S.t}; sonPuerta(); guardar(); mostrarFin();
 }
 function mostrarFin(){
+  if (window.portalIdea) window.portalIdea('fin'); // aviso al portal: escaparon
   var s = S.salida, np = 0, k;
   for (k in S.pistas) if (S.pistas.hasOwnProperty(k) && AX[k] && AX[k].sala < 5) np += S.pistas[k];
   $('fin').innerHTML = '<h1 class="festejo">¡ESCAPASTE!</h1><p style="color:#8DB3A2;font-size:17px">Polilla quedó encerrado en la papelera. <b style="color:#E3A857">' + esc(S.equipo) + '</b>, sos libre.</p>' +
@@ -796,5 +797,6 @@ init();
 
 </script>
 <script src="/volver.js" data-pos="bl"></script>
+<script src="/idea.js"></script>
 </body>
 </html>

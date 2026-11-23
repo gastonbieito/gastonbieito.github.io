@@ -755,6 +755,7 @@ const FANC = ['#FF3B6B', '#00B8F0', '#7C5CFF', '#2FBF84', '#FF9F43', '#E8456B'];
 
 /* ===== Publicar video ===== */
 function Publish(m, st, extra, shell) {
+  setTimeout(function () { if (nextMission(PL()) < 0 && window.portalIdea) window.portalIdea('fin'); }, 500); // aviso al portal: terminó todas las misiones
   const p = PL(), prev = p.vids[m.id] ? p.vids[m.id].stars : 0, first = prev === 0;
   const table = [0, 40, 80, 120], mult = [1, 1, 1.25, 1.5][p.level];
   const gain = st > prev ? Math.round((table[st] - table[prev]) * mult) : 0; const vg = gain > 0 ? gain * rint(7, 12) + rint(20, 60) : rint(8, 30);
@@ -1462,4 +1463,5 @@ MIMPL.m7 = function (sh, level) {
 })();
 
 </script><script src="/volver.js" data-pos="bl"></script>
+<script src="/idea.js"></script>
 </body></html>

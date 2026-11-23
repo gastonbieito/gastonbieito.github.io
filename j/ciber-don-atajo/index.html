@@ -2441,6 +2441,7 @@ function flTermino() {
   var m = G.ms, def = m.def;
   if (m.fin) { return; }
   m.fin = true;
+  if (def.id === MS[MS.length - 1].id && window.portalIdea) window.portalIdea('fin'); // aviso al portal: terminó la última misión
   m.tFin = new Date().getTime();
   var ms = m.tFin - m.t0;
   if (G.timer) { clearInterval(G.timer); G.timer = null; }
@@ -2642,4 +2643,5 @@ function flArrancar() {
 window.onload = flArrancar;
 </script>
 <script src="/volver.js" data-pos="bl" data-y="50"></script>
+<script src="/idea.js"></script>
 </body></html>
