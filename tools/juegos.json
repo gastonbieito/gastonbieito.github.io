@@ -6,19 +6,19 @@
       "clases": [
         { "id": "inicial", "nombre": "Inicial", "detalle": "Inicial, 1.º y 2.º", "color": "#ffc93c", "juegos": [
           { "slug": "lumi", "titulo": "Lumi y la isla dormida", "desc": "Despertá la isla con clics y arrastres.", "url": "/lumi/", "nuevo": true },
-          { "slug": "robotito-rescate", "titulo": "Robotito al rescate", "desc": "Guiá al robot y rescatá a los animales.", "src": "2026-11-09_Rosario_Inicial_1_2_Robotito_al_Rescate/Robotito_al_Rescate.html" },
-          { "slug": "robotito-pintor", "titulo": "Robotito pintor", "desc": "Pintá dibujos moviendo al robot.", "src": "2026-11-10_Rosario_Inicial_1_2_Robotito_Pintor/Robotito_Pintor.html" },
+          { "slug": "robotito-rescate", "volverY": 72, "titulo": "Robotito al rescate", "desc": "Guiá al robot y rescatá a los animales.", "src": "2026-11-09_Rosario_Inicial_1_2_Robotito_al_Rescate/Robotito_al_Rescate.html" },
+          { "slug": "robotito-pintor", "volverY": 72, "titulo": "Robotito pintor", "desc": "Pintá dibujos moviendo al robot.", "src": "2026-11-10_Rosario_Inicial_1_2_Robotito_Pintor/Robotito_Pintor.html" },
           { "slug": "teclado-magico", "titulo": "Teclado mágico", "desc": "Cada tecla trae un animal.", "src": "2026-11-06_Jornada_Integracion_Stand_Informatica/Teclado_Magico.html" }
         ] },
         { "id": "345", "nombre": "3.º, 4.º y 5.º", "detalle": "Martes y miércoles", "color": "#4fc3f7", "juegos": [
-          { "slug": "ciber-don-atajo", "titulo": "El ciber de Don Atajo", "desc": "Atajos de teclado y trucos de compu.", "src": "2026-11-11_Rosario_345_El_Ciber_De_Don_Atajo/Ciber_Don_Atajo.html", "nuevo": true },
-          { "slug": "bucle-historia", "titulo": "bucle", "desc": "Cómo te elige videos un algoritmo.", "src": "2026-11-10_Rosario_3_4_5_Bucle_Modo_Historia/Bucle_Modo_Historia.html" },
+          { "slug": "ciber-don-atajo", "volverY": 50, "titulo": "El ciber de Don Atajo", "desc": "Atajos de teclado y trucos de compu.", "src": "2026-11-11_Rosario_345_El_Ciber_De_Don_Atajo/Ciber_Don_Atajo.html", "nuevo": true },
+          { "slug": "bucle-historia", "volverY": 50, "titulo": "bucle", "desc": "Cómo te elige videos un algoritmo.", "src": "2026-11-10_Rosario_3_4_5_Bucle_Modo_Historia/Bucle_Modo_Historia.html" },
           { "slug": "colla-2", "titulo": "Colla 2", "desc": "Programá al robot muralista.", "src": "Juegos Colla y Helvecio/El_Mural_de_Colla_2.html" },
           { "slug": "atrapados", "titulo": "Atrapados en la compu", "desc": "Sala de escape con Polilla.", "src": "Polilla/Polilla.html" }
         ] },
         { "id": "6", "nombre": "6.º", "detalle": "Lunes y jueves", "color": "#9b7bff", "juegos": [
           { "slug": "rumor", "titulo": "El rumor", "desc": "Cómo se difunde un mensaje y cómo se frena.", "url": "/rumor/", "nuevo": true },
-          { "slug": "bucle", "titulo": "bucle", "desc": "El algoritmo te conoce.", "src": "2026-11-09_Rosario_6_El_Algoritmo_Te_Conoce/Bucle.html" },
+          { "slug": "bucle", "volverY": 50, "titulo": "bucle", "desc": "El algoritmo te conoce.", "src": "2026-11-09_Rosario_6_El_Algoritmo_Te_Conoce/Bucle.html" },
           { "slug": "detective-pixel", "titulo": "Detective Pixel", "desc": "Casos disparatados para resolver con lógica.", "src": "2026-11-05_Rosario_6_Detective_Pixel/Detective_Pixel_Casos_Disparatados.html" },
           { "slug": "venganza-polilla", "titulo": "La venganza de Polilla", "desc": "Sala de escape con acertijos de compu.", "src": "2026-10-22_Rosario_6_La_Venganza_De_Polilla/La_Venganza_De_Polilla.html" },
           { "slug": "colla-mira", "titulo": "Colla, el robot que mira", "desc": "Programá con sensores.", "src": "Juegos Colla y Helvecio/Colla_El_Robot_Que_Mira.html" },

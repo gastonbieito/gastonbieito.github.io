@@ -14,7 +14,12 @@ for (const c of M.colegios) for (const k of c.clases) for (const j of k.juegos) 
   if (j.src) {
     const from = path.join(M.origen, j.src);
     fs.mkdirSync(path.join(root, 'j', j.slug), { recursive: true });
-    fs.copyFileSync(from, path.join(root, 'j', j.slug, 'index.html'));
+    // Copia el juego y le agrega el botón para volver al portal (esquina elegida en juegos.json, "volver").
+    const tag = `<script src="/volver.js" data-pos="${j.volver || 'bl'}"${j.volverY ? ` data-y="${j.volverY}"` : ''}></script>`;
+    let html = fs.readFileSync(from, 'utf8');
+    const at = html.lastIndexOf('</body>');
+    html = at >= 0 ? html.slice(0, at) + tag + '\n' + html.slice(at) : html + '\n' + tag + '\n';
+    fs.writeFileSync(path.join(root, 'j', j.slug, 'index.html'), html);
     j.href = `j/${j.slug}/`;
     j.file = from;
   } else { j.href = j.url; j.file = path.join(root, local[j.slug]); }
