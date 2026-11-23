@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Atrapados en la compu</title>
+<style>
+  body{ margin:0; background:#0A1A14; color:#E6F2EC; font-family:Verdana,Arial,Helvetica,sans-serif; font-size:15px; }
+  #caja{ width:980px; margin:0 auto; padding:14px 0 50px; }
+  button{ font-family:Verdana,Arial,Helvetica,sans-serif; }
+  .limpiar{ clear:both; }
+
+  /* barra superior */
+  #barra{ overflow:hidden; padding:6px 0 12px; border-bottom:2px solid #1D3D30; }
+  #titulo{ float:left; font-size:25px; font-weight:bold; letter-spacing:-0.5px; }
+  #titulo span{ color:#E3A857; }
+  #sub{ float:left; clear:left; font-size:11px; color:#5F8A77; letter-spacing:1px; margin-top:3px; }
+  #bateria{ float:right; width:270px; margin-top:4px; }
+  #batTxt{ font-size:12px; color:#8DB3A2; margin-bottom:5px; overflow:hidden; }
+  #batTxt b{ float:right; font-size:15px; color:#6EE7B7; }
+  #batMarco{ position:relative; height:22px; border:2px solid #3B6B57; border-radius:6px; padding:2px; }
+  #batMarco:after{ content:''; position:absolute; right:-7px; top:6px; width:4px; height:10px; background:#3B6B57; border-radius:0 2px 2px 0; }
+  #batBarra{ height:18px; width:100%; background:#6EE7B7; border-radius:3px; transition:width .5s, background .5s; }
+  #equipoTxt{ float:right; clear:right; font-size:11px; color:#5F8A77; margin-top:6px; }
+  #sonido{ background:none; border:0; color:#5F8A77; font-size:11px; cursor:pointer; text-decoration:underline; padding:0; margin-left:8px; }
+
+  /* salas */
+  #salas{ margin:14px 0 14px; overflow:hidden; }
+  .tab{ float:left; margin-right:8px; padding:8px 14px 8px 10px; border-radius:12px; background:#10261D; color:#5F8A77;
+        font-size:12.5px; font-weight:bold; cursor:pointer; border:2px solid #10261D; }
+  .tab svg{ vertical-align:middle; margin-right:6px; }
+  .tab.hecha{ color:#0A1A14; background:#6EE7B7; border-color:#6EE7B7; }
+  .tab.ahora{ border-color:#E3A857; color:#E3A857; }
+  .tab.cerrada{ opacity:.45; cursor:default; }
+  .tab.bonus{ background:#231B38; border-color:#231B38; color:#B794F4; }
+
+  #izq{ float:left; width:640px; }
+  #der{ float:right; width:316px; }
+
+  .sala{ background:#10261D; border:1px solid #1D3D30; border-radius:16px; padding:20px 24px; }
+  .sala h1{ margin:0 0 4px; font-size:24px; color:#E3A857; }
+  .sala .intro{ color:#8DB3A2; font-size:13.5px; line-height:1.55; margin:0 0 14px; }
+  .acert{ border-top:1px solid #1D3D30; padding-top:16px; margin-top:6px; }
+  .acert h2{ font-size:16px; margin:0 0 8px; color:#E6F2EC; }
+  .acert h2 i{ font-style:normal; color:#5F8A77; font-weight:normal; font-size:12px; margin-left:6px; }
+  .consigna{ font-size:14.5px; line-height:1.6; color:#CFE3D9; margin:0 0 12px; }
+  .consigna b{ color:#E3A857; }
+  .hecho{ background:#0D2F23; border:1px solid #2F6B54; border-radius:10px; padding:9px 14px; margin-bottom:8px;
+          color:#6EE7B7; font-size:13.5px; }
+  .hecho b{ color:#E6F2EC; }
+
+  .codigo{ font-family:'Courier New',monospace; font-size:30px; letter-spacing:6px; background:#06120D; border:1px solid #1D3D30;
+           border-radius:10px; padding:14px 18px; margin:6px 0 14px; color:#6EE7B7; text-align:center; }
+  .fila{ margin-top:10px; }
+  input.resp{ font-size:20px; padding:9px 12px; width:230px; border-radius:9px; border:2px solid #3B6B57; background:#06120D; color:#fff;
+              font-family:'Courier New',monospace; letter-spacing:3px; text-transform:uppercase; vertical-align:middle; }
+  .btn{ display:inline-block; vertical-align:middle; border:0; border-radius:10px; padding:11px 18px; margin-left:6px; cursor:pointer;
+        font-size:14px; font-weight:bold; background:#E3A857; color:#0A1A14; border-bottom:4px solid #A87633; }
+  .btn:active{ border-bottom-width:2px; margin-top:2px; }
+  .btn.sec{ background:#1D3D30; color:#CFE3D9; border-bottom-color:#122B21; }
+  .msj{ min-height:22px; margin-top:10px; font-size:14px; font-weight:bold; }
+  .msj.mal{ color:#FF6B6B; } .msj.bien{ color:#6EE7B7; }
+
+  /* teclado en pantalla */
+  .teclado{ margin:4px 0 6px; }
+  .tfila{ margin-bottom:5px; white-space:nowrap; }
+  .tecla{ display:inline-block; width:40px; height:40px; line-height:40px; text-align:center; margin-right:5px; border-radius:7px;
+          background:#1D3D30; color:#E6F2EC; font-weight:bold; font-size:15px; cursor:pointer; border:0; border-bottom:3px solid #0E2219; padding:0; }
+  .tecla:hover{ background:#2A5444; }
+  .tecla.ancha{ width:90px; font-size:11px; }
+  .tecla.sucia{ background:#5B5546; color:#2A271F; position:relative; }
+  .tecla.sucia:after{ content:''; position:absolute; left:8px; top:7px; width:22px; height:24px; border-radius:50%;
+                      border:2px dotted #8E866E; }
+
+  /* lámparas */
+  .lamparas{ margin:8px 0 4px; white-space:nowrap; }
+  .lampara{ display:inline-block; vertical-align:top; width:104px; margin-right:8px; text-align:center; cursor:pointer; }
+  .foco{ width:56px; height:56px; margin:0 auto 6px; border-radius:50%; background:#1D3D30; border:3px solid #2E5545; transition:background .15s, box-shadow .15s; }
+  .lampara.on .foco{ background:#FFE27A; border-color:#FFF2B8; box-shadow:0 0 22px rgba(255,226,122,.75); }
+  .puntos{ white-space:normal; height:46px; background:#06120D; border-radius:8px; padding:6px 4px; line-height:9px; }
+  .pto{ display:inline-block; width:7px; height:7px; border-radius:50%; background:#8DB3A2; margin:1px; }
+  .lampara.on .pto{ background:#FFE27A; }
+  .mini{ white-space:nowrap; margin:6px 0; }
+  .mini span{ display:inline-block; width:26px; height:26px; border-radius:50%; margin-right:8px; background:#1D3D30; border:2px solid #2E5545; vertical-align:middle; }
+  .mini span.on{ background:#FFE27A; border-color:#FFF2B8; box-shadow:0 0 10px rgba(255,226,122,.6); }
+  .mini em{ font-style:normal; color:#5F8A77; font-size:12px; margin-left:4px; vertical-align:middle; }
+
+  /* luces de pantalla */
+  .monitor{ width:230px; height:150px; border-radius:12px; border:10px solid #22332C; background:#000; margin:6px 0 10px; }
+  .luces button{ width:96px; padding:12px 0; margin-right:8px; border-radius:10px; border:3px solid #333; font-weight:bold; cursor:pointer; color:#fff; background:#222; }
+  .luces button.r.on{ background:#E53935; border-color:#FF8A80; }
+  .luces button.g.on{ background:#2E9E44; border-color:#8AF59C; }
+  .luces button.b.on{ background:#2F55D4; border-color:#8EA8FF; }
+  .objetivos span{ display:inline-block; width:44px; height:44px; border-radius:10px; margin-right:10px; border:3px solid #22332C; vertical-align:middle; }
+  .objetivos span.ya{ border-color:#6EE7B7; }
+  .objetivos span.ahora{ border-color:#E3A857; box-shadow:0 0 0 3px rgba(227,168,87,.35); }
+
+  /* píxeles */
+  .grilla{ display:inline-block; vertical-align:top; background:#06120D; padding:8px; border-radius:10px; }
+  .gfila{ white-space:nowrap; height:32px; }
+  .px{ display:inline-block; width:30px; height:30px; margin:0 2px 2px 0; background:#E6F2EC; border-radius:3px; cursor:pointer; }
+  .px.n{ background:#111; box-shadow:inset 0 0 0 2px #333; }
+  .reglas{ display:inline-block; vertical-align:top; margin-left:14px; font-family:'Courier New',monospace; font-size:13.5px; line-height:32px; color:#CFE3D9; }
+
+  /* explorador */
+  .explorador{ background:#F2F4F3; color:#1B1F1D; border-radius:10px; overflow:hidden; border:1px solid #38544A; font-family:Arial,Helvetica,sans-serif; }
+  .xbarra{ background:#DCE3E0; padding:6px 10px; font-size:12px; border-bottom:1px solid #B9C5C0; }
+  .xbarra button{ font-size:12px; padding:4px 10px; margin-right:6px; border:1px solid #A9B6B1; border-radius:5px; background:#fff; cursor:pointer; font-family:Arial,Helvetica,sans-serif; }
+  .xbarra button.on{ background:#CFE9DD; border-color:#4C9A78; }
+  .xruta{ display:inline-block; margin-left:6px; color:#4A5A54; }
+  .xcuerpo{ overflow:hidden; height:260px; }
+  .xarbol{ float:left; width:150px; height:260px; background:#E8EDEB; border-right:1px solid #C9D3CF; font-size:13px; }
+  .xarbol div{ padding:7px 12px; cursor:pointer; }
+  .xarbol div.sel{ background:#CFE9DD; font-weight:bold; }
+  .xlista{ float:left; width:400px; height:260px; overflow:auto; padding:8px; font-size:13px; }
+  .xarch{ padding:6px 8px; border-radius:5px; cursor:pointer; }
+  .xarch:hover{ background:#E3EEE9; }
+  .xarch.sel{ background:#CFE9DD; }
+  .xico{ display:inline-block; width:22px; height:16px; border-radius:3px; margin-right:8px; vertical-align:middle; font-size:9px; font-weight:bold; color:#fff; text-align:center; line-height:16px; }
+  .xvista{ background:#fff; border-top:1px solid #C9D3CF; padding:10px 12px; font-size:13px; min-height:40px; line-height:1.5; }
+
+  /* cables */
+  .puertos{ margin:10px 0; }
+  .puerto{ display:inline-block; width:132px; margin-right:10px; text-align:center; }
+  .puerto .num{ background:#22332C; border-radius:8px 8px 0 0; padding:6px; font-weight:bold; color:#E3A857; }
+  .puerto select{ width:132px; font-size:15px; padding:8px; border-radius:0 0 8px 8px; border:1px solid #3B6B57; background:#06120D; color:#fff; }
+  .pistasL{ margin:0 0 10px; padding-left:20px; line-height:1.7; color:#CFE3D9; font-size:14px; }
+
+  /* columna derecha */
+  .panel{ background:#10261D; border:1px solid #1D3D30; border-radius:14px; padding:14px 16px; margin-bottom:12px; }
+  .panel .t{ font-size:11px; letter-spacing:2px; color:#5F8A77; font-weight:bold; margin-bottom:8px; }
+  .pal{ font-family:'Courier New',monospace; font-size:15px; padding:5px 0; border-bottom:1px dashed #1D3D30; color:#5F8A77; }
+  .pal b{ color:#E3A857; letter-spacing:2px; }
+  #pistas .una{ margin-bottom:8px; font-size:13px; line-height:1.5; color:#CFE3D9; }
+  #pistas .una span{ display:block; font-size:11px; color:#E3A857; font-weight:bold; letter-spacing:1px; }
+  #bPista{ width:100%; margin:6px 0 0; }
+  #polilla{ overflow:hidden; }
+  #polilla svg{ float:left; margin-right:10px; }
+  #polTxt{ font-size:13px; line-height:1.5; color:#D9C9FF; }
+
+  /* pantallas completas */
+  .pantalla{ display:none; }
+  .hoja{ background:#10261D; border:1px solid #1D3D30; border-radius:18px; padding:28px 34px; margin-top:20px; }
+  .hoja h1{ font-size:32px; margin:0 0 10px; }
+  .hoja h1 span{ color:#E3A857; }
+  .hoja p{ font-size:16px; line-height:1.6; color:#CFE3D9; }
+  input.nombre{ font-size:18px; padding:10px 12px; border-radius:10px; border:2px solid #3B6B57; background:#06120D; color:#fff; width:300px; }
+  .grande{ display:inline-block; border:0; border-radius:12px; padding:14px 26px; margin:12px 10px 0 0; cursor:pointer; font-size:16px; font-weight:bold;
+           background:#E3A857; color:#0A1A14; border-bottom:4px solid #A87633; }
+  .grande.sec{ background:transparent; color:#8DB3A2; border:2px solid #1D3D30; font-size:13px; padding:10px 16px; }
+  .regla{ display:inline-block; background:#0D2F23; border-radius:10px; padding:8px 12px; margin:0 8px 8px 0; font-size:13.5px; color:#CFE3D9; }
+  #fin{ text-align:center; }
+  #fin h1{ font-size:42px; color:#6EE7B7; margin:24px 0 8px; }
+  .diploma{ display:inline-block; background:#10261D; border:2px solid #2F6B54; border-radius:18px; padding:24px 44px; margin-top:16px; }
+  .diploma td{ padding:5px 14px; color:#8DB3A2; text-align:left; font-size:14px; }
+  .diploma td.v{ color:#E6F2EC; font-weight:bold; text-align:right; font-size:17px; }
+  .festejo{ animation:subir .5s ease; }
+  @keyframes subir{ from{opacity:0; transform:translateY(16px)} to{opacity:1; transform:none} }
+  .temblor{ animation:tiembla .35s linear; }
+  @keyframes tiembla{ 0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
+</style>
+</head>
+<body>
+<div id="caja">
+  <div id="barra">
+    <div id="titulo">Atrapados en <span>la compu</span></div>
+    <div id="sub">INFORMÁTICA · 3.º, 4.º Y 5.º · SALA DE ESCAPE</div>
+    <div id="bateria">
+      <div id="batTxt">BATERÍA <b id="batPct">100 %</b></div>
+      <div id="batMarco"><div id="batBarra"></div></div>
+    </div>
+    <div id="equipoTxt"></div>
+  </div>
+  <div id="inicio" class="pantalla"></div>
+  <div id="juego" class="pantalla">
+    <div id="salas"></div>
+    <div id="izq"></div>
+    <div id="der">
+      <div class="panel" id="polilla"></div>
+      <div class="panel"><div class="t">TU BITÁCORA</div><div id="bitacora"></div></div>
+      <div class="panel"><div class="t">PISTAS</div><div id="pistas"></div>
+        <button class="btn sec" id="bPista" onclick="pedirPista()">Pedir una pista</button></div>
+    </div>
+    <div class="limpiar"></div>
+  </div>
+  <div id="fin" class="pantalla"></div>
+</div>
+<script>
+/* ════════════════════════════════════════════════════════════════
+   ATRAPADOS EN LA COMPU · sala de escape para 3.º, 4.º y 5.º
+   Un solo archivo, sin internet, JavaScript ES5.
+   ════════════════════════════════════════════════════════════════ */
+function $(id){ return document.getElementById(id); }
+function esc(t){ return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function norm(s){
+  s = String(s || '').toUpperCase();
+  s = s.replace(/[ÁÀÄ]/g, 'A').replace(/[ÉÈË]/g, 'E').replace(/[ÍÌÏ]/g, 'I').replace(/[ÓÒÖ]/g, 'O').replace(/[ÚÙÜ]/g, 'U');
+  return s.replace(/[^A-Z0-9Ñ]/g, '');
+}
+
+/* ── sonido ─────────────────────────────────────────────────────── */
+var AC = null, sonido = true;
+function tono(f, dur, tipo, vol, hasta, demora){
+  if (!sonido) return;
+  try {
+    if (!AC){ var C = window.AudioContext || window.webkitAudioContext; if (!C) return; AC = new C(); }
+    if (AC.state === 'suspended' && AC.resume) AC.resume();
+    var t = AC.currentTime + (demora || 0), o = AC.createOscillator(), g = AC.createGain();
+    o.type = tipo; o.frequency.setValueAtTime(f, t);
+    if (hasta) o.frequency.exponentialRampToValueAtTime(hasta, t + dur);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(AC.destination); o.start(t); o.stop(t + dur + 0.03);
+  } catch(e){}
+}
+function sonClic(){ tono(520, 0.05, 'triangle', 0.08); }
+function sonBien(){ tono(660, 0.12, 'sine', 0.16); tono(880, 0.2, 'sine', 0.14, 0, 0.1); }
+function sonMal(){ tono(220, 0.25, 'square', 0.10, 130); }
+function sonPuerta(){ tono(392, 0.12, 'sine', 0.16); tono(523, 0.12, 'sine', 0.16, 0, 0.11); tono(659, 0.12, 'sine', 0.16, 0, 0.22); tono(784, 0.35, 'sine', 0.18, 0, 0.33); }
+function sonVirus(){ tono(140, 0.4, 'sawtooth', 0.14, 60); tono(300, 0.15, 'square', 0.08, 200, 0.2); }
+
+/* ── guardado ───────────────────────────────────────────────────── */
+var CLAVE = 'escape_compu_v1', guardaOK = true, TOTAL = 45 * 60 * 1000;
+var COSTO = {pista: 90 * 1000, trampa: 150 * 1000, error: 20 * 1000};
+var S = nuevo();
+function nuevo(){ return {equipo:'', fase:'inicio', t:TOTAL, hecho:{}, pistas:{}, trampas:0, errores:0, sala:0, p:{}, salida:null, bonus:{}}; }
+function guardar(){ try { window.localStorage.setItem(CLAVE, JSON.stringify(S)); } catch(e){ guardaOK = false; } }
+function cargar(){
+  try { var r = window.localStorage.getItem(CLAVE); if (r){ var o = JSON.parse(r); if (o && o.hecho) S = o; } } catch(e){ guardaOK = false; }
+  try { window.localStorage.setItem('esc_prueba', '1'); window.localStorage.removeItem('esc_prueba'); } catch(e){ guardaOK = false; }
+}
+function P(id){ if (!S.p[id]) S.p[id] = {}; return S.p[id]; }
+
+/* ── dibujos ────────────────────────────────────────────────────── */
+var POLILLA = '<svg width="58" height="50" viewBox="0 0 58 50"><ellipse cx="15" cy="20" rx="14" ry="11" fill="#7E5BC4"/><ellipse cx="43" cy="20" rx="14" ry="11" fill="#7E5BC4"/>' +
+  '<ellipse cx="17" cy="36" rx="10" ry="8" fill="#9C7CE0"/><ellipse cx="41" cy="36" rx="10" ry="8" fill="#9C7CE0"/><circle cx="15" cy="20" r="4" fill="#D9C9FF"/><circle cx="43" cy="20" r="4" fill="#D9C9FF"/>' +
+  '<rect x="25" y="12" width="8" height="32" rx="4" fill="#3A2A5E"/><circle cx="27" cy="16" r="1.6" fill="#FFE27A"/><circle cx="31" cy="16" r="1.6" fill="#FFE27A"/>' +
+  '<path d="M27 12 Q22 3 17 4" stroke="#3A2A5E" stroke-width="2" fill="none"/><path d="M31 12 Q36 3 41 4" stroke="#3A2A5E" stroke-width="2" fill="none"/></svg>';
+var ICO = [
+  '<svg width="22" height="16" viewBox="0 0 22 16"><rect x="1" y="2" width="20" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="4" y="5" width="3" height="2" fill="currentColor"/><rect x="9" y="5" width="3" height="2" fill="currentColor"/><rect x="14" y="5" width="3" height="2" fill="currentColor"/><rect x="6" y="9" width="10" height="2" fill="currentColor"/></svg>',
+  '<svg width="22" height="16" viewBox="0 0 22 16"><rect x="3" y="3" width="16" height="10" rx="1" fill="none" stroke="currentColor" stroke-width="2"/><rect x="6" y="6" width="3" height="4" fill="currentColor"/><rect x="13" y="6" width="3" height="4" fill="currentColor"/><path d="M5 1v2M9 1v2M13 1v2M17 1v2M5 13v2M9 13v2M13 13v2M17 13v2" stroke="currentColor" stroke-width="1.5"/></svg>',
+  '<svg width="22" height="16" viewBox="0 0 22 16"><rect x="1" y="1" width="20" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="8" y="12" width="6" height="2" fill="currentColor"/><rect x="5" y="14" width="12" height="1.5" fill="currentColor"/></svg>',
+  '<svg width="22" height="16" viewBox="0 0 22 16"><ellipse cx="11" cy="4" rx="9" ry="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M2 4v8c0 1.7 4 3 9 3s9-1.3 9-3V4" fill="none" stroke="currentColor" stroke-width="2"/></svg>',
+  '<svg width="22" height="16" viewBox="0 0 22 16"><circle cx="11" cy="3" r="2.5" fill="currentColor"/><circle cx="4" cy="13" r="2.5" fill="currentColor"/><circle cx="18" cy="13" r="2.5" fill="currentColor"/><path d="M11 3L4 13M11 3l7 10M4 13h14" stroke="currentColor" stroke-width="1.8" fill="none"/></svg>',
+  '<svg width="22" height="16" viewBox="0 0 22 16"><rect x="4" y="7" width="14" height="8" rx="2" fill="currentColor"/><path d="M7 7V5a4 4 0 0 1 8 0v2" stroke="currentColor" stroke-width="2" fill="none"/></svg>'
+];
+
+/* ── las salas y los acertijos ──────────────────────────────────── */
+var SALAS = [
+  {nombre:'El teclado', intro:'Están adentro de la computadora. La primera parte que tocan es el teclado: por acá entra todo lo que la máquina sabe de vos.',
+   polilla:'Bienvenido a mi computadora. Te rompí el teclado, ¿se nota? Jijiji.'},
+  {nombre:'La memoria', intro:'La memoria guarda todo con lamparitas que solo pueden estar prendidas o apagadas. Con eso solo, la computadora escribe números, letras y fotos.',
+   polilla:'Acá adentro no hay letras ni números. Solo lamparitas. A ver si sabés leerlas.'},
+  {nombre:'La pantalla', intro:'La pantalla está hecha de millones de puntitos. Cada uno tiene tres luces chiquitas: una roja, una verde y una azul.',
+   polilla:'Te apagué la pantalla. A ver si sabés mezclar luces.'},
+  {nombre:'El disco', intro:'El disco es donde se guardan los archivos. Polilla escondió la llave entre ellos, y llenó la máquina de trampas.',
+   polilla:'Abrí lo que quieras. Algunos archivos no son lo que parecen. Jijiji.'},
+  {nombre:'La red', intro:'La última parte: los cables por donde la computadora habla con las demás. Por acá está la salida.',
+   polilla:'Desenchufé todos los cables y los mezclé. Y la puerta de salida… tiene mi teclado.'},
+  {nombre:'Archivos secretos', intro:'Ya escapaste. Pero Polilla dejó cinco archivos secretos para los que quieren más. Acá no corre la batería.',
+   polilla:'¿Todavía acá? Estos son mis acertijos más difíciles. Nadie los resolvió nunca.'}
+];
+
+var AC_ = [
+  /* sala 0 · teclado */
+  {id:'T1', sala:0, tit:'Las manos corridas', tipo:'resp', resp:['LA CLAVE ES LUNA'], palabra:'LUNA',
+   pistas:['Mirá tu teclado. Si alguien corre las manos una tecla a la derecha y quiere escribir A, ¿qué letra le sale?',
+           'Para descifrar hacé al revés: por cada letra del mensaje, buscá la tecla que está justo a su izquierda. Por ejemplo, a la izquierda de la Ñ está la L.',
+           'El mensaje empieza LA CLAVE ES… y la última palabra tiene cuatro letras, empieza con L y está en el cielo de noche. Escribí el mensaje entero.']},
+  {id:'T2', sala:0, tit:'Las huellas', tipo:'resp', resp:['4752'],
+   pistas:['Fijate qué teclas tienen huellas. Esos son los únicos números que podés usar, cada uno una sola vez.',
+           'Mirá la primera regla: ¿cuál de esos números es el doble de otro de esos números? Eso te dice cuál va primero y cuál va último.',
+           'Empieza con 4 y termina con 2. En el medio van el 5 y el 7: ¿en qué orden, si el segundo tiene que ser mayor que el tercero?']},
+  /* sala 1 · memoria */
+  {id:'M1', sala:1, tit:'Las lámparas que cuentan', tipo:'lamp',
+   pistas:['Contá los puntitos que hay abajo de cada lámpara. ¿Cuántos tiene cada una? ¿Ves algún patrón?',
+           'Cada lámpara vale el doble que la de su derecha: 16, 8, 4, 2 y 1. Empezá por la más grande que entre en el número y seguí con lo que falta.',
+           '13 = 8 + 4 + 1. 22 = 16 + 4 + 2. 7 = 4 + 2 + 1.']},
+  {id:'M2', sala:1, tit:'La palabra encendida', tipo:'resp', resp:['IMAN'], palabra:'IMÁN',
+   pistas:['Cada fila funciona igual que las lámparas de antes. ¿Cuánto vale cada lámpara prendida?',
+           'Sumá las lámparas prendidas de cada fila: te tienen que dar cuatro números entre 1 y 26. Después buscá cada número en el abecedario.',
+           'Los números son 9, 13, 1 y 14. La letra número 9 es la I.']},
+  /* sala 2 · pantalla */
+  {id:'P1', sala:2, tit:'Luz de colores', tipo:'luz',
+   pistas:['Probá prender una sola luz, y después dos juntas. ¿Qué pasa cuando juntás dos?',
+           'Con luz no funciona como con las témperas. Rojo y verde juntos, en una pantalla, dan amarillo.',
+           'Amarillo: rojo y verde. Celeste: verde y azul. Fucsia: rojo y azul. Blanco: las tres. Y para el negro… ¿qué pasa con la pantalla si no prendés ninguna?']},
+  {id:'P2', sala:2, tit:'Dibujar con números', tipo:'pix', resp:['B'], palabra:'B',
+   pistas:['Cada renglón de la derecha dice cómo pintar la fila de la grilla que tiene al lado, de izquierda a derecha.',
+           '■1 □5 ■1 quiere decir: un cuadrado negro, después cinco blancos, después uno negro. Hacé clic en un cuadrado para pintarlo o despintarlo.',
+           'Cuando esté bien, se ve una letra mayúscula: la segunda del abecedario.']},
+  /* sala 3 · disco */
+  {id:'D1', sala:3, tit:'La papelera', tipo:'disco', resp:['4'],
+   pistas:['Antes de abrir cualquier cosa, buscá un archivo que se llame leeme y leelo.',
+           'Hay archivos disfrazados: el nombre no muestra todo. En la barra de arriba hay un botón para mostrar las extensiones, lo que va después del último punto.',
+           'Con las extensiones a la vista, contá los archivos que terminan en .exe en todas las carpetas, sin abrirlos. Mirá Descargas, Fotos y Juegos.']},
+  {id:'D2', sala:3, tit:'El archivo que no abre', tipo:'disco', resp:['RED'], palabra:'RED',
+   pistas:['¿Qué decía la llave que recuperaste de la papelera?',
+           'La computadora elige con qué programa abrir un archivo según su extensión. ¿Qué extensión abre el bloc de notas? Mirá cómo terminan los archivos de texto.',
+           'Seleccioná tesoro.dat, apretá Renombrar, escribí tesoro.txt y después abrilo.']},
+  /* sala 4 · red */
+  {id:'R1', sala:4, tit:'Los cables', tipo:'cables', palabra:'ENTER',
+   pistas:['Empezá por la pista que deja menos opciones. ¿En qué puertos puede estar Ana?',
+           'Si Ana está en el 2, Beto está en el 3. Si Ana está en el 3, Beto está en el 4. Probá los dos casos con las otras dos pistas.',
+           'Ana va en el 2 y Beto en el 3. Caro va en el puerto impar que queda libre.']},
+  {id:'R2', sala:4, tit:'La puerta de salida', tipo:'resp', resp:['ÑONTR'],
+   pistas:['Juntá la primera letra de cada palabra de la bitácora, en orden. ¿Qué palabra se forma?',
+           'Se forma LIBRE. Ahora acordate de la sala del teclado: Polilla aprieta siempre la tecla de al lado, hacia la derecha.',
+           'L se escribe Ñ, I se escribe O, B se escribe N, R se escribe T y E se escribe R.']},
+  /* sala 5 · archivos secretos */
+  {id:'X1', sala:5, tit:'Archivo secreto 1: ocho lámparas', tipo:'lamp8',
+   pistas:['Ahora son ocho lámparas. La de más a la izquierda vale 128: cada una vale el doble que la de su derecha.',
+           'Empezá por la más grande que entre en 200 y seguí con lo que te falta.',
+           '200 = 128 + 64 + 8.']},
+  {id:'X2', sala:5, tit:'Archivo secreto 2: las manos para arriba', tipo:'resp', resp:['MANZANA'],
+   pistas:['Esta vez Polilla corrió las manos una fila hacia arriba. ¿Qué letra está arriba de la A en tu teclado?',
+           'Para descifrar, por cada letra buscá la tecla que está justo abajo. Abajo de la J está la M.',
+           'Es una fruta de siete letras.']},
+  {id:'X3', sala:5, tit:'Archivo secreto 3: contar como la compu', tipo:'resp', resp:['110'],
+   pistas:['Esos números están escritos solo con ceros y unos. Pensalos como lámparas: el 1 es una lámpara prendida.',
+           'Con lámparas de valor 4, 2 y 1: 1 es uno, 10 es dos, 11 es tres, 100 es cuatro, 101 es cinco. ¿Cómo se escribe el seis?',
+           'Seis es 4 + 2: lámpara del 4 prendida, la del 2 prendida, la del 1 apagada.']},
+  {id:'X4', sala:5, tit:'Archivo secreto 4: el candado de Polilla', tipo:'resp', resp:['042'],
+   pistas:['Empezá por la pista que dice que no hay nada correcto: esos tres números quedan descartados para siempre.',
+           'Si el 7, el 3 y el 8 no están, mirá la última pista: ¿cuál de sus números sí está? Y la primera: ¿cuál de 6, 8 o 2 puede ser el correcto?',
+           'El código termina en 2 y tiene un 0 y un 4. Mirá la pista del 6 1 4 para saber dónde no puede ir el 4.']},
+  {id:'X5', sala:5, tit:'Archivo secreto 5: el reloj binario', tipo:'resp', resp:['1045', '10:45'],
+   pistas:['Hay dos filas de lámparas: la de arriba son las horas y la de abajo los minutos. Leelas como en la sala de la memoria.',
+           'Fijate cuánto vale cada lámpara: están escritos los valores arriba de cada una. Sumá las prendidas de cada fila por separado.',
+           'Las horas suman 8 + 2. Los minutos suman 32 + 8 + 4 + 1.']}
+];
+var AX = {}; (function(){ for (var i = 0; i < AC_.length; i++) AX[AC_[i].id] = AC_[i]; })();
+
+/* ── batería ────────────────────────────────────────────────────── */
+var reloj = null;
+function gastar(ms){ S.t = Math.max(0, S.t - ms); dibujarBateria(); }
+function pct(){ return Math.round(S.t / TOTAL * 100); }
+function dibujarBateria(){
+  var p = pct(), b = $('batBarra');
+  b.style.width = p + '%';
+  b.style.background = p > 50 ? '#6EE7B7' : (p > 20 ? '#E3A857' : '#FF6B6B');
+  var min = Math.floor(S.t / 60000), seg = Math.floor(S.t % 60000 / 1000);
+  $('batPct').innerHTML = p + ' % <span style="font-size:11px;color:#5F8A77;font-weight:normal">(' + min + ':' + (seg < 10 ? '0' : '') + seg + ')</span>';
+}
+var ticks = 0, avisoCero = false;
+function tic(){
+  if (S.fase !== 'juego' || S.salida) return;
+  if (S.t > 0){ S.t = Math.max(0, S.t - 1000); dibujarBateria(); }
+  else if (!avisoCero){ avisoCero = true; decir('Se te acabó la batería. Podés seguir, pero la compu ya está en modo ahorro. Jijiji.'); }
+  if (++ticks % 5 === 0) guardar();
+}
+
+/* ── estructura de la pantalla ──────────────────────────────────── */
+function mostrar(id){ var ids = ['inicio', 'juego', 'fin'], i; for (i = 0; i < ids.length; i++) $(ids[i]).style.display = ids[i] === id ? 'block' : 'none'; window.scrollTo(0, 0); }
+function salaHecha(n){ var i; for (i = 0; i < AC_.length; i++) if (AC_[i].sala === n && !S.hecho[AC_[i].id]) return false; return true; }
+function salaAbierta(n){ if (n === 5) return !!S.salida; return n === 0 || salaHecha(n - 1); }
+function decir(t){ $('polilla').innerHTML = POLILLA + '<div id="polTxt"><b style="color:#B794F4">Polilla:</b> ' + t + '</div>'; }
+function actual(){ var i; for (i = 0; i < AC_.length; i++) if (AC_[i].sala === S.sala && !S.hecho[AC_[i].id]) return AC_[i]; return null; }
+
+function render(){
+  var h = '', i, c;
+  for (i = 0; i < 6; i++){
+    if (i === 5 && !S.salida) continue;
+    c = 'tab' + (i === 5 ? ' bonus' : '') + (salaHecha(i) ? ' hecha' : '') + (i === S.sala ? ' ahora' : '') + (!salaAbierta(i) ? ' cerrada' : '');
+    h += '<div class="' + c + '" onclick="irSala(' + i + ')">' + (i === 5 ? '<svg width="18" height="16" viewBox="0 0 18 16"><path d="M9 1l2.4 4.9 5.4.8-3.9 3.8.9 5.3L9 13.3 4.2 15.8l.9-5.3L1.2 6.7l5.4-.8z" fill="currentColor"/></svg>' : (salaAbierta(i) ? ICO[i] : ICO[5])) + (i < 5 ? (i + 1) + '. ' : '') + SALAS[i].nombre + '</div>';
+  }
+  $('salas').innerHTML = h;
+  dibujarSala();
+  dibujarBitacora();
+  dibujarPistas();
+  dibujarBateria();
+  $('equipoTxt').innerHTML = '<b style="color:#E6F2EC">' + esc(S.equipo) + '</b> <button id="sonido" onclick="alternarSonido()">' + (sonido ? 'sonido: sí' : 'sonido: no') + '</button>';
+}
+function irSala(n){ if (!salaAbierta(n)) { decir('Esa puerta está cerrada. Primero terminen la sala anterior.'); return; } S.sala = n; guardar(); render(); decir(SALAS[n].polilla); }
+function alternarSonido(){ sonido = !sonido; render(); }
+
+function dibujarBitacora(){
+  var h = '', i, a, k = 0;
+  for (i = 0; i < AC_.length; i++){
+    a = AC_[i]; if (!a.palabra) continue; k++;
+    h += '<div class="pal">Sala ' + k + ': ' + (S.hecho[a.id] ? '<b>' + a.palabra + '</b>' : '. . . . .') + '</div>';
+  }
+  $('bitacora').innerHTML = h + '<div style="font-size:11.5px;color:#5F8A77;margin-top:8px;line-height:1.5">Anotá cada palabra también en la hoja: la vas a necesitar al final.</div>';
+}
+function dibujarPistas(){
+  var a = actual(), h = '', n, i, t = ['PRIMERO PENSÁ', 'UNA IDEA', 'CASI LA RESPUESTA'];
+  if (!a){ $('pistas').innerHTML = '<div style="font-size:13px;color:#5F8A77">No hay acertijos pendientes en esta sala.</div>'; $('bPista').style.display = 'none'; return; }
+  n = S.pistas[a.id] || 0;
+  for (i = 0; i < n; i++) h += '<div class="una"><span>' + t[i] + '</span>' + a.pistas[i] + '</div>';
+  if (!n) h = '<div style="font-size:13px;color:#5F8A77;line-height:1.5">Cada pista gasta un poco de batería' + (a.sala === 5 ? ' (acá no)' : '') + '. Primero intentá pensarlo solo.</div>';
+  $('pistas').innerHTML = h;
+  $('bPista').style.display = n >= 3 ? 'none' : 'block';
+  $('bPista').innerHTML = 'Pedir una pista (' + (n + 1) + ' de 3)';
+}
+function pedirPista(){
+  var a = actual(); if (!a) return;
+  var n = S.pistas[a.id] || 0; if (n >= 3) return;
+  S.pistas[a.id] = n + 1;
+  if (a.sala !== 5 && !S.salida) gastar(COSTO.pista);
+  tono(700, 0.08, 'sine', 0.1); guardar(); dibujarPistas();
+}
+
+/* ── resolver ───────────────────────────────────────────────────── */
+function resolver(id){
+  var a = AX[id];
+  S.hecho[id] = true; sonBien();
+  if (id === 'D1') xst().vista = '<b>llave.txt</b> — ¡Recuperada! La palabra de esta sala está escondida adentro de <b>tesoro.dat</b>, en la carpeta Fotos. Pero ningún programa sabe abrir un .dat: <b>cambiale la extensión</b> para que lo abra el bloc de notas.';
+  if (a.palabra) decir('¿Encontraste la palabra ' + a.palabra + '? No te la olvides… la vas a necesitar.');
+  if (id === 'R2'){ salir(); return; }
+  if (salaHecha(a.sala) && a.sala < 4){ sonPuerta(); decir('¡No! Abriste la puerta de ' + SALAS[a.sala].nombre.toLowerCase() + '. Pasá a la siguiente… si te animás.'); }
+  guardar(); render();
+}
+function fallar(id, txt){
+  if (AX[id].sala !== 5 && !S.salida){ S.errores++; gastar(COSTO.error); }
+  sonMal(); guardar();
+  var m = $('m_' + id); if (m){ m.className = 'msj mal'; m.innerHTML = txt || 'No es eso. Revisá y probá de nuevo.'; }
+  var c = $('c_' + id); if (c){ c.className = 'acert'; void c.offsetWidth; c.className = 'acert temblor'; }
+}
+function probar(id){
+  var a = AX[id], v = norm($('r_' + id).value), i;
+  if (!v){ var m0 = $('m_' + id); if (m0){ m0.className = 'msj mal'; m0.innerHTML = 'Escribí algo primero.'; } return; }
+  if (id === 'R2' && v === 'LIBRE'){ var m = $('m_' + id); m.className = 'msj mal'; m.innerHTML = '¡Casi! Esa es la contraseña, pero este teclado es el de Polilla. ¿Cómo la escribiría él?'; sonMal(); return; }
+  for (i = 0; i < a.resp.length; i++) if (v === norm(a.resp[i])){ resolver(id); return; }
+  fallar(id);
+}
+function tecla(id, ch){ var r = $('r_' + id); if (!r) return; sonClic(); if (ch === '<') r.value = r.value.slice(0, -1); else r.value += ch; }
+
+/* ── piezas de interfaz ─────────────────────────────────────────── */
+var FILAS = ['1234567890', 'QWERTYUIOP', 'ASDFGHJKLÑ', 'ZXCVBNM'];
+function teclado(id, conNumeros, sucias){
+  var h = '<div class="teclado">', f, i, ch, desde = conNumeros ? 0 : 1;
+  for (f = desde; f < FILAS.length; f++){
+    h += '<div class="tfila" style="padding-left:' + ((f - desde) * 16) + 'px">';
+    for (i = 0; i < FILAS[f].length; i++){
+      ch = FILAS[f].charAt(i);
+      h += '<button class="tecla' + (sucias && sucias.indexOf(ch) >= 0 ? ' sucia' : '') + '" onclick="tecla(\'' + id + '\',\'' + ch + '\')">' + ch + '</button>';
+    }
+    if (f === FILAS.length - 1) h += '<button class="tecla ancha" onclick="tecla(\'' + id + '\',\'<\')">BORRAR</button>';
+    h += '</div>';
+  }
+  return h + '</div>';
+}
+function cajaResp(id, ph){
+  return '<div class="fila"><input class="resp" id="r_' + id + '" placeholder="' + (ph || '') + '" autocomplete="off" onkeydown="if(event.keyCode===13)probar(\'' + id + '\')">' +
+         '<button class="btn" onclick="probar(\'' + id + '\')">Probar</button></div><div class="msj" id="m_' + id + '"></div>';
+}
+function hechoHTML(a, extra){ return '<div class="hecho">&#10003; <b>' + a.tit + '</b>' + (extra ? ' · ' + extra : '') + '</div>'; }
+
+/* ── las salas, una por una ─────────────────────────────────────── */
+function dibujarSala(){
+  var n = S.sala, h = '<div class="sala"><h1>' + (n < 5 ? 'Sala ' + (n + 1) + ' · ' : '') + SALAS[n].nombre + '</h1><p class="intro">' + SALAS[n].intro + '</p>', i, a, pend = null;
+  for (i = 0; i < AC_.length; i++){
+    a = AC_[i]; if (a.sala !== n) continue;
+    if (S.hecho[a.id]){ h += hechoHTML(a, a.palabra ? 'palabra de la sala: <b style="color:#E3A857">' + a.palabra + '</b>' : ''); continue; }
+    if (pend && a.tipo !== 'disco' && n !== 5) continue;
+    if (!pend) pend = a;
+    if (a.id === 'D2'){ if (S.hecho.D1) h += '<div class="acert">' + CUERPO.D1() + '</div>'; continue; }
+    h += '<div class="acert" id="c_' + a.id + '"><h2>' + a.tit + '<i>' + (n === 5 ? '' : 'acertijo ' + (a.id.charAt(1)) + ' de 2') + '</i></h2>' + CUERPO[a.id]() + '</div>';
+  }
+  if (n < 5 && salaHecha(n)) h += n < 4 ? '<div class="fila"><button class="btn" onclick="irSala(' + (n + 1) + ')">Pasar a la sala ' + (n + 2) + ' &#9654;</button></div>' : '';
+  if (n === 5 && salaHecha(5)) h += '<div class="hecho" style="margin-top:12px">Resolviste los cinco archivos secretos. Sos leyenda.</div>';
+  if (n === 5) h += '<div class="fila"><button class="btn sec" onclick="mostrarFin()">Volver al resumen</button></div>';
+  h += '</div>';
+  $('izq').innerHTML = h;
+  if (n === 3 && (!S.hecho.D1 || !S.hecho.D2)) dibujarExplorador();
+}
+
+var CUERPO = {
+  T1: function(){
+    return '<p class="consigna">Polilla dejó este mensaje. Lo escribió con <b>las manos corridas una tecla hacia la derecha</b>: cada vez que quiso apretar una letra, apretó la de al lado. Descifren <b>el mensaje completo</b>.</p>' +
+      '<div class="codigo">ÑS VÑSBR RD ÑIMS</div>' + teclado('T1', false) + cajaResp('T1', 'el mensaje');
+  },
+  T2: function(){
+    return '<p class="consigna">La puerta del teclado tiene un código de <b>4 números</b>. Polilla usó solo las teclas que quedaron sucias, cada una una sola vez. Y se olvidó una nota:</p>' +
+      '<div class="codigo" style="font-size:16px;letter-spacing:1px;text-align:left;font-family:Verdana,Arial,sans-serif;color:#CFE3D9">· El primer número es el doble del último.<br>· El segundo número es mayor que el tercero.</div>' +
+      teclado('T2', true, '2457').split('<div class="tfila" style="padding-left:16px">')[0] + '</div>' + cajaResp('T2', '4 números');
+  },
+  M1: function(){
+    var st = P('M1'), r = st.ronda || 0, metas = [13, 22, 7], h = '', i, v = [16, 8, 4, 2, 1], on = st.on || [0, 0, 0, 0, 0], k;
+    h = '<p class="consigna">Cada lámpara tiene puntitos abajo. Prendé las lámparas justas para que los puntitos encendidos sumen <b style="font-size:20px">' + metas[r] + '</b>. <span style="color:#5F8A77">(Número ' + (r + 1) + ' de 3)</span></p><div class="lamparas">';
+    for (i = 0; i < 5; i++){
+      h += '<div class="lampara' + (on[i] ? ' on' : '') + '" onclick="lampara(\'M1\',' + i + ')"><div class="foco"></div><div class="puntos">';
+      for (k = 0; k < v[i]; k++) h += '<span class="pto"></span>';
+      h += '</div></div>';
+    }
+    return h + '</div><div class="fila"><button class="btn" onclick="probarLamp(\'M1\')">Probar</button></div><div class="msj" id="m_M1"></div>';
+  },
+  M2: function(){
+    var filas = [9, 13, 1, 14], h = '<p class="consigna">Polilla escondió una palabra en la memoria. <b>Cada fila de lámparas es un número</b>, y cada número es una letra: A = 1, B = 2, C = 3…</p>', i, b, v = [16, 8, 4, 2, 1];
+    h += '<div style="background:#06120D;border-radius:10px;padding:10px 14px;display:inline-block"><div class="mini" style="color:#5F8A77;font-size:11px;white-space:nowrap">';
+    for (b = 0; b < 5; b++) h += '<span style="background:none;border:0;box-shadow:none;text-align:center;font-weight:bold">' + v[b] + '</span>';
+    h += '</div>';
+    for (i = 0; i < 4; i++){
+      h += '<div class="mini">';
+      for (b = 0; b < 5; b++) h += '<span' + (filas[i] & v[b] ? ' class="on"' : '') + '></span>';
+      h += '<em>letra ' + (i + 1) + '</em></div>';
+    }
+    h += '</div><p class="consigna" style="font-size:12.5px;color:#8DB3A2;margin-top:10px">A1 B2 C3 D4 E5 F6 G7 H8 I9 J10 K11 L12 M13 N14 O15 P16 Q17 R18 S19 T20 U21 V22 W23 X24 Y25 Z26</p>';
+    return h + cajaResp('M2', 'la palabra');
+  },
+  P1: function(){
+    var st = P('P1'), on = st.on || [0, 0, 0], r = st.ronda || 0, h, i;
+    h = '<p class="consigna">La pantalla está apagada y Polilla tapó la vista previa. Elegí qué luces prender para lograr <b>el color del cuadradito marcado</b> y recién después apretá <b>Probar</b>: la pantalla muestra lo que eligieron. Son cinco colores, y cada intento fallido gasta batería.</p>';
+    h += '<div class="objetivos" style="margin-bottom:10px">';
+    for (i = 0; i < METAS_LUZ.length; i++) h += '<span class="' + (i < r ? 'ya' : (i === r ? 'ahora' : '')) + '" style="background:' + rgb(METAS_LUZ[i]) + (i === 4 ? ';border-color:#555' : '') + '"></span>';
+    h += '</div><div class="monitor" id="monitor" style="background:' + (st.visto ? rgb(st.visto) : '#000') + '"></div><div class="luces">' +
+      '<button class="r' + (on[0] ? ' on' : '') + '" onclick="luz(0)">ROJA</button><button class="g' + (on[1] ? ' on' : '') + '" onclick="luz(1)">VERDE</button><button class="b' + (on[2] ? ' on' : '') + '" onclick="luz(2)">AZUL</button>' +
+      '<button class="btn" style="width:auto;border:0;border-bottom:4px solid #A87633;color:#0A1A14;background:#E3A857;padding:12px 18px" onclick="probarLuz()">Probar</button></div><div class="msj" id="m_P1"></div>';
+    return h;
+  },
+  P2: function(){
+    var st = P('P2'), g = st.g || [], h, y, x;
+    if (st.ok) return '<p class="consigna">¡El dibujo está bien! ¿Qué letra quedó dibujada?</p>' + grillaHTML(g, false) + cajaResp('P2', 'la letra');
+    h = '<p class="consigna">La pantalla se rompió y Polilla dejó las instrucciones para volver a dibujar la imagen. <b>■</b> es un cuadrado negro y <b>□</b> uno blanco, de izquierda a derecha.</p>';
+    h += grillaHTML(g, true) + '<div class="reglas">';
+    for (y = 0; y < PIX.length; y++) h += reglaFila(PIX[y]) + '<br>';
+    return h + '</div><div class="fila"><button class="btn" onclick="probarPix()">Probar el dibujo</button></div><div class="msj" id="m_P2"></div>';
+  },
+  D1: function(){
+    return '<p class="consigna">Polilla escondió la llave en esta computadora. Se abre como cualquier carpeta: hacé clic en una carpeta de la izquierda, elegí un archivo y apretá <b>Abrir</b>. <b>Cuidado:</b> abrir un programa trampa gasta batería.</p>' +
+      '<div class="explorador" id="explorador"></div><div id="puertaDisco"></div>';
+  },
+  R1: function(){
+    var st = P('R1'), sel = st.sel || ['', '', '', ''], h, i, j, nom = ['Ana', 'Beto', 'Caro', 'Dani'];
+    h = '<p class="consigna">Polilla desenchufó las cuatro computadoras de la escuela. Hay que volver a enchufar cada una en su puerto. Esto es lo que se sabe:</p>' +
+      '<ol class="pistasL"><li>Ana no está en ninguna punta: ni en el puerto 1 ni en el 4.</li><li>Beto está justo a la derecha de Ana.</li>' +
+      '<li>Caro está en un puerto impar.</li><li>Dani no está al lado de Ana.</li></ol><div class="puertos">';
+    for (i = 0; i < 4; i++){
+      h += '<div class="puerto"><div class="num">PUERTO ' + (i + 1) + '</div><select id="s_R1_' + i + '" onchange="cable(' + i + ', this.value)"><option value="">—</option>';
+      for (j = 0; j < 4; j++) h += '<option' + (sel[i] === nom[j] ? ' selected' : '') + '>' + nom[j] + '</option>';
+      h += '</select></div>';
+    }
+    return h + '</div><div class="fila"><button class="btn" onclick="probarCables()">Enchufar</button></div><div class="msj" id="m_R1"></div>';
+  },
+  R2: function(){
+    return '<p class="consigna">La puerta de salida pide una contraseña: <b>la primera letra de cada palabra de la bitácora, en orden</b>. Pero este es el teclado de Polilla, y él siempre aprieta <b>la tecla de al lado, hacia la derecha</b>. Escribí la contraseña como la escribiría Polilla.</p>' +
+      teclado('R2', false) + cajaResp('R2', 'la contraseña');
+  },
+  X1: function(){
+    var st = P('X1'), on = st.on || [0, 0, 0, 0, 0, 0, 0, 0], v = [128, 64, 32, 16, 8, 4, 2, 1], h = '<p class="consigna">Ocho lámparas, sin puntitos. Prendé las justas para formar el número <b style="font-size:20px">200</b>.</p><div class="lamparas">', i;
+    for (i = 0; i < 8; i++) h += '<div class="lampara' + (on[i] ? ' on' : '') + '" style="width:66px;margin-right:6px" onclick="lampara(\'X1\',' + i + ')"><div class="foco" style="width:44px;height:44px"></div><div style="color:#8DB3A2;font-size:13px;font-weight:bold">' + v[i] + '</div></div>';
+    return h + '</div><div class="fila"><button class="btn" onclick="probarLamp(\'X1\')">Probar</button></div><div class="msj" id="m_X1"></div>';
+  },
+  X2: function(){
+    return '<p class="consigna">Esta vez Polilla corrió las manos <b>una fila hacia arriba</b>: cada letra quedó en la tecla de arriba de la que quería. ¿Qué escribió?</p><div class="codigo">JQHAQHQ</div>' + teclado('X2', false) + cajaResp('X2', 'la palabra');
+  },
+  X4: function(){
+    return '<p class="consigna">El candado tiene <b>3 números</b>. Polilla dejó estas pistas:</p>' +
+      '<div class="codigo" style="font-size:15px;letter-spacing:1px;text-align:left;font-family:Verdana,Arial,sans-serif;color:#CFE3D9;line-height:1.9">' +
+      '<b style="font-family:Courier New,monospace;font-size:20px;letter-spacing:4px;color:#6EE7B7">6 8 2</b> &nbsp; un número es correcto y está en su lugar.<br>' +
+      '<b style="font-family:Courier New,monospace;font-size:20px;letter-spacing:4px;color:#6EE7B7">6 1 4</b> &nbsp; un número es correcto pero está en otro lugar.<br>' +
+      '<b style="font-family:Courier New,monospace;font-size:20px;letter-spacing:4px;color:#6EE7B7">2 0 6</b> &nbsp; dos números son correctos pero están en otro lugar.<br>' +
+      '<b style="font-family:Courier New,monospace;font-size:20px;letter-spacing:4px;color:#6EE7B7">7 3 8</b> &nbsp; nada es correcto.<br>' +
+      '<b style="font-family:Courier New,monospace;font-size:20px;letter-spacing:4px;color:#6EE7B7">7 8 0</b> &nbsp; un número es correcto pero está en otro lugar.</div>' + cajaResp('X4', '3 números');
+  },
+  X5: function(){
+    var h = '<p class="consigna">El reloj de la compu no tiene números: tiene lámparas. <b>¿Qué hora marca?</b></p><div style="background:#06120D;border-radius:10px;padding:12px 16px;display:inline-block">', b;
+    var hv = [16, 8, 4, 2, 1], mv = [32, 16, 8, 4, 2, 1], hh = 10, mm = 45;
+    h += '<div class="mini"><em style="width:70px;display:inline-block;margin:0">HORAS</em>';
+    for (b = 0; b < 5; b++) h += '<span' + (hh & hv[b] ? ' class="on"' : '') + ' title="' + hv[b] + '"></span>';
+    h += '</div><div class="mini" style="color:#5F8A77;font-size:11px"><em style="width:70px;display:inline-block;margin:0"></em>';
+    for (b = 0; b < 5; b++) h += '<span style="background:none;border:0;box-shadow:none;text-align:center;font-weight:bold;font-size:11px;line-height:26px">' + hv[b] + '</span>';
+    h += '</div><div class="mini"><em style="width:70px;display:inline-block;margin:0">MINUTOS</em>';
+    for (b = 0; b < 6; b++) h += '<span' + (mm & mv[b] ? ' class="on"' : '') + '></span>';
+    h += '</div><div class="mini" style="color:#5F8A77;font-size:11px"><em style="width:70px;display:inline-block;margin:0"></em>';
+    for (b = 0; b < 6; b++) h += '<span style="background:none;border:0;box-shadow:none;text-align:center;font-weight:bold;font-size:11px;line-height:26px">' + mv[b] + '</span>';
+    return h + '</div></div>' + cajaResp('X5', 'hora:minutos');
+  },
+  X3: function(){
+    return '<p class="consigna">La compu cuenta así. ¿Qué número sigue?</p><div class="codigo">1 &nbsp; 10 &nbsp; 11 &nbsp; 100 &nbsp; 101 &nbsp; ?</div>' + cajaResp('X3', 'el que sigue');
+  }
+};
+
+/* lámparas */
+function lampara(id, i){
+  var st = P(id), n = id === 'X1' ? 8 : 5;
+  if (!st.on) { st.on = []; for (var k = 0; k < n; k++) st.on.push(0); }
+  st.on[i] = st.on[i] ? 0 : 1; tono(st.on[i] ? 880 : 440, 0.06, 'sine', 0.1); guardar(); dibujarSala();
+}
+function probarLamp(id){
+  var st = P(id), v = id === 'X1' ? [128, 64, 32, 16, 8, 4, 2, 1] : [16, 8, 4, 2, 1], s = 0, i, on = st.on || [], meta;
+  for (i = 0; i < v.length; i++) if (on[i]) s += v[i];
+  meta = id === 'X1' ? 200 : [13, 22, 7][st.ronda || 0];
+  if (s === meta){
+    if (id === 'X1'){ resolver('X1'); return; }
+    st.ronda = (st.ronda || 0) + 1; st.on = [0, 0, 0, 0, 0];
+    if (st.ronda >= 3){ decir('Así cuenta una computadora: solo con lámparas prendidas o apagadas. Se llama sistema binario. Grrr.'); resolver('M1'); return; }
+    sonBien(); guardar(); dibujarSala();
+    var m = $('m_M1'); m.className = 'msj bien'; m.innerHTML = '¡Bien! Ahora el siguiente número.';
+    return;
+  }
+  fallar(id, 'Con esas lámparas los puntitos suman ' + s + '. ' + (s < meta ? 'Te falta.' : 'Te pasaste.'));
+}
+/* luces */
+function rgb(a){ return 'rgb(' + (a[0] ? 255 : 0) + ',' + (a[1] ? 255 : 0) + ',' + (a[2] ? 255 : 0) + ')'; }
+var METAS_LUZ = [[1, 1, 0], [0, 1, 1], [1, 0, 1], [1, 1, 1], [0, 0, 0]];
+var NOMBRES_LUZ = ['negro', 'azul', 'verde', 'celeste', 'rojo', 'fucsia', 'amarillo', 'blanco'];
+function luz(i){
+  var st = P('P1');
+  if (!st.on) st.on = [0, 0, 0];
+  st.on[i] = st.on[i] ? 0 : 1; sonClic(); guardar(); dibujarSala();
+}
+function probarLuz(){
+  var st = P('P1'), on = st.on || [0, 0, 0], r = st.ronda || 0, meta = METAS_LUZ[r], nom = NOMBRES_LUZ[on[0] * 4 + on[1] * 2 + on[2]];
+  st.visto = [on[0], on[1], on[2]];
+  if (on[0] === meta[0] && on[1] === meta[1] && on[2] === meta[2]){
+    st.ronda = r + 1;
+    if (st.ronda >= METAS_LUZ.length){ decir('¿Rojo y verde dan amarillo? ¿Y con todo apagado, negro? En la pantalla sí: es luz, no pintura. Cada puntito de la pantalla se llama píxel.'); resolver('P1'); return; }
+    st.on = [0, 0, 0]; sonBien(); guardar(); dibujarSala();
+    var m = $('m_P1'); m.className = 'msj bien'; m.innerHTML = '¡Ese es! Ahora el siguiente color.';
+    return;
+  }
+  dibujarSala();
+  fallar('P1', 'Con esas luces la pantalla da ' + nom + '. No es el color marcado.');
+}
+/* píxeles */
+var PIX = ['NNNNNN.', 'N.....N', 'N.....N', 'N.....N', 'NNNNNN.', 'N.....N', 'N.....N', 'N.....N', 'NNNNNN.'];
+function reglaFila(f){
+  var out = [], i = 0, c, n;
+  while (i < f.length){ c = f.charAt(i); n = 0; while (i < f.length && f.charAt(i) === c){ n++; i++; } out.push((c === 'N' ? '■' : '□') + n); }
+  return out.join(' ');
+}
+function grillaHTML(g, activa){
+  var h = '<div class="grilla">', y, x, on;
+  for (y = 0; y < PIX.length; y++){
+    h += '<div class="gfila">';
+    for (x = 0; x < 7; x++){ on = g[y * 7 + x]; h += '<span class="px' + (on ? ' n' : '') + '"' + (activa ? ' id="px' + (y * 7 + x) + '" onclick="pixel(' + (y * 7 + x) + ')"' : '') + '></span>'; }
+    h += '</div>';
+  }
+  return h + '</div>';
+}
+function pixel(i){ var st = P('P2'); if (!st.g) st.g = []; st.g[i] = st.g[i] ? 0 : 1; var el = $('px' + i); if (el) el.className = 'px' + (st.g[i] ? ' n' : ''); sonClic(); guardar(); }
+function probarPix(){
+  var st = P('P2'), g = st.g || [], y, x;
+  for (y = 0; y < PIX.length; y++) for (x = 0; x < 7; x++)
+    if (!!g[y * 7 + x] !== (PIX[y].charAt(x) === 'N')){ fallar('P2', 'La fila ' + (y + 1) + ' no coincide con su instrucción. Contá de nuevo de izquierda a derecha.'); return; }
+  st.ok = true; sonBien(); guardar(); dibujarSala();
+}
+/* cables */
+function cable(i, v){ var st = P('R1'); if (!st.sel) st.sel = ['', '', '', '']; st.sel[i] = v; sonClic(); guardar(); }
+function reglasCables(s){
+  var pos = {}, i, viol = [];
+  for (i = 0; i < 4; i++) if (s[i]) pos[s[i]] = i + 1;
+  if (!(pos.Ana === 2 || pos.Ana === 3)) viol.push(1);
+  if (pos.Beto !== pos.Ana + 1) viol.push(2);
+  if (pos.Caro % 2 !== 1) viol.push(3);
+  if (Math.abs(pos.Dani - pos.Ana) === 1) viol.push(4);
+  return viol;
+}
+function probarCables(){
+  var st = P('R1'), s = st.sel || ['', '', '', ''], vistos = {}, i, v;
+  for (i = 0; i < 4; i++){ if (!s[i]){ fallarSuave('R1', 'Falta enchufar algo en el puerto ' + (i + 1) + '.'); return; } if (vistos[s[i]]){ fallarSuave('R1', s[i] + ' está enchufado en dos puertos a la vez.'); return; } vistos[s[i]] = 1; }
+  v = reglasCables(s);
+  if (!v.length){ decir('¿Enchufaste todo bien? La pantalla se prendió y dice ENTER. No me gusta nada esto.'); resolver('R1'); return; }
+  fallar('R1', 'No se prende. Revisá la pista ' + v[0] + '.');
+}
+function fallarSuave(id, t){ var m = $('m_' + id); m.className = 'msj mal'; m.innerHTML = t; sonMal(); }
+
+/* ── el explorador de archivos (sala del disco) ──────────────────── */
+var CARPETAS = ['Documentos', 'Descargas', 'Fotos', 'Juegos', 'Papelera'];
+var ARCH = {
+  Documentos: [['leeme', 'txt'], ['tarea_de_mates', 'docx'], ['cuento_del_dragon', 'docx'], ['horario', 'pdf']],
+  Descargas: [['tarea_final.pdf', 'exe'], ['juego_gratis', 'exe'], ['cancion', 'mp3'], ['instrucciones', 'pdf']],
+  Fotos: [['playa', 'jpg'], ['perro', 'jpg'], ['cumple.jpg', 'exe'], ['tesoro', 'dat']],
+  Juegos: [['minecraft_trucos', 'exe'], ['puntajes', 'txt']],
+  Papelera: [['llave', 'txt']]
+};
+var COLEXT = {txt:'#5B6B66', docx:'#2B5BB8', pdf:'#C0392B', jpg:'#2E9E6B', mp3:'#8E44AD', exe:'#444', dat:'#999'};
+function xst(){ var st = P('DISCO'); if (!st.carpeta) st.carpeta = 'Documentos'; if (!st.tesoro) st.tesoro = 'dat'; return st; }
+function nombreArch(a, st){
+  var ext = (a[0] === 'tesoro') ? st.tesoro : a[1];
+  return {nom: a[0] + (st.ver ? '.' + ext : ''), ext: ext, aparente: a[0].indexOf('.') >= 0 ? a[0].split('.').pop() : (st.ver ? ext : (ext === 'exe' ? 'exe' : ext))};
+}
+function dibujarExplorador(){
+  var st = xst(), h, i, lista = ARCH[st.carpeta], n, ico;
+  h = '<div class="xbarra"><button onclick="xAbrir()">Abrir</button><button onclick="xRenombrar()">Renombrar</button>' +
+      '<button class="' + (st.ver ? 'on' : '') + '" onclick="xVer()">' + (st.ver ? '&#10003; ' : '') + 'Mostrar extensiones</button>' +
+      '<span class="xruta">Este equipo › ' + st.carpeta + '</span></div><div class="xcuerpo"><div class="xarbol">';
+  for (i = 0; i < CARPETAS.length; i++) h += '<div class="' + (CARPETAS[i] === st.carpeta ? 'sel' : '') + '" onclick="xCarpeta(\'' + CARPETAS[i] + '\')">' + (CARPETAS[i] === 'Papelera' ? '&#128465; ' : '&#128193; ') + CARPETAS[i] + '</div>';
+  h += '</div><div class="xlista">';
+  for (i = 0; i < lista.length; i++){
+    n = nombreArch(lista[i], st);
+    ico = n.aparente;
+    if (!st.ver && lista[i][1] === 'exe' && lista[i][0].indexOf('.') < 0) ico = 'app';
+    h += '<div class="xarch' + (st.sel === st.carpeta + '/' + i ? ' sel' : '') + '" id="xa_' + i + '" onclick="xSel(' + i + ')" ondblclick="xSel(' + i + ');xAbrir()">' +
+         '<span class="xico" style="background:' + (COLEXT[ico] || '#555') + '">' + String(ico).toUpperCase().slice(0, 3) + '</span>' + esc(n.nom) + '</div>';
+  }
+  h += '</div></div><div class="xvista" id="xvista">' + (st.vista || 'Elegí un archivo y apretá Abrir.') + '</div>';
+  $('explorador').innerHTML = h;
+  var pd = $('puertaDisco');
+  if (pd){
+    if (S.hecho.D1 && !S.hecho.D2) pd.innerHTML = '<div class="acert" id="c_D2" style="margin-top:14px"><h2>El archivo que no abre<i>acertijo 2 de 2</i></h2><p class="consigna">La puerta del disco pide la palabra escondida en el tesoro.</p>' + cajaResp('D2', 'la palabra') + '</div>';
+    else pd.innerHTML = '';
+  }
+}
+function xCarpeta(c){ var st = xst(); st.carpeta = c; st.sel = null; st.vista = ''; sonClic(); guardar(); dibujarExplorador(); }
+function xSel(i){ var st = xst(); st.sel = st.carpeta + '/' + i; guardar(); dibujarExplorador(); }
+function xVer(){ var st = xst(); st.ver = !st.ver; sonClic(); guardar(); dibujarExplorador(); }
+function xActual(){ var st = xst(); if (!st.sel) return null; var p = st.sel.split('/'); return ARCH[p[0]][+p[1]]; }
+function xAbrir(){
+  var st = xst(), a = xActual(), ext, t;
+  if (!a){ st.vista = 'Primero elegí un archivo de la lista.'; dibujarExplorador(); return; }
+  ext = a[0] === 'tesoro' ? st.tesoro : a[1];
+  if (ext === 'exe'){
+    S.trampas++; if (!S.salida) gastar(COSTO.trampa); sonVirus();
+    st.vista = '<b style="color:#C0392B">¡TRAMPA!</b> Ese archivo era un programa disfrazado y Polilla te robó batería. Nunca abras un .exe si no sabés de dónde viene.';
+    decir('¡Jijiji! Caíste. Ese no era lo que parecía. Mmm, qué rica batería.');
+    var c = $('izq'); c.className = ''; void c.offsetWidth; c.className = 'temblor';
+    guardar(); dibujarExplorador(); return;
+  }
+  if (a[0] === 'llave'){
+    if (S.hecho.D1) st.vista = '<b>llave.txt</b> — ¡Recuperada! La palabra de esta sala está escondida adentro de <b>tesoro.dat</b>, en la carpeta Fotos. Pero ningún programa sabe abrir un .dat: <b>cambiale la extensión</b> para que lo abra el bloc de notas.';
+    else st.vista = '<b>llave.txt</b> está en la papelera y pide una clave para recuperarse:<br>«Para restaurarme, escribí <b>cuántos programas .exe hay en esta computadora</b>, sin contar la papelera.»' +
+      '<div class="fila" style="margin-top:6px"><input class="resp" style="width:120px;font-size:16px;color:#fff" id="r_D1" onkeydown="if(event.keyCode===13)probar(\'D1\')"><button class="btn" onclick="probar(\'D1\')">Restaurar</button></div><div class="msj" id="m_D1"></div>';
+    guardar(); dibujarExplorador(); return;
+  }
+  if (a[0] === 'tesoro'){
+    if (ext === 'txt') t = '<b>tesoro.txt</b> (bloc de notas) — Lo abriste. Palabra de la sala: <b style="font-size:18px;letter-spacing:3px">RED</b>. Escribila en la puerta de abajo.';
+    else if (ext === 'dat') t = 'Windows no sabe con qué programa abrir un archivo <b>.dat</b>.';
+    else if (ext === 'jpg' || ext === 'png') t = 'El visor de fotos dice: «La imagen está dañada». No es una foto.';
+    else t = 'Ningún programa sabe abrir un archivo <b>.' + esc(ext) + '</b>.';
+    st.vista = t; guardar(); dibujarExplorador(); return;
+  }
+  t = {
+    leeme: '<b>leeme.txt</b> — Si estás leyendo esto, Polilla escondió la llave en la <b>papelera</b>. Pero cuidado: en esta computadora hay programas disfrazados de fotos y documentos. <b>Los nombres no siempre muestran todo.</b>',
+    puntajes: '<b>puntajes.txt</b> — Polilla: 9999 puntos. Vos: 0. Jijiji.',
+    playa: 'Una foto de la playa en verano. Linda, pero no tiene nada escondido.',
+    perro: 'Una foto de un perro con lentes de sol. No tiene nada escondido.'
+  }[a[0]];
+  st.vista = t || ('Se abrió <b>' + esc(a[0]) + '</b>. No tiene nada que ver con la llave.');
+  guardar(); dibujarExplorador();
+}
+function xRenombrar(){
+  var st = xst(), a = xActual();
+  if (!a){ st.vista = 'Primero elegí el archivo que querés renombrar.'; dibujarExplorador(); return; }
+  if (a[0] !== 'tesoro'){ st.vista = 'Polilla no te deja renombrar ese archivo.'; dibujarExplorador(); return; }
+  st.vista = 'Nuevo nombre: <input class="resp" style="width:200px;font-size:15px;text-transform:none;letter-spacing:0;color:#fff" id="xNombre" value="tesoro.' + st.tesoro + '" onkeydown="if(event.keyCode===13)xConfirmar()"> <button class="btn" onclick="xConfirmar()">Listo</button>';
+  dibujarExplorador();
+}
+function xConfirmar(){
+  var st = xst(), v = String($('xNombre').value || '').toLowerCase().replace(/\s+/g, ''), m = v.match(/^tesoro\.([a-z0-9]{1,5})$/);
+  if (!m){ st.vista = 'El nombre tiene que ser <b>tesoro</b>, un punto y la extensión. Por ejemplo: tesoro.algo'; dibujarExplorador(); return; }
+  st.tesoro = m[1]; st.vista = 'Ahora se llama <b>tesoro.' + m[1] + '</b>.' + (st.ver ? '' : ' (Para ver la extensión, prendé Mostrar extensiones.)');
+  sonClic(); guardar(); dibujarExplorador();
+}
+
+/* ── inicio y final ─────────────────────────────────────────────── */
+function vistaInicio(){
+  var h = '<div class="hoja"><div style="float:right;margin:0 0 10px 20px">' + POLILLA.replace('width="58" height="50"', 'width="150" height="130"') + '</div>' +
+    '<h1>Atrapados en <span>la compu</span></h1>' +
+    '<p>El virus <b style="color:#B794F4">Polilla</b> se metió en la computadora de la escuela… y te metió a vos adentro. Para salir tenés que atravesar <b>cinco partes de la máquina</b>: el teclado, la memoria, la pantalla, el disco y la red.</p>' +
+    '<p>Tenés <b style="color:#E3A857">45 minutos de batería</b>. Cada pista gasta un poco, cada respuesta equivocada también, y algunas trampas gastan mucho.</p>' +
+    '<div style="margin:8px 0 6px"><span class="regla">Pensá antes de escribir</span><span class="regla">Anotá las palabras en la hoja</span><span class="regla">Usá tu teclado: es parte del juego</span></div>';
+  if (!guardaOK) h += '<p style="color:#FF6B6B;font-size:13px">Atención: este navegador no deja guardar el avance. No cierren la página.</p>';
+  if (S.fase !== 'inicio' && S.equipo){
+    h += '<button class="grande" onclick="continuar()">Continuar como ' + esc(S.equipo) + '</button><button class="grande sec" onclick="deCero()">Empezar de cero</button>';
+  } else {
+    h += '<p style="margin:14px 0 6px">Tu nombre:</p><input class="nombre" id="nom" maxlength="30" onkeydown="if(event.keyCode===13)empezar()">' +
+         '<div id="nomAviso" style="color:#FF6B6B;font-size:13px;min-height:18px;margin-top:6px"></div><button class="grande" onclick="empezar()">Entrar a la compu &#9654;</button>';
+  }
+  $('inicio').innerHTML = h + '<div class="limpiar"></div></div>';
+  mostrar('inicio'); dibujarBateria();
+}
+function empezar(){
+  var v = String($('nom').value || '').replace(/^\s+|\s+$/g, '');
+  if (!v){ $('nomAviso').innerHTML = 'Escribí tu nombre.'; return; }
+  S = nuevo(); S.equipo = v; S.fase = 'juego'; guardar(); entrar();
+}
+function continuar(){ if (S.salida && S.sala !== 5){ mostrarFin(); return; } entrar(); }
+function deCero(){ if (!window.confirm('Se borra todo el avance de esta computadora. ¿Seguro?')) return; S = nuevo(); guardar(); vistaInicio(); }
+function entrar(){ S.fase = 'juego'; guardar(); mostrar('juego'); render(); decir(SALAS[S.sala].polilla); }
+function salir(){
+  S.salida = {bat: pct(), usado: TOTAL - S.t}; sonPuerta(); guardar(); mostrarFin();
+}
+function mostrarFin(){
+  var s = S.salida, np = 0, k;
+  for (k in S.pistas) if (S.pistas.hasOwnProperty(k) && AX[k] && AX[k].sala < 5) np += S.pistas[k];
+  $('fin').innerHTML = '<h1 class="festejo">¡ESCAPASTE!</h1><p style="color:#8DB3A2;font-size:17px">Polilla quedó encerrado en la papelera. <b style="color:#E3A857">' + esc(S.equipo) + '</b>, sos libre.</p>' +
+    '<div class="diploma"><table>' +
+    '<tr><td>Batería que te quedó</td><td class="v" style="color:#6EE7B7;font-size:28px">' + s.bat + ' %</td></tr>' +
+    '<tr><td>Pistas pedidas</td><td class="v">' + np + '</td></tr>' +
+    '<tr><td>Respuestas equivocadas</td><td class="v">' + S.errores + '</td></tr>' +
+    '<tr><td>Trampas en las que caíste</td><td class="v">' + S.trampas + '</td></tr>' +
+    '<tr><td>Archivos secretos</td><td class="v">' + contarBonus() + ' de 5</td></tr></table></div>' +
+    '<p style="color:#8DB3A2">Avisale al profe cuánta batería te quedó.</p>' +
+    (contarBonus() < 5 ? '<button class="grande" onclick="irBonus()">Abrir los archivos secretos de Polilla</button>' : '<p style="color:#B794F4;font-weight:bold">Resolviste los archivos secretos. Sos leyenda.</p>');
+  mostrar('fin');
+}
+function contarBonus(){ var n = 0, i, ids = ['X1', 'X2', 'X3', 'X4', 'X5']; for (i = 0; i < ids.length; i++) if (S.hecho[ids[i]]) n++; return n; }
+function irBonus(){ S.sala = 5; S.fase = 'juego'; guardar(); mostrar('juego'); render(); decir(SALAS[5].polilla); }
+
+function init(){
+  cargar();
+  reloj = setInterval(tic, 1000);
+  vistaInicio();
+}
+init();
+
+</script>
+</body>
+</html>

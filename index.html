@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Juegos de Informática</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='6' y='14' width='52' height='36' rx='14' fill='%23ff7a59'/%3E%3Ccircle cx='22' cy='32' r='5' fill='%23fff'/%3E%3Ccircle cx='44' cy='27' r='4' fill='%23ffd23f'/%3E%3Ccircle cx='44' cy='37' r='4' fill='%234fc3f7'/%3E%3C/svg%3E">
+<style>
+@font-face{font-family:Nunito;font-weight:600;font-display:swap;src:url(fonts/nunito-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:Nunito;font-weight:800;font-display:swap;src:url(fonts/nunito-latin-800-normal.woff2) format('woff2')}
+:root{--ink:#24204a;--dim:#6b6790;--bg:#eef3ff;--card:#fff}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{background:var(--bg);color:var(--ink);font:600 16px/1.35 Nunito,'Segoe UI',system-ui,sans-serif;overflow-x:hidden}
+.blobs{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.blobs i{position:absolute;border-radius:50%;filter:blur(2px);opacity:.55;animation:drift 18s ease-in-out infinite alternate}
+@keyframes drift{to{transform:translate(40px,-30px) scale(1.08)}}
+header{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:12px;padding:12px 20px;background:rgba(238,243,255,.85);backdrop-filter:blur(8px)}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:22px;color:var(--ink);text-decoration:none;background:#fff;padding:8px 16px 8px 10px;border-radius:999px;box-shadow:0 4px 0 #d6def5}
+.logo svg{width:38px;height:38px}
+.crumbs{display:flex;gap:8px;flex-wrap:wrap}
+.crumb{font-weight:800;font-size:16px;padding:9px 16px;border-radius:999px;background:#fff;color:var(--ink);text-decoration:none;box-shadow:0 4px 0 #d6def5}
+.crumb.on{background:var(--ink);color:#fff;box-shadow:0 4px 0 #0f0c26}
+main{position:relative;z-index:1;max-width:1240px;margin:0 auto;padding:18px 20px 60px}
+h1{font-size:clamp(28px,4.5vw,46px);margin:10px 0 4px;font-weight:800;letter-spacing:-.5px}
+.sub{color:var(--dim);margin:0 0 22px;font-size:18px}
+.resume{display:inline-flex;align-items:center;gap:10px;margin:0 0 22px;padding:10px 18px;border-radius:999px;background:#fff;color:var(--ink);font-weight:800;text-decoration:none;box-shadow:0 4px 0 #d6def5}
+.resume b{background:#ffd23f;border-radius:999px;padding:2px 10px}
+.grid{display:grid;gap:22px}
+.schools{grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr))}
+.classes{grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}
+.games{grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr))}
+.tile{position:relative;display:block;border-radius:28px;text-decoration:none;color:#fff;overflow:hidden;transition:transform .18s cubic-bezier(.34,1.56,.64,1),box-shadow .18s;box-shadow:0 8px 0 rgba(0,0,0,.14)}
+.tile:hover,.tile:focus-visible{transform:translateY(-6px) rotate(-.6deg);box-shadow:0 14px 0 rgba(0,0,0,.14);outline:none}
+.tile:active{transform:translateY(2px) scale(.98)}
+.school{min-height:300px;padding:28px}
+.school .big{font-size:clamp(56px,8vw,86px);font-weight:800;line-height:1;letter-spacing:-1px;text-shadow:0 4px 0 rgba(0,0,0,.12)}
+.school .place{font-size:22px;opacity:.95}
+.school .count{position:absolute;left:28px;bottom:24px;background:rgba(255,255,255,.25);padding:6px 14px;border-radius:999px;font-weight:800}
+.school svg.art{position:absolute;right:-6px;bottom:-6px;width:58%;max-width:300px}
+.klass{min-height:230px;padding:22px}
+.klass .big{font-size:clamp(40px,6vw,58px);font-weight:800;line-height:1.05;text-shadow:0 3px 0 rgba(0,0,0,.12)}
+.klass .det{font-size:18px;opacity:.95}
+.klass .stack{position:absolute;right:16px;bottom:16px;display:flex}
+.klass .stack img{width:96px;height:54px;object-fit:cover;border-radius:10px;border:3px solid #fff;margin-left:-38px;box-shadow:0 4px 10px rgba(0,0,0,.2)}
+.klass .stack img:nth-child(1){transform:rotate(-8deg)}.klass .stack img:nth-child(3){transform:rotate(7deg)}
+.klass .count{position:absolute;left:22px;bottom:18px;background:rgba(255,255,255,.25);padding:5px 12px;border-radius:999px;font-weight:800}
+.game{background:var(--card);color:var(--ink);border-radius:22px;box-shadow:0 7px 0 #d6def5}
+.game:hover,.game:focus-visible{box-shadow:0 12px 0 #c9d3f0}
+.game .shot{aspect-ratio:16/9;background:#dfe6fa center/cover no-repeat;border-radius:22px 22px 0 0}
+.game .info{padding:12px 16px 16px}
+.game .t{font-weight:800;font-size:19px;line-height:1.2}
+.game .d{color:var(--dim);font-size:15px;margin-top:3px}
+.badge{position:absolute;top:12px;left:12px;background:#ffd23f;color:var(--ink);font-weight:800;font-size:13px;padding:4px 10px;border-radius:999px;box-shadow:0 3px 0 #d6a800;letter-spacing:.5px}
+.play{position:absolute;top:calc((100% - 0px) * 0);right:12px;margin-top:12px;width:44px;height:44px;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 3px 0 rgba(0,0,0,.15);opacity:0;transform:scale(.6);transition:.18s}
+.game:hover .play{opacity:1;transform:scale(1)}
+.play svg{width:20px;height:20px;margin-left:3px}
+footer{position:relative;z-index:1;text-align:center;color:var(--dim);font-size:14px;padding:0 20px 30px}
+@media (max-width:560px){header{padding:10px 12px}.logo span{display:none}.school{min-height:230px}}
+</style>
+</head>
+<body>
+<div class="blobs" aria-hidden="true"><i style="width:420px;height:420px;background:#ffd6c9;left:-120px;top:-80px"></i><i style="width:360px;height:360px;background:#cfe9ff;right:-100px;top:120px;animation-delay:-6s"></i><i style="width:300px;height:300px;background:#e3d9ff;left:30%;bottom:-120px;animation-delay:-12s"></i><i style="width:220px;height:220px;background:#d4f5e6;right:20%;top:-60px;animation-delay:-3s"></i></div>
+<header>
+  <a class="logo" href="#/" aria-label="Inicio"><svg viewBox="0 0 64 64"><rect x="4" y="14" width="56" height="36" rx="16" fill="#ff7a59"/><rect x="14" y="29" width="16" height="6" rx="3" fill="#fff"/><rect x="19" y="24" width="6" height="16" rx="3" fill="#fff"/><circle cx="44" cy="27" r="4.5" fill="#ffd23f"/><circle cx="44" cy="38" r="4.5" fill="#4fc3f7"/><circle cx="50" cy="32.5" r="4.5" fill="#9b7bff"/></svg><span>Juegos de Informática</span></a>
+  <nav class="crumbs" id="crumbs"></nav>
+</header>
+<main id="app"></main>
+<footer>Juegos hechos para las clases de Informática. No guardan nada en internet: el avance queda en cada compu.</footer>
+<script src="datos.js"></script>
+<script>
+(function () {
+  'use strict';
+  var D = window.JUEGOS, app = document.getElementById('app'), crumbs = document.getElementById('crumbs');
+  var esc = function (s) { return String(s).replace(/[<>&"]/g, function (c) { return { '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[c]; }); };
+  var count = function (c) { return c.clases.reduce(function (n, k) { return n + k.juegos.length; }, 0); };
+  var plural = function (n) { return n + (n === 1 ? ' juego' : ' juegos'); };
+  var store = { get: function () { try { return localStorage.getItem('portalClase'); } catch (e) { return null; } }, set: function (v) { try { localStorage.setItem('portalClase', v); } catch (e) { } } };
+  var school = function (color) {
+    return '<svg class="art" viewBox="0 0 300 220" aria-hidden="true"><rect x="40" y="90" width="220" height="130" rx="10" fill="rgba(255,255,255,.9)"/><path d="M28 98 L150 26 L272 98Z" fill="rgba(255,255,255,.75)"/><rect x="128" y="150" width="44" height="70" rx="8" fill="' + color + '" opacity=".55"/>' +
+      [70, 110, 190, 230].map(function (x) { return '<rect x="' + (x - 14) + '" y="118" width="28" height="26" rx="6" fill="' + color + '" opacity=".4"/>'; }).join('') +
+      '<circle cx="150" cy="76" r="15" fill="' + color + '" opacity=".5"/><path d="M150 26 V4 M150 4 h26 v14 h-26" stroke="rgba(255,255,255,.9)" stroke-width="5" fill="rgba(255,255,255,.75)"/></svg>';
+  };
+  var card = function (j) {
+    return '<a class="tile game" href="' + esc(j.href) + '" data-slug="' + esc(j.slug) + '"><div class="shot" style="background-image:url(img/' + esc(j.slug) + '.jpg)"></div>' +
+      (j.nuevo ? '<span class="badge">NUEVO</span>' : '') + '<span class="play"><svg viewBox="0 0 20 20"><path d="M4 2 L18 10 L4 18Z" fill="#24204a"/></svg></span>' +
+      '<div class="info"><div class="t">' + esc(j.titulo) + '</div><div class="d">' + esc(j.desc) + '</div></div></a>';
+  };
+  function setCrumbs(list) {
+    crumbs.innerHTML = list.map(function (c, i) { return '<a class="crumb' + (i === list.length - 1 ? ' on' : '') + '" href="' + c[1] + '">' + esc(c[0]) + '</a>'; }).join('');
+  }
+  function render() {
+    var parts = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
+    var c = D.colegios.filter(function (x) { return x.id === parts[0]; })[0];
+    var k = c && c.clases.filter(function (x) { return x.id === parts[1]; })[0];
+    window.scrollTo(0, 0);
+    if (k) {
+      store.set(c.id + '/' + k.id);
+      setCrumbs([['Inicio', '#/'], [c.nombre, '#/' + c.id], [k.nombre, '#/' + c.id + '/' + k.id]]);
+      app.innerHTML = '<h1>' + esc(c.nombre) + ' · ' + esc(k.nombre) + '</h1><p class="sub">' + esc(k.detalle) + ' · ' + plural(k.juegos.length) + '</p><div class="grid games">' + k.juegos.map(card).join('') + '</div>';
+      document.title = c.nombre + ' ' + k.nombre + ' · Juegos de Informática';
+    } else if (c) {
+      setCrumbs([['Inicio', '#/'], [c.nombre, '#/' + c.id]]);
+      app.innerHTML = '<h1>' + esc(c.nombre) + '</h1><p class="sub">' + esc(c.lugar) + ' · Elegí tu clase</p><div class="grid classes">' + c.clases.map(function (k) {
+        return '<a class="tile klass" href="#/' + c.id + '/' + k.id + '" data-clase="' + c.id + '/' + k.id + '" style="background:' + k.color + '"><div class="big">' + esc(k.nombre) + '</div><div class="det">' + esc(k.detalle) + '</div>' +
+          '<span class="count">' + plural(k.juegos.length) + '</span><div class="stack">' + k.juegos.slice(0, 3).map(function (j) { return '<img src="img/' + esc(j.slug) + '.jpg" alt="">'; }).join('') + '</div></a>';
+      }).join('') + '</div>';
+      document.title = c.nombre + ' · Juegos de Informática';
+    } else {
+      setCrumbs([['Inicio', '#/']]);
+      var last = store.get(), lc = null, lk = null;
+      if (last) { lc = D.colegios.filter(function (x) { return x.id === last.split('/')[0]; })[0]; lk = lc && lc.clases.filter(function (x) { return x.id === last.split('/')[1]; })[0]; }
+      app.innerHTML = '<h1>¡Hola! ¿De qué colegio sos?</h1><p class="sub">Elegí tu colegio y después tu clase.</p>' +
+        (lk ? '<a class="resume" href="#/' + lc.id + '/' + lk.id + '" data-resume="1">Seguir en <b>' + esc(lc.nombre) + ' · ' + esc(lk.nombre) + '</b></a>' : '') +
+        '<div class="grid schools">' + D.colegios.map(function (c) {
+          return '<a class="tile school" href="#/' + c.id + '" data-colegio="' + c.id + '" style="background:' + c.color + '"><div class="big">' + esc(c.nombre) + '</div><div class="place">' + esc(c.lugar) + '</div><span class="count">' + plural(count(c)) + '</span>' + school(c.color) + '</a>';
+        }).join('') + '</div>';
+      document.title = 'Juegos de Informática';
+    }
+    var tiles = app.querySelectorAll('.tile');
+    for (var i = 0; i < tiles.length; i++) tiles[i].animate && tiles[i].animate([{ opacity: 0, transform: 'translateY(16px) scale(.96)' }, { opacity: 1, transform: 'none' }], { duration: 380, delay: i * 45, easing: 'cubic-bezier(.34,1.56,.64,1)', fill: 'backwards' });
+  }
+  window.addEventListener('hashchange', render);
+  render();
+})();
+</script>
+</body>
+</html>

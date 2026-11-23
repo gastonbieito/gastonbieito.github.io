@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Yo, en el futuro</title>
+<style>
+  body{ margin:0; background:#F4EFE6; color:#2A2622; font-family:Verdana,Arial,Helvetica,sans-serif; font-size:15px; }
+  #caja{ width:1000px; margin:0 auto; padding:14px 0 50px; }
+  button{ font-family:Verdana,Arial,Helvetica,sans-serif; cursor:pointer; }
+  .limpiar{ clear:both; }
+  #barra{ overflow:hidden; padding:4px 0 12px; border-bottom:2px solid #2A2622; }
+  #titulo{ float:left; font-family:Georgia,'Times New Roman',serif; font-size:28px; font-weight:bold; }
+  #titulo span{ color:#D2552D; }
+  #pasos{ float:right; margin-top:6px; }
+  .paso{ float:left; margin-left:6px; padding:6px 12px; border-radius:16px; font-size:12px; background:#E6DED0; color:#7A7066; border:0; }
+  .paso.hecho{ background:#2A2622; color:#F4EFE6; }
+  .paso.ahora{ background:#D2552D; color:#fff; }
+  .pantalla{ display:none; padding-top:22px; }
+  .pantalla.vis{ display:block; }
+  h2{ font-family:Georgia,'Times New Roman',serif; font-size:30px; margin:0 0 6px; }
+  .bajada{ color:#6B6158; margin:0 0 20px; font-size:15px; }
+  .boton{ background:#2A2622; color:#fff; border:0; border-radius:8px; padding:12px 26px; font-size:16px; font-weight:bold; }
+  .boton:hover{ background:#D2552D; }
+  .boton.apagado{ background:#C9C0B3; cursor:default; }
+  .boton2{ background:none; border:2px solid #2A2622; color:#2A2622; border-radius:8px; padding:10px 20px; font-size:14px; font-weight:bold; }
+  .boton2:hover{ border-color:#D2552D; color:#D2552D; }
+  input[type=text], textarea{ font-family:Verdana,Arial,Helvetica,sans-serif; font-size:16px; border:2px solid #CFC5B6; border-radius:8px; padding:10px 12px; background:#fff; color:#2A2622; width:100%; box-sizing:border-box; }
+  input[type=text]:focus, textarea:focus{ outline:none; border-color:#D2552D; }
+  textarea{ resize:vertical; line-height:1.4; }
+
+  /* inicio */
+  #portada{ overflow:hidden; padding:30px 0 10px; }
+  #portadaTxt{ float:left; width:560px; }
+  #portadaTxt h1{ font-family:Georgia,'Times New Roman',serif; font-size:56px; line-height:1.05; margin:0 0 18px; }
+  #portadaTxt h1 span{ color:#D2552D; }
+  #portadaTxt p{ font-size:18px; line-height:1.5; color:#5A5048; margin:0 0 24px; }
+  #portadaDib{ float:right; width:380px; }
+  #nombreCaja{ width:340px; margin-bottom:8px; }
+  .nota{ font-size:12px; color:#8A8076; margin:0 0 18px; }
+  #continuarCaja{ display:none; margin-top:14px; }
+
+  /* test */
+  #pregunta{ background:#fff; border-radius:16px; padding:30px 34px; min-height:240px; }
+  #pregNum{ font-size:12px; letter-spacing:2px; color:#D2552D; font-weight:bold; margin-bottom:8px; }
+  #pregTxt{ font-family:Georgia,'Times New Roman',serif; font-size:30px; margin-bottom:26px; }
+  .opc{ float:left; width:200px; margin:0 14px 14px 0; padding:20px 10px; background:#F4EFE6; border:3px solid #F4EFE6; border-radius:14px; font-size:17px; font-weight:bold; color:#2A2622; text-align:center; }
+  .opc:hover{ border-color:#D2552D; background:#fff; }
+  .opc svg{ display:block; margin:0 auto 10px; }
+  #saltarTest{ margin-top:14px; font-size:13px; background:none; border:0; color:#8A8076; text-decoration:underline; padding:0; }
+
+  /* explorar */
+  #sugeridas{ background:#2A2622; color:#F4EFE6; border-radius:14px; padding:16px 20px; margin-bottom:18px; display:none; }
+  #sugeridas b{ color:#FFB38F; }
+  #filtros{ margin-bottom:14px; overflow:hidden; }
+  .filtro{ float:left; margin:0 8px 8px 0; padding:7px 14px; border-radius:16px; border:2px solid #CFC5B6; background:#fff; font-size:13px; color:#5A5048; }
+  .filtro.on{ background:#2A2622; color:#fff; border-color:#2A2622; }
+  #tarjetas{ overflow:hidden; }
+  .tarj{ float:left; width:240px; height:146px; margin:0 13px 13px 0; padding:14px; box-sizing:border-box; background:#fff; border:3px solid #fff; border-radius:14px; text-align:left; color:#2A2622; position:relative; }
+  .tarj:nth-child(4n){ margin-right:0; }
+  .tarj:hover{ border-color:#D2552D; }
+  .tarj.marcada{ border-color:#2A2622; }
+  .tarj.marcada .nom{ padding-right:62px; }
+  .tarj.marcada:after{ content:'Sugerida'; position:absolute; right:10px; top:10px; font-size:10px; background:#D2552D; color:#fff; padding:3px 7px; border-radius:8px; }
+  .tarj .ic{ float:left; margin:0 10px 6px 0; }
+  .tarj .nom{ font-weight:bold; font-size:15px; display:block; padding-top:6px; }
+  .tarj .que{ clear:both; display:block; font-size:12px; color:#6B6158; line-height:1.4; padding-top:6px; }
+  #ficha{ display:none; background:#fff; border-radius:16px; padding:28px 32px; overflow:hidden; }
+  #ficha .ic{ float:left; margin-right:20px; }
+  #fichaNom{ font-family:Georgia,'Times New Roman',serif; font-size:34px; font-weight:bold; margin:6px 0 14px; }
+  .dato{ margin:0 0 12px; font-size:16px; line-height:1.5; }
+  .dato b{ display:block; font-size:11px; letter-spacing:2px; color:#D2552D; }
+  #fichaBotones{ clear:both; padding-top:12px; }
+  #otraCaja{ display:none; margin-top:12px; width:420px; }
+
+  /* escribir */
+  #escr .preg{ background:#fff; border-radius:14px; padding:16px 20px 18px; margin-bottom:12px; }
+  #escr .preg.lista{ box-shadow:inset 6px 0 0 #3E9B6B; }
+  .pTit{ font-weight:bold; font-size:16px; margin-bottom:4px; }
+  .pTit i{ font-style:normal; color:#3E9B6B; font-size:13px; margin-left:8px; display:none; }
+  .lista .pTit i{ display:inline; }
+  .pAyuda{ font-size:12px; color:#8A8076; margin-bottom:8px; }
+  .pAyuda button{ background:none; border:0; color:#D2552D; text-decoration:underline; padding:0; font-size:12px; }
+  #contador{ font-size:14px; color:#6B6158; margin:6px 0 14px; }
+  #contador b{ color:#2A2622; }
+
+  /* camino */
+  #ruta{ position:relative; height:120px; margin:4px 0 14px; }
+  #ruta svg{ position:absolute; left:0; top:0; }
+  #auto{ position:absolute; top:22px; left:0; transition:left .8s; }
+  #llegaste{ display:none; position:absolute; right:0; top:-6px; background:#3E9B6B; color:#fff; font-weight:bold; padding:6px 14px; border-radius:14px; font-size:14px; }
+  #paradas{ overflow:hidden; }
+  .parada{ float:left; width:238px; margin-right:16px; background:#fff; border-radius:14px; padding:14px; box-sizing:border-box; border:3px solid #fff; }
+  .parada:last-child{ margin-right:0; }
+  .parada.lista{ border-color:#3E9B6B; }
+  .edad{ font-family:Georgia,'Times New Roman',serif; font-size:24px; font-weight:bold; }
+  .edadSub{ font-size:12px; color:#8A8076; margin:2px 0 10px; }
+  .chip{ display:block; width:100%; text-align:left; margin:0 0 6px; padding:7px 10px; border-radius:10px; border:2px solid #E6DED0; background:#F4EFE6; font-size:13px; color:#2A2622; }
+  .chip:hover{ border-color:#D2552D; background:#fff; }
+  .parada textarea{ font-size:14px; padding:8px; margin-top:4px; }
+  .parada .ok{ display:none; color:#3E9B6B; font-size:12px; font-weight:bold; margin-top:6px; }
+  .parada.lista .ok{ display:block; }
+  #dCamino{ margin-top:18px; border-top:4px double #1E1B18; padding-top:14px; }
+  #dCamino h4, #dCarta h4{ font-family:Verdana,Arial,sans-serif; font-size:12px; letter-spacing:3px; color:#D2552D; margin:0 0 10px; }
+  .dPar{ float:left; width:220px; margin-right:16px; border-top:4px solid #D2552D; padding-top:8px; font-size:15px; line-height:1.45; }
+  .dPar:last-child{ margin-right:0; }
+  .dPar b{ display:block; font-family:Verdana,Arial,sans-serif; font-size:12px; letter-spacing:1px; margin-bottom:4px; }
+
+  /* diario */
+  #diario{ background:#FFFDF8; border:2px solid #2A2622; padding:26px 34px 30px; font-family:Georgia,'Times New Roman',serif; color:#1E1B18; }
+  #dCab{ text-align:center; border-bottom:4px double #1E1B18; padding-bottom:10px; }
+  #dCab .nomDiario{ font-size:46px; font-weight:bold; letter-spacing:1px; }
+  #dCab .linea{ font-family:Verdana,Arial,sans-serif; font-size:11px; letter-spacing:2px; color:#5A5048; overflow:hidden; margin-top:6px; }
+  #dCab .linea span{ float:left; } #dCab .linea em{ float:right; font-style:normal; }
+  #dVolanta{ font-family:Verdana,Arial,sans-serif; font-size:12px; letter-spacing:3px; color:#D2552D; font-weight:bold; margin:20px 0 6px; text-transform:uppercase; }
+  #dTitular{ font-size:46px; font-weight:bold; line-height:1.08; margin:0 0 14px; }
+  #dBajada{ font-size:19px; font-style:italic; color:#4A423B; line-height:1.45; margin:0 0 20px; }
+  #dCols{ overflow:hidden; border-top:1px solid #1E1B18; padding-top:16px; }
+  #dIzq{ float:left; width:590px; font-size:16px; line-height:1.6; }
+  #dIzq p{ margin:0 0 12px; }
+  #dDer{ float:right; width:300px; }
+  #dDib{ background:#F1E9DB; text-align:center; padding:18px 0 10px; }
+  #dDib p{ font-family:Verdana,Arial,sans-serif; font-size:11px; color:#6B6158; margin:6px 0 0; }
+  #dCita{ border-left:4px solid #D2552D; padding:6px 0 6px 14px; margin:16px 0; font-size:18px; font-style:italic; }
+  #dCita span{ display:block; font-family:Verdana,Arial,sans-serif; font-style:normal; font-size:11px; color:#6B6158; margin-top:6px; }
+  .letra{ font-size:44px; float:left; line-height:0.9; margin:4px 6px 0 0; font-weight:bold; }
+  #dCarta{ display:none; margin-top:18px; border-top:4px double #1E1B18; padding-top:14px; }
+  #dCarta p{ font-size:16px; line-height:1.6; margin:0; white-space:pre-wrap; }
+  #editTitular{ background:#fff; border-radius:14px; padding:16px 20px; margin-bottom:16px; overflow:hidden; }
+  #editTitular .col{ float:left; width:300px; margin-right:16px; }
+  #editTitular .col.ancha{ width:600px; }
+  #extra{ background:#2A2622; color:#F4EFE6; border-radius:14px; padding:20px 24px; margin-top:22px; }
+  #extra h3{ margin:0 0 6px; font-family:Georgia,'Times New Roman',serif; font-size:22px; color:#FFB38F; }
+  #extra p{ margin:0 0 12px; font-size:14px; color:#D9CFC2; }
+  #finBotones{ margin-top:18px; overflow:hidden; }
+  #finBotones button{ margin-right:10px; }
+  #borrarCaja{ float:right; }
+  #aviso{ display:none; position:fixed; left:50%; top:24px; margin-left:-180px; width:360px; background:#2A2622; color:#fff; text-align:center; padding:12px; border-radius:10px; font-size:14px; z-index:9; }
+</style>
+</head>
+<body>
+<div id="caja">
+  <div id="barra">
+    <div id="titulo">Yo, en el <span>futuro</span></div>
+    <div id="pasos">
+      <span class="paso" id="p1">1 · Qué me gusta</span>
+      <span class="paso" id="p2">2 · Explorar</span>
+      <span class="paso" id="p3">3 · Mi plan</span>
+      <span class="paso" id="p4">4 · El camino</span>
+      <span class="paso" id="p5">5 · El diario</span>
+    </div>
+  </div>
+
+  <!-- INICIO -->
+  <div class="pantalla vis" id="sInicio">
+    <div id="portada">
+      <div id="portadaTxt">
+        <h1>¿Qué vas a ser<br><span>de grande?</span></h1>
+        <p>Vas a descubrir qué te gusta, mirar trabajos y estudios, escribir tu plan y salir en la tapa de un diario del año <b class="anioF">2041</b>.</p>
+        <div id="nombreCaja"><input type="text" id="nombre" maxlength="20" placeholder="Tu nombre"></div>
+        <p class="nota">Solo tu nombre, sin apellido.</p>
+        <button class="boton" id="bEmpezar">Empezar</button>
+        <div id="continuarCaja"><button class="boton2" id="bContinuar">Seguir donde quedé</button></div>
+      </div>
+      <div id="portadaDib"></div>
+    </div>
+  </div>
+
+  <!-- TEST -->
+  <div class="pantalla" id="sTest">
+    <div id="pregunta">
+      <div id="pregNum"></div>
+      <div id="pregTxt"></div>
+      <div id="opciones"></div>
+      <div class="limpiar"></div>
+    </div>
+    <button id="saltarTest">Ya sé lo que quiero, saltar las preguntas</button>
+  </div>
+
+  <!-- EXPLORAR -->
+  <div class="pantalla" id="sExplorar">
+    <h2>Mirá trabajos y estudios</h2>
+    <p class="bajada">Tocá uno para ver qué se hace y qué se estudia. Cuando encuentres el tuyo, elegilo.</p>
+    <div id="sugeridas"></div>
+    <div id="lista">
+      <div id="filtros"></div>
+      <div id="tarjetas"></div>
+    </div>
+    <div id="ficha">
+      <div class="ic" id="fichaIc"></div>
+      <div id="fichaNom"></div>
+      <p class="dato"><b>QUÉ HACÉS</b><span id="fichaQue"></span></p>
+      <p class="dato"><b>QUÉ ESTUDIÁS</b><span id="fichaEst"></span></p>
+      <p class="dato"><b>UN DATO</b><span id="fichaDato"></span></p>
+      <div id="fichaBotones">
+        <button class="boton" id="bElegir">Elijo este</button>
+        <button class="boton2" id="bVolverLista">Ver otros</button>
+      </div>
+    </div>
+    <div style="margin-top:6px">
+      <button class="boton2" id="bOtra">Lo mío no está en la lista</button>
+      <div id="otraCaja">
+        <input type="text" id="otraTxt" maxlength="40" placeholder="Escribí qué querés ser">
+        <div style="margin-top:10px"><button class="boton" id="bOtraOk">Elijo esto</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ESCRIBIR -->
+  <div class="pantalla" id="sEscribir">
+    <h2>Tu plan</h2>
+    <p class="bajada">Una o dos oraciones en cada una. Con esto se arma tu diario.</p>
+    <div id="escr"></div>
+    <div id="contador"></div>
+    <button class="boton apagado" id="bDiario">Seguir</button>
+    <button class="boton2" id="bCambiar" style="margin-left:8px">Cambiar de trabajo</button>
+  </div>
+
+  <!-- CAMINO -->
+  <div class="pantalla" id="sCamino">
+    <h2>El camino</h2>
+    <p class="bajada">¿Qué vas a hacer para llegar? Tocá una idea y terminá la frase.</p>
+    <div id="ruta"><div id="llegaste">¡Llegaste!</div></div>
+    <div id="paradas"></div>
+    <div id="contCamino" style="font-size:14px;color:#6B6158;margin:14px 0"></div>
+    <button class="boton apagado" id="bCaminoOk">Armar mi diario</button>
+    <button class="boton2" id="bCaminoAtras" style="margin-left:8px">Volver a mi plan</button>
+  </div>
+
+  <!-- DIARIO -->
+  <div class="pantalla" id="sDiario">
+    <div id="editTitular">
+      <div class="col ancha">
+        <div class="pTit">Escribí el titular de tu noticia</div>
+        <input type="text" id="titular" maxlength="70">
+      </div>
+      <div class="col" style="width:280px;margin-right:0">
+        <div class="pTit">Año</div>
+        <input type="text" id="anio" maxlength="4">
+      </div>
+    </div>
+    <div id="diario">
+      <div id="dCab">
+        <div class="nomDiario">El Diario del Futuro</div>
+        <div class="linea"><span id="dFecha"></span><em>EDICIÓN ESPECIAL</em></div>
+      </div>
+      <div id="dVolanta"></div>
+      <div id="dTitular"></div>
+      <div id="dBajada"></div>
+      <div id="dCols">
+        <div id="dIzq"></div>
+        <div id="dDer">
+          <div id="dDib"></div>
+          <div id="dCita"></div>
+        </div>
+      </div>
+      <div id="dCamino"><h4 id="dCaminoTit"></h4><div id="dCaminoPar"></div><div class="limpiar"></div></div>
+      <div id="dCarta"><h4>CARTA A MI YO DE 18 AÑOS</h4><p id="dCartaTxt"></p></div>
+    </div>
+    <div id="finBotones">
+      <button class="boton" id="bGuardar">Guardar mi diario</button>
+      <button class="boton2" id="bEditar">Cambiar lo que escribí</button>
+      <span id="borrarCaja"><button class="boton2" id="bBorrar">Empezar de nuevo</button></span>
+    </div>
+    <div id="extra">
+      <h3>¿Terminaste? Escribile a tu yo de 18 años</h3>
+      <p>¿Qué le querés decir? ¿Qué esperás que ya haya hecho? ¿Qué no se tiene que olvidar? Aparece abajo en el diario.</p>
+      <textarea id="carta" rows="5" placeholder="Hola, yo de 18 años:"></textarea>
+    </div>
+  </div>
+</div>
+<div id="aviso"></div>
+
+<script>
+(function(){
+var $ = function(id){ return document.getElementById(id); };
+function esc(t){ return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+/* ---------- iconos ---------- */
+var IC = {
+  personas:'<circle cx="24" cy="15" r="8"/><path d="M8 42c0-10 7-16 16-16s16 6 16 16z"/>',
+  animales:'<circle cx="13" cy="18" r="5"/><circle cx="24" cy="12" r="5"/><circle cx="35" cy="18" r="5"/><path d="M24 24c-8 0-13 8-13 13 0 4 4 5 7 4 3-1 4-2 6-2s3 1 6 2c3 1 7 0 7-4 0-5-5-13-13-13z"/>',
+  cosas:'<path d="M21 4h6l1 6 5 2 5-4 4 4-4 5 2 5 6 1v6l-6 1-2 5 4 5-4 4-5-4-5 2-1 6h-6l-1-6-5-2-5 4-4-4 4-5-2-5-6-1v-6l6-1 2-5-4-5 4-4 5 4 5-2z"/><circle cx="24" cy="24" r="7" fill="#fff"/>',
+  compu:'<rect x="5" y="8" width="38" height="25" rx="3"/><rect x="9" y="12" width="30" height="17" fill="#fff"/><path d="M2 38h44l-3 4H5z"/>',
+  arte:'<path d="M24 5C13 5 5 13 5 23s8 19 17 19c4 0 4-3 3-5-1-3 0-5 4-5h5c6 0 9-4 9-9 0-10-9-18-19-18z"/><circle cx="15" cy="20" r="3" fill="#fff"/><circle cx="23" cy="13" r="3" fill="#fff"/><circle cx="32" cy="17" r="3" fill="#fff"/>',
+  cuerpo:'<circle cx="24" cy="24" r="19"/><path d="M24 12l7 5-3 8h-8l-3-8z" fill="#fff"/>',
+  descubrir:'<circle cx="20" cy="20" r="13"/><circle cx="20" cy="20" r="8" fill="#fff"/><path d="M29 27l13 13-4 4-13-13z"/>',
+  ayudar:'<path d="M24 42S5 30 5 17c0-6 5-11 11-11 4 0 7 2 8 5 1-3 4-5 8-5 6 0 11 5 11 11 0 13-19 25-19 25z"/>',
+  crear:'<path d="M34 4l10 10-24 24-12 3 3-12z"/><path d="M8 44h34v-3H8z"/>',
+  arreglar:'<path d="M30 4a11 11 0 0 0-10 15L5 34l9 9 15-15A11 11 0 0 0 44 18l-7 7-6-2-2-6 7-7c-2-1-4-1-6-1z"/>',
+  afuera:'<circle cx="16" cy="14" r="7"/><path d="M2 42l14-18 9 11 7-8 14 15z"/>',
+  adentro:'<path d="M24 5L4 21h5v21h30V21h5z"/><rect x="19" y="28" width="10" height="14" fill="#fff"/>',
+  campo:'<path d="M24 44V20"/><path d="M24 22c-9 0-14-6-14-14 9 0 14 6 14 14zM24 30c9 0 14-6 14-14-9 0-14 6-14 14z"/><rect x="22" y="20" width="4" height="24"/>',
+  cocina:'<path d="M12 18a8 8 0 0 1 4-14 9 9 0 0 1 16 0 8 8 0 0 1 4 14v8H12z"/><rect x="12" y="29" width="24" height="12" rx="2"/>',
+  musica:'<path d="M18 8l24-5v28a6 6 0 1 1-4-6V12l-16 3v22a6 6 0 1 1-4-6z"/>',
+  camara:'<path d="M6 14h9l3-5h12l3 5h9v26H6z"/><circle cx="24" cy="26" r="8" fill="#fff"/><circle cx="24" cy="26" r="4"/>',
+  libro:'<path d="M4 8c7-2 14-1 19 3v31c-5-4-12-5-19-3zM44 8c-7-2-14-1-19 3v31c5-4 12-5 19-3z"/>',
+  avion:'<path d="M44 6c-2-2-6 0-8 2l-8 8-20-6-4 4 16 10-7 8-6-1-3 3 8 5 5 8 3-3-1-6 8-7 10 16 4-4-6-20 8-8c2-2 4-6 1-9z"/>',
+  ley:'<path d="M23 4h2v36h-2z"/><path d="M10 42h28v3H10zM8 12h32v3H8z"/><path d="M4 28l6-13 6 13a6 6 0 0 1-12 0zM32 28l6-13 6 13a6 6 0 0 1-12 0z"/>',
+  fuego:'<path d="M24 44c-9 0-15-6-15-14 0-9 8-13 8-22 6 3 9 8 9 13 2-2 3-5 3-8 6 4 10 10 10 17 0 8-6 14-15 14z"/><path d="M24 40c-4 0-6-3-6-6 0-4 4-6 5-10 4 3 7 6 7 10 0 3-2 6-6 6z" fill="#fff"/>',
+  negocio:'<rect x="4" y="16" width="40" height="26" rx="3"/><path d="M17 16v-6h14v6h-4v-3h-6v3z"/><rect x="4" y="25" width="40" height="3" fill="#fff"/>',
+  tijera:'<circle cx="12" cy="36" r="6"/><circle cx="12" cy="36" r="2.5" fill="#fff"/><circle cx="36" cy="36" r="6"/><circle cx="36" cy="36" r="2.5" fill="#fff"/><path d="M15 31L34 4l3 2-17 28zM33 31L14 4l-3 2 17 28z"/>',
+  pregunta:'<circle cx="24" cy="24" r="20"/><path d="M18 18a6 6 0 1 1 9 5c-2 1-3 2-3 5" stroke="#fff" stroke-width="4" fill="none"/><circle cx="24" cy="35" r="2.5" fill="#fff"/>'
+};
+function icono(n, tam, color){
+  tam = tam || 48; color = color || '#2A2622';
+  return '<svg width="'+tam+'" height="'+tam+'" viewBox="0 0 48 48" fill="'+color+'">'+(IC[n]||IC.pregunta)+'</svg>';
+}
+
+/* ---------- trabajos ---------- */
+/* t: personas animales cosas compu arte cuerpo | descubrir ayudar crear arreglar | afuera adentro */
+var TR = [
+ {id:'vet', n:'Veterinaria', ic:'animales', c:'#3E9B6B', t:['animales','ayudar','descubrir','afuera'], q:'Cuidás y curás animales: mascotas, vacas, caballos.', e:'La carrera de Veterinaria en la facultad.', d:'En el campo, muchos veterinarios trabajan en tambos y estancias.'},
+ {id:'med', n:'Medicina', ic:'ayudar', c:'#C8453A', t:['personas','ayudar','descubrir','adentro'], q:'Atendés a las personas cuando se enferman y las ayudás a estar sanas.', e:'La carrera de Medicina en la facultad. Es de las más largas.', d:'Después de recibirse, muchos eligen una especialidad: niños, corazón, huesos.'},
+ {id:'enf', n:'Enfermería', ic:'ayudar', c:'#D9707A', t:['personas','ayudar','adentro'], q:'Cuidás a los pacientes todos los días en hospitales y policlínicas.', e:'La carrera de Enfermería.', d:'Es de los trabajos que más se necesitan.'},
+ {id:'doc', n:'Maestra o profe', ic:'libro', c:'#E0A030', t:['personas','ayudar','crear','adentro'], q:'Enseñás a niños o a jóvenes y los ayudás a aprender.', e:'Magisterio o profesorado, en un instituto de formación docente.', d:'Todos los trabajos de esta lista empezaron con alguien que enseñó.'},
+ {id:'prog', n:'Programación', ic:'compu', c:'#3A6FC8', t:['compu','crear','arreglar','descubrir','adentro'], q:'Creás programas, apps y páginas web. Le decís a la compu qué hacer.', e:'Ingeniería en computación o carreras de informática; también hay cursos más cortos.', d:'Se puede trabajar desde casa para empresas de otros países.'},
+ {id:'vjue', n:'Videojuegos', ic:'compu', c:'#6A4FC8', t:['compu','arte','crear','adentro'], q:'Inventás juegos: la historia, los personajes, los niveles y el código.', e:'Carreras de diseño de videojuegos, programación o animación.', d:'Un juego lo hace un equipo: dibujantes, programadores, músicos, guionistas.'},
+ {id:'arq', n:'Arquitectura', ic:'adentro', c:'#8A6A4A', t:['arte','crear','cosas','adentro'], q:'Diseñás casas, escuelas, plazas y edificios.', e:'La carrera de Arquitectura en la facultad.', d:'Antes de construir, se dibuja todo en planos y en la compu.'},
+ {id:'ing', n:'Ingeniería', ic:'cosas', c:'#4A5A6A', t:['cosas','descubrir','arreglar','crear'], q:'Inventás y mejorás máquinas, puentes, rutas o energía.', e:'Ingeniería en la facultad: civil, eléctrica, mecánica, química y más.', d:'Los molinos de viento que dan electricidad los diseñan ingenieros.'},
+ {id:'mec', n:'Mecánica', ic:'arreglar', c:'#5A5048', t:['cosas','arreglar','adentro'], q:'Arreglás autos, motos, tractores y máquinas.', e:'Cursos de mecánica en UTU.', d:'Los autos nuevos tienen computadora: el mecánico también usa una.'},
+ {id:'ele', n:'Electricista', ic:'fuego', c:'#E0A030', t:['cosas','arreglar','afuera'], q:'Instalás y arreglás la luz de casas, comercios y fábricas.', e:'Cursos de electricidad en UTU.', d:'Es un trabajo con mucho cuidado: primero siempre se corta la luz.'},
+ {id:'chef', n:'Cocina', ic:'cocina', c:'#D2552D', t:['crear','cosas','personas','adentro'], q:'Inventás platos y cocinás en restaurantes, hoteles o tu propio local.', e:'Gastronomía en UTU o en escuelas de cocina.', d:'Un buen cocinero también sabe de compras, de números y de equipo.'},
+ {id:'fut', n:'Fútbol u otro deporte', ic:'cuerpo', c:'#3E9B6B', t:['cuerpo','afuera','personas'], q:'Entrenás todos los días y competís con un equipo.', e:'Se entrena en un club desde chico. Conviene estudiar algo también.', d:'La carrera de un deportista suele terminar antes de los 40.'},
+ {id:'ef', n:'Profe de Educación Física', ic:'cuerpo', c:'#2E8B8B', t:['cuerpo','personas','ayudar','afuera'], q:'Enseñás deportes y juegos, y ayudás a la gente a moverse.', e:'Profesorado de Educación Física.', d:'También trabajan en clubes, gimnasios y con equipos.'},
+ {id:'mus', n:'Música', ic:'musica', c:'#B04A8A', t:['arte','crear','personas'], q:'Tocás, cantás o componés canciones.', e:'Escuela de música, conservatorio o con un profesor.', d:'Mucha música de hoy se graba y se arma en la compu.'},
+ {id:'per', n:'Periodismo', ic:'libro', c:'#4A5A6A', t:['personas','descubrir','crear'], q:'Averiguás lo que pasa y lo contás en diarios, radio, tele o internet.', e:'Comunicación o periodismo.', d:'Como este diario que vas a armar.'},
+ {id:'cine', n:'Fotografía o cine', ic:'camara', c:'#2A2622', t:['arte','crear','afuera'], q:'Sacás fotos o filmás películas, publicidades y videos.', e:'Escuelas de cine, fotografía o comunicación.', d:'Como en la clase de Fotografía: el sonido y la luz importan tanto como la cámara.'},
+ {id:'dis', n:'Diseño', ic:'arte', c:'#D2552D', t:['arte','crear','compu'], q:'Creás logos, carteles, ropa, muebles o páginas web.', e:'Carreras de diseño gráfico, de moda o industrial.', d:'Casi todo lo que usás alguien lo diseñó.'},
+ {id:'abo', n:'Abogacía', ic:'ley', c:'#4A3B66', t:['personas','ayudar','descubrir'], q:'Conocés las leyes y defendés a las personas cuando tienen un problema.', e:'La carrera de Abogacía en la facultad.', d:'Un abogado lee y escribe muchísimo.'},
+ {id:'psi', n:'Psicología', ic:'personas', c:'#2E8B8B', t:['personas','ayudar','descubrir'], q:'Escuchás a las personas y las ayudás a sentirse mejor.', e:'La carrera de Psicología en la facultad.', d:'También trabajan en escuelas y en empresas.'},
+ {id:'agro', n:'Trabajo de campo', ic:'campo', c:'#5E8A3A', t:['animales','afuera','cosas','descubrir'], q:'Plantás, cosechás, cuidás animales o manejás un tambo.', e:'Agronomía en la facultad, o cursos agrarios en UTU.', d:'Hoy hay tractores con GPS y drones que miran los cultivos.'},
+ {id:'bom', n:'Bomberos', ic:'fuego', c:'#C8453A', t:['ayudar','cuerpo','afuera','personas'], q:'Apagás incendios y rescatás personas y animales.', e:'Se entra con un curso de formación y mucha preparación física.', d:'Entrenan aunque no haya incendios, todos los días.'},
+ {id:'cie', n:'Ciencia', ic:'descubrir', c:'#3A6FC8', t:['descubrir','animales','cosas','adentro'], q:'Investigás cosas que nadie sabe todavía: el cuerpo, los animales, el espacio.', e:'Carreras de biología, química o física en la facultad.', d:'Un científico pasa mucho tiempo probando cosas que no salen.'},
+ {id:'pelu', n:'Peluquería y estética', ic:'tijera', c:'#B04A8A', t:['personas','arte','crear','adentro'], q:'Cortás el pelo, peinás y ayudás a la gente a verse como quiere.', e:'Cursos de peluquería y estética.', d:'Muchos terminan teniendo su propio local.'},
+ {id:'yt', n:'Hacer videos en internet', ic:'camara', c:'#C8453A', t:['compu','crear','personas','arte'], q:'Hacés videos o transmisiones para que los vea mucha gente.', e:'No hay una carrera: sirven la edición de video, la comunicación y la fotografía.', d:'Muy pocos viven solo de eso. Conviene tener otro estudio también.'},
+ {id:'pil', n:'Piloto', ic:'avion', c:'#3A6FC8', t:['cosas','afuera','descubrir'], q:'Manejás aviones y llevás gente o cosas a otros países.', e:'Escuela de aviación, con muchas horas de vuelo.', d:'Hay que saber inglés: en el aire se habla en inglés.'},
+ {id:'neg', n:'Tener mi negocio', ic:'negocio', c:'#8A6A4A', t:['personas','crear'], q:'Abrís tu propio comercio o empresa y decidís cómo funciona.', e:'Administración o cursos de emprendimientos. Sirve saber de números.', d:'Muchos negocios empiezan chiquitos, en una casa.'}
+];
+function trab(id){ for(var i=0;i<TR.length;i++){ if(TR[i].id===id){ return TR[i]; } } return null; }
+
+/* ---------- preguntas ---------- */
+var PREG = [
+ {t:'¿Dónde te gustaría trabajar?', o:[['afuera','Afuera','afuera'],['adentro','Adentro','adentro'],['','Me da igual','pregunta']]},
+ {t:'¿Con qué te gusta más estar?', o:[['personas','Con personas','personas'],['animales','Con animales','animales'],['cosas','Con máquinas','cosas'],['compu','Con la compu','compu']]},
+ {t:'¿Qué te sale mejor?', o:[['crear','Inventar cosas','crear'],['ayudar','Ayudar a otros','ayudar'],['arreglar','Arreglar cosas','arreglar'],['descubrir','Averiguar cosas','descubrir']]},
+ {t:'¿Qué preferís hacer en un recreo largo?', o:[['cuerpo','Jugar a algo','cuerpo'],['arte','Dibujar o escuchar música','arte'],['personas','Charlar','personas'],['compu','Un juego en la tablet','compu']]},
+ {t:'Y si tuvieras que elegir uno solo...', o:[['ayudar','Que la gente esté mejor','ayudar'],['crear','Hacer algo que no existe','crear'],['descubrir','Entender cómo funciona todo','descubrir'],['arte','Que algo quede lindo','arte']]}
+];
+
+/* ---------- estado ---------- */
+var CAMPOS = [
+ {k:'ser', t:'Cuando sea grande quiero ser...', a:'', p:'Quiero ser...'},
+ {k:'porque', t:'Me gusta porque...', a:'¿Qué es lo que más te atrae? ¿Conocés a alguien que lo haga?', p:'Me gusta porque...'},
+ {k:'estudiar', t:'Para llegar, voy a estudiar...', a:'', p:'Voy a estudiar...'},
+ {k:'dia', t:'Un día de trabajo mío es así...', a:'¿A qué hora empezás? ¿Dónde estás? ¿Qué hacés primero?', p:'A la mañana...'},
+ {k:'yasabe', t:'Algo que ya sé hacer y me va a servir...', a:'Puede ser algo de la escuela, de tu casa o un juego.', p:'Ya sé...'},
+ {k:'aprender', t:'Algo que todavía tengo que aprender...', a:'Algo difícil que vas a tener que practicar.', p:'Tengo que aprender...'}
+];
+var EST = { nombre:'', puntos:{}, preg:0, trabajo:'', otra:'', textos:{}, camino:{}, titular:'', anio:'', carta:'', pantalla:'sInicio', sug:[] };
+var CLAVE = 'yoEnElFuturo_v1';
+function guardar(){ try{ localStorage.setItem(CLAVE, JSON.stringify(EST)); }catch(e){} }
+function cargar(){ try{ var s = localStorage.getItem(CLAVE); if(s){ return JSON.parse(s); } }catch(e){} return null; }
+var anioBase = (new Date()).getFullYear() + 15;
+
+function aviso(t){ var a=$('aviso'); a.innerHTML=esc(t); a.style.display='block'; clearTimeout(aviso.tm); aviso.tm=setTimeout(function(){ a.style.display='none'; }, 2200); }
+
+/* ---------- navegación ---------- */
+var ORDEN = ['sTest','sExplorar','sEscribir','sCamino','sDiario'];
+function ir(p){
+  var ps = document.querySelectorAll('.pantalla');
+  for(var i=0;i<ps.length;i++){ ps[i].className = 'pantalla'; }
+  $(p).className = 'pantalla vis';
+  EST.pantalla = p;
+  var k = -1; for(var j=0;j<ORDEN.length;j++){ if(ORDEN[j]===p){ k=j; } }
+  for(var m=0;m<5;m++){ $('p'+(m+1)).className = 'paso' + (m<k ? ' hecho' : (m===k ? ' ahora' : '')); }
+  if(p==='sTest'){ dibPregunta(); }
+  if(p==='sExplorar'){ dibExplorar(); }
+  if(p==='sEscribir'){ dibEscribir(); }
+  if(p==='sCamino'){ dibCamino(); }
+  if(p==='sDiario'){ dibDiario(); }
+  guardar();
+  try{ if(document.documentElement){ document.documentElement.scrollTop = 0; } document.body.scrollTop = 0; }catch(e){}
+}
+
+/* ---------- inicio ---------- */
+function dibPortada(){
+  var s = '<svg width="380" height="330" viewBox="0 0 380 330">';
+  s += '<rect x="40" y="30" width="300" height="270" fill="#FFFDF8" stroke="#2A2622" stroke-width="3"/>';
+  s += '<rect x="60" y="50" width="260" height="22" fill="#2A2622"/>';
+  s += '<rect x="60" y="88" width="200" height="14" fill="#D2552D"/><rect x="60" y="110" width="250" height="14" fill="#2A2622"/>';
+  for(var i=0;i<7;i++){ s += '<rect x="60" y="'+(140+i*18)+'" width="140" height="6" fill="#C9C0B3"/>'; }
+  s += '<rect x="215" y="140" width="105" height="100" fill="#F1E9DB"/>';
+  s += '<g transform="translate(243,166)">'+icono('pregunta',48,'#D2552D').replace(/<\/?svg[^>]*>/g,'')+'</g>';
+  s += '<text x="60" y="290" font-family="Verdana" font-size="12" fill="#6B6158">AÑO '+anioBase+'</text>';
+  s += '</svg>';
+  $('portadaDib').innerHTML = s;
+  var an = document.querySelectorAll('.anioF'); for(var k=0;k<an.length;k++){ an[k].innerHTML = anioBase; }
+}
+function empezar(){
+  var n = $('nombre').value.replace(/^\s+|\s+$/g,'');
+  if(!n){ aviso('Escribí tu nombre para empezar.'); $('nombre').focus(); return; }
+  EST = { nombre:n, puntos:{}, preg:0, trabajo:'', otra:'', textos:{}, camino:{}, titular:'', anio:String(anioBase), carta:'', pantalla:'sTest', sug:[] };
+  ir('sTest');
+}
+
+/* ---------- test ---------- */
+function dibPregunta(){
+  var q = PREG[EST.preg];
+  $('pregNum').innerHTML = 'PREGUNTA ' + (EST.preg+1) + ' DE ' + PREG.length;
+  $('pregTxt').innerHTML = esc(q.t);
+  var h = '';
+  for(var i=0;i<q.o.length;i++){
+    h += '<button class="opc" data-i="'+i+'">'+icono(q.o[i][2],56,'#D2552D')+esc(q.o[i][1])+'</button>';
+  }
+  $('opciones').innerHTML = h;
+}
+function responder(i){
+  var tag = PREG[EST.preg].o[i][0];
+  if(tag){ EST.puntos[tag] = (EST.puntos[tag]||0) + 1; }
+  EST.preg++;
+  if(EST.preg >= PREG.length){ calcularSug(); ir('sExplorar'); }
+  else { dibPregunta(); guardar(); }
+}
+function calcularSug(){
+  var lista = [];
+  for(var i=0;i<TR.length;i++){
+    var p = 0; for(var j=0;j<TR[i].t.length;j++){ p += (EST.puntos[TR[i].t[j]]||0); }
+    lista.push({id:TR[i].id, p:p, i:i});
+  }
+  lista.sort(function(a,b){ return b.p-a.p || a.i-b.i; });
+  EST.sug = [];
+  for(var k=0;k<3 && k<lista.length;k++){ if(lista[k].p>0){ EST.sug.push(lista[k].id); } }
+}
+
+/* ---------- explorar ---------- */
+var FILTROS = [['','Todos'],['personas','Personas'],['animales','Animales'],['cosas','Máquinas'],['compu','Compu'],['arte','Arte'],['cuerpo','Deporte'],['afuera','Afuera']];
+var filtro = '';
+function dibExplorar(){
+  $('ficha').style.display = 'none';
+  $('lista').style.display = 'block';
+  if(EST.sug.length){
+    var ns = []; for(var i=0;i<EST.sug.length;i++){ ns.push('<b>'+esc(trab(EST.sug[i]).n)+'</b>'); }
+    $('sugeridas').innerHTML = 'Por lo que contestaste, ' + esc(EST.nombre) + ', mirá primero: ' + ns.join(', ') + '. Pero podés elegir cualquiera.';
+    $('sugeridas').style.display = 'block';
+  } else { $('sugeridas').style.display = 'none'; }
+  var f = '';
+  for(var j=0;j<FILTROS.length;j++){ f += '<button class="filtro'+(filtro===FILTROS[j][0]?' on':'')+'" data-f="'+FILTROS[j][0]+'">'+FILTROS[j][1]+'</button>'; }
+  $('filtros').innerHTML = f;
+  var orden = [], k;
+  for(k=0;k<EST.sug.length;k++){ orden.push(trab(EST.sug[k])); }
+  for(k=0;k<TR.length;k++){ if(EST.sug.indexOf(TR[k].id)<0){ orden.push(TR[k]); } }
+  var h = '';
+  for(k=0;k<orden.length;k++){
+    var t = orden[k];
+    if(filtro && t.t.indexOf(filtro)<0){ continue; }
+    h += '<button class="tarj'+(EST.sug.indexOf(t.id)>=0?' marcada':'')+'" data-id="'+t.id+'"><span class="ic">'+icono(t.ic,40,t.c)+'</span><span class="nom">'+esc(t.n)+'</span><span class="que">'+esc(t.q)+'</span></button>';
+  }
+  $('tarjetas').innerHTML = h;
+}
+var viendo = '';
+function verFicha(id){
+  var t = trab(id); viendo = id;
+  $('fichaIc').innerHTML = icono(t.ic,96,t.c);
+  $('fichaNom').innerHTML = esc(t.n);
+  $('fichaQue').innerHTML = esc(t.q);
+  $('fichaEst').innerHTML = esc(t.e);
+  $('fichaDato').innerHTML = esc(t.d);
+  $('lista').style.display = 'none';
+  $('ficha').style.display = 'block';
+}
+function elegir(id, otra){
+  var antes = EST.trabajo + '|' + EST.otra;
+  EST.trabajo = id; EST.otra = otra || '';
+  if(antes !== EST.trabajo + '|' + EST.otra){
+    EST.textos.ser = 'Quiero ser ' + nombreTrabajo().toLowerCase().replace(/^tener mi negocio$/,'dueño de mi negocio') + '.';
+    if(id==='neg'){ EST.textos.ser = 'Quiero tener mi propio negocio.'; }
+    if(id==='fut'){ EST.textos.ser = 'Quiero ser deportista.'; }
+    if(id==='yt'){ EST.textos.ser = 'Quiero hacer videos para internet.'; }
+    if(id==='agro'){ EST.textos.ser = 'Quiero trabajar en el campo.'; }
+    if(id==='bom'){ EST.textos.ser = 'Quiero ser bombero.'; }
+    if(id==='cie'){ EST.textos.ser = 'Quiero ser científico.'; }
+    if(id==='pil'){ EST.textos.ser = 'Quiero ser piloto.'; }
+    if(id==='ele'){ EST.textos.ser = 'Quiero ser electricista.'; }
+    if(id==='pelu'){ EST.textos.ser = 'Quiero trabajar en peluquería.'; }
+    if(id==='doc'){ EST.textos.ser = 'Quiero ser maestra o profe.'; }
+    if(id==='ef'){ EST.textos.ser = 'Quiero ser profe de Educación Física.'; }
+    if(id==='mec'){ EST.textos.ser = 'Quiero ser mecánico.'; }
+    if(id==='chef'){ EST.textos.ser = 'Quiero ser cocinero.'; }
+    if(id==='prog'){ EST.textos.ser = 'Quiero ser programador.'; }
+    if(id==='vjue'){ EST.textos.ser = 'Quiero hacer videojuegos.'; }
+    if(id==='vet'){ EST.textos.ser = 'Quiero ser veterinario.'; }
+    if(id==='med'){ EST.textos.ser = 'Quiero ser médico.'; }
+    if(id==='enf'){ EST.textos.ser = 'Quiero ser enfermero.'; }
+    if(id==='arq'){ EST.textos.ser = 'Quiero ser arquitecto.'; }
+    if(id==='ing'){ EST.textos.ser = 'Quiero ser ingeniero.'; }
+    if(id==='mus'){ EST.textos.ser = 'Quiero ser músico.'; }
+    if(id==='per'){ EST.textos.ser = 'Quiero ser periodista.'; }
+    if(id==='cine'){ EST.textos.ser = 'Quiero ser fotógrafo o hacer cine.'; }
+    if(id==='dis'){ EST.textos.ser = 'Quiero ser diseñador.'; }
+    if(id==='abo'){ EST.textos.ser = 'Quiero ser abogado.'; }
+    if(id==='psi'){ EST.textos.ser = 'Quiero ser psicólogo.'; }
+    if(id===''){ EST.textos.ser = 'Quiero ser ' + otra + '.'; }
+    EST.titular = '';
+  }
+  ir('sEscribir');
+}
+function nombreTrabajo(){ if(EST.trabajo){ return trab(EST.trabajo).n; } return EST.otra; }
+
+/* ---------- escribir ---------- */
+function palabras(t){ t = (t||'').replace(/^\s+|\s+$/g,''); return t ? t.split(/\s+/).length : 0; }
+function dibEscribir(){
+  var t = trab(EST.trabajo);
+  var h = '';
+  for(var i=0;i<CAMPOS.length;i++){
+    var c = CAMPOS[i];
+    var ay = c.a;
+    if(c.k==='estudiar'){ ay = t ? 'Pista: ' + t.e + ' <button data-pista="1">Usar la pista</button>' : 'Si no sabés, poné qué te imaginás.'; }
+    if(c.k==='ser'){ ay = 'Ya lo escribimos por vos. Cambialo como quieras.'; }
+    h += '<div class="preg" id="pr_'+c.k+'"><div class="pTit">'+(i+1)+'. '+esc(c.t)+'<i>Listo</i></div><div class="pAyuda">'+(c.k==='estudiar'?ay:esc(ay))+'</div><textarea rows="2" id="tx_'+c.k+'" data-k="'+c.k+'" placeholder="'+esc(c.p)+'">'+esc(EST.textos[c.k]||'')+'</textarea></div>';
+  }
+  $('escr').innerHTML = h;
+  revisar();
+}
+var MIN = 4;
+function revisar(){
+  var listos = 0;
+  for(var i=0;i<CAMPOS.length;i++){
+    var k = CAMPOS[i].k, ok = palabras(EST.textos[k]) >= (k==='ser' ? 3 : MIN);
+    if(ok){ listos++; }
+    $('pr_'+k).className = 'preg' + (ok ? ' lista' : '');
+  }
+  var falta = CAMPOS.length - listos;
+  $('contador').innerHTML = falta ? 'Te faltan <b>'+falta+'</b>. Cada una necesita por lo menos '+MIN+' palabras.' : '<b>¡Listo!</b> Ya podés armar tu diario.';
+  $('bDiario').className = 'boton' + (falta ? ' apagado' : '');
+  return falta === 0;
+}
+
+/* ---------- camino ---------- */
+var PARADAS = [
+ {k:'c12', e:'Ahora', s:'En sexto', o:['Voy a practicar...','Le voy a preguntar a...','Voy a averiguar sobre...','Voy a mirar videos de...']},
+ {k:'c15', e:'A los 15', s:'En el liceo o en UTU', o:['En el liceo voy a...','Voy a hacer un curso de...','Voy a aprender a...','Voy a ayudar a...']},
+ {k:'c18', e:'A los 18', s:'Termino el liceo', o:['Voy a entrar a...','Me voy a ir a vivir a...','Voy a empezar a estudiar...','Mi primer trabajo va a ser...']},
+ {k:'c25', e:'A los 25', s:'Ya trabajo', o:['Voy a trabajar en...','Voy a vivir en...','Voy a tener...','Todavía voy a aprender...']}
+];
+function paradaLista(t){ t = (t||'').replace(/^\s+|\s+$/g,''); return palabras(t) >= 5 && !/\.\.\.$|…$/.test(t); }
+function dibCamino(){
+  if(!EST.camino){ EST.camino = {}; }
+  var h = '';
+  for(var i=0;i<PARADAS.length;i++){
+    var P = PARADAS[i];
+    h += '<div class="parada" id="pa_'+P.k+'"><div class="edad">'+P.e+'</div><div class="edadSub">'+P.s+'</div>';
+    for(var j=0;j<P.o.length;j++){ h += '<button class="chip" data-chip="'+P.k+'|'+j+'">'+esc(P.o[j])+'</button>'; }
+    h += '<textarea rows="3" id="ca_'+P.k+'" data-c="'+P.k+'" placeholder="O escribí la tuya">'+esc(EST.camino[P.k]||'')+'</textarea><div class="ok">Listo</div></div>';
+  }
+  $('paradas').innerHTML = h;
+  var r = '<svg width="1000" height="120" viewBox="0 0 1000 120">';
+  r += '<rect x="0" y="64" width="1000" height="34" rx="17" fill="#2A2622"/>';
+  r += '<line x1="20" y1="81" x2="980" y2="81" stroke="#F4EFE6" stroke-width="3" stroke-dasharray="18 14"/>';
+  for(var k=0;k<4;k++){ var cx = 119 + k*254; r += '<circle cx="'+cx+'" cy="81" r="14" fill="#F4EFE6" stroke="#2A2622" stroke-width="3" id="pt'+k+'"/>'; }
+  r += '</svg><div id="auto">'+autoSVG()+'</div><div id="llegaste">¡Llegaste!</div>';
+  $('ruta').innerHTML = r;
+  revisarCamino();
+}
+function autoSVG(){
+  return '<svg width="76" height="50" viewBox="0 0 76 50"><path d="M8 30l6-14c2-4 5-6 9-6h24c4 0 7 2 10 5l9 9 5 1c3 1 5 3 5 6v7H6v-4c0-2 1-4 2-4z" fill="#D2552D"/><path d="M22 14h12v10H17zM38 14h9c2 0 4 1 6 3l6 7H38z" fill="#CFE7F5"/><circle cx="20" cy="40" r="8" fill="#2A2622"/><circle cx="20" cy="40" r="3" fill="#F4EFE6"/><circle cx="58" cy="40" r="8" fill="#2A2622"/><circle cx="58" cy="40" r="3" fill="#F4EFE6"/></svg>';
+}
+function revisarCamino(){
+  var n = 0;
+  for(var i=0;i<PARADAS.length;i++){
+    var k = PARADAS[i].k, ok = paradaLista(EST.camino[k]);
+    if(ok){ n++; }
+    $('pa_'+k).className = 'parada' + (ok ? ' lista' : '');
+    var pt = document.getElementById('pt'+i); if(pt){ pt.setAttribute('fill', ok ? '#3E9B6B' : '#F4EFE6'); }
+  }
+  $('auto').style.left = (n === 0 ? 0 : (119 + (n-1)*254 - 38)) + 'px';
+  $('llegaste').style.display = n === 4 ? 'block' : 'none';
+  $('contCamino').innerHTML = n === 4 ? '<b>¡Llegaste!</b> Ya podés armar tu diario.' : 'Te faltan <b>' + (4-n) + '</b>. Terminá cada frase con tus palabras.';
+  $('bCaminoOk').className = 'boton' + (n === 4 ? '' : ' apagado');
+  return n === 4;
+}
+
+/* ---------- diario ---------- */
+function mayus1(t){ t = (t||'').replace(/^\s+|\s+$/g,''); return t.charAt(0).toUpperCase() + t.slice(1); }
+function punto(t){ t = mayus1(t); if(t && !/[.!?…]$/.test(t)){ t += '.'; } return t; }
+function sinComillas(t){ return (t||'').replace(/^[\s"“«]+|[\s"”»]+$/g,''); }
+function titularSugerido(){
+  var n = EST.nombre, t = nombreTrabajo();
+  var ops = {
+    vet:n+' salvó a un ternero en medio de la noche', med:n+', la médica que todos quieren', enf:n+' cuidó a 30 pacientes en un solo día',
+    doc:'Los alumnos de '+n+' ganaron el premio nacional', prog:n+' creó la app que usa todo el país', vjue:'El juego de '+n+' ya lo juegan un millón de personas',
+    arq:n+' diseñó la escuela más linda del departamento', ing:n+' inventó un molino que da luz a todo el pueblo', mec:n+' arregló el tractor que nadie podía arreglar',
+    ele:n+' devolvió la luz a todo el barrio', chef:'Hay fila para probar los platos de '+n, fut:n+' metió el gol del campeonato',
+    ef:'El equipo de '+n+' salió campeón', mus:'Se agotaron las entradas para ver a '+n, per:n+' descubrió la noticia del año',
+    cine:'La película de '+n+' se estrena hoy', dis:'Todos quieren lo que diseñó '+n, abo:n+' ganó un caso muy difícil',
+    psi:n+' abrió un lugar para ayudar a los chicos', agro:'El tambo de '+n+' es el mejor del país', bom:n+' rescató a una familia y a su perro',
+    cie:n+' descubrió algo que nadie sabía', pelu:'La peluquería de '+n+' es la más buscada', yt:'Los videos de '+n+' llegaron a todo el mundo',
+    pil:n+' aterrizó en medio de una tormenta', neg:'El negocio de '+n+' cumple diez años'
+  };
+  return ops[EST.trabajo] || (n + ': ' + t.toLowerCase() + ' y feliz');
+}
+function dibDiario(){
+  if(!EST.titular){ EST.titular = titularSugerido(); }
+  if(!EST.anio){ EST.anio = String(anioBase); }
+  $('titular').value = EST.titular;
+  $('anio').value = EST.anio;
+  $('carta').value = EST.carta || '';
+  pintarDiario();
+}
+var MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+function pintarDiario(){
+  var tx = EST.textos, t = trab(EST.trabajo), d = new Date();
+  $('dFecha').innerHTML = 'ROSARIO · ' + d.getDate() + ' DE ' + MESES[d.getMonth()].toUpperCase() + ' DE ' + esc(EST.anio || anioBase);
+  $('dVolanta').innerHTML = esc(nombreTrabajo());
+  $('dTitular').innerHTML = esc(EST.titular || titularSugerido());
+  $('dBajada').innerHTML = esc(EST.nombre) + ' estudió en esta escuela. Hoy contó cómo es su trabajo y cómo llegó hasta acá.';
+  var n = esc(EST.nombre);
+  function q(x){ return '«' + esc(punto(sinComillas(x))) + '»'; }
+  var izq = '<p><span class="letra">C</span>uenta ' + n + ' que un día de trabajo es así: ' + q(tx.dia) + '</p>';
+  izq += '<p>Cuando estaba en sexto ya tenía un plan: ' + q(tx.estudiar) + '</p>';
+  izq += '<p>Y una ventaja: ' + q(tx.yasabe) + '</p>';
+  izq += '<p>¿Lo más difícil? ' + q(tx.aprender) + ', decía a los once años. Y lo aprendió.</p>';
+  $('dIzq').innerHTML = izq;
+  $('dDib').innerHTML = icono(t ? t.ic : 'pregunta', 120, t ? t.c : '#D2552D') + '<p>' + esc(nombreTrabajo()) + '</p>';
+  $('dCita').innerHTML = '«' + esc(punto(sinComillas(tx.porque))) + '»<span>' + esc(EST.nombre) + '</span>';
+  var cam = EST.camino || {}, hc = '';
+  for(var pi=0;pi<PARADAS.length;pi++){ hc += '<div class="dPar"><b>'+PARADAS[pi].e.toUpperCase()+'</b>'+esc(punto(cam[PARADAS[pi].k]||''))+'</div>'; }
+  $('dCaminoTit').innerHTML = 'EL CAMINO DE ' + esc(EST.nombre.toUpperCase());
+  $('dCaminoPar').innerHTML = hc;
+  var c = (EST.carta||'').replace(/^\s+|\s+$/g,'');
+  $('dCarta').style.display = c ? 'block' : 'none';
+  $('dCartaTxt').innerHTML = esc(c);
+}
+function htmlGuardado(){
+  var css = '';
+  var st = document.getElementsByTagName('style')[0].innerHTML;
+  css = st;
+  return '<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><title>El Diario del Futuro - '+esc(EST.nombre)+'</title><style>'+css+' body{padding:20px 0;} #diario{width:930px;margin:0 auto;}</style></head><body>'+ $('diario').outerHTML +'</body></html>';
+}
+function nombreArchivo(){
+  var n = EST.nombre.toLowerCase();
+  var de = 'áéíóúüñ', a = 'aeiouun';
+  for(var i=0;i<de.length;i++){ n = n.split(de.charAt(i)).join(a.charAt(i)); }
+  n = n.replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'') || 'mi';
+  return 'Diario_del_Futuro_' + n + '.html';
+}
+function guardarArchivo(){
+  try{
+    var blob = new Blob([htmlGuardado()], {type:'text/html'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = nombreArchivo();
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    aviso('Guardado en Descargas: ' + nombreArchivo());
+  }catch(e){ aviso('No se pudo guardar. Avisale al profe.'); }
+}
+
+/* ---------- eventos ---------- */
+document.addEventListener('click', function(ev){
+  var el = ev.target;
+  while(el && el !== document.body){
+    if(el.getAttribute){
+      if(el.className && String(el.className).indexOf('opc')===0){ responder(+el.getAttribute('data-i')); return; }
+      if(el.getAttribute('data-f')!==null && el.className.indexOf('filtro')===0){ filtro = el.getAttribute('data-f'); dibExplorar(); return; }
+      if(el.getAttribute('data-id')){ verFicha(el.getAttribute('data-id')); return; }
+      if(el.getAttribute('data-chip')){ var pc = el.getAttribute('data-chip').split('|'), P = null; for(var z=0;z<PARADAS.length;z++){ if(PARADAS[z].k===pc[0]){ P = PARADAS[z]; } } var ta = $('ca_'+pc[0]); var base = P.o[+pc[1]].replace(/\.\.\.$/,' '); ta.value = base; EST.camino[pc[0]] = base; revisarCamino(); guardar(); ta.focus(); try{ ta.setSelectionRange(base.length, base.length); }catch(e2){} return; }
+      if(el.getAttribute('data-pista')){ var t = trab(EST.trabajo); EST.textos.estudiar = 'Voy a estudiar ' + t.e.charAt(0).toLowerCase() + t.e.slice(1); $('tx_estudiar').value = EST.textos.estudiar; revisar(); guardar(); return; }
+    }
+    el = el.parentNode;
+  }
+});
+$('bEmpezar').onclick = empezar;
+$('nombre').onkeydown = function(e){ if((e.keyCode||e.which)===13){ empezar(); } };
+$('saltarTest').onclick = function(){ EST.sug = []; ir('sExplorar'); };
+$('bVolverLista').onclick = function(){ dibExplorar(); };
+$('bElegir').onclick = function(){ elegir(viendo); };
+$('bOtra').onclick = function(){ $('otraCaja').style.display = 'block'; $('otraTxt').focus(); };
+$('bOtraOk').onclick = function(){
+  var o = $('otraTxt').value.replace(/^\s+|\s+$/g,'');
+  if(!o){ aviso('Escribí qué querés ser.'); return; }
+  elegir('', o);
+};
+$('escr').oninput = function(e){ var k = e.target.getAttribute('data-k'); if(k){ EST.textos[k] = e.target.value; revisar(); guardar(); } };
+$('escr').onkeyup = $('escr').oninput;
+$('bDiario').onclick = function(){ if(revisar()){ ir('sCamino'); } else { aviso('Completá todas para seguir.'); } };
+$('paradas').oninput = function(e){ var k = e.target.getAttribute('data-c'); if(k){ EST.camino[k] = e.target.value; revisarCamino(); guardar(); } };
+$('bCaminoOk').onclick = function(){ if(revisarCamino()){ ir('sDiario'); } else { aviso('Terminá las cuatro frases del camino.'); } };
+$('bCaminoAtras').onclick = function(){ ir('sEscribir'); };
+$('bCambiar').onclick = function(){ ir('sExplorar'); };
+$('titular').oninput = function(){ EST.titular = this.value; pintarDiario(); guardar(); };
+$('anio').oninput = function(){ EST.anio = this.value.replace(/[^0-9]/g,''); pintarDiario(); guardar(); };
+$('carta').oninput = function(){ EST.carta = this.value; pintarDiario(); guardar(); };
+$('bGuardar').onclick = guardarArchivo;
+$('bEditar').onclick = function(){ ir('sEscribir'); };
+var borrarArmado = false;
+$('bBorrar').onclick = function(){
+  if(!borrarArmado){ borrarArmado = true; this.innerHTML = '¿Seguro? Se borra todo'; var b=this; setTimeout(function(){ borrarArmado=false; b.innerHTML='Empezar de nuevo'; }, 4000); return; }
+  try{ localStorage.removeItem(CLAVE); }catch(e){}
+  EST = { nombre:'', puntos:{}, preg:0, trabajo:'', otra:'', textos:{}, camino:{}, titular:'', anio:'', carta:'', pantalla:'sInicio', sug:[] };
+  borrarArmado = false; this.innerHTML = 'Empezar de nuevo';
+  $('nombre').value = ''; $('continuarCaja').style.display = 'none';
+  ir('sInicio');
+};
+$('bContinuar').onclick = function(){ var p = EST.pantalla; if(p==='sInicio'){ p='sTest'; } ir(p); };
+
+/* ---------- arranque ---------- */
+dibPortada();
+var prev = cargar();
+if(prev && prev.nombre){
+  EST = prev; if(!EST.camino){ EST.camino = {}; }
+  $('nombre').value = prev.nombre;
+  $('continuarCaja').style.display = 'block';
+  $('bContinuar').innerHTML = 'Seguir donde quedé, ' + esc(prev.nombre);
+}
+window.__est = function(){ return EST; };
+})();
+</script>
+</body>
+</html>

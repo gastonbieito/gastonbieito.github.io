@@ -1,0 +1,1650 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Helvecio, el robot que decide</title>
+<style>
+  body{ margin:0; background:#0C1220; color:#E8EEF7;
+        font-family:Arial,Helvetica,sans-serif; font-size:15px; }
+  #caja{ width:980px; margin:0 auto; padding:16px 0 50px; }
+
+  #barra{ overflow:hidden; padding:8px 0 14px; border-bottom:2px solid #1E2A42; }
+  #titulo{ float:left; font-size:26px; font-weight:bold; letter-spacing:-0.5px; }
+  #titulo span{ color:#FFC53D; }
+  #sub{ float:left; clear:left; font-size:12px; color:#5E6E8A; letter-spacing:1px; margin-top:3px; }
+  #chip{ float:right; margin-top:10px; background:#1A2740; padding:7px 16px;
+         border-radius:20px; font-size:13px; color:#8FA0BC; }
+  #chip b{ color:#5BE3AE; font-size:16px; }
+  #sonido{ float:right; clear:right; margin-top:7px; font-size:11px; color:#4A5A78;
+           background:none; border:0; cursor:pointer; font-family:Arial,Helvetica,sans-serif; }
+  #bVestir{ position:relative; float:right; margin:2px 12px 0 0; height:52px; padding:0 16px 0 8px; background:#FFC53D; color:#0C1220;
+             border:0; border-bottom:4px solid #C9980F; border-radius:12px; cursor:pointer; font-family:Arial,Helvetica,sans-serif; }
+  #bVestir:hover{ background:#FFD266; }
+  #bvIcono{ display:inline-block; vertical-align:middle; width:30px; height:44px; overflow:visible; }
+  .bvt{ display:inline-block; vertical-align:middle; text-align:left; font-size:12px; font-weight:bold; letter-spacing:.6px; line-height:1.25; margin-left:6px; }
+  #bVestir .badge{ display:none; position:absolute; right:-10px; top:-9px; background:#FF4F6D; color:#FFFFFF; font-size:10px; font-weight:bold;
+                   padding:3px 7px; border-radius:9px; letter-spacing:.5px; }
+  #bVestir.nuevo .badge{ display:block; }
+  #bVestir.nuevo{ animation:latido 1.1s ease-in-out infinite; -webkit-animation:latido 1.1s ease-in-out infinite; }
+  @keyframes latido{ 0%,100%{transform:scale(1)} 50%{transform:scale(1.07)} }
+  @-webkit-keyframes latido{ 0%,100%{-webkit-transform:scale(1)} 50%{-webkit-transform:scale(1.07)} }
+  #premioPop{ display:none; position:fixed; left:0; top:0; right:0; bottom:0; background:rgba(5,9,18,.85); z-index:60; text-align:center; }
+  .pcaja{ position:relative; overflow:hidden; display:inline-block; width:440px; margin-top:110px; background:#121B2E; border:3px solid #FFC53D;
+          border-radius:20px; padding:26px 30px 28px; box-shadow:0 0 60px rgba(255,197,61,.35);
+          animation:aparecer .35s ease; -webkit-animation:aparecer .35s ease; }
+  @keyframes aparecer{ 0%{transform:scale(.6); opacity:0} 100%{transform:scale(1); opacity:1} }
+  @-webkit-keyframes aparecer{ 0%{-webkit-transform:scale(.6); opacity:0} 100%{-webkit-transform:scale(1); opacity:1} }
+  .pcaja .pt{ font-size:12px; letter-spacing:3px; color:#FFC53D; font-weight:bold; }
+  .pcaja .pn{ font-size:30px; font-weight:bold; color:#FFFFFF; margin:6px 0 4px; }
+  .pcaja .pd{ font-size:14px; color:#8FA0BC; line-height:1.5; margin-bottom:6px; }
+  .pcaja .prob{ position:relative; height:150px; margin:10px auto 4px; width:150px; border-radius:50%;
+                background:radial-gradient(circle, rgba(255,197,61,.28) 0%, rgba(255,197,61,0) 70%); }
+  .vbloque{ margin-top:18px; padding:16px 18px; background:#0C1220; border-radius:12px; border:1px solid #1E2A42; }
+  .vitrina .nariz{ display:none; }
+  .vprev{ float:left; width:150px; height:140px; text-align:center; background:#121B2E; border-radius:12px; border:1px solid #22304B; }
+  .vopc{ float:left; margin-left:20px; width:600px; }
+  .vtit{ font-size:11px; letter-spacing:2px; color:#6C7C99; font-weight:bold; margin:4px 0 8px; }
+  .vcol{ width:34px; height:34px; border-radius:50%; border:3px solid #0C1220; margin:0 8px 10px 0; cursor:pointer; box-shadow:0 0 0 2px #22304B; }
+  .vcol.sel{ box-shadow:0 0 0 3px #FFFFFF; }
+  .vacc{ display:inline-block; background:#1A2740; color:#E8EEF7; border:2px solid #22304B; border-radius:10px; padding:7px 12px;
+         margin:0 6px 7px 0; cursor:pointer; font-size:12.5px; font-weight:bold; font-family:Arial,Helvetica,sans-serif; }
+  .vacc.sel{ border-color:#FFC53D; color:#FFC53D; }
+  .vacc.bloq{ cursor:default; color:#4A5A78; border-style:dashed; font-weight:normal; }
+  #vestidor{ display:none; position:fixed; left:0; top:0; right:0; bottom:0; background:rgba(5,9,18,.82); z-index:50; }
+  .vcaja{ width:820px; margin:90px auto 0; background:#121B2E; border:2px solid #22304B; border-radius:16px; padding:22px 26px; }
+  .vcaja .vt{ font-size:12px; letter-spacing:3px; color:#FFC53D; font-weight:bold; margin-bottom:14px; }
+  .mini{ margin-top:8px; background:#B79CFF; color:#0C1220; border:0; border-radius:8px; padding:6px 12px; font-weight:bold; font-size:12.5px;
+         cursor:pointer; font-family:Arial,Helvetica,sans-serif; }
+  .mini.sec{ background:transparent; color:#DCCEFF; border:1px solid #B79CFF; }
+  #fRobot{ margin:4px 0 0; }
+  #sonido:hover{ color:#8FA0BC; text-decoration:underline; }
+
+  #izq{ float:left; width:462px; }
+  #der{ float:right; width:488px; }
+  .limpiar{ clear:both; }
+  h2{ font-size:11px; letter-spacing:3px; color:#6C7C99; margin:20px 0 10px; font-weight:bold; }
+
+  #etapa{ display:inline-block; margin:16px 0 4px; padding:4px 12px; border-radius:10px;
+          background:#1A2740; color:#FFC53D; font-size:11px; font-weight:bold; letter-spacing:2px; }
+  #tableros{ margin:6px 0 10px; font-size:11px; color:#5E6E8A; letter-spacing:1px; min-height:22px; }
+  .pch{ display:inline-block; padding:3px 10px; margin-right:5px; border-radius:10px;
+        background:#1A2740; color:#6C7C99; font-weight:bold; }
+  .pch.hecha{ background:#2FA87B; color:#0C1220; }
+  .pch.ahora{ background:#FFC53D; color:#0C1220; }
+  .pch.sorp{ background:#2A2146; color:#A890E0; }
+  .pch.sorpok{ background:#7A61B5; color:#0C1220; }
+
+  #marco, #marco2{ position:relative; }
+  .capaConf{ position:absolute; left:-16px; top:-16px; overflow:hidden; z-index:7; pointer-events:none; }
+  #marco{ background:#121B2E; border-radius:14px; padding:16px;
+          box-shadow:inset 0 0 0 1px #1E2A42; display:inline-block; }
+  #tablero{ position:relative; }
+  .celda{ position:absolute; border-radius:9px; background:#22304B;
+          border-bottom:3px solid #1A2539; }
+  .prende{ background:#2E5486; border-bottom-color:#1F3A5E; }
+  .prendida{ background:#FFC53D; border-bottom-color:#D19A14;
+             box-shadow:0 0 18px rgba(255,197,61,.55); }
+  .pop{ animation:pop .3s ease; }
+  @keyframes pop{ 0%{transform:scale(1)} 45%{transform:scale(1.18)} 100%{transform:scale(1)} }
+
+  .quemada{ background:#B8324A; border-bottom-color:#7E1F31; }
+  .robot{ position:absolute; z-index:5; transition:left .2s ease, top .2s ease, opacity .45s ease, margin-top .45s ease; }
+  .rin{ position:absolute; left:0; top:0; width:42px; height:40px; }
+  .cuerpo{ position:absolute; left:4px; top:7px; width:34px; height:30px;
+           background:#5BE3AE; border-radius:9px; border-bottom:3px solid #2FA87B; }
+  .ojo{ position:absolute; width:9px; height:9px; border-radius:50%; background:#0C1220;
+        animation:parpadeo 4.6s infinite; -webkit-animation:parpadeo 4.6s infinite; }
+  @keyframes parpadeo{ 0%,93%,100%{transform:scaleY(1)} 96%{transform:scaleY(.12)} }
+  @-webkit-keyframes parpadeo{ 0%,93%,100%{-webkit-transform:scaleY(1)} 96%{-webkit-transform:scaleY(.12)} }
+  .antena{ position:absolute; left:19px; top:0; width:4px; height:8px; background:#2FA87B; }
+  .bombita{ position:absolute; left:16px; top:-5px; width:10px; height:10px;
+            border-radius:50%; background:#FF7A8F; transition:background .15s, box-shadow .15s; }
+  .robot.mira .bombita, .robot.mira .gorro i{ background:#FFF27A; box-shadow:0 0 10px 3px rgba(255,242,122,.85); }
+  .nariz{ position:absolute; width:18px; height:18px; line-height:18px; text-align:center;
+          font-size:17px; color:#FFFFFF; text-shadow:0 0 4px #0C1220, 0 0 2px #0C1220; }
+  /* caras */
+  .feliz .ojo{ height:5px; border-radius:9px 9px 0 0; margin-top:1px; animation:none; }
+  .feliz{ animation:salto .45s ease 3; -webkit-animation:salto .45s ease 3; }
+  @keyframes salto{ 0%,100%{transform:translateY(0)} 45%{transform:translateY(-9px)} }
+  @-webkit-keyframes salto{ 0%,100%{-webkit-transform:translateY(0)} 45%{-webkit-transform:translateY(-9px)} }
+  .triste .ojo{ height:5px; border-radius:0 0 9px 9px; margin-top:3px; animation:none; }
+  .chispa .ojo{ height:3px; border-radius:2px; margin-top:3px; animation:none; }
+  .chispa{ animation:temblor .08s linear 8; -webkit-animation:temblor .08s linear 8; }
+  .chispa .bombita{ background:#FFFFFF; box-shadow:0 0 12px 4px rgba(255,255,255,.9); }
+  @keyframes temblor{ 0%,100%{transform:translateX(0)} 25%{transform:translateX(-2px)} 75%{transform:translateX(2px)} }
+  @-webkit-keyframes temblor{ 0%,100%{-webkit-transform:translateX(0)} 25%{-webkit-transform:translateX(-2px)} 75%{-webkit-transform:translateX(2px)} }
+  .mareado{ animation:mareo 1.1s ease-in-out infinite; -webkit-animation:mareo 1.1s ease-in-out infinite; }
+  .mareado .ojo{ border-radius:2px; width:8px; height:8px; transform:rotate(45deg); animation:none; background:#54427A; }
+  @keyframes mareo{ 0%,100%{transform:rotate(-9deg)} 50%{transform:rotate(9deg)} }
+  @-webkit-keyframes mareo{ 0%,100%{-webkit-transform:rotate(-9deg)} 50%{-webkit-transform:rotate(9deg)} }
+  /* accesorios */
+  .acc{ position:absolute; z-index:3; }
+  .acc i, .acc b{ position:absolute; display:block; }
+  .gorro{ left:5px; top:-1px; width:32px; height:11px; background:#D9433B; border-radius:16px 16px 2px 2px; border-bottom:4px solid #F1F1F1; }
+  .gorro i{ left:11px; top:-8px; width:10px; height:10px; border-radius:50%; background:#F1F1F1; transition:background .15s, box-shadow .15s; }
+  .lentes{ left:7px; top:14px; width:30px; height:14px; }
+  .lentes i{ top:0; width:10px; height:10px; border:2px solid #1B2438; border-radius:4px; background:rgba(255,255,255,.18); }
+  .lentes .l1{ left:0; } .lentes .l2{ left:15px; }
+  .lentes b{ left:13px; top:5px; width:3px; height:2px; background:#1B2438; }
+  .mono{ left:12px; top:32px; width:18px; height:10px; }
+  .mono i{ top:0; width:0; height:0; border-top:5px solid transparent; border-bottom:5px solid transparent; }
+  .mono .m1{ left:0; border-left:8px solid #D9433B; } .mono .m2{ right:0; border-right:8px solid #D9433B; }
+  .mono b{ left:6px; top:2px; width:6px; height:6px; border-radius:2px; background:#A82E28; }
+  .bandera{ left:23px; top:-11px; width:12px; height:11px; background:#E0303A; border-radius:1px; }
+  .bandera .h{ left:2px; top:4px; width:8px; height:3px; background:#FFFFFF; }
+  .bandera .v{ left:4px; top:2px; width:3px; height:7px; background:#FFFFFF; }
+  .corona{ left:9px; top:-3px; width:24px; height:10px; }
+  .corona b{ left:0; top:4px; width:24px; height:6px; background:#FFC53D; border-bottom:2px solid #C9980F; }
+  .corona i{ top:-2px; width:0; height:0; border-left:4px solid transparent; border-right:4px solid transparent; border-bottom:7px solid #FFC53D; }
+  .corona .p1{ left:0; } .corona .p2{ left:8px; } .corona .p3{ left:16px; }
+  /* globito y papelitos */
+  .globo{ display:none; position:absolute; z-index:9; margin-left:-40px; width:80px; text-align:center; padding:4px 0; border-radius:9px;
+          font-size:11px; font-weight:bold; color:#0C1220; background:#FFFFFF; box-shadow:0 2px 6px rgba(0,0,0,.4); }
+  .globo.si{ background:#5BE3AE; } .globo.no{ background:#FFD1D9; }
+  .conf{ position:absolute; top:4px; width:7px; height:10px; border-radius:2px; z-index:7;
+         animation:caer 1.2s ease-in forwards; -webkit-animation:caer 1.2s ease-in forwards; }
+  @keyframes caer{ 0%{transform:translateY(0) rotate(0); opacity:1} 100%{transform:translateY(190px) rotate(540deg); opacity:0} }
+  @-webkit-keyframes caer{ 0%{-webkit-transform:translateY(0) rotate(0); opacity:1} 100%{-webkit-transform:translateY(190px) rotate(540deg); opacity:0} }
+
+  #mensaje{ min-height:26px; margin-top:12px; font-size:16px; font-weight:bold; color:#FF7A8F; }
+  #mensaje.ok{ color:#5BE3AE; }
+  #mensaje.bucle{ color:#B79CFF; }
+  #mensaje.info{ color:#C9D6E8; }
+  #consigna{ font-size:16px; line-height:1.5; margin-bottom:8px; }
+  #consigna b{ color:#FFC53D; }
+  #objetivo{ font-size:12.5px; color:#6C7C99; margin-bottom:12px; }
+  #objetivo b{ color:#FFC53D; }
+
+  #progreso{ margin-bottom:6px; }
+  .punto{ display:inline-block; width:19px; height:19px; line-height:19px; text-align:center;
+          font-size:10px; margin:0 2px 3px 0; border-radius:50%; background:#1A2436; color:#53637F; cursor:pointer; }
+  .punto:hover{ outline:2px solid #5BE3AE; }
+  .punto.hecho{ background:#5BE3AE; color:#0C1220; font-weight:bold; }
+  .punto.premio{ background:#FFC53D; color:#0C1220; font-weight:bold; }
+  .punto.ahora{ background:#FFFFFF; color:#0C1220; font-weight:bold; box-shadow:0 0 12px rgba(255,255,255,.55); }
+  #leyenda{ font-size:11px; color:#4A5A78; margin-bottom:12px; line-height:1.6; }
+  .enlace{ background:none; border:0; color:#6C7C99; font-size:11.5px; cursor:pointer; padding:0;
+           font-family:Arial,Helvetica,sans-serif; text-decoration:underline; }
+  .enlace:hover{ color:#FFC53D; }
+
+  #pistas{ background:#121B2E; padding:12px 14px; border-radius:10px; border-left:4px solid #FFC53D; font-size:13px;
+           color:#8FA0BC; line-height:1.6; }
+  #pistas .t{ display:block; color:#FFC53D; font-weight:bold; margin-bottom:3px; font-size:12px; letter-spacing:1px; }
+  #pistas .una{ margin-bottom:8px; }
+  #pistas .una:last-child{ margin-bottom:0; }
+  #pistas .q{ color:#E8EEF7; }
+  #bPista{ margin-top:8px; background:#1A2740; color:#FFC53D; border:0; border-bottom:3px solid #101A2E; border-radius:9px;
+           padding:8px 14px; font-weight:bold; font-size:12.5px; cursor:pointer; font-family:Arial,Helvetica,sans-serif; }
+  #bPista:hover{ background:#22345A; }
+  #dato{ display:none; margin-top:10px; font-size:13px; color:#C9D6E8; line-height:1.65;
+         background:#17243A; padding:12px 14px; border-radius:10px; border-left:4px solid #FF7A8F; }
+  #dato b{ color:#FF7A8F; }
+  #dato .tit{ display:block; color:#FF7A8F; font-weight:bold; margin-bottom:3px; }
+  #aviso{ display:none; margin-top:10px; font-size:13px; color:#DCCEFF; line-height:1.65;
+          background:#1F1A3A; padding:12px 14px; border-radius:10px; border-left:4px solid #B79CFF; }
+  #aviso b{ color:#B79CFF; }
+
+  .orden{ display:inline-block; background:#22304B; color:#E8EEF7; border:0;
+          border-bottom:4px solid #162033; border-radius:11px; padding:10px 0 8px;
+          width:111px; margin:0 6px 7px 0; cursor:pointer;
+          font-family:Arial,Helvetica,sans-serif; font-size:11.5px; font-weight:bold; letter-spacing:.4px; }
+  .orden:hover{ background:#2C3D5E; }
+  .orden:active{ border-bottom-width:2px; margin-top:2px; }
+  .orden .g{ display:block; font-size:20px; margin-bottom:3px; }
+  .orden.enc{ background:#8A6A14; border-bottom-color:#5E4809; }
+  .orden.enc:hover{ background:#A37F1B; }
+  .orden.proc{ background:#54427A; border-bottom-color:#3A2D56; }
+  .orden.proc:hover{ background:#664F94; }
+  .orden.proc2{ background:#7A4270; border-bottom-color:#56304F; }
+  .orden.proc2:hover{ background:#945288; }
+  .orden.sen{ background:#1E6B52; border-bottom-color:#12462F; }
+  .orden.sen:hover{ background:#288A69; }
+  .orden.sen .g{ font-size:12px; margin-bottom:3px; letter-spacing:1px; }
+
+  .prog{ background:#121B2E; padding:11px 13px; margin-bottom:9px; border-radius:12px;
+         border:2px solid #121B2E; cursor:pointer; }
+  .prog.activo{ border-color:#5BE3AE; }
+  .prog .cab{ font-size:12px; color:#6C7C99; letter-spacing:1px; margin-bottom:8px; }
+  .prog .cab b{ color:#E8EEF7; font-size:13px; }
+  .prog .cab i{ color:#5BE3AE; font-style:normal; }
+  .ranura{ display:inline-block; vertical-align:top; width:42px; height:38px; margin:0 5px 5px 0; background:#0C1220;
+           border:2px dashed #22304B; border-radius:9px; text-align:center; line-height:36px;
+           font-size:17px; cursor:pointer; }
+  .ranura.llena{ background:#22304B; border:2px solid #38496E; border-bottom-width:4px; }
+  .ranura.enc{ background:#8A6A14; border-color:#B08A1B; }
+  .ranura.proc{ background:#54427A; border-color:#7A61B5; font-size:12px; font-weight:bold; }
+  .ranura.proc2{ background:#7A4270; border-color:#B0609F; font-size:12px; font-weight:bold; }
+  .ranura.sen{ background:#1E6B52; border-color:#36A37C; font-size:9.5px; font-weight:bold; line-height:12px; padding-top:4px; }
+  .ranura.colgada{ border-left:5px solid #36A37C; }
+  .ranura.corriendo{ outline:3px solid #FFFFFF; outline-offset:1px; }
+  .ranura.salteada{ opacity:.35; }
+  .lectura{ margin-top:6px; padding-top:6px; border-top:1px solid #1E2A42; font-size:11.5px; color:#6C7C99; line-height:1.55; }
+
+  .accion{ display:inline-block; border:0; border-radius:11px; padding:13px 20px;
+           margin:8px 7px 0 0; cursor:pointer; font-size:14px; font-weight:bold;
+           font-family:Arial,Helvetica,sans-serif; }
+  #bEjec{ background:#5BE3AE; color:#0C1220; border-bottom:4px solid #2FA87B; }
+  #bPaso{ background:#2B5E8C; color:#EDE8F7; border-bottom:4px solid #1C4163; }
+  #dOtra{ background:#2B5E8C; color:#EDE8F7; border-bottom:4px solid #1C4163; }
+  #bBorrar{ background:transparent; color:#6C7C99; border:2px solid #22304B; }
+  #bSig{ background:#FFC53D; color:#0C1220; border-bottom:4px solid #C9980F; display:none; }
+
+  .pantalla{ display:none; }
+  .hoja{ background:#121B2E; border-radius:16px; border:2px solid #22304B; padding:26px 32px; margin-top:20px; }
+  .hoja h1{ font-size:30px; margin:0 0 10px; }
+  .hoja h1 span{ color:#FFC53D; }
+  .hoja p{ font-size:16px; line-height:1.6; color:#C9D6E8; }
+  .hoja .saber{ display:inline-block; margin:2px 6px 6px 0; padding:6px 12px; border-radius:10px; background:#1A2740; font-size:13px; color:#E8EEF7; }
+  .hoja .nuevo{ background:#1E6B52; }
+  input.nombre{ font-size:18px; padding:9px 12px; border-radius:10px; border:2px solid #38496E; background:#0C1220; color:#fff;
+                font-family:Arial,Helvetica,sans-serif; width:260px; }
+  .grande{ display:inline-block; border:0; border-radius:11px; padding:14px 26px; margin:10px 8px 0 0; cursor:pointer;
+           font-size:16px; font-weight:bold; font-family:Arial,Helvetica,sans-serif; background:#FFC53D; color:#0C1220;
+           border-bottom:4px solid #C9980F; }
+  .grande.sec{ background:transparent; color:#6C7C99; border:2px solid #22304B; font-size:13px; padding:10px 16px; }
+
+  #pChip,#dChip{ display:inline-block; background:#1A2740; padding:6px 16px; border-radius:20px;
+          font-size:12px; color:#8FA0BC; letter-spacing:2px; margin-bottom:16px; }
+  #marcador,#dMarcador{ float:right; font-size:12px; color:#6C7C99; margin-top:8px; }
+  #pTexto{ font-size:22px; font-weight:bold; line-height:1.4; margin-bottom:20px; }
+  .opcion{ display:block; width:100%; text-align:left; background:#121B2E; color:#E8EEF7;
+           border:2px solid #22304B; border-radius:12px; padding:14px 18px; margin-bottom:10px;
+           cursor:pointer; font-size:15.5px; font-family:Arial,Helvetica,sans-serif; line-height:1.4; }
+  .opcion:hover{ border-color:#5BE3AE; }
+  .opcion .letra{ display:inline-block; width:26px; color:#6C7C99; font-weight:bold; }
+  .opcion.bien{ border-color:#5BE3AE; background:#102B26; }
+  .opcion.mal{ border-color:#FF7A8F; background:#321823; }
+  #pFeed,#dFeed{ display:none; margin-top:16px; font-size:14px; line-height:1.65; color:#C9D6E8;
+          background:#17243A; padding:14px 16px; border-radius:10px; border-left:4px solid #5BE3AE; }
+  #pFeed b,#dFeed b{ color:#5BE3AE; }
+  #pFeed.mal,#dFeed.mal{ border-left-color:#FF7A8F; }
+  #pFeed.mal b,#dFeed.mal b{ color:#FF7A8F; }
+  #pSig,#dSig{ background:#FFC53D; color:#0C1220; border-bottom:4px solid #C9980F; display:none; }
+  #dTexto{ font-size:17px; line-height:1.55; margin-bottom:14px; }
+  #dTexto b{ color:#FFC53D; }
+  .dprog{ background:#121B2E; border:2px solid #22304B; border-radius:12px; padding:12px 14px; margin-bottom:10px; cursor:pointer; text-align:left; width:100%;
+          color:#E8EEF7; font-family:Arial,Helvetica,sans-serif; font-size:13.5px; line-height:1.6; }
+  .dprog:hover{ border-color:#5BE3AE; }
+  .dprog b{ color:#FFC53D; }
+  .dprog.bien{ border-color:#5BE3AE; background:#102B26; }
+  .dprog.mal{ border-color:#FF7A8F; background:#321823; }
+
+  #fin{ text-align:center; padding:30px 0; }
+  #fin h1{ font-size:44px; color:#5BE3AE; margin:0 0 10px; }
+  #fin p{ color:#8FA0BC; font-size:17px; line-height:1.6; }
+  #diploma{ display:inline-block; margin-top:20px; padding:26px 48px; background:#121B2E;
+            border-radius:16px; border:2px solid #22304B; }
+  #diploma .t{ font-size:12px; letter-spacing:3px; color:#6C7C99; }
+  #diploma .n{ font-size:26px; color:#FFC53D; font-weight:bold; margin:8px 0 14px; }
+  #diploma table{ margin:0 auto; border-collapse:collapse; }
+  #diploma td{ padding:5px 14px; font-size:14px; color:#8FA0BC; text-align:left; }
+  #diploma td.v{ color:#E8EEF7; font-weight:bold; font-size:17px; text-align:right; }
+  .festejo{ animation:subir .5s ease; }
+  @keyframes subir{ from{opacity:0; transform:translateY(20px)} to{opacity:1; transform:none} }
+</style>
+</head>
+<body>
+<div id="caja">
+
+  <div id="barra">
+    <div id="titulo">Helvecio, el robot que <span>decide</span></div>
+    <div id="sub">COLEGIO MTA &nbsp;·&nbsp; NUEVA HELVECIA &nbsp;·&nbsp; TALLER DE PROGRAMACIÓN</div>
+    <div id="chip">&nbsp;</div>
+    <button id="bVestir" onclick="abrirVestidor()" style="display:none"><span id="bvIcono"></span><span class="bvt">VESTIR A<br>HELVECIO</span><span class="badge">¡NUEVO!</span></button>
+    <button id="sonido" onclick="alternarSonido()">sonido: sí</button>
+  </div>
+  <div class="limpiar"></div>
+
+  <div id="inicio" class="pantalla"></div>
+
+  <div id="juego" class="pantalla">
+    <div id="izq">
+      <div id="etapa"></div>
+      <div id="tableros"></div>
+      <div id="marco"><div id="tablero"></div></div>
+      <div id="mensaje"></div>
+      <div id="consigna"></div>
+      <div id="objetivo"></div>
+      <div id="progreso"></div>
+      <div id="leyenda">
+        Verde: resuelto. &nbsp;Amarillo: con el mínimo de órdenes. &nbsp;Clic en un número para ir.<br>
+        <button class="enlace" onclick="saltar()">saltar este nivel</button> &nbsp;·&nbsp; <button class="enlace" onclick="irPrueba()">pasar a la prueba</button> &nbsp;·&nbsp; <button class="enlace" id="vel" onclick="alternarVel()">velocidad: normal</button>
+      </div>
+      <div id="pistas"></div>
+      <button id="bPista" onclick="pedirPista()"></button>
+      <div id="dato"></div>
+      <div id="aviso"></div>
+    </div>
+
+    <div id="der">
+      <h2>LAS ÓRDENES</h2>
+      <div id="botones"></div>
+
+      <h2>TU PROGRAMA</h2>
+      <div class="prog activo" id="cajaM" onclick="elegir('M')">
+        <div class="cab"><b>PRINCIPAL</b> &nbsp;·&nbsp; <span id="cuentaM"></span>
+          <i id="aquiM"> &nbsp;·&nbsp; escribiendo acá</i></div>
+        <div id="ranurasM"></div>
+        <div class="lectura" id="lecM"></div>
+      </div>
+      <div class="prog" id="caja1" onclick="elegir('1')" style="display:none">
+        <div class="cab"><b>P1</b> &nbsp;·&nbsp; <span id="cuenta1"></span>
+          <i id="aqui1" style="display:none"> &nbsp;·&nbsp; escribiendo acá</i></div>
+        <div id="ranuras1"></div>
+        <div class="lectura" id="lec1"></div>
+      </div>
+      <div class="prog" id="caja2" onclick="elegir('2')" style="display:none">
+        <div class="cab"><b>P2</b> &nbsp;·&nbsp; <span id="cuenta2"></span>
+          <i id="aqui2" style="display:none"> &nbsp;·&nbsp; escribiendo acá</i></div>
+        <div id="ranuras2"></div>
+        <div class="lectura" id="lec2"></div>
+      </div>
+
+      <button class="accion" id="bEjec" onclick="ejecutar()">&#9654; EJECUTAR</button>
+      <button class="accion" id="bPaso" onclick="unPaso()">PASO A PASO</button>
+      <button class="accion" id="bBorrar" onclick="borrarTodo()">Borrar</button>
+      <button class="accion" id="bSig" onclick="siguiente()">SIGUIENTE &#9654;</button>
+    </div>
+    <div class="limpiar"></div>
+  </div>
+
+  <div id="prueba" class="pantalla">
+    <div class="hoja" style="margin-top:20px;background:none;border:0;padding:0">
+      <h1 style="font-size:36px;margin:10px 0 6px">La prueba de <span style="color:#FFC53D">Helvecio</span></h1>
+      <p style="color:#8FA0BC;margin:0 0 20px">Diez preguntas sobre lo que hiciste hoy. No se puede volver atrás.</p>
+    </div>
+    <div id="pChip">PREGUNTA 1 / 10</div>
+    <div id="marcador"></div>
+    <div class="limpiar"></div>
+    <div id="pTexto"></div>
+    <div id="pOpciones"></div>
+    <div id="pFeed"></div>
+    <button class="accion" id="pSig" onclick="pSiguiente()">SIGUIENTE &#9654;</button>
+  </div>
+
+  <div id="detective" class="pantalla">
+    <div class="hoja" style="margin-top:20px;background:none;border:0;padding:0">
+      <h1 style="font-size:36px;margin:10px 0 6px">El detective de <span style="color:#FFC53D">Helvecio</span></h1>
+      <p style="color:#8FA0BC;margin:0 0 20px">Ahora al revés: no escribís el programa, <b>lo descubrís</b> mirando cómo se mueve el robot.</p>
+    </div>
+    <div id="dChip">CASO 1 / 4</div>
+    <div id="dMarcador"></div>
+    <div class="limpiar"></div>
+    <div id="dTexto"></div>
+    <div style="float:left;width:462px">
+      <div id="dTabs" style="margin-bottom:8px"></div>
+      <div id="marco2" class="mar" style="background:#121B2E;border-radius:14px;padding:16px;box-shadow:inset 0 0 0 1px #1E2A42;display:inline-block"><div id="tablero2" style="position:relative"></div></div>
+      <div><button class="accion" id="dOtra" onclick="dRepetir()">&#9654; Ver otra vez</button></div>
+    </div>
+    <div style="float:right;width:488px" id="dOpciones"></div>
+    <div class="limpiar"></div>
+    <div id="dFeed"></div>
+    <button class="accion" id="dSig" onclick="dSiguiente()">SIGUIENTE &#9654;</button>
+  </div>
+
+  <div id="fin" class="pantalla">
+    <h1>&#9733; Helvecio ya sabe decidir.</h1>
+    <p>Lo más difícil de hoy no fue encender baldosas.<br>
+       Fue escribir <b style="color:#FFC53D">un programa que no sabe cómo es el tablero</b> y aun así lo resuelve.</p>
+    <div id="diploma">
+      <div class="t">PROGRAMADOR DE HELVECIO · NIVEL 2</div>
+      <div id="fRobot"></div>
+      <div class="n" id="fNombre">Colegio MTA</div>
+      <table>
+        <tr><td>Niveles resueltos</td><td class="v" id="fNiveles"></td></tr>
+        <tr><td>Resueltos sin gastar de más</td><td class="v" id="fPremios"></td></tr>
+        <tr><td>Pistas pedidas</td><td class="v" id="fPistas"></td></tr>
+        <tr><td>Prueba escrita</td><td class="v" id="fPrueba"></td></tr>
+        <tr><td>Casos del detective</td><td class="v" id="fDetective"></td></tr>
+        <tr><td>Accesorios ganados</td><td class="v" id="fAcc"></td></tr>
+        <tr><td>Veces que se cayó o se cortocircuitó</td><td class="v" id="fCaidas"></td></tr>
+      </table>
+    </div>
+    <p style="margin-top:22px;font-size:14px">Sacale una foto a esta pantalla y mostrásela al profe.<br>
+      <button class="enlace" onclick="volverAlJuego()">volver a los niveles</button></p>
+  </div>
+
+</div>
+
+<div id="premioPop"><div class="pcaja" id="pCaja"></div></div>
+<div id="vestidor"><div class="vcaja"><div class="vt">EL VESTIDOR DE HELVECIO</div><div id="ovest"></div>
+  <button class="grande" onclick="cerrarVestidor()">Listo</button></div></div>
+<script>
+/* ── utilidades, sonido, guardado ─────────────────────────────── */
+function $(id){ return document.getElementById(id); }
+function azar(a){ return a[Math.floor(Math.random() * a.length)]; }
+function barajar(a){ var i, j, t; for (i = a.length - 1; i > 0; i--){ j = Math.floor(Math.random() * (i + 1)); t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+function esc(t){ return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+var AC = null, sonido = true;
+function audio(){
+  if (AC) return AC;
+  var C = window.AudioContext || window.webkitAudioContext;
+  if (!C) return null;
+  try { AC = new C(); } catch(e){ AC = null; }
+  return AC;
+}
+function tono(f, dur, tipo, vol, hasta, demora){
+  if (!sonido) return;
+  try {
+    var c = audio(); if (!c) return;
+    if (c.state === 'suspended' && c.resume) c.resume();
+    var t = c.currentTime + (demora || 0);
+    var o = c.createOscillator(), g = c.createGain();
+    o.type = tipo;
+    o.frequency.setValueAtTime(f, t);
+    if (hasta) o.frequency.exponentialRampToValueAtTime(hasta, t + dur);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol, t + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(c.destination);
+    o.start(t); o.stop(t + dur + 0.03);
+  } catch(e){}
+}
+function sonPaso(){ tono(190, 0.08, 'triangle', 0.13, 125); }
+function sonGiro(){ tono(260, 0.05, 'triangle', 0.09, 200); }
+function sonMira(){ tono(880, 0.05, 'sine', 0.07); }
+function sonEnciende(n){ var f = 523 * Math.pow(1.0595, n > 13 ? 13 : n); tono(f, 0.13, 'sine', 0.20); tono(f * 2, 0.07, 'sine', 0.06); }
+function sonCaida(){ tono(240, 0.30, 'sawtooth', 0.16, 70); }
+function sonGana(){ tono(523, 0.12, 'sine', 0.18, 0, 0); tono(659, 0.12, 'sine', 0.18, 0, 0.10); tono(784, 0.30, 'sine', 0.20, 0, 0.20); }
+function sonBien(){ tono(660, 0.12, 'sine', 0.18); tono(880, 0.2, 'sine', 0.15, 0, 0.1); }
+function sonPremio(){ tono(659, 0.1, 'sine', 0.16, 0, 0); tono(784, 0.1, 'sine', 0.16, 0, 0.09); tono(988, 0.1, 'sine', 0.16, 0, 0.18); tono(1319, 0.35, 'sine', 0.18, 0, 0.27); }
+function sonMal(){ tono(300, 0.22, 'square', 0.12, 180); }
+function alternarSonido(){
+  sonido = !sonido;
+  $('sonido').innerHTML = sonido ? 'sonido: sí' : 'sonido: no';
+  if (sonido) tono(660, 0.10, 'sine', 0.15);
+}
+
+var CLAVE = 'helvecio_decide_v1', guardaOK = true;
+var S = nuevoEstado();
+function nuevoEstado(){ return {nombre:'', nivel:0, hechos:{}, pistas:{}, progs:{}, caidas:0, fase:'inicio', quiz:null, det:null, look:{c:0, a:''}, anunciados:{}, nuevoAcc:false}; }
+function guardar(){ try { window.localStorage.setItem(CLAVE, JSON.stringify(S)); } catch(e){ guardaOK = false; } }
+function cargarGuardado(){
+  try {
+    var raw = window.localStorage.getItem(CLAVE);
+    if (raw){ var o = JSON.parse(raw); if (o && o.hechos){ S = o; if (!S.pistas) S.pistas = {}; if (!S.progs) S.progs = {}; if (!S.look) S.look = {c:0, a:''}; if (!S.anunciados) S.anunciados = {}; } }
+  } catch(e){ guardaOK = false; }
+}
+function contarHechos(){ var n = 0, k; for (k in S.hechos) if (S.hechos.hasOwnProperty(k)) n++; return n; }
+function contarPremios(){ var n = 0, k; for (k in S.hechos) if (S.hechos.hasOwnProperty(k) && S.hechos[k].premio) n++; return n; }
+function contarPistas(){ var n = 0, k; for (k in S.pistas) if (S.pistas.hasOwnProperty(k)) n += S.pistas[k]; return n; }
+
+/* ── el programa en castellano ───────────────────────────────── */
+var SENSORES = {
+  '?P': ['SI HAY', 'un hueco', 'si hay un hueco adelante,'],
+  '?G': ['SI HAY QUE', 'encender', 'si hay que encender esta baldosa,']
+};
+function enEspanol(c){
+  if (c === 'A') return 'avanzar';
+  if (c === 'I') return 'girar a la izquierda';
+  if (c === 'D') return 'girar a la derecha';
+  if (c === 'E') return 'encender';
+  if (c === '1') return 'hacer P1';
+  if (c === '2') return 'hacer P2';
+  return c;
+}
+function leerUnidad(arr, i){
+  var c = arr[i];
+  if (esSensor(c)){
+    if (i + 1 >= arr.length) return [SENSORES[c][2] + ' …', i + 1];
+    var r = leerUnidad(arr, i + 1);
+    return [SENSORES[c][2] + ' ' + r[0], r[1]];
+  }
+  return [enEspanol(c), i + 1];
+}
+function lectura(arr){
+  var out = [], i = 0, r;
+  while (i < arr.length){ r = leerUnidad(arr, i); out.push(r[0]); i = r[1]; }
+  return out.length ? out.join('  &#183;  ') : '—';
+}
+
+/* ── el aspecto de Helvecio ─────────────────────────────────────── */
+function addC(el, c){ if (el && (' ' + el.className + ' ').indexOf(' ' + c + ' ') < 0) el.className = el.className + ' ' + c; }
+function delC(el, c){ if (el) el.className = (' ' + el.className + ' ').replace(' ' + c + ' ', ' ').replace(/^\s+|\s+$/g, ''); }
+var COLORES = [
+  ['menta',   '#5BE3AE', '#2FA87B'],
+  ['celeste', '#6CC4F5', '#3A8FC4'],
+  ['coral',   '#FF9273', '#D3603F'],
+  ['violeta', '#B9A2FF', '#8468D6'],
+  ['rosa',    '#FF9DCB', '#D9679C'],
+  ['plata',   '#D5DDE8', '#97A3B5']
+];
+/* un accesorio por etapa completa */
+var ACCES = [
+  ['gorro',   'gorro de lana'],
+  ['lentes',  'lentes'],
+  ['mono',    'moño'],
+  ['bandera', 'bandera suiza'],
+  ['corona',  'corona']
+];
+var ACC_HTML = {
+  gorro:   '<div class="acc gorro"><i></i></div>',
+  lentes:  '<div class="acc lentes"><i class="l1"></i><i class="l2"></i><b></b></div>',
+  mono:    '<div class="acc mono"><i class="m1"></i><i class="m2"></i><b></b></div>',
+  bandera: '<div class="acc bandera"><i class="h"></i><i class="v"></i></div>',
+  corona:  '<div class="acc corona"><i class="p1"></i><i class="p2"></i><i class="p3"></i><b></b></div>'
+};
+function miLook(){ var l = (typeof S !== 'undefined' && S.look) ? S.look : {c:0, a:''}; return {col:COLORES[l.c] || COLORES[0], a:l.a || ''}; }
+/* devuelve el HTML del robot; k = escala */
+function htmlRobot(p, k, extra, acc){
+  var L = miLook(); if (acc !== undefined) L.a = acc;
+  var c1 = L.col[1], c2 = L.col[2];
+  return '<div class="robot' + (extra ? ' ' + extra : '') + '" id="' + p + 'robot" style="width:42px;height:40px;transform:scale(' + k + ');-webkit-transform:scale(' + k + ');transform-origin:0 0;-webkit-transform-origin:0 0">' +
+         '<div class="rin" id="' + p + 'rin">' +
+         '<div class="antena" style="background:' + c2 + '"></div><div class="bombita"></div>' +
+         '<div class="cuerpo" style="background:' + c1 + ';border-bottom-color:' + c2 + '"><div class="ojo" id="' + p + 'ojoI" style="left:9px;top:9px"></div><div class="ojo" id="' + p + 'ojoD" style="left:21px;top:9px"></div></div>' +
+         (ACC_HTML[L.a] || '') +
+         '<div class="nariz" id="' + p + 'nariz" style="left:34px;top:12px">&#9654;</div></div></div>';
+}
+/* un robot suelto, quieto, para vidrieras (inicio, vestidor, diploma) */
+function htmlRobotSuelto(p, k, extra, acc){
+  return '<div style="position:relative;display:inline-block;width:' + Math.round(42 * k) + 'px;height:' + Math.round(42 * k) + 'px;margin-top:' + Math.round(13 * k) + 'px">' + htmlRobot(p, k, 'vitrina' + (extra ? ' ' + extra : ''), acc) + '</div>';
+}
+
+/* ── un tablero que se puede dibujar dos veces (juego y detective) ── */
+var FLECHA = ['&#9654;', '&#9660;', '&#9664;', '&#9650;'];
+var POSFLE = [[34, 12], [12, 32], [-10, 12], [12, -11]];
+var POSOJO = [[2, 0], [0, 2], [-2, 0], [0, -2]];
+function Tab(pref, cont, anchoMax){ this.p = pref; this.cont = cont; this.anchoMax = anchoMax; this.mapa = []; this.rob = null; this.cel = 50; this.sep = 6; this.luces = 0; this.tg = null; this.tm = null; }
+Tab.prototype.cargar = function(filas, dir){
+  var s = copiarMapa(filas, dir); this.mapa = s.m; this.rob = s.rob; this.luces = 0; this.dibujar();
+};
+Tab.prototype.dibujar = function(){
+  var t = $(this.cont), h = '', ancho = 0, y, x, c, m = this.mapa;
+  for (y = 0; y < m.length; y++) if (m[y].length > ancho) ancho = m[y].length;
+  this.cel = Math.min(50, Math.floor((this.anchoMax - (ancho - 1) * this.sep) / ancho));
+  if (this.cel < 20) this.cel = 20;
+  var CEL = this.cel, SEP = this.sep;
+  for (y = 0; y < m.length; y++) for (x = 0; x < m[y].length; x++){
+    c = m[y][x]; if (c === '#') continue;
+    h += '<div class="celda' + (c === 'o' ? ' prende' : (c === '*' ? ' prendida' : '')) + '" id="' + this.p + 'c' + x + '_' + y + '" style="left:' + (x*(CEL+SEP)) +
+         'px;top:' + (y*(CEL+SEP)) + 'px;width:' + CEL + 'px;height:' + CEL + 'px"></div>';
+  }
+  h += htmlRobot(this.p, CEL / 50);
+  t.innerHTML = h;
+  t.style.width  = (ancho*(CEL+SEP) - SEP) + 'px';
+  t.style.height = (m.length*(CEL+SEP) - SEP) + 'px';
+  this.ubicar();
+};
+Tab.prototype.ubicar = function(){
+  var k = this.cel / 50, r = this.rob, el = $(this.p + 'robot'), n = $(this.p + 'nariz');
+  if (!el) return;
+  el.style.left = (r.x*(this.cel+this.sep) + 4*k) + 'px';
+  el.style.top  = (r.y*(this.cel+this.sep) + 5*k) + 'px';
+  n.innerHTML = FLECHA[r.d]; n.style.left = POSFLE[r.d][0] + 'px'; n.style.top = POSFLE[r.d][1] + 'px';
+  var i = $(this.p + 'ojoI'), d = $(this.p + 'ojoD'), ox = POSOJO[r.d][0], oy = POSOJO[r.d][1];
+  i.style.left = (7 + ox) + 'px'; i.style.top = (9 + oy) + 'px'; d.style.left = (19 + ox) + 'px'; d.style.top = (9 + oy) + 'px';
+};
+/* caras: feliz, triste, chispa, mareado */
+Tab.prototype.cara = function(c){ var r = $(this.p + 'rin'); if (r) r.className = 'rin' + (c ? ' ' + c : ''); };
+/* la lamparita se prende cuando Helvecio mira; aparece un globito con la respuesta */
+Tab.prototype.mirar = function(texto, si){
+  var el = $(this.p + 'robot'), t = $(this.cont), g = $(this.p + 'globo'), self = this, k = this.cel + this.sep, x, y;
+  addC(el, 'mira');
+  if (this.tm) clearTimeout(this.tm);
+  this.tm = setTimeout(function(){ delC($(self.p + 'robot'), 'mira'); }, 450);
+  if (!t || !texto) return;
+  if (!g){ g = document.createElement('div'); g.id = this.p + 'globo'; t.appendChild(g); }
+  x = this.rob.x * k + this.cel / 2;
+  y = this.rob.y * k - 30;
+  g.className = 'globo ' + (si ? 'si' : 'no') + '';
+  g.innerHTML = texto;
+  g.style.left = x + 'px'; g.style.top = y + 'px'; g.style.display = 'block';
+  if (this.tg) clearTimeout(this.tg);
+  this.tg = setTimeout(function(){ var gg = $(self.p + 'globo'); if (gg) gg.style.display = 'none'; }, 1100);
+};
+/* papelitos de festejo */
+Tab.prototype.festejo = function(ww, hh){
+  var t0 = $(this.cont), w = ww || (parseInt(t0.style.width, 10) || 200) + 32, ht = hh || (parseInt(t0.style.height, 10) || 60) + 32, i, d, t = document.createElement('div'), cols = ['#FFC53D', '#5BE3AE', '#FF7A8F', '#6CC4F5', '#B9A2FF', '#FFFFFF'], hs = [];
+  t.className = 'capaConf'; t.style.width = w + 'px'; t.style.height = ht + 'px'; t0.appendChild(t);
+  for (i = 0; i < 26; i++){
+    d = document.createElement('div');
+    d.className = 'conf';
+    d.style.left = Math.round(Math.random() * w) + 'px';
+    d.style.background = cols[i % cols.length];
+    d.style.animationDuration = (0.9 + Math.random() * 0.7) + 's';
+    d.style.animationDelay = (Math.random() * 0.25) + 's';
+    t.appendChild(d); hs.push(d);
+  }
+  setTimeout(function(){ if (t.parentNode) t.parentNode.removeChild(t); }, 1900);
+};
+/* aplica un suceso de la simulación a lo que se ve en pantalla */
+Tab.prototype.aplicar = function(e){
+  var cel, self = this;
+  if (e.t !== 'prim') return;
+  if (e.c === 'I' || e.c === 'D'){ this.rob.d = e.d; this.ubicar(); sonGiro(); }
+  else if (e.c === 'A'){
+    if (e.falla){
+      sonCaida(); this.rob.x = e.x; this.rob.y = e.y; this.ubicar(); this.cara('triste');
+      var rr = $(this.p + 'robot'); setTimeout(function(){ if (rr){ rr.style.opacity = (e.y >= 0 && e.y < self.mapa.length && e.x >= 0 && e.x < self.mapa[e.y].length) ? '0.12' : '0'; rr.style.marginTop = (8 * self.cel / 50) + 'px'; } }, 260);
+    }
+    else { this.rob.x = e.x; this.rob.y = e.y; this.ubicar(); sonPaso(); }
+  } else if (e.c === 'E'){
+    if (e.luz){
+      this.mapa[e.luz[1]][e.luz[0]] = '*'; this.luces++; sonEnciende(this.luces);
+      cel = $(this.p + 'c' + e.luz[0] + '_' + e.luz[1]); if (cel) cel.className = 'celda prendida pop';
+    } else if (e.falla){
+      sonCaida(); cel = $(this.p + 'c' + this.rob.x + '_' + this.rob.y);
+      if (cel) cel.className = 'celda quemada';
+      this.cara('chispa');
+    }
+  }
+};
+/* ── motor: simula el programa y devuelve la lista de sucesos ─────── */
+function esSensor(c){ return c.length === 2 && c.charAt(0) === '?'; }
+function unidad(arr, i){            /* cuántas ranuras ocupa la orden que empieza en i (con sus guardias) */
+  var j = i;
+  while (j < arr.length && esSensor(arr[j])) j++;
+  return Math.min(j + 1, arr.length) - i;
+}
+function copiarMapa(filas, dir){
+  var m = [], y, x, rob = null;
+  for (y = 0; y < filas.length; y++) m.push(filas[y].split(''));
+  for (y = 0; y < m.length; y++) for (x = 0; x < m[y].length; x++)
+    if (m[y][x] === 'R'){ rob = {x:x, y:y, d:dir}; m[y][x] = '.'; }
+  return {m:m, rob:rob};
+}
+function pendientes(m){
+  var n = 0, y, x;
+  for (y = 0; y < m.length; y++) for (x = 0; x < m[y].length; x++) if (m[y][x] === 'o') n++;
+  return n;
+}
+function libre(m, x, y){ return y >= 0 && y < m.length && x >= 0 && x < m[y].length && m[y][x] !== '#'; }
+var DXS = [1,0,-1,0], DYS = [0,1,0,-1];
+/* devuelve {ev:[...], res:'gano'|'caida'|'corto'|'falta'|'bucle', resto:n}
+   cada suceso: {t:'prim'|'mira'|'llama', c, box, idx, ok, x, y, d, luz:[x,y]|null, falla:null|'caida'|'corto'} */
+function simular(filas, dir, exacto, prog, p1, p2){
+  var s = copiarMapa(filas, dir), m = s.m, rob = s.rob, ev = [], fr = [{arr:prog, box:'M', i:0}], n = 0, res = null;
+  function nuevo(t, c, box, idx, ok){ var e = {t:t, c:c, box:box, idx:idx, ok:ok, x:rob.x, y:rob.y, d:rob.d, luz:null, falla:null}; ev.push(e); return e; }
+  function evaluar(c){
+    if (c === '?P') return !libre(m, rob.x + DXS[rob.d], rob.y + DYS[rob.d]);
+    if (c === '?G') return m[rob.y][rob.x] === 'o';
+    return true;
+  }
+  if (pendientes(m) === 0) return {ev:ev, res:'gano', resto:0};
+  while (!res){
+    if (++n > 700){ res = 'bucle'; break; }
+    var f = fr[fr.length - 1];
+    if (!f){ res = 'falta'; break; }
+    if (f.i >= f.arr.length){ fr.pop(); continue; }
+    var c = f.arr[f.i], e;
+    if (esSensor(c)){
+      if (f.i + 1 >= f.arr.length){ f.i++; continue; }
+      var ok = evaluar(c);
+      nuevo('mira', c, f.box, f.i, ok);
+      if (ok) f.i++; else f.i += 1 + unidad(f.arr, f.i + 1);
+      continue;
+    }
+    var idx = f.i; f.i++;
+    if (c === '1' || c === '2'){
+      if (fr.length > 150){ res = 'bucle'; break; }
+      var g = fr[fr.length - 1];
+      if (g.i >= g.arr.length) fr.pop();          /* la llamada era lo último: no acumulo pilas */
+      fr.push({arr:(c === '1' ? p1 : p2), box:c, i:0});
+      nuevo('llama', c, f.box, idx, true);
+      continue;
+    }
+    e = nuevo('prim', c, f.box, idx, true);
+    if (c === 'I'){ rob.d = (rob.d + 3) % 4; e.d = rob.d; }
+    else if (c === 'D'){ rob.d = (rob.d + 1) % 4; e.d = rob.d; }
+    else if (c === 'E'){
+      if (m[rob.y][rob.x] === 'o'){ m[rob.y][rob.x] = '*'; e.luz = [rob.x, rob.y]; }
+      else if (exacto){ e.falla = 'corto'; res = 'corto'; break; }
+      if (pendientes(m) === 0){ res = 'gano'; break; }
+    } else if (c === 'A'){
+      var nx = rob.x + DXS[rob.d], ny = rob.y + DYS[rob.d];
+      if (!libre(m, nx, ny)){ e.falla = 'caida'; e.x = nx; e.y = ny; res = 'caida'; break; }
+      rob.x = nx; rob.y = ny; e.x = nx; e.y = ny;
+    }
+  }
+  return {ev:ev, res:res, resto:pendientes(m)};
+}
+function totalOrdenes(M, a, b){ return (M||[]).length + (a||[]).length + (b||[]).length; }
+/* ════════════════════════════════════════════════════════════════
+   .  baldosa gris   o  baldosa azul (hay que encender)   #  hueco   R  arranque
+   dir: 0 derecha · 1 abajo · 2 izquierda · 3 arriba
+   órdenes:  A avanzar · I izquierda · D derecha · E encender · 1 llamar P1 · 2 llamar P2
+             ?P  SI HAY hueco adelante  → ejecuta LO QUE SIGUE solo si se cumple
+             ?G  SI HAY QUE encender esta baldosa → ídem
+   ════════════════════════════════════════════════════════════════ */
+var ETAPAS = [
+  'ETAPA 1 · CALENTAMIENTO',
+  'ETAPA 2 · HELVECIO EMPIEZA A MIRAR',
+  'ETAPA 3 · SIN CONTAR LAS VUELTAS',
+  'ETAPA 4 · REPARTIR EL TRABAJO',
+  'ETAPA 5 · LOS TABLEROS SORPRESA'
+];
+/* tableros que se reusan */
+var L1 = ["Rooo","###o","###o"],
+    L2 = ["Roo","##o","##o","##o"],
+    L3 = ["Rooooo"],
+    LL = ["Rooooo","#####o","#####o","#####o"],
+    U1 = ["Rooo","###o","oooo"],
+    A3 = ["Roo","o#o","ooo"],
+    /* versiones con baldosas grises que NO hay que encender */
+    X1 = ["Ro.o","###.","###o"],
+    X2 = ["R.oo","###o","###."],
+    X3 = ["R.o.oo"],
+    XL = ["Ro.o","###o","###."],
+    XU = ["Roo.","###o","o.oo"],
+    XA3 = ["Ro.","o#o","o.o"],
+    XA4 = ["Roo.","o##o","o##.","o.oo"],
+    XA5 = ["Roo.o","o###.","o###o","o###o","o.ooo"],
+    XS  = ["Ro.ooo","#####o","oo.o#o","o####o","oo.ooo"];
+
+var NIVELES = [
+
+/* ── ETAPA 1 · lo que ya saben ─────────────────────────────────── */
+{ et:0, mapas:[["Rooo"]], dir:0, max:8,
+  texto:"Para empezar, algo que ya sabés: Helvecio tiene que encender <b>las tres baldosas azules</b>.",
+  pistas:["Helvecio está parado en una baldosa gris. ¿Qué pasa si apretás ENCENDER ahí? ¿Y si primero lo hacés AVANZAR?",
+          "AVANZAR lo pasa a la baldosa de adelante. ENCENDER prende la que está pisando. Probá de a una orden y mirá qué hace.",
+          "Avanzar, encender; avanzar, encender; avanzar, encender. Son seis ranuras."],
+  sol:{M:['A','E','A','E','A','E']} },
+
+{ et:0, mapas:[["Roo","..o"]], dir:0, max:10,
+  texto:"Ahora la última baldosa está <b>abajo</b>.",
+  pistas:["Helvecio mira hacia la derecha, pero la última baldosa queda hacia abajo. ¿Qué tiene que hacer antes de avanzar hacia abajo?",
+          "DERECHA no lo mueve de lugar: solo lo hace mirar hacia otro lado. Fijate hacia dónde apuntan los ojos.",
+          "Encendé las dos de arriba, girá a la derecha, avanzá y encendé la de abajo."],
+  sol:{M:['A','E','A','E','D','A','E']} },
+
+{ et:0, mapas:[["Roo","..o","..o"]], dir:0, max:12,
+  roto:{ M:['A','E','A','A','E','D','A','E','A','E'] },
+  texto:"Este programa ya está escrito y <b>casi</b> anda. Leelo y arreglalo.",
+  pistas:["¿En qué momento se cae Helvecio? Corré el programa con PASO A PASO y mirá qué orden se resalta justo antes de la caída.",
+          "Se cae porque camina una baldosa de más. Leé el programa en castellano abajo de las ranuras: ¿hay dos AVANZAR seguidos que no deberían estar?",
+          "Borrá uno de los dos AVANZAR seguidos del principio, haciendo clic en su ranura."],
+  sol:{M:['A','E','A','E','D','A','E','A','E']} },
+
+{ et:0, mapas:[["Rooooo"]], dir:0, max:5, maxP:3,
+  roto:{ M:['1','1','1','1','1'], a:['A','E','A'] },
+  texto:"Otro programa roto, pero el error está <b>adentro de P1</b>.",
+  pistas:["El error no está en PRINCIPAL: ahí solo se llama a P1. Si P1 está mal, ¿cuántas veces se equivoca Helvecio?",
+          "Si arreglás P1, se arregla en las cinco llamadas a la vez. Leé P1 en castellano: ¿qué orden sobra al final?",
+          "Borrá el último AVANZAR de P1. P1 tiene que quedar: avanzar, encender."],
+  sol:{M:['1','1','1','1','1'], a:['A','E']} },
+
+/* ── ETAPA 2 · aparece el SI ───────────────────────────────────── */
+{ et:1, mapas:[["Ro.oo.o"]], dir:0, max:6, maxP:3, sensores:['?G'], exacto:true,
+  texto:"Cuidado: <b>algunas baldosas son grises y no hay que encenderlas</b>. Si Helvecio enciende una que no corresponde, hace cortocircuito.",
+  pistas:["¿Puede Helvecio saber, parado en una baldosa, si le toca encenderla? ¿Cómo lo sabrías vos?",
+          "Apareció una orden nueva: SI HAY QUE encender. Funciona como un guardia: deja pasar a la orden que va justo después solo si se cumple. Si no se cumple, esa orden se saltea.",
+          "En P1 poné: AVANZAR, SI HAY QUE encender, ENCENDER. Después poné P1 seis veces en PRINCIPAL."],
+  sol:{M:['1','1','1','1','1','1'], a:['A','?G','E']} },
+
+{ et:1, mapas:[["Ro.oo.o"],["Roo.o.o"]], dir:0, max:6, maxP:3, sensores:['?G'], exacto:true,
+  texto:"Dos tableros, <b>un solo programa</b>. Las baldosas grises están en lugares distintos.",
+  pistas:["Los dos tableros tienen el mismo largo pero las grises caen en lugares distintos. ¿Sirve armar un programa que cuente cuáles saltear?",
+          "Contar no sirve: lo que funciona en un tablero falla en el otro. El programa tiene que mirar la baldosa en cada paso.",
+          "El mismo P1 del nivel anterior sirve para los dos. Escribilo igual y apretá EJECUTAR."],
+  sol:{M:['1','1','1','1','1','1'], a:['A','?G','E']} },
+
+{ et:1, mapas:[L1], dir:0, max:5, maxP:4, sensores:['?P'],
+  texto:"Ahora el camino <b>dobla</b>. Y Helvecio hace siempre lo mismo en cada vuelta de P1.",
+  pistas:["Si P1 hace siempre lo mismo, ¿cómo sabe Helvecio cuándo le toca doblar? ¿Qué mirarías vos si estuvieras ahí parado?",
+          "Apareció SI HAY hueco: deja pasar a la orden siguiente solo si adelante no hay baldosa. Pensá: si hay un hueco adelante, ¿qué conviene hacer?",
+          "En P1: SI HAY hueco, DERECHA, AVANZAR, ENCENDER. Y P1 cinco veces en PRINCIPAL."],
+  sol:{M:['1','1','1','1','1'], a:['?P','D','A','E']} },
+
+{ et:1, mapas:[L1, L2, L3], dir:0, max:5, maxP:4, sensores:['?P'],
+  texto:"Tres caminos que doblan en lugares distintos. <b>El mismo programa para los tres.</b>",
+  pistas:["Los tres tableros tienen el mismo largo. ¿Dónde está la diferencia entre ellos? ¿El programa del nivel anterior mira justamente eso?",
+          "Cada tablero dobla en un lugar distinto, pero siempre hacia la derecha y siempre cuando hay un hueco adelante.",
+          "Es el mismo P1 del nivel anterior. Escribilo y comprobá que anda en los tres."],
+  sol:{M:['1','1','1','1','1'], a:['?P','D','A','E']} },
+
+{ et:1, mapas:[X1, X2, X3], dir:0, max:5, maxP:5, sensores:['?P','?G'], exacto:true,
+  texto:"Tres tableros con <b>dobladas y baldosas grises</b> a la vez.",
+  pistas:["Cada vuelta, antes de actuar, Helvecio tiene que preguntar dos cosas. ¿Cuáles son? ¿Cuál conviene preguntar primero: doblar o encender?",
+          "Una pregunta es si hay hueco (para doblar). La otra es si hay que encender (para no hacer cortocircuito). Doblar y avanzar primero; encender al final, ya parado en la baldosa nueva.",
+          "P1: SI HAY hueco, DERECHA, AVANZAR, SI HAY QUE encender, ENCENDER. Cinco veces en PRINCIPAL."],
+  sol:{M:['1','1','1','1','1'], a:['?P','D','A','?G','E']} },
+
+/* ── ETAPA 3 · recursión + SI ──────────────────────────────────── */
+{ et:2, mapas:[["Roooooooo"]], dir:0, max:1, maxP:3,
+  texto:"Una sola ranura en PRINCIPAL y un camino largo. <b>Esto ya lo hiciste en la clase anterior.</b>",
+  pistas:["Solo hay una ranura en PRINCIPAL. ¿Te acordás de lo que hacías la clase pasada cuando las ranuras no alcanzaban?",
+          "Poné P1 adentro del propio P1: Helvecio lo repite solo, una y otra vez, hasta que no quedan baldosas azules.",
+          "P1: AVANZAR, ENCENDER, P1. PRINCIPAL: P1."],
+  sol:{M:['1'], a:['A','E','1']} },
+
+{ et:2, mapas:[["Ro.oo"],["Roo.o.oo"],["R.oo.o"]], dir:0, max:1, maxP:4, sensores:['?G'], exacto:true,
+  texto:"Tres tableros de <b>largo distinto</b>, con baldosas grises en el medio. Un solo programa.",
+  pistas:["Si no sabés cuánto mide el camino, ¿cómo le decís a Helvecio dónde parar?",
+          "No hace falta frenarlo: cuando todas las baldosas azules estén encendidas, Helvecio termina solo. Lo que sí necesita es llamarse a sí mismo y mirar antes de encender.",
+          "P1: AVANZAR, SI HAY QUE encender, ENCENDER, P1. PRINCIPAL: P1."],
+  sol:{M:['1'], a:['A','?G','E','1']} },
+
+{ et:2, mapas:[L1, U1, LL], dir:0, max:1, maxP:5, sensores:['?P'],
+  texto:"Tres caminos de <b>forma y largo distintos</b>. El mismo programa, sin contar.",
+  pistas:["Tres caminos que doblan en lugares distintos y tienen largos distintos. ¿Qué parte del programa tiene que 'sentir' la esquina?",
+          "Juntá lo que ya sabés: P1 llamándose a sí mismo (para no contar) y SI HAY hueco, DERECHA (para doblar).",
+          "P1: SI HAY hueco, DERECHA, AVANZAR, ENCENDER, P1. PRINCIPAL: P1."],
+  sol:{M:['1'], a:['?P','D','A','E','1']} },
+
+{ et:2, mapas:[XA3, XA4, XA5], dir:0, max:1, maxP:6, sensores:['?P','?G'], exacto:true,
+  texto:"Tres anillos de distinto tamaño, con baldosas grises. <b>Un solo programa.</b>",
+  pistas:["Un anillo es un camino que dobla cuatro veces. ¿El programa necesita saber que es un anillo, o le alcanza con mirar lo que tiene adelante?",
+          "Al programa no le importa la forma completa: mira un paso a la vez. Si funciona doblando donde hay hueco y encendiendo solo cuando hace falta, sirve para cualquier anillo.",
+          "P1: SI HAY hueco, DERECHA, AVANZAR, SI HAY QUE encender, ENCENDER, P1. PRINCIPAL: P1."],
+  sol:{M:['1'], a:['?P','D','A','?G','E','1']} },
+
+{ et:2, mapas:[XA3, XA4], dir:0, max:1, maxP:6, sensores:['?P','?G'], exacto:true,
+  roto:{ M:['1'], a:['?P','D','A','E','?G','E'] },
+  texto:"Un programa con <b>dos errores</b>: a uno le sobra una orden y al otro le falta una.",
+  pistas:["Corré PASO A PASO. ¿En qué momento Helvecio hace algo que no debería? ¿Y qué le falta para seguir andando después de la primera vuelta?",
+          "Un error es un ENCENDER que se hace sin preguntar nada. El otro es que P1 nunca se vuelve a llamar.",
+          "Borrá el ENCENDER que está antes del SI HAY QUE. Después agregá P1 al final de P1."],
+  sol:{M:['1'], a:['?P','D','A','?G','E','1']} },
+
+/* ── ETAPA 4 · dividir ─────────────────────────────────────────── */
+{ et:3, mapas:[XA3, XL, XU], dir:0, max:1, maxP:5, maxP2:2, sensores:['?P','?G'], exacto:true,
+  texto:"P1 ya no tiene lugar para todo. <b>Repartí el trabajo entre P1 y P2.</b>",
+  pistas:["P1 tiene lugar para cinco órdenes y el programa completo necesita más. ¿Hay un pedacito que podrías guardar con un nombre?",
+          "Usá P2 para 'revisar y encender': el pedacito SI HAY QUE encender, ENCENDER. P1 se queda con moverse y llamar a P2.",
+          "P2: SI HAY QUE encender, ENCENDER. P1: SI HAY hueco, DERECHA, AVANZAR, P2, P1. PRINCIPAL: P1."],
+  sol:{M:['1'], a:['?P','D','A','2','1'], b:['?G','E']} },
+
+{ et:3, mapas:[X3, XL, XU, XA4], dir:0, max:1, maxP:5, maxP2:2, sensores:['?P','?G'], exacto:true,
+  texto:"Cuatro tableros, y el reparto es <b>al revés</b>: P2 tiene lugar para solo dos órdenes.",
+  pistas:["Ahora P2 es el corto. ¿Qué pedacito de dos órdenes se repite en cada vuelta y es el candidato a tener nombre?",
+          "El pedacito de dos órdenes es SI HAY hueco, DERECHA: es el que se encarga de doblar.",
+          "P2: SI HAY hueco, DERECHA. P1: P2, AVANZAR, SI HAY QUE encender, ENCENDER, P1. PRINCIPAL: P1."],
+  sol:{M:['1'], a:['2','A','?G','E','1'], b:['?P','D']} },
+
+{ et:3, mapas:[XA3, XU, XA4], dir:0, max:1, maxP:6, maxP2:3, sensores:['?P','?G'], exacto:true,
+  roto:{ M:['1'], a:['2','A','?G','E','E'], b:['?P','D','A'] },
+  texto:"Un programa grande, con <b>tres errores</b> repartidos entre P1 y P2.",
+  pistas:["Son tres errores en dos procedimientos. Probá PASO A PASO: cada orden que se resalta, ¿es la que esperabas?",
+          "Uno sobra en P2 (Helvecio camina dos veces por vuelta), otro sobra en P1 (enciende sin preguntar) y a P1 le falta la vuelta final.",
+          "Borrá el AVANZAR de P2. Borrá el ENCENDER suelto del final de P1. Agregá P1 al final de P1."],
+  sol:{M:['1'], a:['2','A','?G','E','1'], b:['?P','D']} },
+
+/* ── ETAPA 5 · sorpresa ────────────────────────────────────────── */
+{ et:4, mapas:[L1, U1], ocultos:[LL, A3], dir:0, max:1, maxP:5, sensores:['?P'],
+  texto:"<b>Dos tableros se ven. Otros dos, no.</b> Tu programa tiene que resolverlos todos.",
+  pistas:["Tu programa también se va a probar con tableros que no ves. ¿Qué partes del programa dependen de cómo es cada tablero y cuáles no?",
+          "Si contaste pasos o dejaste órdenes hechas a medida, falla en los sorpresa. Lo que no falla es lo que mira y decide.",
+          "P1: SI HAY hueco, DERECHA, AVANZAR, ENCENDER, P1. PRINCIPAL: P1."],
+  sol:{M:['1'], a:['?P','D','A','E','1']} },
+
+{ et:4, mapas:[XA3, XL], ocultos:[XA5, XU], dir:0, max:1, maxP:6, sensores:['?P','?G'], exacto:true,
+  texto:"Otra vez <b>dos tableros que se ven y dos que no</b>. Ahora con baldosas grises.",
+  pistas:["Los tableros sorpresa pueden tener formas que no viste. ¿Qué forma de camino podría aparecer que tu programa no conozca?",
+          "Todo camino se recorre doblando a la derecha cuando hay hueco y encendiendo solo cuando hace falta. ¿Tu programa hace las dos cosas?",
+          "P1: SI HAY hueco, DERECHA, AVANZAR, SI HAY QUE encender, ENCENDER, P1. PRINCIPAL: P1."],
+  sol:{M:['1'], a:['?P','D','A','?G','E','1']} },
+
+{ et:4, mapas:[X3, XA4, XU], ocultos:[["Ro.o.ooo.oo"], XS, XA5], dir:0, max:1, maxP:6, sensores:['?P','?G'], exacto:true,
+  texto:"El último. <b>Tres tableros se ven y tres no.</b> Entre los que no se ven hay una espiral.",
+  pistas:["Último nivel. ¿Qué programa serviría para cualquier camino que doble siempre a la derecha, sea cual sea su forma y su largo?",
+          "Es el del nivel anterior. No lo cambies: si está bien escrito, es el mismo para todos, hasta para una espiral.",
+          "P1: SI HAY hueco, DERECHA, AVANZAR, SI HAY QUE encender, ENCENDER, P1. PRINCIPAL: P1."],
+  sol:{M:['1'], a:['?P','D','A','?G','E','1']} }
+];
+/* ── lo que Helvecio averiguó ──────────────────────────────────── */
+var DATOS = {
+  2:  ["Cuatro idiomas",
+       "Suiza tiene <b>cuatro idiomas nacionales</b>: alemán, francés, italiano y romanche. El alemán, que ustedes aprenden en el MTA, es el más hablado de los cuatro."],
+  3:  ["De dónde viene la palabra bug",
+       "En 1947 una <b>polilla</b> se metió en una computadora enorme (la Harvard Mark II) y la hizo fallar. Los técnicos la pegaron en su cuaderno y anotaron: «primer caso real de bicho encontrado». Por eso a los errores de un programa se les dice <b>bugs</b>, y a arreglarlos, <b>depurar</b>."],
+  5:  ["El primer programa de la historia",
+       "<b>Ada Lovelace</b> escribió en 1843 lo que hoy se considera el primer programa. Lo escribió para una máquina que todavía no se había construido: lo pensó todo sin poder probarlo."],
+  6:  ["Robot",
+       "La palabra <b>robot</b> aparece por primera vez en una obra de teatro de 1920, del escritor checo Karel Čapek. En checo, <i>robota</i> quiere decir «trabajo duro»."],
+  7:  ["El SI está en todos lados",
+       "La puerta automática del supermercado se abre <b>SI</b> detecta a alguien adelante. El semáforo cambia <b>SI</b> pasó el tiempo. El aire acondicionado se apaga <b>SI</b> llegó a la temperatura. Todo eso es lo que acabás de escribir."],
+  9:  ["Verdadero o falso",
+       "En 1854 el matemático inglés <b>George Boole</b> mostró que se puede razonar usando solo dos valores: verdadero y falso. Hoy cada SI de cada programa del mundo funciona con esa idea."],
+  10: ["Lo que ya sabías",
+       "Un procedimiento que se llama a sí mismo se llama <b>recursión</b>. La usaste la clase pasada sin que nadie te dijera el nombre."],
+  11: ["Programar sin saber el tamaño",
+       "Casi ningún programa sabe de antemano cuánto va a tener que trabajar: no sabe cuántas fotos vas a subir ni cuántos mensajes vas a recibir. Está escrito para <b>mirar y seguir hasta que no quede nada</b>, igual que el tuyo."],
+  12: ["27 toneladas",
+       "La ENIAC, una de las primeras computadoras electrónicas (1945), ocupaba <b>una sala entera y pesaba unas 27 toneladas</b>. Tu celular es muchísimo más potente."],
+  13: ["Un programa que mira un paso a la vez",
+       "El programa que escribiste no conoce la forma completa del camino: solo mira lo que tiene adelante. Los robots aspiradoras recorren una casa que nunca vieron <b>de la misma manera</b>."],
+  14: ["Leer es la mitad del trabajo",
+       "Un programador pasa <b>más tiempo leyendo y arreglando programas que escribiéndolos</b>. Casi nunca se arranca de cero. Lo que acabás de hacer es trabajo de verdad."],
+  15: ["Ponerle nombre a las partes",
+       "Dividir un problema grande en partes chicas, cada una con su nombre, se llama <b>descomponer</b>. Es lo que hace cualquier equipo que arma un videojuego: una persona hace el movimiento y otra los puntos."],
+  16: ["Margaret Hamilton",
+       "<b>Margaret Hamilton</b> dirigió al equipo que escribió el software de las misiones Apolo a la Luna. Fue ella quien empezó a usar la expresión «ingeniería de software»."],
+  17: ["Tres errores a la vez",
+       "En un programa grande los errores casi nunca vienen de a uno. Por eso se prueba <b>paso a paso</b>, como hiciste vos."],
+  18: ["Probar con lo que nadie vio",
+       "Los programadores prueban sus programas con casos que ellos mismos no imaginaron. Si el programa solo funciona con los ejemplos que el autor tenía a mano, <b>todavía no está terminado</b>."],
+  19: ["Python",
+       "El lenguaje <b>Python</b> no se llama así por la serpiente. Su creador lo bautizó en honor a un grupo de humor inglés, los <b>Monty Python</b>."],
+  20: ["Plan Ceibal",
+       "En 2007 empezó en Uruguay el <b>Plan Ceibal</b>, que entregó una computadora a cada niño de escuela pública. Uruguay fue de los primeros países del mundo en hacerlo."]
+};
+
+/* ── la prueba ─────────────────────────────────────────────────── */
+var PRUEBA = [
+  { p:'¿Qué hace la orden SI HAY QUE encender?',
+    o:['Enciende todas las baldosas del tablero',
+       'Deja pasar a la orden que viene justo después solo si la baldosa pide encenderse',
+       'Avisa con un sonido cuando hay una baldosa azul'],
+    r:1, x:'Por eso se llama condicional: la orden se ejecuta bajo una condición.' },
+
+  { p:'Si la condición de un SI no se cumple, ¿qué pasa con la orden que va justo después?',
+    o:['Se ejecuta igual',
+       'Se saltea y el programa sigue con la que viene después',
+       'El programa se detiene'],
+    r:1, x:'El SI funciona como un guardia: solo deja pasar a la orden de al lado cuando se cumple.' },
+
+  { p:'En P1 está SI HAY hueco, DERECHA. ¿Cuándo gira Helvecio?',
+    o:['Siempre, en cada vuelta de P1',
+       'Solo cuando adelante no hay baldosa',
+       'Cuando termina de encender todas las baldosas'],
+    r:1, x:'Si hay una baldosa adelante, la orden DERECHA se saltea y Helvecio sigue derecho.' },
+
+  { p:'¿Por qué un programa que cuenta las vueltas sirve para un tablero y falla en otro?',
+    o:['Porque los tableros tienen distintos colores',
+       'Porque está hecho a medida de un tablero, y el otro tiene otra forma o otro largo',
+       'Porque los programas solo se pueden usar una vez'],
+    r:1, x:'Contar sirve para un caso. Mirar y decidir sirve para cualquiera.' },
+
+  { p:'En el nivel de los tres tableros de largo distinto, ¿por qué no hizo falta contar baldosas?',
+    o:['Porque P1 se llamaba a sí mismo y Helvecio terminaba solo al encender la última baldosa',
+       'Porque los tres tableros tenían el mismo largo',
+       'Porque Helvecio adivinaba el largo'],
+    r:0, x:'Eso es recursión: P1 repite hasta que no queda trabajo, sin que nadie cuente las vueltas.' },
+
+  { p:'¿Para qué sirve el PASO A PASO?',
+    o:['Para que Helvecio camine más lento y sea más fácil',
+       'Para ver qué orden se ejecuta en cada momento y encontrar dónde está el error',
+       'Para ganar más puntos'],
+    r:1, x:'Encontrar y corregir errores se llama depurar, y es lo que más hace un programador.' },
+
+  { p:'Si arreglás un error que está adentro de P1, ¿qué pasa?',
+    o:['Se arregla en todos los lugares donde se llama a P1',
+       'Hay que arreglarlo de nuevo en cada llamada',
+       'P1 deja de funcionar'],
+    r:0, x:'Por eso conviene escribir cada cosa una sola vez, con un nombre: se arregla una sola vez.' },
+
+  { p:'Un programa resuelve tableros que su autor nunca vio. ¿Qué tiene que tener sí o sí?',
+    o:['Muchas más órdenes que un programa común',
+       'Condiciones (SI) que lo hagan mirar y decidir en cada paso',
+       'Un número de vueltas distinto para cada tablero'],
+    r:1, x:'Sin condiciones, un programa hace siempre lo mismo. Con condiciones, se adapta a lo que encuentra.' },
+
+  { p:'¿De dónde viene la palabra «bug» (error de programa)?',
+    o:['De una polilla que se metió en una computadora en 1947',
+       'De un videojuego de insectos',
+       'De la palabra alemana para «roto»'],
+    r:0, x:'La polilla quedó pegada en el cuaderno de los técnicos de la Harvard Mark II.' },
+
+  { p:'¿Cuántos idiomas nacionales tiene Suiza, el país de donde vinieron los fundadores de Nueva Helvecia?',
+    o:['Uno: alemán','Dos: alemán y francés','Cuatro: alemán, francés, italiano y romanche'],
+    r:2, x:'El alemán es el más hablado, y es el que ustedes estudian en el MTA.' }
+];
+
+/* ── los casos del detective ───────────────────────────────────── */
+var CASOS = [
+  { titulo:'El caso de las baldosas grises',
+    texto:'Un robot desconocido recorrió estos dos tableros y encendió <b>solo las azules</b>, sin cortocircuitos. Mirá cómo lo hizo. ¿Cuál de estos programas es el suyo?',
+    mapas:[["Ro.oo.o"],["Roo.o.o"]], exacto:true,
+    opciones:[
+      {M:['1','1','1','1','1','1'], a:['A','E']},
+      {M:['1','1','1','1','1','1'], a:['A','?G','E'], bien:true},
+      {M:['1','1','1','1','1','1'], a:['?G','A','E']}
+    ],
+    porque:'Hay que avanzar siempre, pero encender solo <b>si hay que</b>. Y el SI tiene que estar justo antes de ENCENDER, que es la orden que cuida.' },
+
+  { titulo:'El caso de la esquina',
+    texto:'Este robot recorrió dos caminos que doblan en lugares distintos. ¿Qué programa explica lo que viste?',
+    mapas:[L1, L2], exacto:false,
+    opciones:[
+      {M:['1','1','1','1','1'], a:['A','E']},
+      {M:['1','1','1','1','1'], a:['?P','D','A','E'], bien:true},
+      {M:['1','1','1','1','1'], a:['?P','I','A','E']}
+    ],
+    porque:'Dobla a la derecha <b>solo cuando adelante hay un hueco</b>. Girar hacia la izquierda lo hubiera mandado fuera del tablero.' },
+
+  { titulo:'El caso de los anillos',
+    texto:'Dos anillos de tamaño distinto y una sola ranura en PRINCIPAL. ¿Qué P1 resolvió los dos?',
+    mapas:[XA3, XA4], exacto:true,
+    opciones:[
+      {M:['1'], a:['?P','D','A','?G','E']},
+      {M:['1'], a:['?P','D','A','?G','E','1'], bien:true},
+      {M:['1'], a:['?P','D','A','E','1']}
+    ],
+    porque:'Tiene que <b>llamarse a sí mismo</b> (si no, hace una sola vuelta) y tiene que <b>preguntar antes de encender</b> (si no, hace cortocircuito en las grises).' },
+
+  { titulo:'El caso del orden',
+    texto:'Las mismas órdenes en otro orden ya no son el mismo programa. Este robot resolvió los dos tableros. ¿Cuál es el suyo?',
+    mapas:[X1, XL], exacto:true,
+    opciones:[
+      {M:['1'], a:['?P','A','D','?G','E','1']},
+      {M:['1'], a:['?P','D','A','?G','E','1'], bien:true},
+      {M:['1'], a:['?P','D','A','1','?G','E']}
+    ],
+    porque:'Primero se <b>dobla</b> y después se <b>avanza</b> (al revés, Helvecio se cae en la esquina). Y la llamada a P1 va <b>al final</b>: si va antes de encender, Helvecio camina y camina sin encender nada hasta caerse.' }
+];
+/* ── estado de la pantalla de juego ─────────────────────────────── */
+var T = null, TD = null;
+var P = {M:[], a:[], b:[]};
+var activo = 'M', R = null, marcados = [], fallosSeguidos = 0;
+var VELS = [['lenta', 600], ['normal', 320], ['rápida', 130]], vi = 1;
+var okTab = [], reveladas = {}, tbAct = 0;
+
+var INTRO = [
+  '<b>Calentamiento.</b> Cuatro niveles para volver a entrar en ritmo con lo que ya sabés. En los niveles 3 y 4 el programa ya viene escrito pero tiene un error: hacé clic en una ranura para borrarla, o agregá una orden al final.',
+  '<b>Helvecio aprende a mirar.</b> Hasta ahora cumplía órdenes a ciegas. Desde hoy hay órdenes <b>SI</b> (las verdes). Un SI es un guardia: cuida a la orden que viene <b>justo después</b>. Si lo que mira es verdad, la deja pasar; si no, la saltea. Cuando Helvecio mira, <b>se le prende la lamparita de la antena</b> y te dice qué vio. Abajo de tu programa vas a ver cómo se lee en castellano.',
+  '<b>Sin contar las vueltas.</b> Un procedimiento puede terminar llamándose a sí mismo: hace una parte del trabajo y vuelve a empezar. El programa se detiene solo cuando Helvecio enciende la última baldosa azul. Así no hace falta saber cuántas veces repetir.',
+  '<b>Repartir el trabajo.</b> Ahora hay dos procedimientos, P1 y P2, y se pueden llamar entre sí. Pensá qué parte del trabajo le toca a cada uno.',
+  '<b>Tableros sorpresa.</b> Tu programa va a probarse también en tableros que todavía no viste. Si contaste pasos, va a fallar. Si le enseñaste a Helvecio a mirar, va a funcionar en cualquiera. Ahora tenés muy pocas ranuras en PRINCIPAL: el trabajo grande está en los procedimientos.'
+];
+var ORD = {
+  'A':  ['&uarr;', 'AVANZAR', ''],
+  'I':  ['&larr;', 'GIRAR IZQ.', ''],
+  'D':  ['&rarr;', 'GIRAR DER.', ''],
+  'E':  ['&#9733;', 'ENCENDER', 'enc'],
+  '?P': ['SI HAY', 'UN HUECO', 'sen'],
+  '?G': ['SI HAY QUE', 'ENCENDER', 'sen'],
+  '1':  ['P1', 'LLAMAR P1', 'proc'],
+  '2':  ['P2', 'LLAMAR P2', 'proc2']
+};
+var ETIQ = { 'A':'&uarr;', 'I':'&larr;', 'D':'&rarr;', 'E':'&#9733;', '?P':'SI<br>HUECO', '?G':'SI HAY<br>QUE', '1':'P1', '2':'P2' };
+
+function nivel(){ return NIVELES[S.nivel]; }
+function todos(){ var L = nivel(); return L.mapas.concat(L.ocultos || []); }
+function prog(box){ return box === 'M' ? P.M : (box === '1' ? P.a : P.b); }
+function capac(box){ var L = nivel(); return box === 'M' ? L.max : (box === '1' ? (L.maxP || 0) : (L.maxP2 || 0)); }
+function setMsg(t, cls){ var m = $('mensaje'); m.className = cls || ''; m.innerHTML = t; }
+function setAviso(h){ var a = $('aviso'); if (!h){ a.style.display = 'none'; a.innerHTML = ''; } else { a.innerHTML = h; a.style.display = 'block'; } }
+function mostrar(id){
+  var ids = ['inicio', 'juego', 'prueba', 'detective', 'fin'], i;
+  for (i = 0; i < ids.length; i++) $(ids[i]).style.display = (ids[i] === id ? 'block' : 'none');
+  $('chip').style.display = (id === 'inicio' || id === 'fin') ? 'none' : 'block';
+  $('bVestir').style.display = (id === 'juego') ? 'block' : 'none';
+  if (id === 'juego') iconoVestir();
+  if (id === 'juego') chipJuego(); else $('chip').innerHTML = (id === 'prueba' ? 'LA PRUEBA' : (id === 'detective' ? 'EL DETECTIVE' : '&nbsp;'));
+  window.scrollTo(0, 0);
+}
+function chipJuego(){ $('chip').innerHTML = 'NIVEL <b>' + (S.nivel + 1) + '</b> / ' + NIVELES.length + ' &nbsp;·&nbsp; resueltos <b>' + contarHechos() + '</b>'; }
+
+/* ── pantalla de inicio ─────────────────────────────────────────── */
+function vistaInicio(){
+  var h, hay = (S.fase && S.fase !== 'inicio' && S.nombre);
+  h = '<div class="hoja"><h1>Helvecio ya sabe <span>moverse</span>. Hoy aprende a <span>decidir</span>.</h1>' +
+      '<p>La clase pasada le diste órdenes y él las cumplió, sin mirar nada. Hoy Helvecio va a poder <b style="color:#FFC53D">mirar el tablero y elegir</b> qué hacer, y vos vas a escribir programas que funcionan aunque no sepas cómo es el tablero.</p>' +
+      '<p style="margin-bottom:4px">Lo que ya sabés:</p>' +
+      '<span class="saber">AVANZAR</span><span class="saber">GIRAR</span><span class="saber">ENCENDER</span><span class="saber">P1: un procedimiento</span><br>' +
+      '<p style="margin:10px 0 4px">Lo nuevo de hoy:</p>' +
+      '<span class="saber nuevo">SI HAY UN HUECO</span><span class="saber nuevo">SI HAY QUE ENCENDER</span><span class="saber nuevo">Programas que se adaptan</span><span class="saber nuevo">Tableros sorpresa</span>' +
+      '<p style="margin-top:16px;font-size:14px;color:#8FA0BC">20 niveles en 5 etapas, una prueba de 10 preguntas y un desafío final de detective. Si te trabás, el botón de pistas te da <b style="color:#FFC53D">tres ayudas, de a una</b>: primero una pregunta, después una idea, al final casi la respuesta. Pedirlas no es malo, pero se cuentan. Tu avance se guarda solo.</p>';
+  h += '<div class="vbloque"><p style="margin:0 0 8px">Elegí el color de tu Helvecio. Los accesorios se ganan completando cada etapa.</p><div id="ivest">' + htmlVestidor('i') + '</div></div>';
+  if (!guardaOK) h += '<p style="color:#FF7A8F;font-size:13px">Atención: este navegador no permite guardar el avance. Si cerrás la página, se pierde.</p>';
+  if (hay){
+    h += '<button class="grande" onclick="continuar()">Continuar como ' + esc(S.nombre) + '</button>' +
+         '<button class="grande sec" onclick="empezarDeCero()">Empezar de cero</button>';
+  } else {
+    h += '<p style="margin:14px 0 6px">¿Cómo te llamás?</p><input class="nombre" id="nom" type="text" maxlength="30" onkeydown="if(event.keyCode===13)comenzar()">' +
+         '<div id="nomAviso" style="color:#FF7A8F;font-size:13px;min-height:18px;margin-top:6px"></div>' +
+         '<button class="grande" onclick="comenzar()">Empezar &#9654;</button>';
+  }
+  h += '</div>';
+  $('inicio').innerHTML = h;
+  mostrar('inicio');
+}
+function comenzar(){
+  var v = $('nom').value.replace(/^\s+|\s+$/g, '');
+  if (!v){ $('nomAviso').innerHTML = 'Escribí tu nombre para empezar.'; return; }
+  var look = S.look; S = nuevoEstado(); S.look = look || {c:0, a:''}; S.nombre = v; S.fase = 'juego'; guardar(); entrarJuego();
+}
+function empezarDeCero(){
+  if (!window.confirm('Se borra todo el avance de este navegador. ¿Seguro?')) return;
+  S = nuevoEstado(); guardar(); vistaInicio();
+}
+function continuar(){
+  if (S.fase === 'prueba') iniciarPrueba();
+  else if (S.fase === 'detective') iniciarDetective();
+  else if (S.fase === 'fin') mostrarFin();
+  else entrarJuego();
+}
+function entrarJuego(){ S.fase = 'juego'; guardar(); mostrar('juego'); irA(S.nivel); }
+function volverAlJuego(){ entrarJuego(); }
+
+/* ── armar la pantalla de un nivel ─────────────────────────────── */
+function irA(i){ parar(); S.nivel = i; guardar(); cargarNivel(); }
+function copiaProg(p){ return {M:p.M.slice(0), a:p.a.slice(0), b:p.b.slice(0)}; }
+function original(){
+  var L = nivel(), r = L.roto;
+  return r ? {M:(r.M || []).slice(0), a:(r.a || []).slice(0), b:(r.b || []).slice(0)} : {M:[], a:[], b:[]};
+}
+function cargarNivel(){
+  var L = nivel(), n = S.nivel, g = S.progs[n], par, txt, k, h, ord, i, tot;
+  fallosSeguidos = 0; tbAct = 0; okTab = []; reveladas = {};
+  P = g ? copiaProg({M:g.M || [], a:g.a || [], b:g.b || []}) : original();
+  if (S.hechos[n]){ tot = todos(); for (k = 0; k < tot.length; k++){ okTab[k] = true; reveladas[n + '_' + k] = true; } }
+  T.cargar(L.mapas[0], L.dir);
+  $('etapa').innerHTML = ETAPAS[L.et];
+  $('consigna').innerHTML = L.texto;
+  par = totalOrdenes(L.sol.M, L.sol.a, L.sol.b);
+  txt = L.roto ? 'Punto amarillo: arreglarlo dejando <b>' + par + '</b> órdenes en total.'
+               : 'Punto amarillo: resolverlo con <b>' + par + '</b> órdenes o menos (sumando todos los programas).';
+  if (L.ocultos) txt += '<br>Además de estos tableros, tu programa se va a probar en <b>tableros sorpresa</b>.';
+  $('objetivo').innerHTML = txt;
+  /* botones de órdenes */
+  ord = ['A', 'I', 'D', 'E'];
+  if (L.sensores) for (i = 0; i < L.sensores.length; i++) ord.push(L.sensores[i]);
+  if (L.maxP) ord.push('1');
+  if (L.maxP2) ord.push('2');
+  h = '';
+  for (i = 0; i < ord.length; i++)
+    h += '<button class="orden ' + ORD[ord[i]][2] + '" onclick="agregar(\'' + ord[i] + '\')"><span class="g">' + ORD[ord[i]][0] + '</span>' + ORD[ord[i]][1] + '</button>';
+  $('botones').innerHTML = h;
+  $('caja1').style.display = L.maxP ? 'block' : 'none';
+  $('caja2').style.display = L.maxP2 ? 'block' : 'none';
+  $('bBorrar').innerHTML = L.roto ? 'Volver al original' : 'Borrar todo';
+  elegir('M');
+  dibujarTodo();
+  dibujarPistas();
+  dibujarDato();
+  setMsg('', '');
+  if ((n === 0 || NIVELES[n - 1].et !== L.et) && !S.hechos[n]) setAviso(INTRO[L.et]); else setAviso('');
+  $('bSig').style.display = S.hechos[n] ? 'inline-block' : 'none';
+  $('bEjec').innerHTML = '&#9654; EJECUTAR';
+  puntos(); chips(); chipJuego();
+}
+function puntos(){
+  var h = '', i, c;
+  for (i = 0; i < NIVELES.length; i++){
+    c = 'punto';
+    if (S.hechos[i]) c += (S.hechos[i].premio ? ' premio' : ' hecho');
+    if (i === S.nivel) c += ' ahora';
+    h += '<span class="' + c + '"' + (i > 0 && NIVELES[i].et !== NIVELES[i - 1].et ? ' style="margin-left:9px"' : '') + ' title="' + ETAPAS[NIVELES[i].et] + '" onclick="irA(' + i + ')">' + (i + 1) + '</span>';
+  }
+  $('progreso').innerHTML = h;
+}
+function chips(){
+  var L = nivel(), nv = L.mapas.length, no = (L.ocultos || []).length, h = '', k, c, t;
+  if (nv < 2 && !no){ $('tableros').innerHTML = ''; return; }
+  for (k = 0; k < nv + no; k++){
+    if (k < nv){
+      c = 'pch' + (okTab[k] ? ' hecha' : '') + (k === tbAct ? ' ahora' : '');
+      t = nv > 1 ? (nv + no > 4 ? 'TAB. ' : 'TABLERO ') + (k + 1) : 'TU TABLERO';
+      h += '<span class="' + c + '" style="cursor:pointer" onclick="verTablero(' + k + ')">' + t + '</span>';
+    } else {
+      var rev = reveladas[S.nivel + '_' + k];
+      c = 'pch ' + (okTab[k] ? 'sorpok' : 'sorp') + (k === tbAct && rev ? ' ahora' : '');
+      t = (nv + no > 4) ? (rev ? 'SORP. ' + (k - nv + 1) : 'SORP. ?') : (rev ? 'SORPRESA ' + (k - nv + 1) : 'SORPRESA ?');
+      h += '<span class="' + c + '"' + (rev ? ' style="cursor:pointer" onclick="verTablero(' + k + ')"' : '') + '>' + t + '</span>';
+    }
+  }
+  $('tableros').innerHTML = h;
+}
+function verTablero(k){
+  if (R) return;
+  var L = nivel();
+  if (k >= L.mapas.length && !reveladas[S.nivel + '_' + k]) return;
+  tbAct = k; T.cargar(todos()[k], L.dir); limpiarMarcas(); chips();
+}
+function dibujarDato(){
+  var d = DATOS[S.nivel + 1], el = $('dato');
+  if (d && S.hechos[S.nivel]){ el.innerHTML = '<span class="tit">LO QUE HELVECIO AVERIGUÓ: ' + d[0].toUpperCase() + '</span>' + d[1]; el.style.display = 'block'; }
+  else { el.style.display = 'none'; el.innerHTML = ''; }
+}
+function dibujarPistas(){
+  var L = nivel(), n = S.pistas[S.nivel] || 0, h = '', i, t = ['PRIMERO PENSÁ', 'UNA IDEA', 'CASI LA RESPUESTA'];
+  if (!n){ $('pistas').style.display = 'none'; $('pistas').innerHTML = ''; }
+  else {
+    for (i = 0; i < n; i++) h += '<div class="una"><span class="t">' + t[i] + '</span><span class="q">' + L.pistas[i] + '</span></div>';
+    $('pistas').innerHTML = h; $('pistas').style.display = 'block';
+  }
+  if (n >= 3) $('bPista').style.display = 'none';
+  else { $('bPista').style.display = 'inline-block'; $('bPista').innerHTML = 'Pedime una pista (' + (n + 1) + ' de 3)'; }
+}
+function pedirPista(){
+  var n = S.pistas[S.nivel] || 0;
+  if (n >= 3) return;
+  S.pistas[S.nivel] = n + 1; guardar(); dibujarPistas(); tono(700, 0.08, 'sine', 0.1);
+}
+
+/* ── los programas: ranuras ─────────────────────────────────────── */
+function claseOrden(c){ return c === 'E' ? 'enc' : (c === '1' ? 'proc' : (c === '2' ? 'proc2' : (esSensor(c) ? 'sen' : ''))); }
+function dibujarProg(box){
+  var arr = prog(box), cap = capac(box), h = '', i, c;
+  for (i = 0; i < arr.length; i++){
+    c = arr[i];
+    h += '<div class="ranura llena ' + claseOrden(c) + (i > 0 && esSensor(arr[i - 1]) ? ' colgada' : '') + '" id="r' + box + i +
+         '" title="clic para borrar" onclick="quitar(\'' + box + '\',' + i + ',event)">' + ETIQ[c] + '</div>';
+  }
+  for (i = arr.length; i < cap; i++) h += '<div class="ranura"></div>';
+  $('ranuras' + box).innerHTML = h;
+  $('cuenta' + box).innerHTML = arr.length + ' de ' + cap;
+  $('lec' + box).innerHTML = lectura(arr);
+}
+function dibujarTodo(){
+  dibujarProg('M');
+  if (capac('1')) dibujarProg('1'); else $('ranuras1').innerHTML = '';
+  if (capac('2')) dibujarProg('2'); else $('ranuras2').innerHTML = '';
+}
+function elegir(box){
+  if (!capac(box)) return;
+  activo = box;
+  var b = ['M', '1', '2'], i;
+  for (i = 0; i < 3; i++){
+    $('caja' + b[i]).className = 'prog' + (b[i] === box ? ' activo' : '');
+    $('aqui' + b[i]).style.display = (b[i] === box ? 'inline' : 'none');
+  }
+}
+function cambio(){
+  var rec = R !== null;
+  parar();
+  if (rec || tbAct > 0){ tbAct = 0; T.cargar(nivel().mapas[0], nivel().dir); chips(); }
+  dibujarTodo();
+  S.progs[S.nivel] = copiaProg(P); guardar();
+  setMsg('', ''); setAviso('');
+}
+function agregar(c){
+  var arr = prog(activo);
+  if (arr.length >= capac(activo)){ setMsg('No entran más órdenes en este programa.', ''); sonMal(); return; }
+  arr.push(c); tono(520, 0.05, 'triangle', 0.09);
+  cambio();
+}
+function quitar(box, i, ev){
+  if (ev && ev.stopPropagation) ev.stopPropagation();
+  prog(box).splice(i, 1); tono(330, 0.06, 'triangle', 0.08);
+  elegir(box); cambio();
+}
+function borrarTodo(){ P = original(); elegir('M'); cambio(); }
+
+/* ── ejecutar ───────────────────────────────────────────────────── */
+function limpiarMarcas(){ var i; for (i = 0; i < marcados.length; i++){ delC(marcados[i], 'corriendo'); delC(marcados[i], 'salteada'); } marcados = []; }
+function marca(box, i, c){ var el = $('r' + box + i); if (el){ addC(el, c); marcados.push(el); } }
+function parar(){ if (R && R.timer) clearTimeout(R.timer); R = null; limpiarMarcas(); }
+function alternarVel(){ vi = (vi + 1) % VELS.length; $('vel').innerHTML = 'velocidad: ' + VELS[vi][0]; }
+
+function armar(modo){
+  var L = nivel();
+  if (!P.M.length){ setMsg('Primero escribí algo en PRINCIPAL.', ''); sonMal(); return false; }
+  parar(); okTab = [];
+  setAviso(''); setMsg('', '');
+  R = {modo:modo, bi:0, sim:null, k:0, lim:0, timer:null, espera:false, lista:todos()};
+  empezarTablero();
+  return true;
+}
+function empezarTablero(){
+  var L = nivel(), f = R.lista[R.bi], nv = L.mapas.length, clave = S.nivel + '_' + R.bi;
+  tbAct = R.bi; T.cargar(f, L.dir); limpiarMarcas();
+  if (R.bi >= nv) reveladas[clave] = true;
+  chips();
+  R.sim = simular(f, L.dir, !!L.exacto, P.M, P.a, P.b);
+  R.k = 0; R.espera = false;
+  R.lim = R.sim.res === 'bucle' ? Math.min(R.sim.ev.length, 40) : R.sim.ev.length;
+  if (R.bi >= nv) setMsg('Ahora, un tablero sorpresa.', 'info');
+  else if (R.lista.length > 1 && R.bi > 0) setMsg('Siguiente tablero.', 'info');
+  else setMsg('', '');
+}
+function ejecutar(){
+  if (R && R.modo === 'paso' && !R.timer){ R.modo = 'auto'; R.timer = setTimeout(tic, 150); return; }
+  if (!armar('auto')) return;
+  R.timer = setTimeout(tic, 450);
+}
+function unPaso(){
+  if (R && R.timer){ clearTimeout(R.timer); R.timer = null; R.modo = 'paso'; return; }
+  if (!R){ if (!armar('paso')) return; }
+  if (R.espera){ R.bi++; empezarTablero(); return; }
+  siguienteEvento();
+}
+function tic(){
+  if (!R) return;
+  R.timer = null;
+  siguienteEvento();
+}
+function siguienteEvento(){
+  var e, d;
+  if (R.k >= R.lim){ finTablero(); return; }
+  e = R.sim.ev[R.k++];
+  evento(e);
+  if (R.k >= R.lim && R.modo === 'paso'){ finTablero(); return; }
+  if (R.modo === 'auto'){
+    d = VELS[vi][1]; if (e.t === 'mira') d = Math.round(d * 0.55); else if (e.t === 'llama') d = Math.round(d * 0.25);
+    if (R.bi > 0) d = Math.round(d * 0.75);
+    R.timer = setTimeout(R.k >= R.lim ? finTablero : tic, R.k >= R.lim ? d + 150 : d);
+  }
+}
+function evento(e){
+  var arr = prog(e.box), n, i, q;
+  limpiarMarcas();
+  marca(e.box, e.idx, 'corriendo');
+  if (e.t === 'prim'){ T.aplicar(e); if (R && R.modo === 'paso') setMsg('', ''); }
+  else if (e.t === 'llama'){ sonMira(); setMsg('Helvecio va a hacer ' + (e.c === '1' ? 'P1' : 'P2') + '.', 'info'); }
+  else {
+    sonMira();
+    q = e.c === '?P' ? '¿Hay un hueco adelante?' : '¿Hay que encender esta baldosa?';
+    T.mirar(e.c === '?P' ? (e.ok ? '¡hueco!' : 'hay piso') : (e.ok ? '¡a encender!' : 'esta no'), e.ok);
+    if (e.ok) setMsg(q + ' SÍ. Sigo con la orden que viene.', 'info');
+    else {
+      n = unidad(arr, e.idx + 1);
+      for (i = 1; i <= n; i++) marca(e.box, e.idx + i, 'salteada');
+      setMsg(q + ' NO. Me salteo: «' + leerUnidad(arr, e.idx + 1)[0] + '».', 'info');
+    }
+  }
+}
+function tieneSensor(c){ var s = nivel().sensores || [], i; for (i = 0; i < s.length; i++) if (s[i] === c) return true; return false; }
+function finTablero(){
+  var r = R.sim.res;
+  limpiarMarcas();
+  if (r === 'gano'){
+    okTab[R.bi] = true; chips();
+    if (R.bi < R.lista.length - 1){
+      if (R.modo === 'auto'){
+        R.bi++;
+        R.timer = setTimeout(function(){ if (!R) return; empezarTablero(); R.timer = setTimeout(tic, 450); }, 700);
+      } else { R.espera = true; setMsg('Tablero resuelto. Apretá PASO A PASO para ver el siguiente.', 'ok'); }
+      return;
+    }
+    ganarNivel();
+    return;
+  }
+  falla(r);
+}
+function falla(r){
+  var L = nivel(), oculto = R.bi >= L.mapas.length, m, a = '', resto = R.sim.resto;
+  if (r === 'caida' || r === 'corto'){ S.caidas++; guardar(); }
+  fallosSeguidos++;
+  if (r === 'caida'){
+    m = 'Helvecio se cayó por un hueco.';
+    a = tieneSensor('?P') ? 'Fijate en la última baldosa antes de la caída. ¿Había alguna forma de saber que adelante no había piso? Helvecio tiene una orden que mira hacia adelante: ¿dónde convendría usarla?'
+                          : 'Probá PASO A PASO y fijate qué orden lo hizo caer. ¿Cuántos pasos da en realidad y cuántos le convendría dar?';
+  } else if (r === 'corto'){
+    m = '¡Cortocircuito! Encendiste una baldosa que no era azul.';
+    a = tieneSensor('?G') ? '¿Qué orden le avisa a Helvecio si le toca encender la baldosa que está pisando? Acordate de que el SI cuida a la orden que viene <b>justo después</b>.'
+                          : 'Probá PASO A PASO y fijate en qué baldosa encendió de más.';
+  } else if (r === 'falta'){
+    m = 'El programa terminó y todavía ' + (resto === 1 ? 'queda 1 baldosa azul' : 'quedan ' + resto + ' baldosas azules') + ' sin encender.';
+    a = 'Helvecio se quedó sin órdenes antes de terminar. ¿Se saltó alguna baldosa, o el programa se acabó antes de que llegara a todas?';
+  } else {
+    m = 'Helvecio se quedó dando vueltas sin parar, y lo detuve.';
+    a = 'Esto pasa cuando un procedimiento se llama a sí mismo y en cada vuelta no avanza hacia nada. Mirá PASO A PASO una vuelta completa: ¿Helvecio llega a una baldosa nueva en cada vuelta? ¿Y qué orden cuida que se repita solo mientras haga falta?';
+  }
+  if (oculto){
+    m = 'Funcionó en los tableros que ya conocías, pero falló en un tablero sorpresa. ' + m;
+    a = '<b>Mirá el tablero sorpresa que quedó a la vista</b> (el chip violeta). ¿Tu programa necesitaba saber de antemano cuántos pasos o cuántas vueltas había? Un programa bueno no cuenta: <b>mira</b>. ' + a;
+  }
+  if (fallosSeguidos >= 3 && !(S.pistas[S.nivel] || 0)) a += '<br><br>Si seguís trabado, usá el botón de pistas: son tres y te las doy de a una.';
+  if (r === 'bucle') T.cara('mareado');
+  setMsg(m, r === 'bucle' ? 'bucle' : '');
+  setAviso(a);
+  if (r === 'caida' || r === 'corto') sonMal();
+  R = null; chips();
+}
+function ganarNivel(){
+  var L = nivel(), n = S.nivel, par = totalOrdenes(L.sol.M, L.sol.a, L.sol.b), tot = totalOrdenes(P.M, P.a, P.b),
+      premio = tot <= par, prev = S.hechos[n], k, all = todos();
+  S.hechos[n] = {premio: !!(premio || (prev && prev.premio)), tot: tot};
+  for (k = 0; k < all.length; k++){ okTab[k] = true; reveladas[n + '_' + k] = true; }
+  S.progs[n] = copiaProg(P);
+  guardar();
+  R = null; sonGana(); T.cara('feliz'); T.festejo();
+  setAviso('');
+  anunciarAccesorio(L.et);
+  setMsg(premio ? '¡Perfecto! Lo resolviste con el mínimo de órdenes: ' + tot + '.'
+                : '¡Resuelto! Usaste ' + tot + ' órdenes. Existe una forma con ' + par + ': si querés el punto amarillo, volvé a intentarlo.', 'ok');
+  dibujarDato(); puntos(); chips(); chipJuego();
+  $('bSig').style.display = 'inline-block';
+}
+
+/* ── pasar de nivel ─────────────────────────────────────────────── */
+function proximoPendiente(){
+  var off, i, n = NIVELES.length;
+  for (off = 1; off <= n; off++){ i = (S.nivel + off) % n; if (!S.hechos[i]) return i; }
+  return -1;
+}
+function siguiente(){
+  var j = proximoPendiente();
+  if (j < 0) postJuego(); else irA(j);
+}
+function saltar(){
+  var j = proximoPendiente();
+  if (j < 0 || j === S.nivel){ setAviso('Este es el único nivel que te queda por resolver.'); return; }
+  irA(j);
+}
+function irPrueba(){
+  if (contarHechos() < 10){ setAviso('Para pasar a la prueba tenés que resolver al menos <b>10 niveles</b>. Te faltan ' + (10 - contarHechos()) + '.'); return; }
+  postJuego();
+}
+function postJuego(){
+  if (!S.quiz || S.quiz.i < PRUEBA.length) iniciarPrueba();
+  else if (!S.det || S.det.i < CASOS.length) iniciarDetective();
+  else mostrarFin();
+}
+
+/* ── la prueba ──────────────────────────────────────────────────── */
+function iniciarPrueba(){
+  if (!S.quiz) S.quiz = {i:0, ok:0, perm:null, resp:null};
+  S.fase = 'prueba'; guardar(); mostrar('prueba'); preguntaPrueba();
+}
+function preguntaPrueba(){
+  var q = S.quiz, Q = PRUEBA[q.i], i, h = '', LET = ['A', 'B', 'C', 'D'];
+  if (!q.perm){ q.perm = []; for (i = 0; i < Q.o.length; i++) q.perm.push(i); barajar(q.perm); q.resp = null; guardar(); }
+  $('pChip').innerHTML = 'PREGUNTA ' + (q.i + 1) + ' / ' + PRUEBA.length;
+  $('marcador').innerHTML = 'Correctas hasta ahora: ' + q.ok;
+  $('pTexto').innerHTML = Q.p;
+  for (i = 0; i < q.perm.length; i++)
+    h += '<button class="opcion" id="op' + i + '" onclick="responder(' + i + ')"><span class="letra">' + LET[i] + '</span>' + Q.o[q.perm[i]] + '</button>';
+  $('pOpciones').innerHTML = h;
+  $('pFeed').style.display = 'none'; $('pSig').style.display = 'none';
+  if (q.resp !== null) marcarPrueba();
+}
+function marcarPrueba(){
+  var q = S.quiz, Q = PRUEBA[q.i], i, el, bien = (q.perm[q.resp] === Q.r), f = $('pFeed');
+  for (i = 0; i < q.perm.length; i++){
+    el = $('op' + i);
+    if (q.perm[i] === Q.r) el.className = 'opcion bien';
+    else if (i === q.resp) el.className = 'opcion mal';
+  }
+  f.className = bien ? '' : 'mal';
+  f.innerHTML = (bien ? '<b>Correcto.</b> ' : '<b>No era esa.</b> ') + Q.x;
+  f.style.display = 'block';
+  $('pSig').innerHTML = (q.i === PRUEBA.length - 1) ? 'VER LOS CASOS DEL DETECTIVE &#9654;' : 'SIGUIENTE &#9654;';
+  $('pSig').style.display = 'inline-block';
+  $('marcador').innerHTML = 'Correctas hasta ahora: ' + q.ok;
+}
+function responder(p){
+  var q = S.quiz, Q = PRUEBA[q.i];
+  if (q.resp !== null) return;
+  q.resp = p;
+  if (q.perm[p] === Q.r){ q.ok++; sonBien(); } else sonMal();
+  guardar(); marcarPrueba();
+}
+function pSiguiente(){
+  var q = S.quiz;
+  q.i++; q.perm = null; q.resp = null; guardar();
+  if (q.i >= PRUEBA.length) iniciarDetective(); else preguntaPrueba();
+}
+
+/* ── el detective ───────────────────────────────────────────────── */
+var dkAct = 0, dRep = null;
+function iniciarDetective(){
+  if (!S.det) S.det = {i:0, ok:0, perm:null, resp:null};
+  S.fase = 'detective'; guardar(); mostrar('detective'); casoDetective();
+}
+function descOpcion(op){
+  var h = '<b>PRINCIPAL:</b> ' + lectura(op.M);
+  if (op.a) h += '<br><b>P1:</b> ' + lectura(op.a);
+  if (op.b) h += '<br><b>P2:</b> ' + lectura(op.b);
+  return h;
+}
+function casoDetective(){
+  var d = S.det, C = CASOS[d.i], i, h = '', LET = ['A', 'B', 'C', 'D'], pos;
+  if (!d.perm){ d.perm = []; for (i = 0; i < C.opciones.length; i++) d.perm.push(i); barajar(d.perm); d.resp = null; guardar(); }
+  $('dChip').innerHTML = 'CASO ' + (d.i + 1) + ' / ' + CASOS.length;
+  $('dMarcador').innerHTML = 'Resueltos: ' + d.ok;
+  $('dTexto').innerHTML = '<b>' + C.titulo + '.</b> ' + C.texto;
+  for (pos = 0; pos < d.perm.length; pos++)
+    h += '<button class="dprog" id="do' + pos + '" onclick="dElegir(' + pos + ')"><b>' + LET[pos] + '</b> &nbsp;' + descOpcion(C.opciones[d.perm[pos]]) + '</button>';
+  $('dOpciones').innerHTML = h;
+  $('dFeed').style.display = 'none'; $('dSig').style.display = 'none';
+  dkAct = 0;
+  dTabs(); dVer(0, correcta(C));
+  if (d.resp !== null) dMarcar(false);
+}
+function correcta(C){ var i; for (i = 0; i < C.opciones.length; i++) if (C.opciones[i].bien) return C.opciones[i]; return C.opciones[0]; }
+function dTabs(){
+  var C = CASOS[S.det.i], h = '', k;
+  if (C.mapas.length < 2){ $('dTabs').innerHTML = ''; return; }
+  for (k = 0; k < C.mapas.length; k++)
+    h += '<span class="pch' + (k === dkAct ? ' ahora' : '') + '" style="cursor:pointer" onclick="dTab(' + k + ')">TABLERO ' + (k + 1) + '</span>';
+  $('dTabs').innerHTML = h;
+}
+function dTab(k){ dkAct = k; dTabs(); dVer(k, correcta(CASOS[S.det.i])); }
+function dVer(k, op){
+  var C = CASOS[S.det.i], sim;
+  if (dRep) dRep.parar();
+  TD.cargar(C.mapas[k], C.dir || 0);
+  sim = simular(C.mapas[k], C.dir || 0, !!C.exacto, op.M, op.a || [], op.b || []);
+  dRep = reproducir(TD, sim, 380, 40, null);
+}
+function dRepetir(){ dVer(dkAct, correcta(CASOS[S.det.i])); }
+function reproducir(tab, sim, demora, lim, fin){
+  var h = {k:0, t:null, vivo:true}, n = sim.res === 'bucle' ? Math.min(sim.ev.length, lim) : sim.ev.length;
+  function paso(){
+    if (!h.vivo) return;
+    while (h.k < n && sim.ev[h.k].t !== 'prim'){ if (sim.ev[h.k].t === 'mira') tab.mirar(null); h.k++; }
+    if (h.k >= n){ tab.cara(sim.res === 'gano' ? 'feliz' : (sim.res === 'bucle' ? 'mareado' : (sim.res === 'falta' ? '' : 'triste'))); if (fin) fin(); return; }
+    tab.aplicar(sim.ev[h.k++]);
+    h.t = setTimeout(paso, demora);
+  }
+  h.t = setTimeout(paso, 450);
+  h.parar = function(){ h.vivo = false; clearTimeout(h.t); };
+  return h;
+}
+function falloDe(C, op){
+  var k, r;
+  for (k = 0; k < C.mapas.length; k++){
+    r = simular(C.mapas[k], C.dir || 0, !!C.exacto, op.M, op.a || [], op.b || []);
+    if (r.res !== 'gano') return {k:k, res:r.res, resto:r.resto};
+  }
+  return null;
+}
+function dElegir(pos){
+  var d = S.det, C = CASOS[d.i], op = C.opciones[d.perm[pos]];
+  if (d.resp !== null) return;
+  d.resp = pos;
+  if (op.bien){ d.ok++; sonBien(); } else sonMal();
+  guardar(); dMarcar(true);
+}
+function dMarcar(animar){
+  var d = S.det, C = CASOS[d.i], op = C.opciones[d.perm[d.resp]], pos, el, f = $('dFeed'), txt, fl;
+  for (pos = 0; pos < d.perm.length; pos++){
+    el = $('do' + pos);
+    if (C.opciones[d.perm[pos]].bien) el.className = 'dprog bien';
+    else if (pos === d.resp) el.className = 'dprog mal';
+  }
+  if (op.bien){ f.className = ''; txt = '<b>Eso es.</b> ' + C.porque; }
+  else {
+    fl = falloDe(C, op);
+    f.className = 'mal';
+    txt = '<b>No es esa.</b> ';
+    if (fl){
+      txt += 'Con el programa que elegiste, Helvecio ' +
+        (fl.res === 'caida' ? 'se cae por un hueco' : (fl.res === 'corto' ? 'enciende una baldosa gris y hace cortocircuito' : (fl.res === 'falta' ? 'termina dejando baldosas sin encender' : 'se queda dando vueltas sin terminar'))) +
+        (C.mapas.length > 1 ? ' en el tablero ' + (fl.k + 1) : '') + '. ';
+      if (animar){ dkAct = fl.k; dTabs(); if (dRep) dRep.parar(); TD.cargar(C.mapas[fl.k], C.dir || 0);
+        dRep = reproducir(TD, simular(C.mapas[fl.k], C.dir || 0, !!C.exacto, op.M, op.a || [], op.b || []), 380, 40, null); }
+    }
+    txt += '<br>' + C.porque;
+  }
+  f.innerHTML = txt; f.style.display = 'block';
+  $('dSig').innerHTML = (d.i === CASOS.length - 1) ? 'VER MI DIPLOMA &#9654;' : 'SIGUIENTE CASO &#9654;';
+  $('dSig').style.display = 'inline-block';
+  $('dMarcador').innerHTML = 'Resueltos: ' + d.ok;
+}
+function dSiguiente(){
+  var d = S.det;
+  d.i++; d.perm = null; d.resp = null; guardar();
+  if (d.i >= CASOS.length) mostrarFin(); else casoDetective();
+}
+
+/* ── el final ───────────────────────────────────────────────────── */
+function mostrarFin(){
+  S.fase = 'fin'; guardar(); mostrar('fin');
+  $('fNombre').innerHTML = esc(S.nombre || 'Colegio MTA');
+  $('fNiveles').innerHTML = contarHechos() + ' de ' + NIVELES.length;
+  $('fPremios').innerHTML = contarPremios();
+  $('fPistas').innerHTML = contarPistas();
+  $('fPrueba').innerHTML = (S.quiz ? S.quiz.ok : 0) + ' de ' + PRUEBA.length;
+  $('fDetective').innerHTML = (S.det ? S.det.ok : 0) + ' de ' + CASOS.length;
+  $('fCaidas').innerHTML = S.caidas;
+  var g = accGanados(), na = 0, i; for (i = 0; i < g.length; i++) if (g[i]) na++;
+  $('fAcc').innerHTML = na + ' de ' + ACCES.length;
+  $('fRobot').innerHTML = htmlRobotSuelto('f', 2.6);
+  $('frin').className = 'rin feliz';
+  sonGana();
+}
+
+/* ── el vestidor ────────────────────────────────────────────────── */
+function accGanados(){
+  var g = [], e, i, ok;
+  for (e = 0; e < ETAPAS.length; e++){ ok = true; for (i = 0; i < NIVELES.length; i++) if (NIVELES[i].et === e && !S.hechos[i]) ok = false; g.push(ok); }
+  return g;
+}
+function htmlVestidor(p){
+  var g = accGanados(), L = S.look, h = '', i;
+  h += '<div class="vprev">' + htmlRobotSuelto(p + 'v', 2.3) + '</div><div class="vopc"><div class="vtit">COLOR</div>';
+  for (i = 0; i < COLORES.length; i++)
+    h += '<button class="vcol' + (L.c === i ? ' sel' : '') + '" style="background:' + COLORES[i][1] + '" title="' + COLORES[i][0] + '" onclick="ponerColor(' + i + ',\'' + p + '\')"></button>';
+  h += '<div class="vtit">ACCESORIO</div><button class="vacc' + (!L.a ? ' sel' : '') + '" onclick="ponerAcc(\'\',\'' + p + '\')">ninguno</button>';
+  for (i = 0; i < ACCES.length; i++){
+    if (g[i]) h += '<button class="vacc' + (L.a === ACCES[i][0] ? ' sel' : '') + '" onclick="ponerAcc(\'' + ACCES[i][0] + '\',\'' + p + '\')">' + ACCES[i][1] + '</button>';
+    else h += '<span class="vacc bloq">' + ACCES[i][1] + ': se gana en la etapa ' + (i + 1) + '</span>';
+  }
+  return h + '</div><div class="limpiar"></div>';
+}
+function iconoVestir(){
+  $('bvIcono').innerHTML = htmlRobotSuelto('bv', 0.62);
+  var b = $('bVestir'); if (S.nuevoAcc) addC(b, 'nuevo'); else delC(b, 'nuevo');
+}
+function refrescarLook(p){
+  var w = p ? $(p + 'vest') : null;
+  if ($('bvIcono')) iconoVestir();
+  if (w) w.innerHTML = htmlVestidor(p);
+  if (T && $('juego').style.display === 'block' && T.mapa.length){ parar(); T.dibujar(); }
+}
+function ponerColor(i, p){ S.look.c = i; guardar(); tono(600, 0.06, 'sine', 0.1); refrescarLook(p); }
+function ponerAcc(a, p){ S.look.a = a; guardar(); tono(760, 0.06, 'sine', 0.1); refrescarLook(p); }
+function abrirVestidor(){ cerrarPremio(); S.nuevoAcc = false; guardar(); iconoVestir(); parar(); $('ovest').innerHTML = htmlVestidor('o'); $('vestidor').style.display = 'block'; }
+function cerrarVestidor(){ $('vestidor').style.display = 'none'; }
+function anunciarAccesorio(e){
+  var g = accGanados();
+  if (!S.anunciados) S.anunciados = {};
+  if (!g[e] || S.anunciados[e]) return;
+  S.anunciados[e] = true; S.nuevoAcc = true; guardar();
+  iconoVestir();
+  setTimeout(function(){ mostrarPremio(e); }, 1300);
+}
+function mostrarPremio(e){
+  var a = ACCES[e][0], c = $('pCaja');
+  c.innerHTML = '<div class="pt">ETAPA ' + (e + 1) + ' COMPLETA</div>' +
+    '<div class="prob">' + htmlRobotSuelto('pp', 2.6, '', a) + '</div>' +
+    '<div class="pd">Desbloqueaste un accesorio nuevo para Helvecio:</div>' +
+    '<div class="pn">' + ACCES[e][1] + '</div>' +
+    '<button class="grande" onclick="ponerAcc(\'' + a + '\',\'\');S.nuevoAcc=false;guardar();cerrarPremio();iconoVestir();T.cara(\'feliz\')">Ponérselo</button>' +
+    '<button class="grande sec" onclick="cerrarPremio()">Ahora no</button>';
+  $('pprin').className = 'rin feliz';
+  $('premioPop').style.display = 'block';
+  sonPremio();
+  var t = new Tab('pz', 'pCaja', 400); t.festejo(c.offsetWidth + 32 || 532, c.offsetHeight + 32 || 460);
+}
+function cerrarPremio(){ $('premioPop').style.display = 'none'; }
+
+function init(){
+  cargarGuardado();
+  try { window.localStorage.setItem('hv_prueba', '1'); window.localStorage.removeItem('hv_prueba'); } catch(e){ guardaOK = false; }
+  T = new Tab('t', 'tablero', 430);
+  TD = new Tab('d', 'tablero2', 430);
+  vistaInicio();
+}
+init();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,2644 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>El ciber de Don Atajo</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;background:#05070f;overflow:hidden;font-family:"Segoe UI","Helvetica Neue",Roboto,Arial,sans-serif;color:#eef2ff;-webkit-font-smoothing:antialiased}
+body{user-select:none;-webkit-user-select:none}
+textarea,input{user-select:text;-webkit-user-select:text}
+#marco{position:fixed;left:0;top:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center}
+#stage{position:relative;width:1280px;height:720px;flex:none;transform-origin:center center;overflow:hidden;background:#0a0f1f}
+.pant{position:absolute;left:0;top:0;right:0;bottom:0;display:none}
+.pant.on{display:block}
+button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit;outline:none}
+button:focus{outline:none}
+
+/* ---------- teclas ---------- */
+.kc{display:inline-block;min-width:34px;padding:5px 11px;border-radius:8px;background:#fff4dc;color:#2a2110;font-weight:800;font-size:17px;text-align:center;box-shadow:0 3px 0 #c9a96b;line-height:1.1}
+.kcs i{font-style:normal;color:#93a0c8;margin:0 5px;font-weight:700}
+.kcs{display:inline-block;margin:3px 6px 3px 0;white-space:nowrap}
+.kc.big{font-size:24px;padding:8px 16px;border-radius:10px}
+.pulsa .kc{animation:kpul 1s ease-in-out infinite}
+@keyframes kpul{0%,100%{transform:translateY(0);box-shadow:0 3px 0 #c9a96b,0 0 0 0 rgba(255,183,3,.0)}50%{transform:translateY(-3px);box-shadow:0 6px 0 #c9a96b,0 0 18px 4px rgba(255,183,3,.55)}}
+
+/* ---------- portada ---------- */
+#portada{background:radial-gradient(900px 560px at 75% 15%,#27407a 0%,rgba(0,0,0,0) 62%),radial-gradient(760px 520px at 12% 95%,#5a2a52 0%,rgba(0,0,0,0) 60%),#0a0f1f}
+#pEscena{position:absolute;left:0;top:0;width:1280px;height:720px}
+#pTitulo{position:absolute;left:0;right:0;top:36px;text-align:center}
+#pTitulo .neon{display:inline-block;padding:10px 34px 12px;border:4px solid #ffb703;border-radius:20px;font-size:62px;font-weight:900;letter-spacing:-2px;color:#fff4dc;text-shadow:0 0 12px #ffb703,0 0 30px #fb8500;box-shadow:0 0 22px rgba(255,183,3,.55),inset 0 0 18px rgba(255,183,3,.3);background:rgba(10,15,31,.55)}
+#pTitulo .sub{margin-top:14px;font-size:22px;color:#c9d3f5}
+#pForm{position:absolute;left:380px;width:520px;top:392px;text-align:center;background:rgba(10,15,31,.82);border:1px solid #2a3a6e;border-radius:22px;padding:22px 26px 24px;box-shadow:0 20px 50px rgba(0,0,0,.45)}
+#pForm label{display:block;font-size:17px;color:#c9d3f5;margin-bottom:8px}
+#nombre{width:100%;height:54px;border-radius:14px;border:2px solid #2a3a6e;background:#111a38;color:#fff;font-size:24px;text-align:center;font-family:inherit;outline:none}
+#nombre:focus{border-color:#ffb703}
+#gorras{display:flex;justify-content:center;gap:12px;margin:14px 0 4px}
+.gorra{width:38px;height:38px;border-radius:50%;border:3px solid transparent;box-shadow:0 3px 0 rgba(0,0,0,.4)}
+.gorra.on{border-color:#fff;transform:scale(1.15)}
+.btnGrande{display:block;width:100%;height:58px;margin-top:14px;border-radius:16px;font-size:22px;font-weight:800;color:#2a1a00;background:linear-gradient(180deg,#ffd166,#ffb703);box-shadow:0 5px 0 #b87a00,0 12px 26px rgba(255,183,3,.25);transition:transform .1s}
+.btnGrande:hover{transform:translateY(-2px)}
+.btnGrande:active{transform:translateY(3px);box-shadow:0 2px 0 #b87a00}
+.btnChico{height:40px;padding:0 18px;border-radius:12px;background:#17213f;border:1px solid #2f4180;color:#dfe6ff;font-size:16px;font-weight:600}
+.btnChico:hover{background:#1f2c55}
+.btnChico.on{border-color:#ffb703;color:#fff4dc}
+#pOpc{position:absolute;right:20px;bottom:16px;display:flex;gap:10px}
+#pPie{position:absolute;left:20px;bottom:18px;font-size:13px;color:#6a79ab}
+#pSeguir{margin-top:8px;font-size:15px;color:#93a0c8}
+#pSeguir button{color:#ffd166;text-decoration:underline;font-size:15px;margin-left:6px}
+
+/* ---------- mapa ---------- */
+#mapa{background:radial-gradient(900px 500px at 50% -10%,#233a73 0%,rgba(0,0,0,0) 65%),#0a0f1f}
+#mHead{position:absolute;left:0;right:0;top:0;height:84px;display:flex;align-items:center;padding:0 28px;gap:18px;border-bottom:1px solid #1f2b55;background:rgba(10,15,31,.7)}
+#mHead .yo{display:flex;align-items:center;gap:12px}
+#mHead .yo svg{width:56px;height:60px}
+#mHead .yo b{font-size:24px}
+#mHead .yo span{display:block;font-size:14px;color:#93a0c8}
+#mHead .esp{flex:1}
+.stat{display:flex;align-items:center;gap:8px;height:44px;padding:0 16px;border-radius:22px;background:#17213f;border:1px solid #2f4180;font-size:20px;font-weight:700}
+.stat small{font-size:13px;color:#93a0c8;font-weight:600}
+.moneda{display:inline-block;width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff1b8,#ffb703 60%,#c98400);box-shadow:inset 0 -2px 0 rgba(0,0,0,.25)}
+#mCards{position:absolute;left:24px;right:24px;top:104px;height:408px;display:flex;gap:18px}
+.jCard{flex:1;border-radius:22px;padding:18px 20px;background:linear-gradient(180deg,#17213f,#111a33);border:1px solid #2a3a6e;position:relative;overflow:hidden}
+.jCard h3{font-size:25px;font-weight:800;line-height:1.1}
+.jCard .jn{font-size:14px;color:#ffd166;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px}
+.jCard p{font-size:16px;color:#aebbe6;margin:6px 0 14px;min-height:40px}
+.jCard.bloq{opacity:.55}
+.jCard.j1 h3{color:#ffd166}.jCard.j2 h3{color:#7ee0d3}.jCard.j3 h3{color:#ff9e9e}
+.nodos{display:flex;flex-wrap:wrap;gap:10px 10px}
+.nodo{width:62px;height:76px;text-align:center}
+.nodo button{display:block;width:58px;height:58px;margin:0 auto;border-radius:50%;font-size:22px;font-weight:800;background:#1f2c55;border:3px solid #3a4f9a;color:#dfe6ff;transition:transform .12s}
+.nodo button:hover{transform:scale(1.1)}
+.nodo.hecho button{background:#2a9d8f;border-color:#7ee0d3;color:#fff}
+.nodo.sig button{background:#ffb703;border-color:#fff4dc;color:#2a1a00;animation:latido 1.2s ease-in-out infinite}
+.nodo.bl button{opacity:.4;cursor:default}
+.nodo .est{font-size:13px;margin-top:2px;letter-spacing:1px;color:#ffd166;height:16px}
+@keyframes latido{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+#mFila{position:absolute;left:24px;right:24px;top:530px;height:170px;display:flex;gap:18px}
+.mini{flex:1;border-radius:20px;padding:16px 20px;background:#131c38;border:1px solid #2a3a6e;position:relative}
+.mini h4{font-size:21px;font-weight:800}
+.mini p{font-size:15px;color:#aebbe6;margin-top:4px}
+.mini .btnChico{position:absolute;right:16px;bottom:14px}
+.mini.bloq{opacity:.5}
+.mini.sig{border-color:#ffb703;box-shadow:0 0 22px rgba(255,183,3,.25)}
+
+/* ---------- juego ---------- */
+#juego{background:#0a0f1f}
+#jTop{position:absolute;left:0;right:0;top:0;height:54px;display:flex;align-items:center;gap:14px;padding:0 16px;background:#0f1730;border-bottom:1px solid #1f2b55}
+#jTop .tit{flex:1;font-size:19px;font-weight:700}
+#jTop .tit small{color:#ffd166;font-size:14px;margin-right:8px;text-transform:uppercase;letter-spacing:.5px}
+#jTop .tiempo{font-size:21px;font-weight:800;width:74px;text-align:center;font-variant-numeric:tabular-nums;color:#7ee0d3}
+#jIzq{position:absolute;left:14px;top:66px;width:296px;bottom:14px;display:flex;flex-direction:column;gap:10px}
+#jCli{flex:none}
+.cli{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;padding:10px;border-radius:16px;background:#17213f;border:1px solid #2a3a6e;position:relative;transition:opacity .3s,transform .3s}
+.cli.hecho{opacity:.55}
+.cli .av{flex:none;width:76px;text-align:center}
+.cli .av svg{width:76px;height:84px;display:block}
+.cli .av span{display:block;font-size:12px;color:#93a0c8;margin-top:-2px;font-weight:600}
+.cli .bub{flex:1;font-size:19px;line-height:1.25;font-weight:600;color:#fff4dc;background:#243564;border-radius:14px;padding:10px 12px;position:relative;min-height:70px;display:flex;align-items:center}
+.cli .bub:before{content:"";position:absolute;left:-9px;top:20px;border:9px solid transparent;border-right-color:#243564;border-left:0}
+.cli .tilde{position:absolute;right:8px;top:6px;width:30px;height:30px;border-radius:50%;background:#2a9d8f;color:#fff;font-weight:900;font-size:19px;text-align:center;line-height:30px;display:none}
+.cli.hecho .tilde{display:block}
+.cli.nuevo{animation:entra .4s ease-out}
+@keyframes entra{from{transform:translateX(-20px);opacity:0}to{transform:none;opacity:1}}
+#jPista{flex:none;min-height:46px;padding:8px 10px;border-radius:14px;background:rgba(255,183,3,.08);border:1px dashed #6b5a2a;display:none}
+#jPista.on{display:block}
+#jPista .lbl{font-size:13px;color:#ffd166;font-weight:700;margin-bottom:2px;text-transform:uppercase;letter-spacing:.5px}
+#jPista .txt{font-size:15px;color:#e8dcb8;margin-top:4px}
+#jKbp{flex:none;display:none;padding:10px;border-radius:14px;background:#121b36;border:1px solid #2a3a6e}
+#jKbp.on{display:block}
+#jKbp .lbl{font-size:12px;color:#93a0c8;margin-bottom:6px;line-height:1.2}
+#jKbp .teclas{display:flex;flex-wrap:wrap;gap:7px}
+.vk{min-width:52px;height:46px;padding:0 10px;border-radius:9px;background:#e9edf8;color:#1b2340;font-size:17px;font-weight:800;box-shadow:0 4px 0 #8b97bd;transition:transform .05s}
+.vk:active{transform:translateY(3px);box-shadow:0 1px 0 #8b97bd}
+.vk.sost{background:#ffd166;box-shadow:0 1px 0 #b87a00;transform:translateY(3px)}
+#jBot{margin-top:auto;display:flex;gap:8px;flex-wrap:wrap}
+#jBot button{flex:1;min-width:110px}
+#jSim{position:absolute;z-index:1;isolation:isolate;left:324px;top:66px;width:940px;height:640px;border-radius:16px;overflow:hidden;background:#0f1730;border:2px solid #26335c;box-shadow:0 12px 40px rgba(0,0,0,.45)}
+#simIn{position:absolute;left:0;top:0;width:940px;height:640px;overflow:hidden}
+
+/* ---------- ventanas de texto ---------- */
+.simBg{position:absolute;left:0;top:0;width:940px;height:640px;background:linear-gradient(135deg,#1e3c72,#2a5298 55%,#3f84d8)}
+.win{position:absolute;background:#f6f7fb;border-radius:10px 10px 6px 6px;box-shadow:0 10px 30px rgba(0,0,0,.4);overflow:hidden;display:flex;flex-direction:column;border:1px solid #9fb0d6}
+.win .wbar{flex:none;height:34px;background:linear-gradient(180deg,#e5ebf7,#d3dcef);display:flex;align-items:center;padding:0 10px;gap:8px;font-size:15px;font-weight:700;color:#1b2340;cursor:default}
+.win .wbar .pts{margin-left:auto;display:flex;gap:6px}
+.win .wbar .pts i{display:block;width:12px;height:12px;border-radius:50%;background:#b8c3df}
+.win .wbar .pts i:last-child{background:#ff6b6b}
+.win textarea{flex:1;width:100%;border:0;outline:none;resize:none;padding:12px 14px;font-family:"Segoe UI",Arial,sans-serif;font-size:19px;line-height:1.5;color:#1b2340;background:#fff}
+.win textarea[readonly]{background:#fbfcff}
+.win.foco{box-shadow:0 0 0 3px #ffd166,0 10px 30px rgba(0,0,0,.4)}
+.win.sacude{animation:sacude .5s}
+@keyframes sacude{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
+.trabado{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);padding:10px 22px;border-radius:14px;background:#ff6b6b;color:#fff;font-size:20px;font-weight:800;z-index:50;box-shadow:0 8px 20px rgba(0,0,0,.4)}
+.trabado.flash{animation:sacude .4s}
+.gatoRun{position:absolute;z-index:60;pointer-events:none;width:150px}
+
+/* ---------- navegador ---------- */
+.nv{position:absolute;left:0;top:0;width:940px;height:640px;background:#dfe5f3;display:flex;flex-direction:column}
+.nvTabs{flex:none;height:42px;background:#b9c5e3;display:flex;align-items:flex-end;padding:6px 8px 0;gap:4px}
+.nvTab{position:relative;height:36px;min-width:60px;max-width:170px;flex:0 1 170px;border-radius:10px 10px 0 0;background:#cdd7ef;padding:0 28px 0 12px;font-size:14px;font-weight:600;color:#33406b;line-height:36px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.nvTab.act{background:#f6f7fb;color:#111a38}
+.nvTab .x{position:absolute;right:5px;top:8px;width:20px;height:20px;border-radius:50%;line-height:19px;text-align:center;font-size:15px;color:#59679a}
+.nvTab .x:hover{background:#ff6b6b;color:#fff}
+.nvMas{width:34px;height:34px;border-radius:50%;font-size:22px;font-weight:700;color:#33406b;margin-bottom:1px}
+.nvMas:hover{background:#cdd7ef}
+.nvBar{flex:none;height:46px;background:#f6f7fb;display:flex;align-items:center;gap:6px;padding:0 10px;border-bottom:1px solid #c5cfe6}
+.nvBtn{width:36px;height:34px;border-radius:8px;font-size:20px;font-weight:700;color:#33406b}
+.nvBtn:hover{background:#e0e6f5}
+.nvBtn.off{opacity:.3;cursor:default}
+.nvUrl{flex:1;height:32px;border-radius:16px;background:#e9edf8;padding:0 16px;line-height:32px;font-size:15px;color:#45527f;white-space:nowrap;overflow:hidden}
+.nvZoom{width:62px;text-align:center;font-size:14px;font-weight:800;color:#b86500;height:28px;line-height:28px;border-radius:14px;background:#fff0cf;visibility:hidden}
+.nvZoom.on{visibility:visible}
+.nvFind{position:absolute;right:20px;top:94px;z-index:30;display:none;align-items:center;gap:6px;padding:8px 10px;background:#fff;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.35);border:1px solid #b9c5e3}
+.nvFind.on{display:flex}
+.nvFind input{width:190px;height:34px;border:2px solid #7aa2ff;border-radius:8px;padding:0 10px;font-size:17px;font-family:inherit;outline:none;color:#111a38}
+.nvFind .cnt{font-size:15px;color:#45527f;width:74px;text-align:center;font-weight:700}
+.nvFind button{width:32px;height:32px;border-radius:8px;font-size:16px;color:#33406b;font-weight:800}
+.nvFind button:hover{background:#e0e6f5}
+.nvBody{position:relative;flex:1;background:#fff;overflow:auto}
+.nvPage{padding:26px 40px 80px;color:#1b2340;font-size:18px;line-height:1.55}
+.nvPage h1{font-size:34px;margin-bottom:10px;color:#0e1a3f}
+.nvPage h2{font-size:24px;margin:22px 0 8px;color:#1f3a8a}
+.nvPage p{margin-bottom:12px}
+.nvPage ul{margin:0 0 12px 24px}
+.nvPage .lnk{color:#1a56db;text-decoration:underline;cursor:pointer;font-weight:600}
+.nvPage .tiles{display:flex;flex-wrap:wrap;gap:16px;margin-top:20px}
+.nvPage .tile{width:260px;height:96px;border-radius:14px;padding:14px 16px;font-size:20px;font-weight:800;color:#fff;cursor:pointer;display:flex;align-items:flex-end;box-shadow:0 5px 0 rgba(0,0,0,.2)}
+.nvPage .tile:hover{filter:brightness(1.08)}
+.nvPage .precio{display:inline-block;padding:6px 16px;border-radius:10px;background:#fff0cf;font-size:26px;font-weight:900;color:#b86500}
+.nvPage .banner{padding:16px 20px;border-radius:14px;background:#e8f1ff;margin-bottom:16px}
+.nvPage .tiny{font-size:6px;line-height:1.4}
+mark{background:#ffeb3b;color:#000;padding:0 1px;border-radius:2px}
+mark.act{background:#ff9800;color:#000;box-shadow:0 0 0 2px #ff9800}
+.nvCarga{text-align:center;padding-top:160px;font-size:26px;font-weight:800;color:#45527f}
+.spin{width:70px;height:70px;border-radius:50%;border:8px solid #d3dcef;border-top-color:#2a5298;margin:0 auto 18px;animation:giro 1s linear infinite}
+@keyframes giro{to{transform:rotate(360deg)}}
+.nvNota{position:absolute;right:16px;bottom:14px;width:290px;z-index:20;background:#fff3b0;border-radius:6px;box-shadow:0 8px 20px rgba(0,0,0,.35);transform:rotate(1.2deg)}
+.nvNota .nt{height:26px;background:#f5dc6a;font-size:13px;font-weight:800;color:#6d5a00;line-height:26px;padding-left:10px;border-radius:6px 6px 0 0}
+.nvNota textarea{display:block;width:100%;height:78px;border:0;outline:none;resize:none;background:transparent;padding:8px 10px;font-size:20px;font-family:"Segoe UI",Arial,sans-serif;color:#33290a;font-weight:600}
+
+/* ---------- escritorio ---------- */
+.ds{position:absolute;left:0;top:0;width:940px;height:640px;background:linear-gradient(135deg,#1e3c72,#2a5298 55%,#3f84d8);overflow:hidden}
+.dsIcons{position:absolute;left:0;top:0;width:130px;bottom:46px;padding:10px 8px;overflow:hidden}
+.dsWins{position:absolute;left:0;top:0;right:0;bottom:46px}
+.dsTask{position:absolute;left:0;right:0;bottom:0;height:46px;background:rgba(14,22,48,.92);display:flex;align-items:center;gap:6px;padding:0 8px;z-index:90}
+.dsStart{width:44px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center}
+.dsStart:hover{background:rgba(255,255,255,.14)}
+.dsStart svg{width:22px;height:22px}
+.dsTb{height:36px;min-width:110px;max-width:160px;padding:0 12px;border-radius:8px;background:rgba(255,255,255,.1);font-size:14px;font-weight:600;color:#e6ecff;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-bottom:3px solid transparent}
+.dsTb.act{background:rgba(255,255,255,.22);border-bottom-color:#ffd166}
+.dsTb.min{opacity:.6}
+.dsClock{margin-left:auto;font-size:14px;color:#cfd8f6;padding:0 8px}
+.dsCam{width:40px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-left:auto}
+.dsCam:hover{background:rgba(255,255,255,.14)}
+.dsCam svg{width:22px;height:22px}
+.it{display:inline-block;vertical-align:top;width:92px;margin:2px 2px 6px;padding:5px 2px 4px;border-radius:8px;text-align:center;cursor:default;border:1px solid transparent}
+.it svg{width:46px;height:46px;display:block;margin:0 auto 3px}
+.it .nm{font-size:13px;line-height:1.15;word-wrap:break-word;overflow:hidden;max-height:32px;font-weight:600}
+.dsIcons .it .nm{color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.8)}
+.it:hover{background:rgba(120,160,255,.18)}
+.it.sel{background:rgba(255,209,102,.35);border-color:#ffd166}
+.it.cut{opacity:.45}
+.it input{width:84px;font-size:13px;font-family:inherit;text-align:center;border:2px solid #2a5298;border-radius:4px;outline:none;color:#111a38}
+.dwin{position:absolute;background:#f6f7fb;border-radius:10px 10px 6px 6px;box-shadow:0 12px 32px rgba(0,0,0,.45);overflow:hidden;display:flex;flex-direction:column;border:1px solid #8ea1cf}
+.dwin.top{box-shadow:0 0 0 3px #ffd166,0 12px 32px rgba(0,0,0,.5)}
+.dwin .wbar{flex:none;height:32px;background:linear-gradient(180deg,#e5ebf7,#d3dcef);display:flex;align-items:center;padding:0 6px 0 10px;gap:8px;font-size:14px;font-weight:700;color:#1b2340}
+.dwin .wbar .tt{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dwin .wbar button{width:28px;height:24px;border-radius:6px;font-size:15px;font-weight:800;color:#33406b}
+.dwin .wbar button:hover{background:#c7d2ec}
+.dwin .wbar button.cl:hover{background:#ff6b6b;color:#fff}
+.dwin .tool{flex:none;height:32px;background:#eef2fb;border-bottom:1px solid #d0d9ee;display:flex;align-items:center;gap:6px;padding:0 8px;font-size:13px;color:#45527f}
+.dwin .tool button{height:24px;padding:0 8px;border-radius:6px;font-size:13px;font-weight:700;color:#33406b;background:#fff;border:1px solid #c5cfe6}
+.dwin .tool .ruta{flex:1;background:#fff;border:1px solid #d0d9ee;border-radius:5px;height:24px;line-height:22px;padding:0 8px;overflow:hidden;white-space:nowrap}
+.dwin .cuerpo{flex:1;overflow:auto;padding:8px;background:#fff}
+.dwin .cuerpo .it .nm{color:#1b2340}
+.dwin .vacio{text-align:center;color:#9aa6c9;padding-top:60px;font-size:15px;font-weight:600}
+.dwin .visor{flex:1;background:#fff;display:flex;align-items:center;justify-content:center}
+.cm{position:absolute;z-index:200;min-width:210px;background:#fff;border-radius:10px;box-shadow:0 12px 30px rgba(0,0,0,.45);border:1px solid #c5cfe6;padding:5px 0;color:#1b2340}
+.cm div{display:flex;padding:7px 14px;font-size:15px;font-weight:600;cursor:pointer;gap:20px}
+.cm div span{margin-left:auto;color:#8591b8;font-size:12px;font-weight:700;padding-top:2px}
+.cm div:hover{background:#e3ebff}
+.cm div.off{opacity:.35;cursor:default}
+.cm div.off:hover{background:none}
+.cm hr{border:0;border-top:1px solid #e0e6f5;margin:4px 0}
+.dsMenu{position:absolute;left:6px;bottom:50px;z-index:150;width:250px;background:#16213f;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.5);padding:8px;border:1px solid #2f4180}
+.dsMenu div{padding:9px 12px;border-radius:8px;font-size:15px;font-weight:600;color:#e6ecff;cursor:pointer;display:flex;gap:10px}
+.dsMenu div span{margin-left:auto;color:#8aa0e0;font-size:12px;padding-top:2px}
+.dsMenu div:hover{background:#26356a}
+.dsCap{position:absolute;left:0;top:0;right:0;bottom:46px;z-index:140;background:rgba(0,0,0,.45);cursor:crosshair}
+.dsCap .rect{position:absolute;border:2px dashed #fff;background:rgba(255,255,255,.15)}
+.dsCap .tip{position:absolute;left:50%;top:16px;transform:translateX(-50%);background:#16213f;color:#fff;padding:8px 18px;border-radius:12px;font-size:16px;font-weight:700}
+.flashB{position:absolute;left:0;top:0;right:0;bottom:0;background:#fff;z-index:300;pointer-events:none;animation:flasheo .5s forwards}
+@keyframes flasheo{from{opacity:.9}to{opacity:0}}
+.drag-over{outline:3px dashed #ffd166;outline-offset:-3px}
+
+/* ---------- capas ---------- */
+#capa{position:absolute;z-index:1000;left:0;top:0;right:0;bottom:0;pointer-events:none}
+#capa>*{pointer-events:auto}
+.vela{position:absolute;left:0;top:0;right:0;bottom:0;background:rgba(5,8,18,.78);display:flex;align-items:center;justify-content:center}
+.tarjeta{position:relative;width:640px;border-radius:26px;padding:26px 34px 28px;background:linear-gradient(180deg,#1a2650,#121b3a);border:2px solid #3a4f9a;box-shadow:0 24px 70px rgba(0,0,0,.6);text-align:center;animation:pop .35s cubic-bezier(.2,1.4,.4,1)}
+@keyframes pop{from{transform:scale(.7);opacity:0}to{transform:none;opacity:1}}
+.tarjeta h2{font-size:38px;font-weight:900;color:#ffd166}
+.tarjeta .estrellas{font-size:64px;letter-spacing:8px;margin:6px 0 2px;color:#ffb703;text-shadow:0 4px 0 #8a5a00}
+.tarjeta .estrellas .vac{color:#3a4f9a;text-shadow:none}
+.tarjeta .propi{font-size:22px;font-weight:700;color:#fff4dc;display:flex;align-items:center;justify-content:center;gap:8px}
+.tarjeta .dato{margin:16px 0 4px;padding:12px 16px;border-radius:14px;background:#0e1633;border:1px solid #2a3a6e;font-size:19px;color:#dfe6ff;line-height:1.35;text-align:left}
+.tarjeta .dato b{color:#ffd166;display:block;font-size:13px;letter-spacing:.6px;text-transform:uppercase;margin-bottom:3px}
+.tarjeta .fila{display:flex;gap:12px;margin-top:18px;justify-content:center}
+.tarjeta .fila .btnGrande{margin-top:0;width:auto;padding:0 30px;display:inline-block}
+.tarjeta .fila .btnChico{height:58px;font-size:18px}
+.barra{height:34px;border-radius:17px;background:#0e1633;margin:10px 0;position:relative;overflow:hidden;text-align:left}
+.barra i{display:block;height:100%;border-radius:17px;transition:width 1.2s}
+.barra span{position:absolute;left:16px;top:0;line-height:34px;font-weight:800;font-size:17px;color:#fff}
+.cf{position:absolute;top:-20px;width:12px;height:18px;border-radius:2px;animation:cae linear forwards;z-index:400;pointer-events:none}
+@keyframes cae{to{transform:translateY(780px) rotate(720deg);opacity:.9}}
+#toasts{position:absolute;right:14px;top:62px;width:330px;display:flex;flex-direction:column;gap:8px;pointer-events:none;z-index:1100}
+.toast{background:#1c2a5c;border:2px solid #ffb703;border-radius:14px;padding:10px 16px;font-size:17px;font-weight:700;color:#fff4dc;box-shadow:0 8px 24px rgba(0,0,0,.5);animation:entraD .35s ease-out}
+.toast.out{opacity:0;transform:translateX(30px);transition:all .45s}
+.toast small{display:block;font-size:13px;color:#ffd166;font-weight:700}
+@keyframes entraD{from{transform:translateX(60px);opacity:0}to{transform:none;opacity:1}}
+
+/* ---------- prueba real / credencial ---------- */
+#real{background:radial-gradient(900px 500px at 50% -10%,#233a73 0%,rgba(0,0,0,0) 65%),#0a0f1f}
+#rTit{position:absolute;left:0;right:0;top:20px;text-align:center}
+#rTit h1{font-size:40px;font-weight:900;color:#ffd166}
+#rTit p{font-size:19px;color:#c9d3f5;margin-top:4px}
+#rLista{position:absolute;left:60px;right:60px;top:112px;display:grid;grid-template-columns:1fr 1fr;gap:12px 22px}
+.rIt{display:flex;align-items:center;gap:14px;height:76px;padding:0 18px;border-radius:18px;background:#17213f;border:2px solid #2a3a6e;cursor:pointer;text-align:left;width:100%}
+.rIt.ok{background:#173a3a;border-color:#2a9d8f}
+.rIt .chk{flex:none;width:36px;height:36px;border-radius:10px;border:3px solid #5a6db0;color:transparent;font-size:24px;font-weight:900;line-height:30px;text-align:center}
+.rIt.ok .chk{background:#2a9d8f;border-color:#7ee0d3;color:#fff}
+.rIt .q{flex:1;font-size:18px;font-weight:700;color:#fff4dc;line-height:1.15}
+#rPie{position:absolute;left:60px;right:60px;bottom:18px;display:flex;align-items:center;gap:16px}
+#rPie .av{flex:1;font-size:16px;color:#c9d3f5}
+.cred{display:flex;gap:22px;align-items:center;text-align:left}
+.cred .cuerpo{flex:1}
+.cred h3{font-size:30px;color:#ffd166}
+.cred ul{list-style:none;margin-top:10px;font-size:17px;color:#dfe6ff;columns:2;column-gap:20px}
+.cred li{margin-bottom:4px}
+.cred li b{color:#7ee0d3}
+</style>
+</head>
+<body>
+<div id="marco"><div id="stage">
+  <div id="portada" class="pant on"></div>
+  <div id="mapa" class="pant"></div>
+  <div id="juego" class="pant"></div>
+  <div id="real" class="pant"></div>
+  <div id="capa"></div>
+  <div id="toasts"></div>
+</div></div>
+<script>
+/* ===== núcleo: utilidades, guardado, sonido, escala ===== */
+var SAVEKEY = 'ciber_don_atajo_v1';
+var memStore = null;
+var P = null;
+var G = { escala: 1, pant: 'portada', ms: null, env: null, saveOk: true, cola: [] };
+var COLGORRA = ['#ffb703', '#e63946', '#2ec4b6', '#9b5de5', '#3a86ff', '#f15bb5'];
+
+function $(id) { return document.getElementById(id); }
+function mk(tag, cls, html) {
+  var e = document.createElement(tag);
+  if (cls) { e.className = cls; }
+  if (html !== undefined) { e.innerHTML = html; }
+  return e;
+}
+function hasCls(e, c) { return (' ' + e.className + ' ').indexOf(' ' + c + ' ') >= 0; }
+function addCls(e, c) { if (!hasCls(e, c)) { e.className = e.className ? e.className + ' ' + c : c; } }
+function rmCls(e, c) {
+  var s = ' ' + e.className + ' ';
+  while (s.indexOf(' ' + c + ' ') >= 0) { s = s.replace(' ' + c + ' ', ' '); }
+  e.className = s.replace(/^\s+|\s+$/g, '');
+}
+function setCls(e, c, on) { if (on) { addCls(e, c); } else { rmCls(e, c); } }
+function vaciar(e) { while (e.firstChild) { e.removeChild(e.firstChild); } }
+function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function azar(n) { return Math.floor(Math.random() * n); }
+function normTxt(s) { return String(s).replace(/\s+/g, ' ').replace(/^\s+|\s+$/g, ''); }
+function sinTilde(s) { return String(s).toLowerCase().replace(/[áä]/g, 'a').replace(/[éë]/g, 'e').replace(/[íï]/g, 'i').replace(/[óö]/g, 'o').replace(/[úü]/g, 'u'); }
+function fmtT(ms) { var s = Math.floor(ms / 1000); var m = Math.floor(s / 60); s = s % 60; return m + ':' + (s < 10 ? '0' : '') + s; }
+function fmtS(ms) { return Math.round(ms / 1000) + ' s'; }
+function loc(e, host) {
+  var r = host.getBoundingClientRect();
+  return { x: (e.clientX - r.left) / G.escala, y: (e.clientY - r.top) / G.escala };
+}
+function escalar() {
+  var s = Math.min(window.innerWidth / 1280, window.innerHeight / 720);
+  G.escala = s;
+  $('stage').style.transform = 'scale(' + s + ')';
+}
+
+/* ---------- guardado ---------- */
+function pNuevo() {
+  return { nombre: '', color: 0, mis: {}, propinas: 0, logros: {}, sonido: true, todo: false,
+           real: {}, pro: { largo: 0, corto: 0 }, cnt: {}, fin: {}, extra: {} };
+}
+function svLeer() {
+  var s = null;
+  try { s = window.localStorage.getItem(SAVEKEY); } catch (e) { s = memStore; }
+  if (s) { try { return JSON.parse(s); } catch (e2) { return null; } }
+  return null;
+}
+function svEscribir() {
+  var s = JSON.stringify(P);
+  try { window.localStorage.setItem(SAVEKEY, s); G.saveOk = true; }
+  catch (e) { memStore = s; G.saveOk = false; }
+}
+function svBorrar() {
+  try { window.localStorage.removeItem(SAVEKEY); } catch (e) { }
+  memStore = null;
+}
+function contar(k) { if (!P) { return; } P.cnt[k] = (P.cnt[k] || 0) + 1; }
+
+/* ---------- sonido (Web Audio, sin archivos) ---------- */
+var AC = null;
+function auCtx() {
+  if (!AC) {
+    try { var C = window.AudioContext || window.webkitAudioContext; if (C) { AC = new C(); } } catch (e) { AC = null; }
+  }
+  if (AC && AC.state === 'suspended') { try { AC.resume(); } catch (e2) { } }
+  return AC;
+}
+function auTono(f, dur, tipo, vol, delay, f2) {
+  if (!P || !P.sonido) { return; }
+  var c = auCtx();
+  if (!c) { return; }
+  try {
+    var t = c.currentTime + (delay || 0);
+    var o = c.createOscillator();
+    var g = c.createGain();
+    o.type = tipo || 'sine';
+    o.frequency.setValueAtTime(f, t);
+    if (f2) { o.frequency.exponentialRampToValueAtTime(f2, t + dur); }
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol || 0.06, t + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(c.destination);
+    o.start(t); o.stop(t + dur + 0.03);
+  } catch (e) { }
+}
+function sfx(n) {
+  if (n === 'click') { auTono(620, 0.06, 'triangle', 0.05); }
+  else if (n === 'tecla') { auTono(900, 0.04, 'square', 0.025); }
+  else if (n === 'ok') { auTono(660, 0.1, 'triangle', 0.07); auTono(880, 0.14, 'triangle', 0.07, 0.09); }
+  else if (n === 'mal') { auTono(220, 0.18, 'sawtooth', 0.05, 0, 150); }
+  else if (n === 'gana') { auTono(523, 0.14, 'triangle', 0.08); auTono(659, 0.14, 'triangle', 0.08, 0.12); auTono(784, 0.14, 'triangle', 0.08, 0.24); auTono(1047, 0.35, 'triangle', 0.09, 0.36); }
+  else if (n === 'maullido') { auTono(520, 0.5, 'sawtooth', 0.04, 0, 900); auTono(900, 0.4, 'sawtooth', 0.03, 0.45, 420); }
+  else if (n === 'foto') { auTono(1500, 0.05, 'square', 0.04); auTono(700, 0.12, 'square', 0.04, 0.05); }
+  else if (n === 'moneda') { auTono(1175, 0.07, 'square', 0.04); auTono(1568, 0.16, 'square', 0.04, 0.07); }
+  else if (n === 'logro') { auTono(784, 0.1, 'triangle', 0.07); auTono(988, 0.1, 'triangle', 0.07, 0.1); auTono(1319, 0.3, 'triangle', 0.08, 0.2); }
+  else if (n === 'pop') { auTono(400, 0.08, 'sine', 0.06, 0, 700); }
+}
+
+/* ---------- avisos y confeti ---------- */
+function toast(txt, sub) {
+  var c = $('toasts');
+  var t = mk('div', 'toast', (sub ? '<small>' + esc(sub) + '</small>' : '') + esc(txt));
+  c.appendChild(t);
+  setTimeout(function () { addCls(t, 'out'); }, 3000);
+  setTimeout(function () { if (t.parentNode) { t.parentNode.removeChild(t); } }, 3600);
+}
+function confeti(host, n) {
+  var cols = ['#ffb703', '#ff6b6b', '#2ec4b6', '#9b5de5', '#3a86ff', '#f15bb5', '#fff4dc'];
+  var i;
+  for (i = 0; i < n; i++) {
+    var d = mk('div', 'cf');
+    d.style.left = Math.floor(Math.random() * 1260) + 'px';
+    d.style.background = cols[i % cols.length];
+    d.style.animationDuration = (1.6 + Math.random() * 1.6) + 's';
+    d.style.animationDelay = (Math.random() * 0.5) + 's';
+    host.appendChild(d);
+  }
+  setTimeout(function () {
+    var xs = host.getElementsByClassName('cf');
+    while (xs.length) { xs[0].parentNode.removeChild(xs[0]); }
+  }, 3800);
+}
+
+/* ---------- teclas en pantalla ---------- */
+function kcs(combo, grande) {
+  var out = '<span class="kcs">';
+  var i;
+  for (i = 0; i < combo.length; i++) {
+    if (i > 0) { out += '<i>+</i>'; }
+    out += '<span class="kc' + (grande ? ' big' : '') + '">' + esc(combo[i]) + '</span>';
+  }
+  return out + '</span>';
+}
+/* ===== arte: personajes e íconos en SVG ===== */
+var CLIS = [
+  { n: 'Doña Rita', piel: '#f3cfae', pelo: '#d9d9e3', ropa: '#e76f51', pt: 'rodete', ant: 1, bi: 0 },
+  { n: 'Tomás', piel: '#d9a273', pelo: '#2d1f16', ropa: '#2a9d8f', pt: 'corto', ant: 0, bi: 0 },
+  { n: 'Mica', piel: '#f3cfae', pelo: '#7a3b1e', ropa: '#9b5de5', pt: 'colitas', ant: 0, bi: 0 },
+  { n: 'Don Beto', piel: '#e8b98f', pelo: '#8d8d99', ropa: '#457b9d', pt: 'pelado', ant: 1, bi: 1 },
+  { n: 'Lucía', piel: '#c98a5e', pelo: '#1c1410', ropa: '#f4a261', pt: 'largo', ant: 0, bi: 0 },
+  { n: 'Profe Nico', piel: '#f3cfae', pelo: '#3d2b1f', ropa: '#3a86ff', pt: 'corto', ant: 1, bi: 1 },
+  { n: 'Abu Carmen', piel: '#f3cfae', pelo: '#f1f1f6', ropa: '#e5989b', pt: 'rulos', ant: 1, bi: 0 },
+  { n: 'Joaquín', piel: '#b9794c', pelo: '#0f0a07', ropa: '#06d6a0', pt: 'gorra', ant: 0, bi: 0 },
+  { n: 'Sofi', piel: '#f3cfae', pelo: '#e9b44c', ropa: '#ef476f', pt: 'largo', ant: 0, bi: 0 },
+  { n: 'Doña Marta', piel: '#e8b98f', pelo: '#b8b8c4', ropa: '#118ab2', pt: 'rodete', ant: 1, bi: 0 }
+];
+
+function arCara(c, gorraCol) {
+  var s = '';
+  var p = c.pelo;
+  /* pelo de atrás */
+  if (c.pt === 'largo') { s += '<path d="M23 48 Q20 12 50 12 Q80 12 77 48 L80 82 L20 82Z" fill="' + p + '"/>'; }
+  if (c.pt === 'rulos') { s += '<circle cx="28" cy="34" r="12" fill="' + p + '"/><circle cx="72" cy="34" r="12" fill="' + p + '"/><circle cx="50" cy="20" r="14" fill="' + p + '"/><circle cx="36" cy="22" r="11" fill="' + p + '"/><circle cx="64" cy="22" r="11" fill="' + p + '"/>'; }
+  if (c.pt === 'rodete') { s += '<circle cx="50" cy="12" r="11" fill="' + p + '"/>'; }
+  if (c.pt === 'colitas') { s += '<circle cx="22" cy="44" r="9" fill="' + p + '"/><circle cx="78" cy="44" r="9" fill="' + p + '"/>'; }
+  /* cabeza */
+  s += '<ellipse cx="50" cy="46" rx="24" ry="26" fill="' + c.piel + '"/>';
+  s += '<ellipse cx="26" cy="48" rx="4" ry="6" fill="' + c.piel + '"/><ellipse cx="74" cy="48" rx="4" ry="6" fill="' + c.piel + '"/>';
+  /* pelo de adelante */
+  if (c.pt === 'corto' || c.pt === 'rodete' || c.pt === 'colitas' || c.pt === 'largo') {
+    s += '<path d="M26 44 Q24 18 50 18 Q76 18 74 44 Q66 32 50 31 Q34 32 26 44Z" fill="' + p + '"/>';
+  }
+  if (c.pt === 'pelado') { s += '<path d="M26 46 Q25 36 30 32 L30 48Z" fill="' + p + '"/><path d="M74 46 Q75 36 70 32 L70 48Z" fill="' + p + '"/>'; }
+  if (c.pt === 'gorra') {
+    s += '<path d="M25 40 Q27 14 50 14 Q73 14 75 40Z" fill="' + (gorraCol || '#e63946') + '"/><path d="M60 38 L88 40 L60 44Z" fill="' + (gorraCol || '#e63946') + '"/>';
+  }
+  /* cara */
+  s += '<circle cx="41" cy="48" r="3.2" fill="#1b1b2b"/><circle cx="59" cy="48" r="3.2" fill="#1b1b2b"/>';
+  s += '<path d="M42 59 Q50 66 58 59" stroke="#7a3b2e" stroke-width="2.6" fill="none" stroke-linecap="round"/>';
+  if (c.bi) { s += '<path d="M39 55 Q50 50 61 55 Q50 58 39 55Z" fill="' + c.pelo + '"/>'; }
+  if (c.ant) { s += '<circle cx="41" cy="48" r="8" fill="none" stroke="#2b2b3d" stroke-width="2"/><circle cx="59" cy="48" r="8" fill="none" stroke="#2b2b3d" stroke-width="2"/><path d="M49 48 L51 48" stroke="#2b2b3d" stroke-width="2"/>'; }
+  return s;
+}
+function arCliente(i, w) {
+  var c = CLIS[i % CLIS.length];
+  var s = '<svg viewBox="0 0 100 110" width="' + w + '" height="' + Math.round(w * 1.1) + '">';
+  s += '<path d="M10 110 Q12 78 50 76 Q88 78 90 110Z" fill="' + c.ropa + '"/>';
+  s += '<rect x="42" y="68" width="16" height="14" rx="5" fill="' + c.piel + '"/>';
+  s += arCara(c);
+  return s + '</svg>';
+}
+function arYo(color, w) {
+  var c = { piel: '#f3cfae', pelo: '#3d2b1f', ropa: '#ffb703', pt: 'gorra', ant: 0, bi: 0 };
+  var s = '<svg viewBox="0 0 100 110" width="' + w + '" height="' + Math.round(w * 1.1) + '">';
+  s += '<path d="M10 110 Q12 78 50 76 Q88 78 90 110Z" fill="#2a5298"/><rect x="40" y="86" width="20" height="24" fill="#ffb703"/>';
+  s += '<rect x="42" y="68" width="16" height="14" rx="5" fill="' + c.piel + '"/>';
+  s += arCara(c, COLGORRA[color || 0]);
+  return s + '</svg>';
+}
+function arDon(w) {
+  var s = '<svg viewBox="0 0 110 120" width="' + w + '" height="' + Math.round(w * 1.09) + '">';
+  s += '<path d="M8 120 Q10 84 55 82 Q100 84 102 120Z" fill="#ffb703"/><path d="M40 84 L55 104 L70 84Z" fill="#fff4dc"/>';
+  s += '<rect x="46" y="72" width="18" height="14" rx="6" fill="#e8b98f"/>';
+  s += '<ellipse cx="55" cy="52" rx="27" ry="29" fill="#e8b98f"/>';
+  s += '<path d="M27 40 Q28 14 55 14 Q82 14 83 40Z" fill="#2a5298"/><path d="M62 38 L100 41 L62 46Z" fill="#2a5298"/>';
+  s += '<text x="55" y="31" font-size="11" font-weight="900" fill="#ffd166" text-anchor="middle" font-family="Arial">ATAJO</text>';
+  s += '<circle cx="45" cy="52" r="3.4" fill="#1b1b2b"/><circle cx="65" cy="52" r="3.4" fill="#1b1b2b"/>';
+  s += '<circle cx="45" cy="52" r="9" fill="none" stroke="#3a2a1a" stroke-width="2.2"/><circle cx="65" cy="52" r="9" fill="none" stroke="#3a2a1a" stroke-width="2.2"/>';
+  s += '<path d="M33 66 Q45 58 55 64 Q65 58 77 66 Q66 76 55 70 Q44 76 33 66Z" fill="#f4f4fa"/>';
+  s += '<path d="M47 76 Q55 82 63 76" stroke="#7a3b2e" stroke-width="2.6" fill="none" stroke-linecap="round"/>';
+  return s + '</svg>';
+}
+function arGato(w) {
+  var s = '<svg viewBox="0 0 150 110" width="' + w + '" height="' + Math.round(w * 0.733) + '">';
+  s += '<path d="M118 78 Q146 70 140 40 Q138 30 130 34" stroke="#f08a24" stroke-width="12" fill="none" stroke-linecap="round"/>';
+  s += '<ellipse cx="78" cy="78" rx="46" ry="26" fill="#f08a24"/>';
+  s += '<path d="M60 56 L58 72 M78 54 L78 70 M96 56 L98 72" stroke="#c4651a" stroke-width="5" stroke-linecap="round"/>';
+  s += '<rect x="44" y="92" width="14" height="14" rx="6" fill="#f08a24"/><rect x="98" y="92" width="14" height="14" rx="6" fill="#f08a24"/>';
+  s += '<circle cx="36" cy="56" r="28" fill="#f08a24"/>';
+  s += '<path d="M12 40 L14 12 L32 28Z" fill="#f08a24"/><path d="M60 40 L58 12 L40 28Z" fill="#f08a24"/>';
+  s += '<path d="M16 34 L17 20 L26 28Z" fill="#ffb3b3"/><path d="M56 34 L55 20 L46 28Z" fill="#ffb3b3"/>';
+  s += '<path d="M24 38 L28 46 M48 38 L44 46" stroke="#c4651a" stroke-width="4" stroke-linecap="round"/>';
+  s += '<ellipse cx="26" cy="54" rx="5" ry="6.5" fill="#c9f27b"/><ellipse cx="46" cy="54" rx="5" ry="6.5" fill="#c9f27b"/>';
+  s += '<ellipse cx="26" cy="54" rx="1.8" ry="5.5" fill="#1b1b2b"/><ellipse cx="46" cy="54" rx="1.8" ry="5.5" fill="#1b1b2b"/>';
+  s += '<path d="M33 62 L39 62 L36 66Z" fill="#ff8fa3"/><path d="M36 66 Q32 71 28 68 M36 66 Q40 71 44 68" stroke="#5a2a10" stroke-width="2" fill="none"/>';
+  s += '<path d="M8 60 L22 62 M8 68 L22 66 M64 60 L50 62 M64 68 L50 66" stroke="#fff" stroke-width="1.6"/>';
+  return s + '</svg>';
+}
+function arWin(w) {
+  return '<svg viewBox="0 0 24 24" width="' + w + '" height="' + w + '"><path fill="#7cc4ff" d="M2 4.5l9-1.3v8.1H2zM12 3l10-1.5v9.8H12zM2 12.7h9v8.1l-9-1.3zM12 12.7h10v9.8L12 21z"/></svg>';
+}
+function arCamara(w) {
+  return '<svg viewBox="0 0 24 24" width="' + w + '" height="' + w + '"><path fill="#e6ecff" d="M9 3l-1.8 2H4a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-3.2L15 3zm3 5.5a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9z"/></svg>';
+}
+function arIco(t) {
+  if (t === 'd') {
+    return '<svg viewBox="0 0 48 48"><path d="M4 12a3 3 0 0 1 3-3h12l4 5h18a3 3 0 0 1 3 3v21a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3z" fill="#f2b632"/><path d="M4 18h40v20a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3z" fill="#ffd166"/></svg>';
+  }
+  if (t === 'jpg') {
+    return '<svg viewBox="0 0 48 48"><rect x="6" y="8" width="36" height="32" rx="4" fill="#fff" stroke="#7aa2ff" stroke-width="2.5"/><circle cx="17" cy="19" r="4" fill="#ffb703"/><path d="M8 38 L20 25 L28 33 L33 28 L40 38Z" fill="#4caf7a"/></svg>';
+  }
+  if (t === 'png') {
+    return '<svg viewBox="0 0 48 48"><rect x="6" y="8" width="36" height="32" rx="4" fill="#fff" stroke="#9b5de5" stroke-width="2.5" stroke-dasharray="4 3"/><path d="M12 34 L22 22 L28 29 L32 25 L38 34Z" fill="#b69cf0"/><circle cx="16" cy="17" r="3" fill="#b69cf0"/></svg>';
+  }
+  if (t === 'doc') {
+    return '<svg viewBox="0 0 48 48"><path d="M10 4h20l10 10v30a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" fill="#fff" stroke="#3a86ff" stroke-width="2.5"/><path d="M30 4v10h10" fill="#cfe0ff" stroke="#3a86ff" stroke-width="2"/><path d="M15 22h18M15 28h18M15 34h12" stroke="#3a86ff" stroke-width="2.6" stroke-linecap="round"/></svg>';
+  }
+  if (t === 'xls') {
+    return '<svg viewBox="0 0 48 48"><path d="M10 4h20l10 10v30a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" fill="#fff" stroke="#2a9d8f" stroke-width="2.5"/><path d="M30 4v10h10" fill="#c8f0ea" stroke="#2a9d8f" stroke-width="2"/><path d="M14 22h20M14 29h20M14 36h20M22 20v18" stroke="#2a9d8f" stroke-width="2.2"/></svg>';
+  }
+  return '<svg viewBox="0 0 48 48"><path d="M10 4h20l10 10v30a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" fill="#fff" stroke="#8a97bd" stroke-width="2.5"/><path d="M30 4v10h10" fill="#e6ebf7" stroke="#8a97bd" stroke-width="2"/><path d="M15 22h18M15 28h18M15 34h10" stroke="#8a97bd" stroke-width="2.6" stroke-linecap="round"/></svg>';
+}
+function arMapa() {
+  var s = '<svg viewBox="0 0 520 330" width="520" height="330">';
+  s += '<rect width="520" height="330" fill="#e9f3e0"/>';
+  s += '<path d="M0 110 H520 M0 220 H520 M130 0 V330 M300 0 V330 M430 0 V330" stroke="#fff" stroke-width="18"/>';
+  s += '<path d="M0 110 H520 M0 220 H520 M130 0 V330 M300 0 V330 M430 0 V330" stroke="#f3d27a" stroke-width="3" stroke-dasharray="14 10"/>';
+  s += '<rect x="150" y="128" width="130" height="74" rx="10" fill="#9ed8a6"/><text x="215" y="172" font-size="20" font-weight="800" text-anchor="middle" fill="#2c5a34" font-family="Arial">Plaza Central</text>';
+  s += '<rect x="318" y="20" width="96" height="70" rx="8" fill="#cfd8ee"/><text x="366" y="62" font-size="16" font-weight="800" text-anchor="middle" fill="#3b4a7a" font-family="Arial">Escuela</text>';
+  s += '<rect x="20" y="236" width="96" height="70" rx="8" fill="#f5c7b8"/><text x="68" y="276" font-size="16" font-weight="800" text-anchor="middle" fill="#8a3b22" font-family="Arial">Panadería</text>';
+  s += '<path d="M68 236 V110 H215 V128" stroke="#e63946" stroke-width="6" fill="none" stroke-dasharray="2 10" stroke-linecap="round"/>';
+  s += '<path d="M215 70 a14 14 0 1 1 0.1 0z" fill="#e63946" transform="translate(0 28)"/><circle cx="215" cy="84" r="5" fill="#fff"/>';
+  return s + '</svg>';
+}
+function arEscena() {
+  var s = '<svg id="pEscena" viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg">';
+  s += '<rect x="0" y="560" width="1280" height="160" fill="#0d1430"/>';
+  var i;
+  for (i = 0; i < 5; i++) {
+    var x = 40 + i * 250;
+    s += '<rect x="' + x + '" y="470" width="190" height="14" rx="4" fill="#26335c"/>';
+    s += '<rect x="' + (x + 70) + '" y="484" width="50" height="76" fill="#1d2850"/>';
+    s += '<rect x="' + (x + 14) + '" y="372" width="162" height="102" rx="9" fill="#1a2444" stroke="#37498a" stroke-width="3"/>';
+    s += '<rect x="' + (x + 22) + '" y="380" width="146" height="86" rx="4" fill="' + ['#173b66', '#3a2a66', '#17504f', '#5a2f3a', '#23407a'][i] + '"/>';
+    s += '<rect x="' + (x + 30) + '" y="390" width="60" height="6" rx="3" fill="rgba(255,255,255,.35)"/><rect x="' + (x + 30) + '" y="404" width="96" height="6" rx="3" fill="rgba(255,255,255,.2)"/><rect x="' + (x + 30) + '" y="418" width="40" height="6" rx="3" fill="rgba(255,255,255,.2)"/>';
+  }
+  s += '<g opacity=".95"><circle cx="150" cy="150" r="4" fill="#ffd166"/><circle cx="1130" cy="110" r="3" fill="#fff"/><circle cx="1010" cy="220" r="2.5" fill="#ffd166"/><circle cx="260" cy="260" r="2.5" fill="#fff"/></g>';
+  return s + '</svg>';
+}
+/* ===== entorno de texto: libretas con copiar, pegar, deshacer ===== */
+function gatoCruza(host, cb) {
+  var g = mk('div', 'gatoRun', arGato(150));
+  g.style.left = '-170px';
+  g.style.top = (300 + azar(180)) + 'px';
+  g.style.transition = 'left 1.5s linear';
+  host.appendChild(g);
+  sfx('maullido');
+  setTimeout(function () { g.style.left = '1000px'; }, 40);
+  setTimeout(function () { if (cb) { cb(); } }, 800);
+  setTimeout(function () { if (g.parentNode) { g.parentNode.removeChild(g); } }, 1800);
+}
+
+function txHist(v) { return { pila: [v], i: 0, t: 0, ult: '' }; }
+function txPush(w, v, tipo) {
+  var h = w.h;
+  if (v === h.pila[h.i]) { return; }
+  var ahora = new Date().getTime();
+  var junta = (tipo === 'insertText' && h.ult === 'insertText' && ahora - h.t < 700 && h.i === h.pila.length - 1);
+  if (junta) { h.pila[h.i] = v; }
+  else { h.pila = h.pila.slice(0, h.i + 1); h.pila.push(v); h.i = h.pila.length - 1; }
+  h.t = ahora; h.ult = tipo || '';
+}
+function txCursorFinal(ta) {
+  try { var n = ta.value.length; ta.setSelectionRange(n, n); } catch (e) { }
+}
+function txEditable(E) {
+  var w = E.wins[E.ultEd];
+  if (w && !w.ro) { return w; }
+  var i;
+  for (i = 0; i < E.orden.length; i++) { if (!E.wins[E.orden[i]].ro) { return E.wins[E.orden[i]]; } }
+  return null;
+}
+function txDeshacer(E) {
+  var w = txEditable(E);
+  if (!w) { return; }
+  if (w.h.i > 0) {
+    w.h.i--; w.h.ult = '';
+    w.ta.value = w.h.pila[w.h.i];
+    contar('z'); sfx('click');
+    txCursorFinal(w.ta);
+  } else { sfx('mal'); }
+}
+function txRehacer(E) {
+  var w = txEditable(E);
+  if (!w) { return; }
+  if (w.h.i < w.h.pila.length - 1) {
+    w.h.i++; w.h.ult = '';
+    w.ta.value = w.h.pila[w.h.i];
+    contar('y'); sfx('click');
+    txCursorFinal(w.ta);
+  } else { sfx('mal'); }
+}
+function txAplicar(E, id, v) {
+  var w = E.wins[id];
+  if (!w) { return; }
+  w.ta.value = v;
+  txPush(w, v, 'prog');
+  E.ultEd = id;
+  E.golpes = (E.golpes || 0) + 1;
+  addCls(w.box, 'sacude');
+  setTimeout(function () { rmCls(w.box, 'sacude'); }, 600);
+}
+function txAviso(E) {
+  if (!E.aviso) { return; }
+  rmCls(E.aviso, 'flash');
+  void E.aviso.offsetWidth;
+  addCls(E.aviso, 'flash');
+}
+var TXOPS = {
+  spam: function (v, a) { return v + (v.length && v.charAt(v.length - 1) !== '\n' ? '\n' : '') + ((a && a.txt) || 'ñññññ gatogatogato asdfjkl miau miau miau'); },
+  borra: function (v, a) { var L = v.split('\n'); L.splice(a.n, 1); return L.join('\n'); },
+  cambia: function (v, a) { return v.split(a.de).join(a.por); },
+  todo: function (v, a) { return a.txt; }
+};
+function txGato(E, id, op, args) {
+  gatoCruza(E.host, function () { txAplicar(E, id, TXOPS[op](E.wins[id].ta.value, args)); });
+}
+function txGatoSeguido(E, lista) {
+  /* lista: [{id, op, args}, ...] el gato pasa varias veces */
+  var i;
+  for (i = 0; i < lista.length; i++) {
+    (function (it, n) {
+      setTimeout(function () { txGato(E, it.id, it.op, it.args); }, n * 1100);
+    })(lista[i], i);
+  }
+}
+
+function txBuild(cfg, host) {
+  var E = { kind: 'texto', wins: {}, orden: [], foco: null, ultEd: null, lock: !!cfg.lock, aviso: null, host: host };
+  host.appendChild(mk('div', 'simBg'));
+  var i;
+  for (i = 0; i < cfg.wins.length; i++) {
+    (function (c) {
+      var box = mk('div', 'win');
+      box.style.left = c.x + 'px'; box.style.top = c.y + 'px';
+      box.style.width = c.w + 'px'; box.style.height = c.h + 'px';
+      box.appendChild(mk('div', 'wbar', '<span>' + esc(c.t) + '</span><span class="pts"><i></i><i></i><i></i></span>'));
+      var ta = mk('textarea');
+      ta.value = c.v || '';
+      ta.spellcheck = false;
+      ta.setAttribute('autocomplete', 'off');
+      if (c.ro) { ta.readOnly = true; }
+      box.appendChild(ta);
+      host.appendChild(box);
+      var w = { id: c.id, box: box, ta: ta, ro: !!c.ro, h: txHist(ta.value), orig: ta.value };
+      E.wins[c.id] = w;
+      E.orden.push(c.id);
+      if (!c.ro && !E.ultEd) { E.ultEd = c.id; }
+      ta.addEventListener('focus', function () {
+        E.foco = c.id;
+        if (!w.ro) { E.ultEd = c.id; }
+        var k;
+        for (k = 0; k < E.orden.length; k++) { rmCls(E.wins[E.orden[k]].box, 'foco'); }
+        addCls(box, 'foco');
+      }, false);
+      ta.addEventListener('input', function (ev) { txPush(w, ta.value, ev.inputType || 'x'); sfx('tecla'); }, false);
+      ta.addEventListener('copy', function () { contar('c'); sfx('click'); }, false);
+      ta.addEventListener('cut', function () { contar('x'); sfx('click'); }, false);
+      ta.addEventListener('paste', function () { contar('v'); sfx('click'); }, false);
+    })(cfg.wins[i]);
+  }
+  if (E.lock) {
+    E.aviso = mk('div', 'trabado', 'Teclado trabado: usá solo el mouse');
+    host.appendChild(E.aviso);
+  }
+  E.val = function (id) { return E.wins[id].ta.value; };
+  E.key = function (e) { return txKey(E, e); };
+  E.combo = function () { return false; };
+  E.destroy = function () { };
+  return E;
+}
+
+function txKey(E, e) {
+  if (!(e.ctrlKey || e.metaKey)) { return false; }
+  var kl = (e.key || '').toLowerCase();
+  if (E.lock && (kl === 'c' || kl === 'v' || kl === 'x' || kl === 'a' || kl === 'z' || kl === 'y')) {
+    e.preventDefault(); txAviso(E); sfx('mal');
+    return true;
+  }
+  if (kl === 'z' && !e.shiftKey) { e.preventDefault(); txDeshacer(E); return true; }
+  if (kl === 'y' || (kl === 'z' && e.shiftKey)) { e.preventDefault(); txRehacer(E); return true; }
+  if (kl === 'a' || kl === 'c' || kl === 'x' || kl === 'v') {
+    var act = document.activeElement;
+    var enTexto = act && act.tagName === 'TEXTAREA';
+    if (!enTexto) {
+      var w = (kl === 'v' || kl === 'x') ? txEditable(E) : (E.wins[E.foco] || E.wins[E.orden[0]]);
+      if (w) { w.ta.focus(); }
+    }
+    if (kl === 'a') { contar('a'); }
+  }
+  return false;
+}
+/* ===== entorno de navegador de mentira ===== */
+var NV_FR = [
+  'Trabajamos con ingredientes frescos y recetas de la familia.',
+  'Desde hace muchos años atendemos a los vecinos del barrio.',
+  'En invierno se llena de gente que viene a buscar algo rico para la merienda.',
+  'Todo se prepara a mano, con paciencia y con mucha harina.',
+  'Los sábados a la mañana hay música en la plaza de enfrente.',
+  'Si venís con amigos, avisanos antes para guardar una mesa grande.',
+  'Algunas cosas se agotan temprano, así que conviene llegar con tiempo.',
+  'El patio de atrás es el lugar preferido de los gurises para jugar.',
+  'Cada semana probamos una receta nueva y los clientes opinan.',
+  'Nuestro equipo es chico, pero trabaja con mucho cariño.',
+  'Cuando llueve, el olor a pan recién hecho se siente desde la esquina.',
+  'Hay opciones para quienes prefieren algo menos dulce.',
+  'La puerta azul de la entrada es fácil de reconocer.',
+  'Aceptamos pedidos para cumpleaños, reuniones y fiestas de la escuela.',
+  'Las fotos del local las sacaron los propios vecinos.',
+  'Un perro simpático suele dormir la siesta junto a la ventana.'
+];
+function nvRelleno(sem, n) {
+  var s = sem * 7 + 3;
+  var out = '';
+  var i, j;
+  for (i = 0; i < n; i++) {
+    var p = '<p>';
+    for (j = 0; j < 3; j++) { s = (s * 16807) % 2147483647; p += NV_FR[s % NV_FR.length] + ' '; }
+    out += p + '</p>';
+  }
+  return out;
+}
+function nvTile(k, t, col) { return '<div class="tile" data-go="' + k + '" style="background:' + col + '">' + t + '</div>'; }
+function nvGuiaLista() {
+  var N = ['Cerrajería Rápida', 'Electricista Díaz', 'Plomería El Caño', 'Gomería Don Pepe', 'Ferretería Central', 'Mudanzas Vuelo', 'Jardinería Verde', 'Lavandería Burbuja', 'Pinturería Colores', 'Carpintería Roble',
+    'Fotocopias Express', 'Taller de bicicletas', 'Zapatero Remendón', 'Vidriería Cristal', 'Relojería Tic Tac', 'Florería Pétalo', 'Veterinaria San Roque', 'Panel de aire frío', 'Tapicería Suave', 'Librería Hoja',
+    'Papelera del Sur', 'Bazar La Olla', 'Mercería Aguja', 'Tintorería Lila', 'Herrería Fuego', 'Agencia de viajes Brújula', 'Gimnasio Fuerza', 'Heladería Copo', 'Kiosco 24 horas', 'Joyería Brillo'];
+  var s = '<ul>';
+  var i;
+  for (i = 0; i < N.length; i++) { s += '<li>' + N[i] + ': 4352 ' + (i === 16 ? 8877 : 1100 + (i * 733) % 7000) + '</li>'; }
+  return s + '</ul>';
+}
+var NVP = {
+  inicio: { t: 'Nueva pestaña', url: 'nueva-pestana', h: function () {
+    return '<h1>¿A dónde vamos?</h1><p>Tocá un sitio para entrar.</p><div class="tiles">' +
+      nvTile('panaderia', 'Panadería La Espiga', '#e76f51') + nvTile('zoo', 'Zoo de Rosario', '#2a9d8f') +
+      nvTile('museo', 'Museo del Cine', '#9b5de5') + nvTile('guia', 'Guía de Servicios', '#3a86ff') +
+      nvTile('rara', 'Peluquería de perros', '#f4a261') + '</div>';
+  } },
+  panaderia: { t: 'Panadería La Espiga', url: 'laespiga.com.uy', h: function () {
+    return '<h1>Panadería La Espiga</h1><div class="banner">Pan caliente todos los días, desde temprano.</div>' +
+      '<h2>Quiénes somos</h2>' + nvRelleno(1, 5) +
+      '<h2>Lo que hacemos</h2><ul><li>Pan francés: $60</li><li>Alfajor de dulce de leche: $45</li><li>Torta de cumpleaños: $900</li></ul>' + nvRelleno(2, 6) +
+      '<h2>Cómo llegar</h2>' + nvRelleno(3, 3) +
+      '<h2>Atención al público</h2><p>De lunes a sábado el local abre a las 7:00 y cierra a las 20:30. Los domingos descansamos.</p>' + nvRelleno(4, 5);
+  } },
+  zoo: { t: 'Zoo de Rosario', url: 'zoorosario.uy', h: function () {
+    return '<h1>Zoo de Rosario</h1><div class="banner">Más de cien animales te esperan.</div><p>Entrada general: <span class="precio">$350</span></p><p>Menores de 5 años: gratis. Abierto de 9 a 17.</p>';
+  } },
+  museo: { t: 'Museo del Cine', url: 'museodelcine.uy', h: function () {
+    return '<h1>Museo del Cine</h1><div class="banner">Una máquina de proyectar de hace cien años.</div><p>Entrada general: <span class="precio">$280</span></p><p>Visitas guiadas los sábados a las 11.</p>';
+  } },
+  guia: { t: 'Guía de Servicios', url: 'guiaserviciosrosario.uy', h: function () {
+    return '<h1>Guía de Servicios</h1><p>Todos los teléfonos del barrio en un solo lugar.</p><h2>Teléfonos útiles</h2>' + nvGuiaLista() + '<h2>Sobre esta guía</h2>' + nvRelleno(5, 6);
+  } },
+  rara: { t: 'Peluquería de perros', url: 'perrosfelices.uy', h: function () {
+    return '<h1>Peluquería de perros</h1><div class="banner">¡Ofertas de baño y corte esta semana!</div>' + nvRelleno(6, 2) + '<p><span class="lnk" data-go="inicio">Volver al inicio</span></p>';
+  } },
+  chiquita: { t: 'Aviso del cliente', url: 'avisos.uy/cliente', h: function () {
+    return '<div class="tiny"><p>Aviso para el cliente: el código secreto de hoy es <b>4721</b>. Guardalo bien.</p><p>Este cartel está escrito con letra muy chiquita a propósito. Si no se lee, hay que agrandar la página.</p></div>';
+  } },
+  colgada: { t: 'La torta', url: 'latorta.uy/pedido', h: function () {
+    return '<h1>¡Listo, cargó!</h1><div class="banner">Tu pedido de torta ya está confirmado.</div>' + nvRelleno(7, 2);
+  } }
+};
+var NV_ZOOMS = [0.5, 0.67, 0.75, 0.8, 0.9, 1, 1.1, 1.25, 1.5, 1.75, 2, 2.5, 3];
+
+function nvMarcar(root, term) {
+  var ms = root.getElementsByTagName('mark');
+  while (ms.length) {
+    var m = ms[0], p = m.parentNode;
+    p.replaceChild(document.createTextNode(m.textContent), m);
+    p.normalize();
+  }
+  if (!term) { return 0; }
+  var lt = term.toLowerCase();
+  var nodos = [];
+  var w = document.createTreeWalker(root, 4, null, false);
+  var nd;
+  while ((nd = w.nextNode())) { nodos.push(nd); }
+  var n = 0, i;
+  for (i = 0; i < nodos.length; i++) {
+    var tx = nodos[i].nodeValue;
+    var low = tx.toLowerCase();
+    var k = low.indexOf(lt);
+    if (k < 0) { continue; }
+    var frag = document.createDocumentFragment();
+    var ult = 0;
+    while (k >= 0) {
+      frag.appendChild(document.createTextNode(tx.substring(ult, k)));
+      var mk2 = document.createElement('mark');
+      mk2.appendChild(document.createTextNode(tx.substring(k, k + lt.length)));
+      frag.appendChild(mk2);
+      n++;
+      ult = k + lt.length;
+      k = low.indexOf(lt, ult);
+    }
+    frag.appendChild(document.createTextNode(tx.substring(ult)));
+    nodos[i].parentNode.replaceChild(frag, nodos[i]);
+  }
+  return n;
+}
+function nvTab(E) { return E.tabs[E.cur]; }
+function nvPg(E) { var t = nvTab(E); return t.hist[t.hi]; }
+function nvNueva(E, key, fondo) {
+  var t = { id: ++E.ids, hist: [key || 'inicio'], hi: 0, zoom: 1, stuck: false };
+  E.tabs.push(t);
+  if (!fondo) { E.cur = E.tabs.length - 1; }
+  nvDibujar(E);
+  return t;
+}
+function nvIr(E, key, fondo) {
+  if (fondo) { nvNueva(E, key, true); sfx('pop'); return; }
+  var t = nvTab(E);
+  t.hist = t.hist.slice(0, t.hi + 1);
+  t.hist.push(key);
+  t.hi = t.hist.length - 1;
+  t.stuck = false;
+  sfx('click');
+  nvDibujar(E);
+}
+function nvAtras(E) { var t = nvTab(E); if (t.hi > 0) { t.hi--; t.stuck = false; contar('back'); sfx('click'); nvDibujar(E); } else { sfx('mal'); } }
+function nvAdelante(E) { var t = nvTab(E); if (t.hi < t.hist.length - 1) { t.hi++; t.stuck = false; contar('fwd'); sfx('click'); nvDibujar(E); } else { sfx('mal'); } }
+function nvRecargar(E) {
+  var t = nvTab(E);
+  E.reloads++;
+  contar('r');
+  sfx('click');
+  E.d.page.innerHTML = '<div class="nvCarga"><div class="spin"></div>Cargando…</div>';
+  setTimeout(function () { t.stuck = false; if (nvTab(E) === t) { nvDibujar(E); } }, 450);
+}
+function nvCerrar(E, idx) {
+  if (E.tabs.length <= 1) { sfx('mal'); return; }
+  E.tabs.splice(idx, 1);
+  if (E.cur > idx || E.cur >= E.tabs.length) { E.cur = Math.max(0, E.cur - 1); }
+  sfx('pop');
+  nvDibujar(E);
+}
+function nvZoom(E, dir) {
+  var t = nvTab(E);
+  var i = 0, k;
+  for (k = 0; k < NV_ZOOMS.length; k++) { if (Math.abs(NV_ZOOMS[k] - t.zoom) < 0.001) { i = k; } }
+  if (dir === 0) { t.zoom = 1; } else { i = Math.max(0, Math.min(NV_ZOOMS.length - 1, i + dir)); t.zoom = NV_ZOOMS[i]; }
+  contar('zoom');
+  sfx('click');
+  nvDibujar(E);
+}
+function nvDibujar(E) {
+  var d = E.d;
+  vaciar(d.tabs);
+  var i;
+  for (i = 0; i < E.tabs.length; i++) {
+    (function (n) {
+      var t = E.tabs[n];
+      var b = mk('div', 'nvTab' + (n === E.cur ? ' act' : ''), esc(NVP[t.hist[t.hi]].t) + '<span class="x">×</span>');
+      b.onclick = function () { E.cur = n; sfx('click'); nvDibujar(E); };
+      b.getElementsByTagName('span')[0].onclick = function (ev) { if (ev.stopPropagation) { ev.stopPropagation(); } nvCerrar(E, n); };
+      d.tabs.appendChild(b);
+    })(i);
+  }
+  var mas = mk('button', 'nvMas', '+');
+  mas.onclick = function () { nvNueva(E, 'inicio'); sfx('pop'); };
+  d.tabs.appendChild(mas);
+  var t = nvTab(E);
+  var key = t.hist[t.hi];
+  E.vis[key] = true;
+  setCls(d.back, 'off', t.hi === 0);
+  setCls(d.fwd, 'off', t.hi >= t.hist.length - 1);
+  d.url.textContent = 'https://' + NVP[key].url;
+  d.zoom.textContent = Math.round(t.zoom * 100) + '%';
+  setCls(d.zoom, 'on', Math.abs(t.zoom - 1) > 0.001);
+  if (t.stuck) { d.page.innerHTML = '<div class="nvCarga"><div class="spin"></div>Cargando…</div>'; }
+  else { d.page.innerHTML = NVP[key].h(); }
+  d.page.style.zoom = t.zoom;
+  d.body.scrollTop = 0;
+  if (hasCls(d.find, 'on') && E.findTerm) { nvBuscar(E, E.findTerm, true); }
+}
+function nvBuscar(E, term, conserva) {
+  E.findTerm = term;
+  E.findN = nvMarcar(E.d.page, term);
+  if (!conserva) { E.findIdx = 0; }
+  nvActual(E);
+}
+function nvActual(E) {
+  var ms = E.d.page.getElementsByTagName('mark');
+  var i;
+  for (i = 0; i < ms.length; i++) { ms[i].className = ''; }
+  if (ms.length) {
+    E.findIdx = ((E.findIdx % ms.length) + ms.length) % ms.length;
+    ms[E.findIdx].className = 'act';
+    var b = E.d.body;
+    var rb = b.getBoundingClientRect(), rm = ms[E.findIdx].getBoundingClientRect();
+    b.scrollTop = b.scrollTop + (rm.top - rb.top) / G.escala - b.clientHeight / 2;
+    E.d.findCnt.textContent = (E.findIdx + 1) + ' de ' + ms.length;
+  } else {
+    E.d.findCnt.textContent = E.findTerm ? 'sin result.' : '';
+  }
+}
+function nvAbrirBusca(E) {
+  addCls(E.d.find, 'on');
+  E.finds++;
+  contar('f');
+  E.d.findIn.focus();
+  E.d.findIn.select();
+  sfx('click');
+}
+function nvCerrarBusca(E) {
+  rmCls(E.d.find, 'on');
+  nvMarcar(E.d.page, '');
+  E.d.findCnt.textContent = '';
+}
+
+function nvBuild(cfg, host) {
+  var E = { kind: 'nav', tabs: [], cur: 0, vis: {}, reloads: 0, finds: 0, findTerm: '', findIdx: 0, findN: 0, host: host, ids: 0 };
+  var root = mk('div', 'nv');
+  root.innerHTML = '<div class="nvTabs"></div>' +
+    '<div class="nvBar"><button class="nvBtn" title="Atrás">←</button><button class="nvBtn" title="Adelante">→</button><button class="nvBtn" title="Recargar">↻</button><div class="nvUrl"></div><div class="nvZoom"></div></div>' +
+    '<div class="nvFind"><input type="text" placeholder="Buscar en la página"><span class="cnt"></span><button title="Anterior">▲</button><button title="Siguiente">▼</button><button title="Cerrar">✕</button></div>' +
+    '<div class="nvBody"><div class="nvPage"></div></div>';
+  host.appendChild(root);
+  var bs = root.getElementsByTagName('button');
+  E.d = {
+    tabs: root.childNodes[0], back: bs[0], fwd: bs[1], rec: bs[2], url: root.childNodes[1].childNodes[3], zoom: root.childNodes[1].childNodes[4],
+    find: root.childNodes[2], findIn: root.childNodes[2].childNodes[0], findCnt: root.childNodes[2].childNodes[1],
+    body: root.childNodes[3], page: root.childNodes[3].childNodes[0]
+  };
+  var fb = root.childNodes[2].getElementsByTagName('button');
+  var i;
+  for (i = 0; i < cfg.tabs.length; i++) {
+    var c = cfg.tabs[i];
+    E.tabs.push({ id: ++E.ids, hist: c.hist.slice(0), hi: (c.hi === undefined ? c.hist.length - 1 : c.hi), zoom: c.zoom || 1, stuck: !!c.stuck });
+  }
+  E.cur = cfg.cur || 0;
+  E.d.back.onclick = function () { nvAtras(E); };
+  E.d.fwd.onclick = function () { nvAdelante(E); };
+  E.d.rec.onclick = function () { nvRecargar(E); };
+  fb[0].onclick = function () { E.findIdx--; nvActual(E); };
+  fb[1].onclick = function () { E.findIdx++; nvActual(E); };
+  fb[2].onclick = function () { nvCerrarBusca(E); };
+  E.d.findIn.addEventListener('input', function () { nvBuscar(E, E.d.findIn.value); sfx('tecla'); }, false);
+  E.d.page.addEventListener('click', function (ev) {
+    var t = ev.target;
+    while (t && t !== E.d.page) {
+      if (t.getAttribute && t.getAttribute('data-go')) { nvIr(E, t.getAttribute('data-go'), !!(ev.ctrlKey || ev.metaKey)); return; }
+      t = t.parentNode;
+    }
+  }, false);
+  E.d.body.addEventListener('wheel', function (ev) {
+    if (ev.ctrlKey) { ev.preventDefault(); nvZoom(E, ev.deltaY < 0 ? 1 : -1); }
+  }, false);
+  if (cfg.nota) {
+    var nota = mk('div', 'nvNota', '<div class="nt">LIBRETA</div><textarea spellcheck="false"></textarea>');
+    host.appendChild(nota);
+    E.d.nota = nota.getElementsByTagName('textarea')[0];
+    E.d.nota.addEventListener('input', function () { sfx('tecla'); }, false);
+  }
+  E.nota = function () { return E.d.nota ? E.d.nota.value : ''; };
+  E.pg = function () { return nvPg(E); };
+  E.zoomNow = function () { return nvTab(E).zoom; };
+  E.stuckNow = function () { return nvTab(E).stuck; };
+  E.hay = function (key) { var k; for (k = 0; k < E.tabs.length; k++) { if (E.tabs[k].hist[E.tabs[k].hi] === key) { return true; } } return false; };
+  E.key = function (e) { return nvKey(E, e); };
+  E.combo = function (c) { return nvCombo(E, c); };
+  E.destroy = function () { };
+  nvDibujar(E);
+  return E;
+}
+function nvKey(E, e) {
+  var ctrl = e.ctrlKey || e.metaKey;
+  var k = e.key;
+  if (ctrl && (k === 'f' || k === 'F')) { e.preventDefault(); nvAbrirBusca(E); return true; }
+  if (ctrl && (k === '+' || k === '=' || k === 'Add')) { e.preventDefault(); nvZoom(E, 1); return true; }
+  if (ctrl && (k === '-' || k === '_' || k === 'Subtract')) { e.preventDefault(); nvZoom(E, -1); return true; }
+  if (ctrl && (k === '0' || k === 'Insert')) { e.preventDefault(); nvZoom(E, 0); return true; }
+  if (k === 'F5' || (ctrl && (k === 'r' || k === 'R'))) { e.preventDefault(); nvRecargar(E); return true; }
+  if (e.altKey && k === 'ArrowLeft') { e.preventDefault(); nvAtras(E); return true; }
+  if (e.altKey && k === 'ArrowRight') { e.preventDefault(); nvAdelante(E); return true; }
+  if (hasCls(E.d.find, 'on')) {
+    if (k === 'Escape') { e.preventDefault(); nvCerrarBusca(E); return true; }
+    if (k === 'F3' || (k === 'Enter' && document.activeElement === E.d.findIn)) {
+      e.preventDefault(); E.findIdx += (e.shiftKey ? -1 : 1); nvActual(E); sfx('click'); return true;
+    }
+  }
+  return false;
+}
+function nvCombo(E, c) {
+  var k = c.key;
+  if (c.ctrl && !c.alt && k === 't' && !c.shift) { contar('t'); nvNueva(E, 'inicio'); sfx('pop'); return true; }
+  if (c.ctrl && !c.alt && k === 'w') { contar('w'); nvCerrar(E, E.cur); return true; }
+  if (c.ctrl && k === 'tab') {
+    contar('tab');
+    E.cur = (E.cur + (c.shift ? E.tabs.length - 1 : 1)) % E.tabs.length;
+    sfx('click'); nvDibujar(E);
+    return true;
+  }
+  return false;
+}
+/* ===== entorno de escritorio de mentira: carpetas, ventanas, capturas ===== */
+var DS_ID = 0;
+function dsNodo(spec) {
+  var id = ++DS_ID;
+  if (spec[0] === 'd') {
+    var c = [], i;
+    for (i = 0; i < spec[2].length; i++) { c.push(dsNodo(spec[2][i])); }
+    return { id: id, t: 'd', n: spec[1], c: c };
+  }
+  return { id: id, t: 'f', n: spec[1], x: spec[2] };
+}
+function dsBusca(nodo, id, padre) {
+  if (nodo.id === id) { return { n: nodo, p: padre }; }
+  if (nodo.t === 'd') {
+    var i;
+    for (i = 0; i < nodo.c.length; i++) {
+      var r = dsBusca(nodo.c[i], id, nodo);
+      if (r) { return r; }
+    }
+  }
+  return null;
+}
+function dsHijoPorNombre(carpeta, nombre) {
+  var i;
+  for (i = 0; i < carpeta.c.length; i++) { if (carpeta.c[i].n === nombre) { return carpeta.c[i]; } }
+  return null;
+}
+function dsPorRuta(E, ruta) {
+  if (!ruta) { return E.root; }
+  var partes = ruta.split('/');
+  var n = E.root, i;
+  for (i = 0; i < partes.length; i++) {
+    if (!n || n.t !== 'd') { return null; }
+    n = dsHijoPorNombre(n, partes[i]);
+  }
+  return n;
+}
+function dsIdsDeNombres(E, nombres) {
+  var ids = [], n = E.root, i;
+  for (i = 0; i < nombres.length; i++) {
+    n = dsHijoPorNombre(n, nombres[i]);
+    if (!n) { break; }
+    ids.push(n.id);
+  }
+  return ids;
+}
+function dsCarpetaDeWin(E, w) {
+  var n = E.root, i;
+  for (i = 0; i < w.path.length; i++) {
+    var r = dsBusca(n, w.path[i], null);
+    if (!r || r.n.t !== 'd') { return null; }
+    n = r.n;
+  }
+  return n;
+}
+function dsFixRutas(E) {
+  var i;
+  for (i = 0; i < E.wins.length; i++) {
+    var w = E.wins[i];
+    if (w.k !== 'exp') { continue; }
+    var ok = [], n = E.root, j;
+    for (j = 0; j < w.path.length; j++) {
+      var r = dsBusca(n, w.path[j], null);
+      if (!r || r.n.t !== 'd') { break; }
+      ok.push(w.path[j]); n = r.n;
+    }
+    w.path = ok;
+  }
+}
+function dsDestino(E) {
+  if (E.act === 'D') { return E.root; }
+  var w = dsWinPorId(E, E.act);
+  if (w && w.k === 'exp') { return dsCarpetaDeWin(E, w) || E.root; }
+  return E.root;
+}
+function dsWinPorId(E, id) {
+  var i;
+  for (i = 0; i < E.wins.length; i++) { if (E.wins[i].id === id) { return E.wins[i]; } }
+  return null;
+}
+function dsNombreLibre(carpeta, base) {
+  if (!dsHijoPorNombre(carpeta, base)) { return base; }
+  var k = 2;
+  while (dsHijoPorNombre(carpeta, base + ' ' + k)) { k++; }
+  return base + ' ' + k;
+}
+function dsDump(nodo) {
+  var s = nodo.n + (nodo.t === 'd' ? '/' : '');
+  if (nodo.t === 'd') {
+    var hs = [], i;
+    for (i = 0; i < nodo.c.length; i++) { hs.push(dsDump(nodo.c[i])); }
+    hs.sort();
+    s += '[' + hs.join(',') + ']';
+  }
+  return s;
+}
+function dsClonar(nodo) {
+  var id = ++DS_ID;
+  if (nodo.t === 'd') {
+    var c = [], i;
+    for (i = 0; i < nodo.c.length; i++) { c.push(dsClonar(nodo.c[i])); }
+    return { id: id, t: 'd', n: nodo.n, c: c };
+  }
+  return { id: id, t: 'f', n: nodo.n, x: nodo.x };
+}
+function dsContiene(nodo, id) { return !!dsBusca(nodo, id, null); }
+
+/* ----- historial del sistema de archivos ----- */
+function dsSnap(E) { E.undo.push(JSON.stringify(E.root)); E.redo = []; if (E.undo.length > 60) { E.undo.shift(); } }
+function dsDeshacer(E) {
+  if (!E.undo.length) { sfx('mal'); return; }
+  E.redo.push(JSON.stringify(E.root));
+  E.root = JSON.parse(E.undo.pop());
+  E.sel = {}; contar('z'); sfx('click');
+  dsFixRutas(E); dsDibujar(E);
+}
+function dsRehacer(E) {
+  if (!E.redo.length) { sfx('mal'); return; }
+  E.undo.push(JSON.stringify(E.root));
+  E.root = JSON.parse(E.redo.pop());
+  E.sel = {}; contar('y'); sfx('click');
+  dsFixRutas(E); dsDibujar(E);
+}
+
+/* ----- operaciones ----- */
+function dsSeleccionados(E) {
+  var ids = [], k;
+  for (k in E.sel) { if (E.sel.hasOwnProperty(k) && E.sel[k]) { ids.push(parseInt(k, 10)); } }
+  return ids;
+}
+function dsCopiar(E, corta) {
+  var ids = dsSeleccionados(E);
+  if (!ids.length) { sfx('mal'); return; }
+  E.clip = { ids: ids, corta: corta };
+  contar(corta ? 'x' : 'c');
+  sfx('click');
+  dsMarcar(E);
+  toast(corta ? 'Cortado. Ahora pegalo donde quieras.' : 'Copiado. Ahora pegalo donde quieras.');
+}
+function dsPegar(E) {
+  if (!E.clip) { sfx('mal'); return; }
+  var dest = dsDestino(E);
+  var nuevos = {};
+  var hecho = false, i;
+  dsSnap(E);
+  for (i = 0; i < E.clip.ids.length; i++) {
+    var r = dsBusca(E.root, E.clip.ids[i], null);
+    if (!r || !r.p) { continue; }
+    if (E.clip.corta) {
+      if (r.p === dest) { continue; }
+      if (r.n.t === 'd' && dsContiene(r.n, dest.id)) { continue; }
+      var q = dsBusca(E.root, r.n.id, null);
+      q.p.c.splice(q.p.c.indexOf(q.n), 1);
+      r.n.n = dsHijoPorNombre(dest, r.n.n) ? dsNombreLibre(dest, r.n.n) : r.n.n;
+      dest.c.push(r.n); nuevos[r.n.id] = true; hecho = true;
+    } else {
+      var cl = dsClonar(r.n);
+      cl.n = dsNombreLibre(dest, cl.n);
+      dest.c.push(cl); nuevos[cl.id] = true; hecho = true;
+    }
+  }
+  if (!hecho) { E.undo.pop(); sfx('mal'); return; }
+  if (E.clip.corta) { E.clip = null; }
+  contar('v');
+  E.sel = nuevos;
+  sfx('ok');
+  dsDibujar(E);
+}
+function dsEliminar(E) {
+  var ids = dsSeleccionados(E);
+  if (!ids.length) { sfx('mal'); return; }
+  dsSnap(E);
+  var i;
+  for (i = 0; i < ids.length; i++) {
+    var r = dsBusca(E.root, ids[i], null);
+    if (r && r.p) { r.p.c.splice(r.p.c.indexOf(r.n), 1); }
+  }
+  E.sel = {};
+  contar('del');
+  sfx('pop');
+  dsFixRutas(E);
+  dsDibujar(E);
+}
+function dsMover(E, ids, dest) {
+  var hecho = false, i;
+  dsSnap(E);
+  for (i = 0; i < ids.length; i++) {
+    var r = dsBusca(E.root, ids[i], null);
+    if (!r || !r.p || r.p === dest) { continue; }
+    if (r.n.t === 'd' && dsContiene(r.n, dest.id)) { continue; }
+    r.p.c.splice(r.p.c.indexOf(r.n), 1);
+    if (dsHijoPorNombre(dest, r.n.n)) { r.n.n = dsNombreLibre(dest, r.n.n); }
+    dest.c.push(r.n);
+    hecho = true;
+  }
+  if (!hecho) { E.undo.pop(); sfx('mal'); return; }
+  contar('drag');
+  sfx('ok');
+  dsDibujar(E);
+}
+function dsSeleccionarTodo(E) {
+  var carpeta = dsDestino(E);
+  E.sel = {};
+  var i;
+  for (i = 0; i < carpeta.c.length; i++) { E.sel[carpeta.c[i].id] = true; }
+  contar('a');
+  sfx('click');
+  dsMarcar(E);
+}
+function dsEmpezarRenombrar(E) {
+  var ids = dsSeleccionados(E);
+  if (ids.length !== 1) { sfx('mal'); return; }
+  E.ren = ids[0];
+  dsDibujar(E);
+}
+function dsCerrarRenombre(E, valor) {
+  var id = E.ren;
+  E.ren = null;
+  if (valor !== null) {
+    var v = normTxt(valor);
+    var r = dsBusca(E.root, id, null);
+    if (r && v && v !== r.n.n) {
+      dsSnap(E);
+      r.n.n = v;
+      contar('f2');
+      sfx('ok');
+    }
+  }
+  dsDibujar(E);
+}
+function dsNuevaCarpeta(E) {
+  var dest = dsDestino(E);
+  dsSnap(E);
+  var n = { id: ++DS_ID, t: 'd', n: dsNombreLibre(dest, 'Nueva carpeta'), c: [] };
+  dest.c.push(n);
+  E.sel = {}; E.sel[n.id] = true;
+  E.ren = n.id;
+  sfx('pop');
+  dsDibujar(E);
+}
+function dsAbrir(E, id, ctx) {
+  var r = dsBusca(E.root, id, null);
+  if (!r) { return; }
+  if (r.n.t !== 'd') { toast('Es un archivo: acá solo se mira el nombre.'); return; }
+  sfx('click');
+  if (ctx !== 'D') {
+    var w = dsWinPorId(E, ctx);
+    if (w && w.k === 'exp') { w.path.push(id); E.sel = {}; dsDibujar(E); return; }
+  }
+  /* desde el escritorio: abrir ventana nueva en esa carpeta */
+  var ruta = [], cur = E.root;
+  var camino = dsRutaHasta(E.root, id, []);
+  dsNuevaVentana(E, { k: 'exp', path: camino || [id] });
+  E.sel = {};
+  dsDibujar(E);
+}
+function dsRutaHasta(nodo, id, acc) {
+  var i;
+  if (nodo.t !== 'd') { return null; }
+  for (i = 0; i < nodo.c.length; i++) {
+    if (nodo.c[i].id === id) { return acc.concat([id]); }
+    var r = dsRutaHasta(nodo.c[i], id, acc.concat([nodo.c[i].id]));
+    if (r) { return r; }
+  }
+  return null;
+}
+
+/* ----- ventanas ----- */
+function dsNuevaVentana(E, c) {
+  var n = E.wins.length;
+  var w = {
+    id: 'w' + (++E.nw), k: c.k || 'exp', path: (c.path || []).slice(0), t: c.t || '',
+    x: c.x !== undefined ? c.x : 160 + (n % 5) * 34, y: c.y !== undefined ? c.y : 40 + (n % 5) * 30,
+    w: c.w || 460, h: c.h || 320, min: false, z: ++E.zc, svg: c.svg || ''
+  };
+  E.wins.push(w);
+  E.act = w.id;
+  E.abiertas++;
+  return w;
+}
+function dsTitulo(E, w) {
+  if (w.k === 'visor') { return w.t; }
+  if (!w.path.length) { return 'Escritorio'; }
+  var r = dsBusca(E.root, w.path[w.path.length - 1], null);
+  return r ? r.n.n : 'Carpeta';
+}
+function dsSube(E, w) {
+  w.z = ++E.zc;
+  w.min = false;
+  E.act = w.id;
+  var i;
+  var wins = E.d.wn.getElementsByClassName('dwin');
+  for (i = 0; i < wins.length; i++) {
+    var id = wins[i].getAttribute('data-w');
+    var ww = dsWinPorId(E, id);
+    if (ww) { wins[i].style.zIndex = ww.z; setCls(wins[i], 'top', ww.id === w.id); }
+  }
+  dsTarea(E);
+}
+function dsTope(E) {
+  var best = null, i;
+  for (i = 0; i < E.wins.length; i++) { if (!E.wins[i].min && (!best || E.wins[i].z > best.z)) { best = E.wins[i]; } }
+  return best;
+}
+function dsAltTab(E) {
+  if (E.wins.length < 2) { sfx('mal'); return; }
+  var orden = E.wins.slice(0).sort(function (a, b) { return b.z - a.z; });
+  var w = orden[1];
+  contar('alttab');
+  E.cambios++;
+  sfx('pop');
+  dsSube(E, w);
+  dsDibujar(E);
+}
+function dsMostrarEscritorio(E) {
+  var i, algunaVisible = false;
+  for (i = 0; i < E.wins.length; i++) { if (!E.wins[i].min) { algunaVisible = true; } }
+  if (algunaVisible) {
+    E.minimizadas = [];
+    for (i = 0; i < E.wins.length; i++) { if (!E.wins[i].min) { E.minimizadas.push(E.wins[i].id); E.wins[i].min = true; } }
+  } else {
+    for (i = 0; i < E.wins.length; i++) { E.wins[i].min = false; }
+  }
+  contar('wind');
+  sfx('pop');
+  dsDibujar(E);
+}
+function dsWinE(E) {
+  contar('wine');
+  var w = dsNuevaVentana(E, { k: 'exp', path: [], w: 440, h: 300 });
+  sfx('pop');
+  dsDibujar(E);
+  return w;
+}
+
+/* ----- capturas ----- */
+function dsCaptura(E, esRecorte) {
+  var ahora = new Date().getTime();
+  if (ahora - E.ultCap < 500) { return; }
+  E.ultCap = ahora;
+  dsSnap(E);
+  var cap = dsHijoPorNombre(E.root, 'Capturas');
+  if (!cap) { cap = { id: ++DS_ID, t: 'd', n: 'Capturas', c: [] }; E.root.c.push(cap); }
+  var base = esRecorte ? 'Recorte' : 'Captura de pantalla';
+  var n = dsNombreLibre(cap, base + ' 1');
+  var k = 1;
+  while (dsHijoPorNombre(cap, base + ' ' + k)) { k++; }
+  cap.c.push({ id: ++DS_ID, t: 'f', n: base + ' ' + k, x: 'png' });
+  E.caps++;
+  contar(esRecorte ? 'recorte' : 'prt');
+  var fl = mk('div', 'flashB');
+  E.host.appendChild(fl);
+  setTimeout(function () { if (fl.parentNode) { fl.parentNode.removeChild(fl); } }, 600);
+  sfx('foto');
+  toast('Captura guardada en la carpeta Capturas');
+  dsDibujar(E);
+}
+function dsModoRecorte(E) {
+  if (E.recorte) { return; }
+  E.recorte = true;
+  var ov = mk('div', 'dsCap', '<div class="tip">Arrastrá para elegir qué recortar</div>');
+  E.d.ds.appendChild(ov);
+  var rect = null, ini = null;
+  function fin(guardar) {
+    document.removeEventListener('mousemove', mover, false);
+    document.removeEventListener('mouseup', soltar, false);
+    if (ov.parentNode) { ov.parentNode.removeChild(ov); }
+    E.recorte = null;
+    if (guardar) { dsCaptura(E, true); }
+  }
+  function mover(ev) {
+    if (!ini) { return; }
+    var p = loc(ev, ov);
+    rect.style.left = Math.min(ini.x, p.x) + 'px'; rect.style.top = Math.min(ini.y, p.y) + 'px';
+    rect.style.width = Math.abs(p.x - ini.x) + 'px'; rect.style.height = Math.abs(p.y - ini.y) + 'px';
+    rect.w = Math.abs(p.x - ini.x); rect.h = Math.abs(p.y - ini.y);
+  }
+  function soltar() { if (!ini) { return; } fin(rect && rect.w > 20 && rect.h > 20); }
+  ov.addEventListener('mousedown', function (ev) {
+    ini = loc(ev, ov);
+    rect = mk('div', 'rect');
+    rect.w = 0; rect.h = 0;
+    ov.appendChild(rect);
+    document.addEventListener('mousemove', mover, false);
+    document.addEventListener('mouseup', soltar, false);
+  }, false);
+  E.cancelaRecorte = function () { fin(false); };
+}
+
+/* ----- dibujo ----- */
+function dsItemEl(E, n, ctx) {
+  var d = mk('div', 'it');
+  d.setAttribute('data-id', n.id);
+  d.setAttribute('data-c', ctx);
+  d.draggable = true;
+  d.innerHTML = arIco(n.t === 'd' ? 'd' : n.x) + '<div class="nm"></div>';
+  var nm = d.childNodes[1];
+  if (E.ren === n.id) {
+    var inp = mk('input');
+    inp.value = n.n;
+    inp.spellcheck = false;
+    nm.appendChild(inp);
+    E.focoRen = inp;
+    inp.addEventListener('keydown', function (ev) {
+      if (ev.stopPropagation) { ev.stopPropagation(); }
+      if (ev.key === 'Enter') { ev.preventDefault(); dsCerrarRenombre(E, inp.value); }
+      else if (ev.key === 'Escape') { ev.preventDefault(); dsCerrarRenombre(E, null); }
+    }, false);
+    inp.addEventListener('mousedown', function (ev) { if (ev.stopPropagation) { ev.stopPropagation(); } }, false);
+    inp.addEventListener('contextmenu', function (ev) { if (ev.stopPropagation) { ev.stopPropagation(); } }, false);
+  } else {
+    nm.textContent = n.n;
+  }
+  return d;
+}
+function dsIconos(E) {
+  vaciar(E.d.ic);
+  var i;
+  for (i = 0; i < E.root.c.length; i++) { E.d.ic.appendChild(dsItemEl(E, E.root.c[i], 'D')); }
+}
+function dsVentanas(E) {
+  vaciar(E.d.wn);
+  var orden = E.wins.slice(0).sort(function (a, b) { return a.z - b.z; });
+  var top = dsTope(E);
+  var i;
+  for (i = 0; i < orden.length; i++) {
+    (function (w) {
+      if (w.min) { return; }
+      var box = mk('div', 'dwin' + (top && top.id === w.id ? ' top' : ''));
+      box.setAttribute('data-w', w.id);
+      box.style.left = w.x + 'px'; box.style.top = w.y + 'px'; box.style.width = w.w + 'px'; box.style.height = w.h + 'px';
+      box.style.zIndex = w.z;
+      box.appendChild(mk('div', 'wbar', '<span class="tt">' + esc(dsTitulo(E, w)) + '</span><button class="mn" title="Minimizar">–</button><button class="cl" title="Cerrar">×</button>'));
+      if (w.k === 'visor') {
+        box.appendChild(mk('div', 'visor', w.svg));
+      } else {
+        var rutaTxt = 'Escritorio', k;
+        for (k = 0; k < w.path.length; k++) { var rr = dsBusca(E.root, w.path[k], null); if (rr) { rutaTxt += ' › ' + esc(rr.n.n); } }
+        box.appendChild(mk('div', 'tool', '<button class="atras" title="Atrás">←</button><div class="ruta">' + rutaTxt + '</div>'));
+        var cu = mk('div', 'cuerpo');
+        cu.setAttribute('data-c', w.id);
+        var car = dsCarpetaDeWin(E, w);
+        if (car && car.c.length) {
+          var j;
+          for (j = 0; j < car.c.length; j++) { cu.appendChild(dsItemEl(E, car.c[j], w.id)); }
+        } else { cu.appendChild(mk('div', 'vacio', 'Esta carpeta está vacía')); }
+        box.appendChild(cu);
+      }
+      E.d.wn.appendChild(box);
+    })(orden[i]);
+  }
+}
+function dsTarea(E) {
+  var tk = E.d.tk;
+  vaciar(tk);
+  var st = mk('button', 'dsStart', arWin(22));
+  st.title = 'Inicio';
+  st.onclick = function (ev) { E.menuIni = !E.menuIni; dsMenuInicio(E); sfx('click'); };
+  tk.appendChild(st);
+  var top = dsTope(E), i;
+  for (i = 0; i < E.wins.length; i++) {
+    (function (w) {
+      var b = mk('button', 'dsTb' + (w.min ? ' min' : '') + (top && top.id === w.id ? ' act' : ''));
+      b.textContent = dsTitulo(E, w);
+      b.onclick = function () {
+        if (!w.min && top && top.id === w.id) { w.min = true; E.act = 'D'; dsDibujar(E); }
+        else { w.min = false; dsSube(E, w); dsDibujar(E); }
+        sfx('click');
+      };
+      tk.appendChild(b);
+    })(E.wins[i]);
+  }
+  var cam = mk('button', 'dsCam', arCamara(22));
+  cam.title = 'Captura de pantalla';
+  cam.onclick = function () { dsCaptura(E, false); };
+  tk.appendChild(cam);
+  tk.appendChild(mk('div', 'dsClock', '10:42'));
+}
+function dsMenuInicio(E) {
+  var viejo = E.d.ds.getElementsByClassName('dsMenu');
+  while (viejo.length) { viejo[0].parentNode.removeChild(viejo[0]); }
+  if (!E.menuIni) { return; }
+  var m = mk('div', 'dsMenu');
+  var items = [
+    ['Explorador de archivos', 'Win + E', function () { dsWinE(E); }],
+    ['Mostrar el escritorio', 'Win + D', function () { dsMostrarEscritorio(E); }],
+    ['Recorte de pantalla', 'Win + Mayús + S', function () { dsModoRecorte(E); }]
+  ];
+  var i;
+  for (i = 0; i < items.length; i++) {
+    (function (it) {
+      var d = mk('div', '', esc(it[0]) + '<span>' + esc(it[1]) + '</span>');
+      d.onclick = function () { E.menuIni = false; dsMenuInicio(E); it[2](); };
+      m.appendChild(d);
+    })(items[i]);
+  }
+  E.d.ds.appendChild(m);
+}
+function dsMarcar(E) {
+  var its = E.d.ds.getElementsByClassName('it');
+  var i;
+  for (i = 0; i < its.length; i++) {
+    var id = parseInt(its[i].getAttribute('data-id'), 10);
+    setCls(its[i], 'sel', !!E.sel[id]);
+    var corta = false;
+    if (E.clip && E.clip.corta) { var k; for (k = 0; k < E.clip.ids.length; k++) { if (E.clip.ids[k] === id) { corta = true; } } }
+    setCls(its[i], 'cut', corta);
+  }
+}
+function dsDibujar(E) {
+  dsIconos(E);
+  dsVentanas(E);
+  dsTarea(E);
+  dsMarcar(E);
+  if (E.ren && E.focoRen) {
+    var inp = E.focoRen;
+    try { inp.focus(); inp.select(); } catch (e) { }
+    inp.onblur = function () { if (E.ren) { dsCerrarRenombre(E, inp.value); } };
+    setTimeout(function () { if (E.ren && document.activeElement !== inp) { try { inp.focus(); inp.select(); } catch (e2) { } } }, 0);
+  }
+}
+
+/* ----- menú contextual ----- */
+function dsCerrarMenu(E) {
+  var m = E.d.ds.getElementsByClassName('cm');
+  while (m.length) { m[0].parentNode.removeChild(m[0]); }
+}
+function dsMenuContextual(E, ev, itemId, ctx) {
+  dsCerrarMenu(E);
+  var m = mk('div', 'cm');
+  var lista = [];
+  var ids = dsSeleccionados(E);
+  if (itemId) {
+    var r = dsBusca(E.root, itemId, null);
+    lista.push(['Abrir', '', function () { dsAbrir(E, itemId, ctx); }, !(r && r.n.t === 'd')]);
+    lista.push(['-']);
+    lista.push(['Cortar', 'Ctrl+X', function () { dsCopiar(E, true); }]);
+    lista.push(['Copiar', 'Ctrl+C', function () { dsCopiar(E, false); }]);
+    lista.push(['Cambiar nombre', 'F2', function () { dsEmpezarRenombrar(E); }, ids.length !== 1]);
+    lista.push(['-']);
+    lista.push(['Eliminar', 'Supr', function () { dsEliminar(E); }]);
+  } else {
+    lista.push(['Nueva carpeta', 'Ctrl+Mayús+N', function () { dsNuevaCarpeta(E); }]);
+    lista.push(['Pegar', 'Ctrl+V', function () { dsPegar(E); }, !E.clip]);
+    lista.push(['Seleccionar todo', 'Ctrl+A', function () { dsSeleccionarTodo(E); }]);
+  }
+  var i;
+  for (i = 0; i < lista.length; i++) {
+    (function (it) {
+      if (it[0] === '-') { m.appendChild(mk('hr')); return; }
+      var d = mk('div', it[3] ? 'off' : '', esc(it[0]) + '<span>' + esc(it[1]) + '</span>');
+      d.onclick = function () { if (it[3]) { return; } dsCerrarMenu(E); it[2](); };
+      m.appendChild(d);
+    })(lista[i]);
+  }
+  var p = loc(ev, E.d.ds);
+  m.style.left = Math.min(p.x, 700) + 'px';
+  m.style.top = Math.min(p.y, 470) + 'px';
+  E.d.ds.appendChild(m);
+  sfx('click');
+}
+
+/* ----- construcción y eventos ----- */
+function dsSube2(el, cls, tope) {
+  while (el && el !== tope) {
+    if (el.className && typeof el.className === 'string' && hasCls(el, cls)) { return el; }
+    el = el.parentNode;
+  }
+  return null;
+}
+function dsBuild(cfg, host) {
+  var E = {
+    kind: 'desk', host: host, root: null, wins: [], zc: 10, nw: 0, sel: {}, act: 'D', clip: null, undo: [], redo: [],
+    ren: null, focoRen: null, caps: 0, abiertas: 0, cambios: 0, ultClick: null, ultCap: 0, menuIni: false, recorte: null, drag: null, d: {}
+  };
+  E.root = dsNodo(['d', 'Escritorio', cfg.fs]);
+  var ds = mk('div', 'ds');
+  host.appendChild(ds);
+  var ic = mk('div', 'dsIcons'), wn = mk('div', 'dsWins'), tk = mk('div', 'dsTask');
+  ds.appendChild(ic); ds.appendChild(wn); ds.appendChild(tk);
+  E.d = { ds: ds, ic: ic, wn: wn, tk: tk };
+  var i;
+  for (i = 0; i < (cfg.wins || []).length; i++) {
+    var c = cfg.wins[i];
+    c.path = dsIdsDeNombres(E, c.ruta || []);
+    dsNuevaVentana(E, c);
+  }
+  E.act = 'D';
+  if (cfg.activa !== undefined) { E.act = E.wins[cfg.activa].id; }
+  E.abiertas = 0;
+  E.dump0 = dsDump(E.root);
+
+  /* -- ratón -- */
+  ds.addEventListener('mousedown', function (ev) { dsAbajo(E, ev); }, false);
+  ds.addEventListener('click', function (ev) { dsClic(E, ev); }, false);
+  ds.addEventListener('contextmenu', function (ev) {
+    ev.preventDefault();
+    var it = dsSube2(ev.target, 'it', ds);
+    var win = dsSube2(ev.target, 'dwin', ds);
+    if (dsSube2(ev.target, 'dsTask', ds)) { return; }
+    var ctx = it ? it.getAttribute('data-c') : (win ? win.getAttribute('data-w') : 'D');
+    E.act = ctx;
+    if (it) {
+      var id = parseInt(it.getAttribute('data-id'), 10);
+      if (!E.sel[id]) { E.sel = {}; E.sel[id] = true; dsMarcar(E); }
+      dsMenuContextual(E, ev, id, ctx);
+    } else {
+      if (win && win.getAttribute('data-w')) { var w = dsWinPorId(E, win.getAttribute('data-w')); if (w && w.k !== 'exp') { return; } }
+      dsMenuContextual(E, ev, 0, ctx);
+    }
+  }, false);
+  /* -- arrastrar y soltar archivos -- */
+  ds.addEventListener('dragstart', function (ev) {
+    var it = dsSube2(ev.target, 'it', ds);
+    if (!it) { return; }
+    var id = parseInt(it.getAttribute('data-id'), 10);
+    if (!E.sel[id]) { E.sel = {}; E.sel[id] = true; dsMarcar(E); }
+    E.drag = dsSeleccionados(E);
+    try { ev.dataTransfer.setData('text/plain', 'archivo'); ev.dataTransfer.effectAllowed = 'move'; } catch (e) { }
+  }, false);
+  ds.addEventListener('dragover', function (ev) {
+    if (!E.drag) { return; }
+    var t = dsDestinoDrop(E, ev.target);
+    if (t) { ev.preventDefault(); dsLimpiaOver(E); addCls(t.el, 'drag-over'); }
+  }, false);
+  ds.addEventListener('drop', function (ev) {
+    if (!E.drag) { return; }
+    var t = dsDestinoDrop(E, ev.target);
+    dsLimpiaOver(E);
+    if (t) { ev.preventDefault(); var ids = E.drag; E.drag = null; dsMover(E, ids, t.carpeta); }
+  }, false);
+  ds.addEventListener('dragend', function () { E.drag = null; dsLimpiaOver(E); }, false);
+
+  E.ls = function (ruta) {
+    var n = dsPorRuta(E, ruta);
+    if (!n || n.t !== 'd') { return []; }
+    var o = [], k;
+    for (k = 0; k < n.c.length; k++) { o.push(n.c[k].n); }
+    return o;
+  };
+  E.tiene = function (ruta) { return !!dsPorRuta(E, ruta); };
+  E.dump = function () { return dsDump(E.root); };
+  E.visibles = function () { var k, n = 0; for (k = 0; k < E.wins.length; k++) { if (!E.wins[k].min) { n++; } } return n; };
+  E.key = function (ev) { return dsTecla(E, ev); };
+  E.combo = function (c) { return dsCombo(E, c); };
+  E.destroy = function () { };
+  dsDibujar(E);
+  return E;
+}
+function dsLimpiaOver(E) {
+  var xs = E.d.ds.getElementsByClassName('drag-over');
+  while (xs.length) { rmCls(xs[0], 'drag-over'); }
+}
+function dsDestinoDrop(E, target) {
+  var it = dsSube2(target, 'it', E.d.ds);
+  if (it) {
+    var id = parseInt(it.getAttribute('data-id'), 10);
+    var r = dsBusca(E.root, id, null);
+    var arrastrando = false, k;
+    for (k = 0; k < E.drag.length; k++) { if (E.drag[k] === id) { arrastrando = true; } }
+    if (r && r.n.t === 'd' && !arrastrando) { return { el: it, carpeta: r.n }; }
+  }
+  var cu = dsSube2(target, 'cuerpo', E.d.ds);
+  if (cu) {
+    var w = dsWinPorId(E, cu.getAttribute('data-c'));
+    if (w) { var c = dsCarpetaDeWin(E, w); if (c) { return { el: cu, carpeta: c }; } }
+  }
+  var ic = dsSube2(target, 'dsIcons', E.d.ds);
+  if (ic) { return { el: ic, carpeta: E.root }; }
+  return null;
+}
+function dsAbajo(E, ev) {
+  var ds = E.d.ds;
+  if (!dsSube2(ev.target, 'cm', ds)) { dsCerrarMenu(E); }
+  if (!dsSube2(ev.target, 'dsMenu', ds) && !dsSube2(ev.target, 'dsStart', ds) && E.menuIni) { E.menuIni = false; dsMenuInicio(E); }
+  if (ev.button === 2) { return; }
+  var winEl = dsSube2(ev.target, 'dwin', ds);
+  var it = dsSube2(ev.target, 'it', ds);
+  if (E.ren && ev.target.tagName !== 'INPUT') { dsCerrarRenombre(E, E.focoRen ? E.focoRen.value : null); return; }
+  if (winEl) {
+    var w = dsWinPorId(E, winEl.getAttribute('data-w'));
+    if (w) {
+      if (dsSube2(ev.target, 'wbar', winEl) && ev.target.tagName !== 'BUTTON') { dsArrastrarVentana(E, w, winEl, ev); }
+      dsSube(E, w);
+    }
+  } else if (dsSube2(ev.target, 'dsIcons', ds) || ev.target === ds) {
+    E.act = 'D';
+  }
+  if (it) {
+    var id = parseInt(it.getAttribute('data-id'), 10);
+    var ctx = it.getAttribute('data-c');
+    if (E.selIn !== ctx) { E.sel = {}; E.selIn = ctx; }
+    E.act = ctx;
+    if (ev.ctrlKey || ev.metaKey) { E.sel[id] = !E.sel[id]; }
+    else if (!E.sel[id]) { E.sel = {}; E.sel[id] = true; }
+    dsMarcar(E);
+    var ahora = new Date().getTime();
+    if (E.ultClick && E.ultClick.id === id && ahora - E.ultClick.t < 450 && !(ev.ctrlKey || ev.metaKey)) {
+      E.ultClick = null;
+      E.sel = {}; E.sel[id] = true;
+      dsAbrir(E, id, ctx);
+      return;
+    }
+    E.ultClick = { id: id, t: ahora };
+  } else if (!dsSube2(ev.target, 'wbar', ds) && !dsSube2(ev.target, 'dsTask', ds) && !dsSube2(ev.target, 'tool', ds) && !dsSube2(ev.target, 'dsMenu', ds) && !dsSube2(ev.target, 'cm', ds)) {
+    if (!(ev.ctrlKey || ev.metaKey)) { E.sel = {}; dsMarcar(E); }
+    if (winEl) { E.selIn = winEl.getAttribute('data-w'); } else { E.selIn = 'D'; }
+  }
+}
+function dsClic(E, ev) {
+  var ds = E.d.ds;
+  var btn = ev.target;
+  if (btn.tagName === 'BUTTON' && dsSube2(btn, 'wbar', ds)) {
+    var winEl = dsSube2(btn, 'dwin', ds);
+    var w = dsWinPorId(E, winEl.getAttribute('data-w'));
+    if (!w) { return; }
+    if (btn.className === 'mn') { w.min = true; E.act = 'D'; }
+    else { E.wins.splice(E.wins.indexOf(w), 1); E.act = 'D'; }
+    sfx('pop');
+    dsDibujar(E);
+    return;
+  }
+  if (btn.tagName === 'BUTTON' && btn.className === 'atras') {
+    var we = dsSube2(btn, 'dwin', ds);
+    var w2 = dsWinPorId(E, we.getAttribute('data-w'));
+    if (w2 && w2.path.length) { w2.path.pop(); E.sel = {}; sfx('click'); dsDibujar(E); }
+    return;
+  }
+  var it = dsSube2(ev.target, 'it', ds);
+  if (it && !(ev.ctrlKey || ev.metaKey)) {
+    var id = parseInt(it.getAttribute('data-id'), 10);
+    var n = dsSeleccionados(E).length;
+    if (n > 1 && E.sel[id]) { E.sel = {}; E.sel[id] = true; dsMarcar(E); }
+  }
+}
+function dsArrastrarVentana(E, w, el, ev) {
+  var p0 = loc(ev, E.d.ds);
+  var ox = p0.x - w.x, oy = p0.y - w.y;
+  function mover(e2) {
+    var p = loc(e2, E.d.ds);
+    w.x = Math.max(-200, Math.min(900, p.x - ox));
+    w.y = Math.max(0, Math.min(560, p.y - oy));
+    el.style.left = w.x + 'px'; el.style.top = w.y + 'px';
+  }
+  function soltar() {
+    document.removeEventListener('mousemove', mover, false);
+    document.removeEventListener('mouseup', soltar, false);
+  }
+  document.addEventListener('mousemove', mover, false);
+  document.addEventListener('mouseup', soltar, false);
+}
+function dsTecla(E, e) {
+  if (E.ren) { return false; }
+  var ctrl = e.ctrlKey || e.metaKey;
+  var k = e.key;
+  var kl = (k || '').toLowerCase();
+  if (k === 'PrintScreen') { e.preventDefault(); dsCaptura(E, false); return true; }
+  if (k === 'Escape') {
+    if (E.recorte && E.cancelaRecorte) { E.cancelaRecorte(); return true; }
+    dsCerrarMenu(E);
+    if (E.menuIni) { E.menuIni = false; dsMenuInicio(E); }
+    return true;
+  }
+  if (ctrl && !e.shiftKey && kl === 'a') { e.preventDefault(); dsSeleccionarTodo(E); return true; }
+  if (ctrl && kl === 'c') { e.preventDefault(); dsCopiar(E, false); return true; }
+  if (ctrl && kl === 'x') { e.preventDefault(); dsCopiar(E, true); return true; }
+  if (ctrl && kl === 'v') { e.preventDefault(); dsPegar(E); return true; }
+  if (ctrl && !e.shiftKey && kl === 'z') { e.preventDefault(); dsDeshacer(E); return true; }
+  if (ctrl && (kl === 'y' || (e.shiftKey && kl === 'z'))) { e.preventDefault(); dsRehacer(E); return true; }
+  if (ctrl && e.shiftKey && kl === 'n') { e.preventDefault(); dsNuevaCarpeta(E); return true; }
+  if (k === 'F2') { e.preventDefault(); dsEmpezarRenombrar(E); return true; }
+  if (k === 'Delete') { e.preventDefault(); dsEliminar(E); return true; }
+  if (k === 'Enter') {
+    var ids = dsSeleccionados(E);
+    if (ids.length === 1) { e.preventDefault(); dsAbrir(E, ids[0], E.selIn || 'D'); return true; }
+  }
+  if (k === 'Backspace' || (e.altKey && k === 'ArrowLeft')) {
+    var w = dsWinPorId(E, E.act);
+    if (w && w.k === 'exp' && w.path.length) { e.preventDefault(); w.path.pop(); E.sel = {}; sfx('click'); dsDibujar(E); return true; }
+  }
+  return false;
+}
+function dsCombo(E, c) {
+  var k = c.key;
+  if (c.alt && k === 'tab') { dsAltTab(E); return true; }
+  if (c.win && !c.shift && k === 'e') { dsWinE(E); return true; }
+  if (c.win && !c.shift && k === 'd') { dsMostrarEscritorio(E); return true; }
+  if (c.win && c.shift && k === 's') { dsModoRecorte(E); return true; }
+  if (c.ctrl && c.shift && k === 'n') { dsNuevaCarpeta(E); return true; }
+  return false;
+}
+
+/* ----- el gato en el escritorio ----- */
+function dsGatoOps(E, ops) {
+  var i;
+  for (i = 0; i < ops.length; i++) {
+    (function (op, n) {
+      setTimeout(function () {
+        gatoCruza(E.host, function () {
+          var nodo = dsPorRuta(E, op.p);
+          if (!nodo) { return; }
+          var r = dsBusca(E.root, nodo.id, null);
+          if (!r || !r.p) { return; }
+          dsSnap(E);
+          if (op.op === 'del') { r.p.c.splice(r.p.c.indexOf(r.n), 1); }
+          else if (op.op === 'ren') { r.n.n = op.a; }
+          else if (op.op === 'mov') {
+            var dest = dsPorRuta(E, op.a);
+            if (dest) { r.p.c.splice(r.p.c.indexOf(r.n), 1); dest.c.push(r.n); }
+          }
+          E.sel = {};
+          E.golpes = (E.golpes || 0) + 1;
+          dsFixRutas(E);
+          dsDibujar(E);
+        });
+      }, n * 1200);
+    })(ops[i], i);
+  }
+}
+/* ===== misiones: todo el contenido del juego ===== */
+var JORS = [
+  { n: 1, t: 'La mañana de Bigotes', s: 'Copiar, pegar, cortar y deshacer', cls: 'j1' },
+  { n: 2, t: 'La tarde de las pestañas', s: 'Navegador: buscar, zoom, volver y pestañas', cls: 'j2' },
+  { n: 3, t: 'La hora pico', s: 'Escritorio: carpetas, ventanas y capturas', cls: 'j3' }
+];
+
+function msCuenta(s, sub) { return s.split(sub).length - 1; }
+function msEn(lista, nombre) {
+  var i;
+  for (i = 0; i < lista.length; i++) { if (sinTilde(normTxt(lista[i])) === sinTilde(nombre)) { return true; } }
+  return false;
+}
+function msTw(id, t, v, ro, x, y, w, h) { return { id: id, t: t, v: v, ro: !!ro, x: x, y: y, w: w, h: h }; }
+function msIzq(id, t, v, ro) { return msTw(id, t, v, ro, 24, 24, 440, 540); }
+function msDer(id, t, v, ro) { return msTw(id, t, v, ro, 476, 24, 440, 540); }
+function msSolo(id, t, v, ro) { return msTw(id, t, v, ro, 150, 24, 640, 540); }
+function msCarp(n, c) { return ['d', n, c || []]; }
+function msArch(n, x) { return ['f', n, x]; }
+function msFotos() { return msCarp('Fotos', [msArch('IMG_0001', 'jpg'), msArch('IMG_0002', 'jpg'), msArch('IMG_0003', 'jpg'), msArch('IMG_0004', 'jpg')]); }
+function msDocs() { return msCarp('Documentos', [msArch('Receta', 'doc'), msArch('Cuentas', 'xls')]); }
+function msFsBase(extra) {
+  var b = [msFotos(), msDocs(), msCarp('Capturas', [])];
+  var i;
+  for (i = 0; extra && i < extra.length; i++) { b.push(extra[i]); }
+  return b;
+}
+function msTxt(cfg) { return { env: 'texto', cfg: function () { return cfg(); } }; }
+
+var CARTA1 = 'Estimada Marta:\nGracias por las tortas.\nUn abrazo, Beto';
+var CARTEL1 = 'Hoy: tortas\nMañana: pan\nPasado: nada';
+var ZOO1 = 'El zoo abre a las 9.\nLa entrada cuesta 350 pesos.\nSe puede ir en grupo.';
+var MENU1 = 'Milanesa con puré\nTarta de verdura\nFlan casero';
+
+var MS = [
+  /* ---------------- PRÓLOGO ---------------- */
+  { id: 'pro1', jor: 0, t: 'Camino largo', env: 'texto', par: 99,
+    cfg: function () { return { lock: true, wins: [msIzq('a', 'Lista de direcciones', 'Calle Artigas 123\nCalle Sarandí 45\nCalle Rivera 678', true), msDer('b', 'Libreta', '', false)] }; },
+    pasos: [{ c: 0, d: 'Pasá las tres direcciones a la libreta. Solo con el mouse.', g: [], pista: 'Triple clic elige una línea. Clic derecho abre el menú.',
+      ok: function (E) { var v = E.val('b'); return v.indexOf('Calle Artigas 123') >= 0 && v.indexOf('Calle Sarandí 45') >= 0 && v.indexOf('Calle Rivera 678') >= 0; } }],
+    dato: 'Anotá tu tiempo: ahora viene el camino corto, con el mismo trabajo.' },
+  { id: 'pro2', jor: 0, t: 'Camino corto', env: 'texto', par: 99, guia: true,
+    cfg: function () { return { lock: false, wins: [msIzq('a', 'Lista de direcciones', 'Plaza Libertad 12\nAvenida Italia 340\nCalle Colón 59', true), msDer('b', 'Libreta', '', false)] }; },
+    pasos: [{ c: 0, d: 'Lo mismo, pero ahora con el teclado.', g: [['Ctrl', 'C'], ['Ctrl', 'V']], pista: 'Triple clic elige una línea.',
+      ok: function (E) { var v = E.val('b'); return v.indexOf('Plaza Libertad 12') >= 0 && v.indexOf('Avenida Italia 340') >= 0 && v.indexOf('Calle Colón 59') >= 0; } }],
+    dato: '' },
+
+  /* ---------------- JORNADA 1 ---------------- */
+  { id: 'j1a', jor: 1, t: 'Copiar y pegar', env: 'texto', par: 25, guia: true,
+    cfg: function () { return { wins: [msIzq('a', 'Agenda', 'Farmacia: 4352 1020\nPanadería: 4352 7788\nTaller: 4352 3344', true), msDer('b', 'Libreta', '', false)] }; },
+    pasos: [{ c: 0, d: 'Pasá la línea de la farmacia a la libreta.', g: [['Ctrl', 'C'], ['Ctrl', 'V']], pista: 'Triple clic elige toda la línea.',
+      ok: function (E) { return E.val('b').indexOf('4352 1020') >= 0; } }],
+    dato: 'Ctrl + C copia y Ctrl + V pega. Lo copiado queda guardado hasta que copies otra cosa.' },
+  { id: 'j1b', jor: 1, t: 'Cortar', env: 'texto', par: 25, guia: true,
+    cfg: function () { return { wins: [msIzq('a', 'Pendientes', 'Pan\nLeche\nTortas\nQueso', false), msDer('b', 'Pedido del horno', '', false)] }; },
+    pasos: [{ c: 1, d: 'Mové «Tortas» al pedido del horno.', g: [['Ctrl', 'X'], ['Ctrl', 'V']], pista: 'Cortar es copiar y sacar del lugar de origen.',
+      ok: function (E) { return E.val('a').indexOf('Tortas') < 0 && E.val('b').indexOf('Tortas') >= 0; } }],
+    dato: 'Ctrl + X corta: saca el texto de acá y lo guarda para pegarlo en otro lado.' },
+  { id: 'j1c', jor: 1, t: 'Seleccionar todo', env: 'texto', par: 25, guia: true,
+    cfg: function () { return { wins: [msIzq('a', 'Receta', 'Tortas fritas\n4 tazas de harina\n1 cucharada de sal\n1 taza de agua tibia\nAmasar bien\nEstirar y cortar\nFreír hasta dorar', true), msDer('b', 'Libreta', '', false)] }; },
+    pasos: [{ c: 2, d: 'Pasá TODA la receta a la libreta.', g: [['Ctrl', 'A'], ['Ctrl', 'C'], ['Ctrl', 'V']], pista: 'Hacé clic en la receta antes de empezar.',
+      ok: function (E) { return normTxt(E.val('b')) === normTxt(E.val('a')); } }],
+    dato: 'Ctrl + A elige todo el texto de una vez. La A es de «All», que en inglés es «todo».' },
+  { id: 'j1d', jor: 1, t: 'Deshacer', env: 'texto', par: 20, guia: true, gato: true,
+    cfg: function () { return { wins: [msSolo('a', 'Carta', CARTA1, false)] }; },
+    pasos: [{ c: 3, d: '¡Bigotes escribió en mi carta! Deshacelo.', g: [['Ctrl', 'Z']], pista: 'Apretalo las veces que haga falta.',
+      ini: function (E) { txGato(E, 'a', 'spam'); },
+      ok: function (E) { return E.golpes >= 1 && E.val('a') === CARTA1; } }],
+    dato: 'Ctrl + Z deshace lo último que pasó. Podés apretarlo varias veces para ir hacia atrás.' },
+  { id: 'j1e', jor: 1, t: 'Rehacer', env: 'texto', par: 25, guia: true, gato: true,
+    cfg: function () { return { wins: [msSolo('a', 'Cartel de la vidriera', CARTEL1, false)] }; },
+    pasos: [
+      { c: 4, d: 'Bigotes borró una línea. Recuperala.', g: [['Ctrl', 'Z']], pista: 'Ctrl + Z trae lo que se perdió.',
+        ini: function (E) { txGato(E, 'a', 'borra', { n: 1 }); },
+        ok: function (E) { return E.golpes >= 1 && E.val('a').indexOf('Mañana: pan') >= 0; } },
+      { c: 4, d: 'Mejor que quede borrada. Rehacé el borrado.', g: [['Ctrl', 'Y']], pista: 'Y va para adelante, Z va para atrás.',
+        ok: function (E) { return E.val('a').indexOf('Mañana: pan') < 0; } }],
+    dato: 'Ctrl + Y rehace lo que deshiciste. Z va hacia atrás y Y va hacia adelante.' },
+  { id: 'j1f', jor: 1, t: 'Tres desastres', env: 'texto', par: 30, gato: true,
+    cfg: function () { return { wins: [msSolo('a', 'Aviso del zoo', ZOO1, false)] }; },
+    pasos: [{ c: 5, d: 'Bigotes lo arruinó tres veces. Dejalo como estaba.', g: [['Ctrl', 'Z']], pista: 'Tres desastres, tres veces Ctrl + Z.',
+      ini: function (E) { txGatoSeguido(E, [{ id: 'a', op: 'spam' }, { id: 'a', op: 'cambia', args: { de: '350', por: 'miau' } }, { id: 'a', op: 'borra', args: { n: 0 } }]); },
+      ok: function (E) { return E.golpes >= 3 && E.val('a') === ZOO1; } }],
+    dato: 'Cada Ctrl + Z deshace una sola cosa. Tres desastres piden tres Ctrl + Z.' },
+  { id: 'j1g', jor: 1, t: 'Pegar varias veces', env: 'texto', par: 25,
+    cfg: function () { return { wins: [msIzq('a', 'Etiqueta', 'ETIQUETA: Alfajor de dulce de leche', true), msDer('b', 'Hoja de etiquetas', '', false)] }; },
+    pasos: [{ c: 6, d: 'Necesito 3 etiquetas iguales. Copiá una vez y pegá tres.', g: [['Ctrl', 'C'], ['Ctrl', 'V']], pista: 'Copiás una sola vez; pegás todas las que quieras.',
+      ok: function (E) { return msCuenta(E.val('b'), 'Alfajor de dulce de leche') >= 3; } }],
+    dato: 'Copiás una sola vez y pegás todas las veces que necesites.' },
+  { id: 'j1h', jor: 1, t: 'Cuidado con deshacer de más', env: 'texto', par: 35, gato: true,
+    cfg: function () { return { wins: [msIzq('a', 'Dirección', 'Calle Sarandí 45', true), msDer('b', 'Carta', 'Querida Rita:\nTe espero en ', false)] }; },
+    pasos: [
+      { c: 7, d: 'Agregá la dirección al final de la carta.', g: [['Ctrl', 'C'], ['Ctrl', 'V']], pista: 'Hacé clic al final del texto de la carta.',
+        ok: function (E) { return E.val('b').indexOf('Calle Sarandí 45') >= 0; } },
+      { c: 7, d: '¡Bigotes escribió encima! Sacá lo suyo y dejá la dirección.', g: [['Ctrl', 'Z'], ['Ctrl', 'Y']], pista: 'Si deshacés de más, Ctrl + Y devuelve lo que sacaste.',
+        ini: function (E) { txGato(E, 'b', 'spam'); },
+        ok: function (E) { return E.golpes >= 1 && E.val('b').indexOf('Calle Sarandí 45') >= 0 && E.val('b').indexOf('miau') < 0; } }],
+    dato: 'Si deshacés de más, Ctrl + Y te devuelve lo que sacaste sin querer.' },
+
+  /* ---------------- JORNADA 2 ---------------- */
+  { id: 'j2a', jor: 2, t: 'Buscar en la página', env: 'nav', par: 40, guia: true,
+    cfg: function () { return { tabs: [{ hist: ['panaderia'] }], nota: true }; },
+    pasos: [{ c: 8, d: '¿A qué hora cierra la panadería? Anotalo en la libreta.', g: [['Ctrl', 'F']], pista: 'Buscá la palabra «cierra».',
+      ok: function (E) { return /(20\s*[:.h]?\s*30|8\s*[:.]\s*30)/.test(E.nota()); } }],
+    dato: 'Ctrl + F busca una palabra en toda la página y te lleva hasta ella.' },
+  { id: 'j2b', jor: 2, t: 'Zoom', env: 'nav', par: 35, guia: true,
+    cfg: function () { return { tabs: [{ hist: ['chiquita'] }], nota: true }; },
+    pasos: [
+      { c: 9, d: 'No veo nada. Agrandá la página y anotá el código.', g: [['Ctrl', '+']], pista: 'También sirve Ctrl y la rueda del mouse.',
+        ok: function (E) { return E.nota().indexOf('4721') >= 0 && E.zoomNow() >= 1.5; } },
+      { c: 9, d: 'Ahora volvé al tamaño normal.', g: [['Ctrl', '0']], pista: 'El cero vuelve todo a 100 %.',
+        ok: function (E) { return Math.abs(E.zoomNow() - 1) < 0.001; } }],
+    dato: 'Ctrl + más agranda, Ctrl + menos achica, y Ctrl + 0 vuelve al tamaño normal.' },
+  { id: 'j2c', jor: 2, t: 'Volver y avanzar', env: 'nav', par: 25, guia: true,
+    cfg: function () { return { tabs: [{ hist: ['inicio', 'rara'] }] }; },
+    pasos: [
+      { c: 0, d: 'Entré a la página equivocada. Volvé.', g: [['Alt', '←']], pista: 'También sirve la flechita de la izquierda.',
+        ok: function (E) { return E.pg() === 'inicio'; } },
+      { c: 0, d: 'Mejor sí era esa. Andá hacia adelante.', g: [['Alt', '→']], pista: 'Ahora la flecha de la derecha.',
+        ok: function (E) { return E.pg() === 'rara'; } }],
+    dato: 'Alt + flecha izquierda vuelve a la página anterior. Alt + flecha derecha va hacia adelante.' },
+  { id: 'j2d', jor: 2, t: 'Recargar', env: 'nav', par: 25, guia: true,
+    cfg: function () { return { tabs: [{ hist: ['colgada'], stuck: true }] }; },
+    pasos: [
+      { c: 1, d: 'La página se colgó. Recargala.', g: [['F5']], pista: 'También sirve el botón de la flecha redonda.',
+        ok: function (E) { return !E.stuckNow() && E.reloads >= 1; } },
+      { c: 1, d: '¡Se colgó otra vez! Recargala de nuevo.', g: [['F5']], pista: 'Ctrl + R hace lo mismo que F5.',
+        ini: function (E) { nvTab(E).stuck = true; nvDibujar(E); },
+        ok: function (E) { return !E.stuckNow() && E.reloads >= 2; } }],
+    dato: 'F5 (o Ctrl + R) recarga la página cuando se cuelga o quedó vieja.' },
+  { id: 'j2e', jor: 2, t: 'Pestaña nueva', env: 'nav', par: 30, guia: true, kb: ['Ctrl', 'T'],
+    cfg: function () { return { tabs: [{ hist: ['panaderia'] }] }; },
+    pasos: [{ c: 2, d: 'Abrí una pestaña nueva y entrá al zoo.', g: [['Ctrl', 'T']], pista: 'Usá el teclado de práctica de abajo a la izquierda.',
+      ok: function (E) { return E.tabs.length >= 2 && E.hay('zoo'); } }],
+    dato: 'Ctrl + T abre una pestaña nueva. La T es de «Tab», que en inglés es pestaña.' },
+  { id: 'j2f', jor: 2, t: 'Cerrar pestañas', env: 'nav', par: 35, guia: true, kb: ['Ctrl', 'W', 'Tab'],
+    cfg: function () { return { tabs: [{ hist: ['inicio'] }, { hist: ['zoo'] }, { hist: ['museo'] }, { hist: ['rara'] }, { hist: ['panaderia'] }], cur: 3 }; },
+    pasos: [{ c: 3, d: 'Hay un montón de pestañas. Dejá solo la panadería.', g: [['Ctrl', 'W']], pista: 'Con Ctrl + Tab pasás de una pestaña a la otra.',
+      ok: function (E) { return E.tabs.length === 1 && E.pg() === 'panaderia'; } }],
+    dato: 'Ctrl + W cierra la pestaña que estás mirando.' },
+  { id: 'j2g', jor: 2, t: 'Saltar entre pestañas', env: 'nav', par: 40, kb: ['Ctrl', 'Tab'],
+    cfg: function () { return { tabs: [{ hist: ['zoo'] }, { hist: ['museo'] }], cur: 0, nota: true }; },
+    pasos: [{ c: 4, d: '¿Qué entrada sale menos, la del zoo o la del museo? Anotá el nombre.', g: [['Ctrl', 'Tab']], pista: 'Mirá las dos pestañas antes de contestar.',
+      ok: function (E) { return /museo/i.test(E.nota()) && E.vis.zoo && E.vis.museo; } }],
+    dato: 'Ctrl + Tab salta a la pestaña de al lado, sin usar el mouse.' },
+  { id: 'j2h', jor: 2, t: 'Buscar en una guía larga', env: 'nav', par: 45, kb: ['Ctrl', 'T', 'W', 'Tab'],
+    cfg: function () { return { tabs: [{ hist: ['inicio'] }], nota: true }; },
+    pasos: [{ c: 5, d: 'Buscá el teléfono de la veterinaria y anotalo.', g: [['Ctrl', 'F']], pista: 'Entrá a la Guía de Servicios y buscá «veterinaria».',
+      ok: function (E) { return E.nota().indexOf('8877') >= 0; } }],
+    dato: 'En una página larga, Ctrl + F encuentra en segundos lo que a ojo tardarías minutos.' },
+  { id: 'j2i', jor: 2, t: 'Hora pico en el navegador', env: 'nav', par: 60, kb: ['Ctrl', 'T', 'W', 'Tab'], modo: 'par',
+    cfg: function () { return { tabs: [{ hist: ['inicio'] }], nota: true }; },
+    pasos: [
+      { c: 0, d: 'Anotá lo que cuesta entrar al zoo.', g: [['Ctrl', 'T'], ['Ctrl', 'Tab']], ok: function (E) { return /350/.test(E.nota()); } },
+      { c: 7, d: 'Y yo quiero el precio del museo.', g: [['Ctrl', 'T'], ['Ctrl', 'Tab']], ok: function (E) { return /280/.test(E.nota()); } }],
+    dato: 'Con varias pestañas abiertas no perdés el lugar en ninguna.' },
+
+  /* ---------------- JORNADA 3 ---------------- */
+  { id: 'j3a', jor: 3, t: 'Cambiar nombre', env: 'desk', par: 25, guia: true,
+    cfg: function () { return { fs: msFsBase(), wins: [{ k: 'exp', ruta: ['Fotos'], x: 170, y: 40, w: 520, h: 340 }] }; },
+    pasos: [{ c: 2, d: 'Cambiale el nombre a IMG_0001: que se llame Torta.', g: [['F2']], pista: 'Tocá el archivo y apretá F2. Enter para terminar.',
+      ok: function (E) { var l = E.ls('Fotos'); return msEn(l, 'Torta') && !msEn(l, 'IMG_0001'); } }],
+    dato: 'F2 cambia el nombre del archivo que tengas elegido.' },
+  { id: 'j3b', jor: 3, t: 'Carpeta nueva', env: 'desk', par: 30, guia: true, kb: ['Ctrl', 'Shift', 'N'],
+    cfg: function () { return { fs: msFsBase(), wins: [] }; },
+    pasos: [{ c: 3, d: 'Creá una carpeta que se llame Fiesta.', g: [['Ctrl', 'Shift', 'N']], pista: 'También: clic derecho en el escritorio y «Nueva carpeta».',
+      ok: function (E) { return msEn(E.ls(''), 'Fiesta'); } }],
+    dato: 'Clic derecho abre un menú con casi todo, y al lado de cada opción aparece su atajo.' },
+  { id: 'j3c', jor: 3, t: 'Copiar archivos', env: 'desk', par: 35, guia: true,
+    cfg: function () { return { fs: msFsBase([msCarp('Fiesta', [])]), wins: [{ k: 'exp', ruta: ['Fotos'], x: 140, y: 40, w: 395, h: 330 }, { k: 'exp', ruta: ['Fiesta'], x: 545, y: 40, w: 395, h: 330 }] }; },
+    pasos: [{ c: 4, d: 'Copiá IMG_0002 a la carpeta Fiesta.', g: [['Ctrl', 'C'], ['Ctrl', 'V']], pista: 'Elegí el archivo, copiá, hacé clic en Fiesta y pegá.',
+      ok: function (E) { return msEn(E.ls('Fotos'), 'IMG_0002') && msEn(E.ls('Fiesta'), 'IMG_0002'); } }],
+    dato: 'Ctrl + C y Ctrl + V también copian archivos, no solo texto.' },
+  { id: 'j3d', jor: 3, t: 'Mover todo', env: 'desk', par: 35, guia: true,
+    cfg: function () { return { fs: msFsBase([msCarp('Fiesta', [])]), wins: [{ k: 'exp', ruta: ['Fotos'], x: 140, y: 40, w: 395, h: 330 }, { k: 'exp', ruta: ['Fiesta'], x: 545, y: 40, w: 395, h: 330 }] }; },
+    pasos: [{ c: 5, d: 'Mové TODAS las fotos a la carpeta Fiesta.', g: [['Ctrl', 'A'], ['Ctrl', 'X'], ['Ctrl', 'V']], pista: 'También podés arrastrarlas con el mouse.',
+      ok: function (E) { return E.ls('Fotos').length === 0 && E.ls('Fiesta').length >= 4; } }],
+    dato: 'Ctrl + A elige todos los archivos de la carpeta. Con Ctrl + X y Ctrl + V los movés de una.' },
+  { id: 'j3e', jor: 3, t: 'Recuperar archivos', env: 'desk', par: 25, guia: true, gato: true,
+    cfg: function () { return { fs: msFsBase(), wins: [{ k: 'exp', ruta: ['Fotos'], x: 170, y: 40, w: 520, h: 340 }] }; },
+    pasos: [{ c: 6, d: 'Bigotes borró varias fotos. ¡Recuperalas!', g: [['Ctrl', 'Z']], pista: 'Una vez por cada foto que borró.',
+      ini: function (E) { dsGatoOps(E, [{ op: 'del', p: 'Fotos/IMG_0001' }, { op: 'del', p: 'Fotos/IMG_0002' }, { op: 'del', p: 'Fotos/IMG_0003' }]); },
+      ok: function (E) { return E.golpes >= 3 && E.ls('Fotos').length === 4; } }],
+    dato: 'Ctrl + Z también recupera archivos que se borraron sin querer.' },
+  { id: 'j3f', jor: 3, t: 'Cambiar de ventana', env: 'desk', par: 40, guia: true, kb: ['Alt', 'Tab'],
+    cfg: function () { return { fs: msFsBase([msCarp('Álbum', [])]), wins: [{ k: 'exp', ruta: ['Álbum'], x: 330, y: 150, w: 480, h: 320 }, { k: 'exp', ruta: ['Fotos'], x: 150, y: 40, w: 480, h: 320 }] }; },
+    pasos: [{ c: 7, d: 'Llevá IMG_0003 al Álbum. Cambiá de ventana con el teclado.', g: [['Ctrl', 'C'], ['Alt', 'Tab'], ['Ctrl', 'V']], pista: 'Alt + Tab está en el teclado de práctica.',
+      ok: function (E) { return msEn(E.ls('Álbum'), 'IMG_0003') && E.cambios >= 1; } }],
+    dato: 'Alt + Tab salta a la ventana que usaste antes. Apretándolo de nuevo, volvés.' },
+  { id: 'j3g', jor: 3, t: 'Mostrar el escritorio', env: 'desk', par: 30, guia: true, kb: ['Win', 'D', 'E'],
+    cfg: function () { return { fs: msFsBase(), wins: [{ k: 'exp', ruta: ['Fotos'], x: 140, y: 30, w: 420, h: 300 }, { k: 'exp', ruta: ['Documentos'], x: 280, y: 120, w: 420, h: 300 }, { k: 'exp', ruta: ['Capturas'], x: 420, y: 210, w: 420, h: 280 }] }; },
+    pasos: [
+      { c: 8, d: '¡Qué lío de ventanas! Mostrá el escritorio.', g: [['Win', 'D']], pista: 'Windows + D esconde todas las ventanas.',
+        ok: function (E) { return E.visibles() === 0; } },
+      { c: 8, d: 'Ahora abrí el Explorador de archivos.', g: [['Win', 'E']], pista: 'Windows + E abre una ventana de archivos.',
+        ok: function (E) { return E.abiertas >= 1 && E.visibles() >= 1; } }],
+    dato: 'La tecla Windows con D muestra el escritorio. Con E abre el Explorador de archivos.' },
+  { id: 'j3h', jor: 3, t: 'Captura de pantalla', env: 'desk', par: 40, guia: true, kb: ['Win', 'Shift', 'S'],
+    cfg: function () { return { fs: msFsBase(), wins: [{ k: 'visor', t: 'Mapa del recorrido', svg: arMapa(), x: 150, y: 30, w: 520, h: 380 }, { k: 'exp', ruta: ['Capturas'], x: 530, y: 230, w: 400, h: 300 }] }; },
+    pasos: [
+      { c: 9, d: 'Sacale una captura al mapa.', g: [['Impr Pant']], pista: 'También: Win + Shift + S, o el botón de la cámara.',
+        ok: function (E) { return E.caps >= 1; } },
+      { c: 9, d: 'Cambiale el nombre a la captura: que se llame Mapa.', g: [['F2']], pista: 'Está en la carpeta Capturas.',
+        ok: function (E) { return msEn(E.ls('Capturas'), 'Mapa'); } }],
+    dato: 'Impr Pant (o Windows + Shift + S) saca una foto de lo que se ve en la pantalla.' },
+  { id: 'j3i', jor: 3, t: 'Hora pico en el escritorio', env: 'desk', par: 60, modo: 'par', kb: ['Alt', 'Tab'],
+    cfg: function () { return { fs: msFsBase([msCarp('Fiesta', [])]), wins: [{ k: 'exp', ruta: ['Fotos'], x: 140, y: 20, w: 395, h: 270 }, { k: 'exp', ruta: ['Documentos'], x: 545, y: 20, w: 395, h: 270 }, { k: 'exp', ruta: ['Fiesta'], x: 340, y: 300, w: 420, h: 250 }] }; },
+    pasos: [
+      { c: 3, d: 'Ponele «Tía» a IMG_0004.', g: [['F2']], ok: function (E) { return msEn(E.ls('Fotos'), 'Tia'); } },
+      { c: 0, d: 'Copiá la Receta a la carpeta Fiesta.', g: [['Ctrl', 'C'], ['Ctrl', 'V']], ok: function (E) { return msEn(E.ls('Fiesta'), 'Receta') && msEn(E.ls('Documentos'), 'Receta'); } }],
+    dato: 'Con dos pedidos a la vez, el truco es no soltar un atajo hasta terminarlo.' },
+  { id: 'j3j', jor: 3, t: 'Bigotes revuelve todo', env: 'desk', par: 55, gato: true,
+    cfg: function () { return { fs: msFsBase([msCarp('Fiesta', [])]), wins: [{ k: 'exp', ruta: ['Fotos'], x: 140, y: 30, w: 395, h: 300 }, { k: 'exp', ruta: ['Documentos'], x: 545, y: 30, w: 395, h: 300 }] }; },
+    pasos: [{ c: 6, d: 'Bigotes revolvió todo el ciber. Dejalo como estaba.', g: [['Ctrl', 'Z']], pista: 'Cuatro travesuras, cuatro veces Ctrl + Z.',
+      ini: function (E) { dsGatoOps(E, [{ op: 'del', p: 'Fotos/IMG_0002' }, { op: 'ren', p: 'Fotos/IMG_0004', a: 'asdfg' }, { op: 'mov', p: 'Documentos/Cuentas', a: 'Fiesta' }, { op: 'del', p: 'Documentos/Receta' }]); },
+      ok: function (E) { return E.golpes >= 4 && E.dump() === E.dump0; } }],
+    dato: 'Con Ctrl + Z deshacés cada travesura, y con Ctrl + Y las rehacés si te pasaste.' },
+
+  /* ---------------- TURNO DE NOCHE (extra) ---------------- */
+  { id: 'n1', jor: 4, t: 'Menú del día', env: 'texto', par: 30, gato: true,
+    cfg: function () { return { wins: [msIzq('a', 'Menú del día', MENU1, true), msDer('b', 'Pizarra', '', false)] }; },
+    pasos: [
+      { c: 1, d: 'Copiá el menú completo a la pizarra.', g: [['Ctrl', 'A'], ['Ctrl', 'C'], ['Ctrl', 'V']], ok: function (E) { return normTxt(E.val('b')) === normTxt(MENU1); } },
+      { c: 1, d: 'Bigotes la ensució dos veces. ¡Arreglala rápido!', g: [['Ctrl', 'Z']],
+        ini: function (E) { txGatoSeguido(E, [{ id: 'b', op: 'spam' }, { id: 'b', op: 'spam', args: { txt: 'miau miau 12345' } }]); },
+        ok: function (E) { return E.golpes >= 2 && normTxt(E.val('b')) === normTxt(MENU1); } }],
+    dato: '' },
+  { id: 'n2', jor: 4, t: 'Precios de la panadería', env: 'nav', par: 45, modo: 'par', kb: ['Ctrl', 'T', 'W', 'Tab'],
+    cfg: function () { return { tabs: [{ hist: ['inicio'] }], nota: true }; },
+    pasos: [
+      { c: 2, d: '¿Cuánto cuesta el pan francés? Anotalo.', g: [['Ctrl', 'F']], ok: function (E) { return /60/.test(E.nota()); } },
+      { c: 9, d: 'Yo quiero saber el precio de la torta de cumpleaños.', g: [['Ctrl', 'F']], ok: function (E) { return /900/.test(E.nota()); } }],
+    dato: '' },
+  { id: 'n3', jor: 4, t: 'Álbum de la fiesta', env: 'desk', par: 50,
+    cfg: function () { return { fs: msFsBase([msCarp('Fiesta', [])]), wins: [{ k: 'exp', ruta: ['Fotos'], x: 140, y: 40, w: 395, h: 330 }, { k: 'exp', ruta: ['Fiesta'], x: 545, y: 40, w: 395, h: 330 }] }; },
+    pasos: [
+      { c: 4, d: 'Ponele «Perro» a IMG_0001.', g: [['F2']], ok: function (E) { return msEn(E.ls('Fotos'), 'Perro'); } },
+      { c: 4, d: 'Copiá todas las fotos a Fiesta. Las originales se quedan.', g: [['Ctrl', 'A'], ['Ctrl', 'C'], ['Ctrl', 'V']], ok: function (E) { return E.ls('Fiesta').length >= 4 && E.ls('Fotos').length === 4; } }],
+    dato: '' },
+  { id: 'n4', jor: 4, t: 'La gran noche', env: 'desk', par: 75, gato: true,
+    cfg: function () { return { fs: msFsBase([msCarp('Fiesta', [])]), wins: [{ k: 'visor', t: 'Mapa del recorrido', svg: arMapa(), x: 140, y: 30, w: 440, h: 360 }, { k: 'exp', ruta: ['Fotos'], x: 560, y: 30, w: 380, h: 280 }, { k: 'exp', ruta: ['Capturas'], x: 560, y: 320, w: 380, h: 240 }] }; },
+    pasos: [
+      { c: 6, d: 'Bigotes revolvió todo. Dejalo como estaba.', g: [['Ctrl', 'Z']],
+        ini: function (E) { dsGatoOps(E, [{ op: 'del', p: 'Fotos/IMG_0001' }, { op: 'ren', p: 'Fotos/IMG_0003', a: 'zzz' }, { op: 'mov', p: 'Fotos/IMG_0004', a: 'Fiesta' }]); },
+        ok: function (E) { return E.golpes >= 3 && E.dump() === E.dump0; } },
+      { c: 6, d: 'Ahora sacale una captura al mapa y llamala «Listo».', g: [['Impr Pant'], ['F2']], ok: function (E) { return msEn(E.ls('Capturas'), 'Listo'); } }],
+    dato: '' }
+];
+
+function msPorId(id) { var i; for (i = 0; i < MS.length; i++) { if (MS[i].id === id) { return MS[i]; } } return null; }
+function msIndice(id) { var i; for (i = 0; i < MS.length; i++) { if (MS[i].id === id) { return i; } } return -1; }
+/* ===== flujo: pantallas, misiones, resultados, logros ===== */
+var CNT_NOMBRES = [
+  ['c', 'Copiar', 'Ctrl + C'], ['v', 'Pegar', 'Ctrl + V'], ['x', 'Cortar', 'Ctrl + X'], ['a', 'Seleccionar todo', 'Ctrl + A'],
+  ['z', 'Deshacer', 'Ctrl + Z'], ['y', 'Rehacer', 'Ctrl + Y'], ['f', 'Buscar en la página', 'Ctrl + F'], ['zoom', 'Zoom', 'Ctrl + / −'],
+  ['r', 'Recargar', 'F5'], ['back', 'Volver', 'Alt + ←'], ['t', 'Pestaña nueva', 'Ctrl + T'], ['w', 'Cerrar pestaña', 'Ctrl + W'],
+  ['tab', 'Saltar de pestaña', 'Ctrl + Tab'], ['f2', 'Cambiar nombre', 'F2'], ['alttab', 'Cambiar de ventana', 'Alt + Tab'],
+  ['wind', 'Mostrar escritorio', 'Win + D'], ['wine', 'Explorador', 'Win + E'], ['prt', 'Captura', 'Impr Pant'], ['recorte', 'Recorte', 'Win + Shift + S']
+];
+var REALES = [
+  ['Abrí una pestaña nueva', ['Ctrl', 'T']], ['Cerrala (la del juego no)', ['Ctrl', 'W']],
+  ['Cambiá de ventana', ['Alt', 'Tab']], ['Abrí el Explorador de archivos', ['Win', 'E']],
+  ['Mostrá el escritorio (y volvé a apretar)', ['Win', 'D']], ['Sacá una captura de pantalla', ['Win', 'Shift', 'S']],
+  ['Cambiale el nombre a un archivo', ['F2']], ['Buscá una palabra en una página', ['Ctrl', 'F']]
+];
+var LOGROS = [
+  { id: 'primero', n: 'Primer cliente', d: 'Terminá tu primer pedido.', ok: function () { return flHechas() >= 1; } },
+  { id: 'camino', n: 'El atajo gana', d: 'Hacé el camino corto más rápido que el largo.', ok: function () { return P.pro.largo > 0 && P.pro.corto > 0 && P.pro.corto < P.pro.largo; } },
+  { id: 'rayo', n: 'Dedos de rayo', d: 'Terminá un pedido en la mitad del tiempo.', ok: function () { return !!P.rayo; } },
+  { id: 'sinayuda', n: 'Sin ayuda', d: 'Conseguí 3 estrellas en 5 pedidos.', ok: function () { return flTresEstrellas() >= 5; } },
+  { id: 'gatos', n: 'Domador de gatos', d: 'Terminá la jornada de Bigotes.', ok: function () { return flJorHecha(1); } },
+  { id: 'pest', n: 'Capitán de pestañas', d: 'Terminá la jornada de las pestañas.', ok: function () { return flJorHecha(2); } },
+  { id: 'escr', n: 'Dueño del escritorio', d: 'Terminá la hora pico.', ok: function () { return flJorHecha(3); } },
+  { id: 'maestroz', n: 'Maestro del Ctrl + Z', d: 'Deshacé 15 veces.', ok: function () { return (P.cnt.z || 0) >= 15; } },
+  { id: 'oro', n: 'Todo de oro', d: 'Conseguí 3 estrellas en 15 pedidos.', ok: function () { return flTresEstrellas() >= 15; } },
+  { id: 'noche', n: 'Turno de noche', d: 'Terminá los 4 pedidos extra.', ok: function () { return flJorHecha(4); } },
+  { id: 'real', n: 'Misión real', d: 'Hacé los 8 atajos en la compu de verdad.', ok: function () { return flRealesHechos() >= 8; } }
+];
+
+function flHechas() { var n = 0, i; for (i = 0; i < MS.length; i++) { if (P.mis[MS[i].id] && P.mis[MS[i].id].e >= 1) { n++; } } return n; }
+function flHecha(id) { var m = P.mis[id]; return !!(m && (m.e >= 1 || m.salt)); }
+function flJorHecha(j) {
+  var i, n = 0, t = 0;
+  for (i = 0; i < MS.length; i++) { if (MS[i].jor === j) { t++; if (flHecha(MS[i].id)) { n++; } } }
+  return t > 0 && n === t;
+}
+function flTresEstrellas() { var n = 0, i; for (i = 0; i < MS.length; i++) { var m = P.mis[MS[i].id]; if (MS[i].jor > 0 && m && m.e >= 3) { n++; } } return n; }
+function flRealesHechos() { var n = 0, i; for (i = 0; i < REALES.length; i++) { if (P.real[i]) { n++; } } return n; }
+function flAbierta(id) {
+  if (P.todo) { return true; }
+  var i = msIndice(id);
+  if (i <= 0) { return true; }
+  return flHecha(MS[i - 1].id);
+}
+function flSiguiente() {
+  var i;
+  for (i = 0; i < MS.length; i++) { if (flAbierta(MS[i].id) && !flHecha(MS[i].id)) { return MS[i].id; } }
+  return null;
+}
+function flRegalo() { return P.pro.largo > 0 && P.pro.corto > 0 ? Math.max(0, Math.round((P.pro.largo - P.pro.corto) / 1000)) : 0; }
+function flEstrellasTotales() { var n = 0, i; for (i = 0; i < MS.length; i++) { var m = P.mis[MS[i].id]; if (MS[i].jor > 0 && m) { n += m.e; } } return n; }
+function flMostrar(n) {
+  var ps = ['portada', 'mapa', 'juego', 'real'], i;
+  for (i = 0; i < ps.length; i++) { setCls($(ps[i]), 'on', ps[i] === n); }
+  G.pant = n;
+}
+function flCapa(html, extra) {
+  var c = $('capa');
+  c.innerHTML = '<div class="vela"><div class="tarjeta ' + (extra || '') + '">' + html + '</div></div>';
+  return c.firstChild.firstChild;
+}
+function flCapaCerrar() { $('capa').innerHTML = ''; G.capaOk = null; }
+function flBtnSon() { return P.sonido ? 'Sonido: sí' : 'Sonido: no'; }
+function flAlternarSonido(b) { P.sonido = !P.sonido; svEscribir(); if (b) { b.textContent = flBtnSon(); } if (P.sonido) { sfx('click'); } }
+
+/* ---------------- portada ---------------- */
+function flPortada() {
+  var p = $('portada');
+  var tiene = P.nombre !== '';
+  var form;
+  if (tiene) {
+    form = '<div style="display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:4px">' + arYo(P.color, 70) +
+      '<div style="text-align:left"><div style="font-size:16px;color:#c9d3f5">Bienvenido de vuelta</div><div style="font-size:30px;font-weight:900">' + esc(P.nombre) + '</div></div></div>' +
+      '<button class="btnGrande" id="bSeguir">Seguir el turno</button><div id="pSeguir">¿Es otra persona?<button id="bOtro">Nuevo jugador</button></div>';
+  } else {
+    var g = '', i;
+    for (i = 0; i < COLGORRA.length; i++) { g += '<button class="gorra' + (i === P.color ? ' on' : '') + '" data-g="' + i + '" style="background:' + COLGORRA[i] + '"></button>'; }
+    form = '<label>¿Cómo te llamás?</label><input id="nombre" maxlength="14" autocomplete="off" spellcheck="false"><label style="margin-top:12px;margin-bottom:0">Elegí el color de tu gorra</label><div id="gorras">' + g + '</div><button class="btnGrande" id="bEmp">Empezar el turno</button>';
+  }
+  p.innerHTML = arEscena() +
+    '<div style="position:absolute;left:44px;top:130px;width:230px">' + arDon(230) + '</div>' +
+    '<div id="pTitulo"><div class="neon">Ciber Don Atajo</div><div class="sub">Atendé a los clientes con el teclado y el mouse</div></div>' +
+    '<div id="pForm">' + form + '</div><div id="pPie">Clase de Informática · 3.º, 4.º y 5.º</div>' +
+    '<div id="pOpc"><button class="btnChico" id="bSon">' + flBtnSon() + '</button></div>';
+  $('bSon').onclick = function () { flAlternarSonido($('bSon')); };
+  if (tiene) {
+    $('bSeguir').onclick = function () { sfx('click'); flMapa(); };
+    $('bOtro').onclick = function () {
+      if (G.confirmaOtro) { svBorrar(); P = pNuevo(); G.confirmaOtro = false; flPortada(); return; }
+      G.confirmaOtro = true; $('bOtro').textContent = 'Tocá otra vez: se borra todo el avance'; sfx('mal');
+    };
+  } else {
+    var gs = p.getElementsByClassName('gorra'), k;
+    for (k = 0; k < gs.length; k++) {
+      (function (b) {
+        b.onclick = function () {
+          P.color = parseInt(b.getAttribute('data-g'), 10);
+          var all = p.getElementsByClassName('gorra'), z;
+          for (z = 0; z < all.length; z++) { setCls(all[z], 'on', all[z] === b); }
+          sfx('click');
+        };
+      })(gs[k]);
+    }
+    var empezar = function () {
+      var v = normTxt($('nombre').value);
+      P.nombre = v || 'Pasante';
+      svEscribir();
+      sfx('ok');
+      flMapa();
+    };
+    $('bEmp').onclick = empezar;
+    $('nombre').onkeydown = function (ev) { if (ev.key === 'Enter') { empezar(); } };
+    setTimeout(function () { try { $('nombre').focus(); } catch (e) { } }, 50);
+  }
+}
+
+/* ---------------- mapa ---------------- */
+function flNodo(def, sigId) {
+  var m = P.mis[def.id];
+  var abierta = flAbierta(def.id);
+  var hecha = flHecha(def.id);
+  var cls = 'nodo' + (hecha ? ' hecho' : '') + (!hecha && abierta && def.id === sigId ? ' sig' : '') + (!abierta ? ' bl' : '');
+  var e = m && m.e ? m.e : 0;
+  var est = '';
+  var k;
+  if (def.jor > 0) { for (k = 0; k < 3; k++) { est += k < e ? '★' : '·'; } }
+  var n = msIndice(def.id);
+  var etiqueta = def.jor === 0 ? (def.id === 'pro1' ? 'L' : 'C') : String(def.num);
+  return '<div class="' + cls + '"><button data-id="' + def.id + '" title="' + esc(def.t) + '">' + etiqueta + '</button><div class="est">' + est + '</div></div>';
+}
+function flMapa() {
+  flMostrar('mapa');
+  flCapaCerrar();
+  window.onbeforeunload = null;
+  var sig = flSiguiente();
+  var cnt = {}, i;
+  for (i = 0; i < MS.length; i++) { cnt[MS[i].jor] = (cnt[MS[i].jor] || 0) + 1; MS[i].num = cnt[MS[i].jor]; }
+  var h = '<div id="mHead"><div class="yo">' + arYo(P.color, 56) + '<div><b>' + esc(P.nombre) + '</b><span>Pasante del ciber</span></div></div><div class="esp"></div>' +
+    '<div class="stat"><span class="moneda"></span>' + P.propinas + ' <small>propinas</small></div>' +
+    '<div class="stat">★ ' + flEstrellasTotales() + ' <small>estrellas</small></div>' +
+    '<div class="stat">' + flRegalo() + ' s <small>regalados</small></div>' +
+    '<button class="btnChico" id="bLog">Logros</button><button class="btnChico" id="bCred">Credencial</button><button class="btnChico" id="bSon">' + flBtnSon() + '</button></div>';
+  h += '<div id="mCards">';
+  var j, js = '';
+  for (j = 0; j < JORS.length; j++) {
+    var J = JORS[j];
+    var ns = '', hechas = 0, tot = 0;
+    for (i = 0; i < MS.length; i++) { if (MS[i].jor === J.n) { ns += flNodo(MS[i], sig); tot++; if (flHecha(MS[i].id)) { hechas++; } } }
+    var abierta = flAbierta(MS[msIndice('j' + J.n + 'a')].id);
+    js += '<div class="jCard ' + J.cls + (abierta ? '' : ' bloq') + '"><div class="jn">Jornada ' + J.n + ' · ' + hechas + ' de ' + tot + '</div><h3>' + esc(J.t) + '</h3><p>' + esc(J.s) + '</p><div class="nodos">' + ns + '</div></div>';
+  }
+  h += js + '</div><div id="mFila">';
+  var pro = flNodo(MS[0], sig) + flNodo(MS[1], sig);
+  h += '<div class="mini' + (sig === 'pro1' || sig === 'pro2' ? ' sig' : '') + '"><h4>El primer día</h4><p>Camino largo, camino corto.</p><div class="nodos" style="margin-top:6px">' + pro + '</div></div>';
+  var noche = '';
+  for (i = 0; i < MS.length; i++) { if (MS[i].jor === 4) { noche += flNodo(MS[i], sig); } }
+  var nocheAb = flAbierta('n1');
+  h += '<div class="mini' + (nocheAb ? '' : ' bloq') + '"><h4>Turno de noche</h4><p>Para los que vuelan. Sin ayuda.</p><div class="nodos" style="margin-top:6px">' + noche + '</div></div>';
+  var realAb = P.todo || flJorHecha(3);
+  h += '<div class="mini' + (realAb ? ' sig' : ' bloq') + '"><h4>La misión real</h4><p>Ahora, en la compu de verdad. ' + flRealesHechos() + ' de 8.</p><button class="btnChico" id="bReal">' + (realAb ? 'Ir a la misión real' : 'Se abre al terminar la hora pico') + '</button></div>';
+  h += '</div>';
+  $('mapa').innerHTML = h;
+  $('bSon').onclick = function () { flAlternarSonido($('bSon')); };
+  $('bLog').onclick = function () { sfx('click'); flLogros(); };
+  $('bCred').onclick = function () { sfx('click'); flCredencial(); };
+  $('bReal').onclick = function () { if (realAb) { sfx('click'); flReal(); } else { sfx('mal'); } };
+  var bs = $('mapa').getElementsByTagName('button'), k;
+  for (k = 0; k < bs.length; k++) {
+    (function (b) {
+      var id = b.getAttribute('data-id');
+      if (!id) { return; }
+      b.onclick = function () { if (flAbierta(id)) { sfx('click'); flIniciar(id); } else { sfx('mal'); toast('Primero terminá el pedido anterior.'); } };
+    })(bs[k]);
+  }
+}
+
+/* ---------------- misión ---------------- */
+function flConstruirJuego() {
+  $('juego').innerHTML =
+    '<div id="jTop"><button class="btnChico" id="jMenu">‹ Menú</button><div class="tit" id="jTit"></div><div class="tiempo" id="jTiempo">0:00</div>' +
+    '<div class="stat" style="height:36px;font-size:17px"><span class="moneda" style="width:18px;height:18px"></span><span id="jProp">0</span></div><button class="btnChico" id="jSon"></button></div>' +
+    '<div id="jIzq"><div id="jCli"></div><div id="jPista"></div><div id="jKbp"></div>' +
+    '<div id="jBot"><button class="btnChico" id="jAyuda">Ayuda</button><button class="btnChico" id="jDeNuevo">De nuevo</button><button class="btnChico" id="jPasar" style="display:none">Pasar</button></div></div>' +
+    '<div id="jSim"><div id="simIn"></div></div>';
+  $('jMenu').onclick = function () { sfx('click'); flSalirMision(); };
+  $('jSon').onclick = function () { flAlternarSonido($('jSon')); };
+  $('jAyuda').onclick = function () { flAyuda(); };
+  $('jDeNuevo').onclick = function () { sfx('click'); flCargarEntorno(); };
+  $('jPasar').onclick = function () { flPasar(); };
+}
+function flIniciar(id) {
+  flCapaCerrar();
+  flConstruirJuego();
+  var def = msPorId(id);
+  G.ms = { def: def, idx: 0, done: [], t0: new Date().getTime(), ayuda: false, usoAyuda: false, fin: false, tFin: 0 };
+  flMostrar('juego');
+  var jt = def.jor === 0 ? 'El primer día' : (def.jor === 4 ? 'Turno de noche' : 'Jornada ' + def.jor + ' · ' + JORS[def.jor - 1].t);
+  $('jTit').innerHTML = '<small>' + esc(jt) + '</small>' + esc(def.t);
+  $('jSon').textContent = flBtnSon();
+  $('jProp').textContent = P.propinas;
+  flCargarEntorno();
+  if (G.timer) { clearInterval(G.timer); }
+  G.timer = setInterval(flTick, 150);
+  window.onbeforeunload = function () { return 'Si salís ahora, el pedido queda sin terminar.'; };
+}
+function flCargarEntorno() {
+  var m = G.ms;
+  if (G.env && G.env.destroy) { G.env.destroy(); }
+  var host = $('simIn');
+  vaciar(host);
+  var def = m.def;
+  var cfg = def.cfg();
+  if (def.env === 'texto') { G.env = txBuild(cfg, host); }
+  else if (def.env === 'nav') { G.env = nvBuild(cfg, host); }
+  else { G.env = dsBuild(cfg, host); }
+  m.idx = 0; m.done = [];
+  var i;
+  for (i = 0; i < def.pasos.length; i++) { m.done.push(false); }
+  if (def.modo === 'par') {
+    for (i = 0; i < def.pasos.length; i++) { if (def.pasos[i].ini) { def.pasos[i].ini(G.env); } }
+  } else if (def.pasos[0].ini) { def.pasos[0].ini(G.env); }
+  flClientes(true);
+  flPista();
+  flKbp();
+}
+function flClientes(nuevo) {
+  var m = G.ms, def = m.def, h = '';
+  var lista = [], i;
+  if (def.modo === 'par') { for (i = 0; i < def.pasos.length; i++) { lista.push(i); } } else { lista.push(m.idx); }
+  for (i = 0; i < lista.length; i++) {
+    var p = def.pasos[lista[i]];
+    var c = CLIS[p.c % CLIS.length];
+    h += '<div class="cli' + (nuevo ? ' nuevo' : '') + (m.done[lista[i]] ? ' hecho' : '') + '"><div class="av">' + arCliente(p.c, 76) + '<span>' + esc(c.n) + '</span></div><div class="bub">' + esc(p.d) + '</div><div class="tilde">✓</div></div>';
+  }
+  if (def.modo !== 'par' && def.pasos.length > 1) {
+    h += '<div style="font-size:13px;color:#93a0c8;margin:-2px 0 4px 4px">Pedido ' + (m.idx + 1) + ' de ' + def.pasos.length + '</div>';
+  }
+  $('jCli').innerHTML = h;
+}
+function flPista() {
+  var m = G.ms, def = m.def, pan = $('jPista');
+  var combos = [], txt = '', i;
+  if (def.modo === 'par') {
+    for (i = 0; i < def.pasos.length; i++) { if (!m.done[i]) { combos = combos.concat(def.pasos[i].g || []); } }
+  } else {
+    var p = def.pasos[m.idx];
+    combos = p.g || [];
+    txt = p.pista || '';
+  }
+  var ver = def.guia || m.ayuda;
+  var h = '';
+  if (ver && combos.length) {
+    var k;
+    h += '<div class="lbl">Pista</div><div class="' + (def.guia ? 'pulsa' : '') + '">';
+    for (k = 0; k < combos.length; k++) {
+      if (k > 0) { h += '<span style="color:#93a0c8;margin:0 2px">›</span>'; }
+      h += kcs(combos[k]);
+    }
+    h += '</div>';
+  }
+  if (m.ayuda && txt) { h += (h ? '' : '<div class="lbl">Pista</div>') + '<div class="txt">' + esc(txt) + '</div>'; }
+  pan.innerHTML = h;
+  setCls(pan, 'on', h !== '');
+}
+function flAyuda() {
+  var m = G.ms;
+  sfx('click');
+  m.ayuda = !m.ayuda;
+  if (m.ayuda && !m.def.guia) { m.usoAyuda = true; }
+  setCls($('jAyuda'), 'on', m.ayuda);
+  flPista();
+}
+function flKbp() {
+  var def = G.ms.def, k = $('jKbp');
+  G.kbHeld = {};
+  if (!def.kb) { k.innerHTML = ''; rmCls(k, 'on'); return; }
+  var h = '<div class="lbl">Teclado de práctica: tocá primero Ctrl, Alt, Shift o Win, y después la letra.</div><div class="teclas">', i;
+  for (i = 0; i < def.kb.length; i++) { h += '<button class="vk" data-k="' + esc(def.kb[i]) + '">' + esc(def.kb[i]) + '</button>'; }
+  k.innerHTML = h + '</div>';
+  addCls(k, 'on');
+  var bs = k.getElementsByTagName('button');
+  for (i = 0; i < bs.length; i++) { (function (b) { b.onclick = function () { flVk(b.getAttribute('data-k')); }; })(bs[i]); }
+}
+function flVkPintar() {
+  var bs = $('jKbp').getElementsByTagName('button'), i;
+  for (i = 0; i < bs.length; i++) { setCls(bs[i], 'sost', !!G.kbHeld[bs[i].getAttribute('data-k')]); }
+}
+function flVk(label) {
+  if (!G.env || G.ms.fin) { return; }
+  if (label === 'Ctrl' || label === 'Alt' || label === 'Shift' || label === 'Win') {
+    G.kbHeld[label] = !G.kbHeld[label];
+    sfx('click'); flVkPintar();
+    return;
+  }
+  var c = { ctrl: !!G.kbHeld.Ctrl, alt: !!G.kbHeld.Alt, shift: !!G.kbHeld.Shift, win: !!G.kbHeld.Win, key: label.toLowerCase() };
+  G.kbHeld = {};
+  flVkPintar();
+  if (!G.env.combo(c)) { sfx('mal'); toast('Esa combinación no hace nada acá.'); }
+}
+function flTick() {
+  var m = G.ms;
+  if (!m || m.fin || G.pant !== 'juego') { return; }
+  var ahora = new Date().getTime();
+  $('jTiempo').textContent = fmtT(ahora - m.t0);
+  if (ahora - m.t0 > 75000 && $('jPasar').style.display === 'none') { $('jPasar').style.display = ''; }
+  var def = m.def, E = G.env, i;
+  try {
+    if (def.modo === 'par') {
+      var todos = true;
+      for (i = 0; i < def.pasos.length; i++) {
+        if (!m.done[i] && def.pasos[i].ok(E)) { m.done[i] = true; sfx('ok'); flClientes(false); flPista(); }
+        if (!m.done[i]) { todos = false; }
+      }
+      if (todos) { flTermino(); }
+    } else {
+      if (def.pasos[m.idx].ok(E)) {
+        m.done[m.idx] = true;
+        sfx('ok');
+        if (m.idx < def.pasos.length - 1) {
+          m.idx++;
+          if (def.pasos[m.idx].ini) { def.pasos[m.idx].ini(E); }
+          flClientes(true); flPista();
+        } else { flTermino(); }
+      }
+    }
+  } catch (err) { if (window.console) { console.log('error en el pedido', err); } }
+}
+function flPasar() {
+  var m = G.ms;
+  if (!m || m.fin) { return; }
+  sfx('click');
+  if (!flHecha(m.def.id)) { P.mis[m.def.id] = { e: 0, salt: 1, mejor: 0 }; svEscribir(); }
+  var sig = flSigId(m.def.id);
+  flFinMision();
+  if (sig && flAbierta(sig)) { flIniciar(sig); } else { flMapa(); }
+}
+function flSigId(id) { var i = msIndice(id); return (i >= 0 && i < MS.length - 1) ? MS[i + 1].id : null; }
+function flFinMision() {
+  if (G.timer) { clearInterval(G.timer); G.timer = null; }
+  if (G.env && G.env.destroy) { G.env.destroy(); }
+  G.env = null;
+  window.onbeforeunload = null;
+}
+function flSalirMision() {
+  if (G.ms) { G.ms.fin = true; }
+  flFinMision();
+  flMapa();
+}
+function flTermino() {
+  var m = G.ms, def = m.def;
+  if (m.fin) { return; }
+  m.fin = true;
+  m.tFin = new Date().getTime();
+  var ms = m.tFin - m.t0;
+  if (G.timer) { clearInterval(G.timer); G.timer = null; }
+  window.onbeforeunload = null;
+  $('jTiempo').textContent = fmtT(ms);
+  var prev = P.mis[def.id] || { e: 0, mejor: 0 };
+  var estrellas = 1;
+  if (def.jor > 0) {
+    if (m.usoAyuda) { estrellas = 1; } else if (ms <= def.par * 1000) { estrellas = 3; } else { estrellas = 2; }
+    if (!m.usoAyuda && ms <= def.par * 500) { P.rayo = true; }
+  }
+  var gana = 0;
+  if (def.jor > 0) {
+    if (estrellas > (prev.e || 0)) { gana = (estrellas - (prev.e || 0)) * 4 + (prev.e ? 0 : 3); }
+    P.propinas += gana;
+  }
+  P.mis[def.id] = { e: Math.max(estrellas, prev.e || 0), mejor: (prev.mejor ? Math.min(prev.mejor, ms) : ms) };
+  if (def.id === 'pro1') { P.pro.largo = ms; }
+  if (def.id === 'pro2') { P.pro.corto = ms; }
+  svEscribir();
+  $('jProp').textContent = P.propinas;
+  sfx('gana');
+  setTimeout(function () { flResultado(estrellas, gana, ms); }, 650);
+}
+function flResultado(estrellas, gana, ms) {
+  var m = G.ms, def = m.def;
+  confeti($('stage'), 60);
+  var sig = flSigId(def.id);
+  var lastJor = sig === null || msPorId(sig).jor !== def.jor;
+  var html = '', btnTxt = 'Siguiente pedido';
+  if (def.id === 'pro1') {
+    html = '<h2>Camino largo: ' + fmtS(ms) + '</h2><div style="margin:10px 0">' + arDon(110) + '</div><div class="dato"><b>Ahora viene lo bueno</b>El mismo trabajo, pero con el teclado. Ojo con el reloj.</div>';
+    btnTxt = 'Camino corto';
+  } else if (def.id === 'pro2') {
+    var largo = P.pro.largo, corto = P.pro.corto, mx = Math.max(largo, corto, 1);
+    var gift = flRegalo();
+    html = '<h2>' + (gift > 0 ? '¡Te regalaste ' + gift + ' segundos!' : 'Casi empatamos') + '</h2>' +
+      '<div class="barra"><i style="width:' + Math.round(largo / mx * 100) + '%;background:#ff6b6b"></i><span>Camino largo · ' + fmtS(largo) + '</span></div>' +
+      '<div class="barra"><i style="width:' + Math.round(corto / mx * 100) + '%;background:#2ec4b6"></i><span>Camino corto · ' + fmtS(corto) + '</span></div>' +
+      '<div class="dato"><b>Dato de compu</b>' + (gift > 0 ? 'Un trabajo de 3 copiados. Imaginá cuántos hacés en un año: los atajos son tiempo que te devuelven.' : 'Esta vez salió parecido. Con un poco de práctica, el atajo gana siempre.') + '</div>';
+    btnTxt = 'Empezar la jornada 1';
+  } else {
+    var st = '', k;
+    for (k = 0; k < 3; k++) { st += k < estrellas ? '★' : '<span class="vac">★</span>'; }
+    var titulo = (def.pasos.length > 1 || def.modo === 'par') ? '¡Pedidos listos!' : '¡Pedido listo!';
+    if (lastJor && def.jor >= 1 && def.jor <= 3) { titulo = '¡Jornada ' + def.jor + ' terminada!'; }
+    if (def.jor === 4 && lastJor) { titulo = '¡Turno de noche terminado!'; }
+    html = '<h2>' + titulo + '</h2><div class="estrellas">' + st + '</div><div class="propi">' + (gana > 0 ? '+' + gana + ' <span class="moneda"></span> de propina' : (estrellas >= 3 ? 'Ya tenías las tres estrellas' : 'Con más práctica salen las tres')) + ' · ' + fmtT(ms) + '</div>';
+    if (def.dato) { html += '<div class="dato"><b>Dato de compu</b>' + esc(def.dato) + '</div>'; }
+    if (m.usoAyuda) { html += '<div style="margin-top:10px;font-size:15px;color:#93a0c8">Usaste la ayuda: sin ayuda salen más estrellas.</div>'; }
+    if (lastJor) { btnTxt = (def.jor === 3 ? 'Ir a la misión real' : 'Volver al mapa'); }
+  }
+  var card = flCapa(html + '<div class="fila"><button class="btnChico" id="rMenu">Mapa</button><button class="btnChico" id="rRep">Repetir</button><button class="btnGrande" id="rSig">' + btnTxt + '</button></div>');
+  G.capaOk = function () { $('rSig').onclick(); };
+  $('rMenu').onclick = function () { sfx('click'); flFinMision(); flMapa(); };
+  $('rRep').onclick = function () { sfx('click'); flFinMision(); flIniciar(def.id); };
+  $('rSig').onclick = function () {
+    sfx('click');
+    flFinMision();
+    if (def.id === 'pro1') { flIniciar('pro2'); return; }
+    if (def.id === 'pro2') { flIniciar('j1a'); return; }
+    if (lastJor) {
+      if (def.jor === 3) { flMapa(); flReal(); } else { flMapa(); }
+      return;
+    }
+    flIniciar(sig);
+  };
+  flLogrosRevisar();
+}
+
+/* ---------------- logros y credencial ---------------- */
+function flLogrosRevisar() {
+  var i, nuevos = [];
+  for (i = 0; i < LOGROS.length; i++) {
+    var L = LOGROS[i];
+    if (!P.logros[L.id] && L.ok()) { P.logros[L.id] = 1; nuevos.push(L); }
+  }
+  if (nuevos.length) {
+    svEscribir();
+    for (i = 0; i < nuevos.length; i++) {
+      (function (L, n) { setTimeout(function () { toast(L.n, 'Logro nuevo'); sfx('logro'); }, 800 + n * 900); })(nuevos[i], i);
+    }
+  }
+}
+function flLogros() {
+  var h = '<h2>Logros</h2><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;text-align:left">', i;
+  for (i = 0; i < LOGROS.length; i++) {
+    var L = LOGROS[i], t = !!P.logros[L.id];
+    h += '<div style="padding:10px 14px;border-radius:14px;background:' + (t ? '#173a3a' : '#0e1633') + ';border:1px solid ' + (t ? '#2a9d8f' : '#2a3a6e') + ';opacity:' + (t ? 1 : 0.7) + '"><div style="font-size:18px;font-weight:800;color:' + (t ? '#fff4dc' : '#93a0c8') + '">' + (t ? '★ ' : '') + esc(L.n) + '</div><div style="font-size:14px;color:#aebbe6;margin-top:2px">' + esc(L.d) + '</div></div>';
+  }
+  h += '</div><div class="fila"><button class="btnGrande" id="lgCer">Cerrar</button></div>';
+  var c = flCapa(h);
+  c.style.width = '780px';
+  $('lgCer').onclick = function () { sfx('click'); flCapaCerrar(); };
+  G.capaOk = function () { flCapaCerrar(); };
+}
+function flCredencial() {
+  var lista = '', i;
+  for (i = 0; i < CNT_NOMBRES.length; i++) {
+    var n = P.cnt[CNT_NOMBRES[i][0]] || 0;
+    if (n > 0) { lista += '<li><b>' + n + '</b> · ' + esc(CNT_NOMBRES[i][1]) + ' <span style="color:#93a0c8">' + esc(CNT_NOMBRES[i][2]) + '</span></li>'; }
+  }
+  if (!lista) { lista = '<li style="column-span:all">Todavía no usaste ningún atajo. ¡Arrancá por el primer día!</li>'; }
+  var h = '<div class="cred"><div>' + arYo(P.color, 120) + '</div><div class="cuerpo"><h3>' + esc(P.nombre) + '</h3><div style="font-size:18px;color:#dfe6ff;margin-top:4px">Pasante del Ciber Don Atajo · ★ ' + flEstrellasTotales() + ' · ' + P.propinas + ' propinas · ' + flRegalo() + ' s regalados</div>' +
+    '<div style="margin-top:12px;font-size:14px;color:#ffd166;font-weight:700;text-transform:uppercase;letter-spacing:.5px">Atajos que usaste de verdad</div><ul>' + lista + '</ul></div></div>' +
+    '<div class="fila"><button class="btnGrande" id="crCer">Cerrar</button></div>';
+  var c = flCapa(h);
+  c.style.width = '760px';
+  $('crCer').onclick = function () { sfx('click'); flCapaCerrar(); };
+  G.capaOk = function () { flCapaCerrar(); };
+}
+
+/* ---------------- misión real ---------------- */
+function flReal() {
+  flMostrar('real');
+  flCapaCerrar();
+  var h = '<div id="rTit"><h1>La misión real</h1><p>Ahora en la compu de verdad, sin juego. Hacé cada uno y mostráselo al profe.</p></div><div id="rLista">', i;
+  for (i = 0; i < REALES.length; i++) {
+    h += '<button class="rIt' + (P.real[i] ? ' ok' : '') + '" data-i="' + i + '"><span class="chk">✓</span><span class="q">' + esc(REALES[i][0]) + '</span>' + kcs(REALES[i][1]) + '</button>';
+  }
+  h += '</div><div id="rPie"><div class="av" id="rAv"></div><button class="btnChico" id="rMapa">Volver al mapa</button><button class="btnChico" id="rCred">Credencial</button></div>';
+  $('real').innerHTML = h;
+  flRealTexto();
+  var bs = $('rLista').getElementsByTagName('button');
+  for (i = 0; i < bs.length; i++) {
+    (function (b) {
+      b.onclick = function () {
+        var k = parseInt(b.getAttribute('data-i'), 10);
+        P.real[k] = !P.real[k];
+        setCls(b, 'ok', !!P.real[k]);
+        sfx(P.real[k] ? 'ok' : 'click');
+        svEscribir();
+        flRealTexto();
+        if (flRealesHechos() >= 8) { confeti($('stage'), 60); sfx('gana'); flLogrosRevisar(); }
+      };
+    })(bs[i]);
+  }
+  $('rMapa').onclick = function () { sfx('click'); flMapa(); };
+  $('rCred').onclick = function () { sfx('click'); flCredencial(); };
+}
+function flRealTexto() {
+  var n = flRealesHechos();
+  $('rAv').textContent = n >= 8 ? '¡Listo! Sos un pasante certificado del Ciber Don Atajo.' : 'Llevás ' + n + ' de 8. Los atajos con Win funcionan en las compus con Windows.';
+}
+
+/* ---------------- docente ---------------- */
+function flDocente() {
+  var h = '<h2>Panel del docente</h2><div style="text-align:left;margin-top:14px;font-size:18px;color:#dfe6ff;line-height:1.6">' +
+    '<div>Jornadas abiertas: <b>' + (P.todo ? 'todas' : 'en orden') + '</b></div><div>Guardado en esta compu: <b>' + (G.saveOk ? 'sí' : 'no (la compu no lo permite)') + '</b></div></div>' +
+    '<div class="fila" style="flex-wrap:wrap"><button class="btnChico" id="dcTodo">' + (P.todo ? 'Volver al orden' : 'Abrir todas') + '</button><button class="btnChico" id="dcSon">' + flBtnSon() + '</button><button class="btnChico" id="dcBorrar">Nuevo jugador</button><button class="btnGrande" id="dcCer">Cerrar</button></div>';
+  flCapa(h);
+  G.capaOk = function () { flCapaCerrar(); };
+  $('dcTodo').onclick = function () { P.todo = !P.todo; svEscribir(); flCapaCerrar(); if (G.pant === 'mapa') { flMapa(); } };
+  $('dcSon').onclick = function () { flAlternarSonido($('dcSon')); };
+  $('dcBorrar').onclick = function () {
+    if (G.confirmaBorrar) { svBorrar(); P = pNuevo(); G.confirmaBorrar = false; flCapaCerrar(); flMostrar('portada'); flPortada(); return; }
+    G.confirmaBorrar = true; $('dcBorrar').textContent = 'Tocá otra vez para borrar todo'; sfx('mal');
+  };
+  $('dcCer').onclick = function () { flCapaCerrar(); };
+}
+
+/* ---------------- teclado global ---------------- */
+function flKeyup(e) {
+  if (e.key === 'PrintScreen' && G.env && G.env.key && G.pant === 'juego' && !G.ms.fin) { G.env.key(e); }
+}
+function flKey(e) {
+  if (G.capaOk && (e.key === 'Enter') && document.activeElement && document.activeElement.tagName !== 'INPUT') { e.preventDefault(); G.capaOk(); return; }
+  if (e.shiftKey && (e.key === 'D' || e.key === 'd') && (G.pant === 'mapa' || G.pant === 'portada') && !(document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA'))) {
+    e.preventDefault(); flDocente(); return;
+  }
+  if (G.pant !== 'juego' || !G.env || !G.ms || G.ms.fin) { return; }
+  var handled = G.env.key(e);
+  if (handled) { return; }
+  var k = (e.key || '').toLowerCase();
+  var c = { ctrl: e.ctrlKey, alt: e.altKey, shift: e.shiftKey, win: e.metaKey, key: k };
+  var reservado = (c.ctrl && !c.alt && (k === 't' || k === 'w' || k === 'tab')) || (c.ctrl && c.shift && k === 'n') || (c.alt && k === 'tab') || (c.win && (k === 'e' || k === 'd' || k === 's'));
+  if (reservado && G.env.combo(c)) { e.preventDefault(); }
+}
+
+/* ---------------- arranque ---------------- */
+function flArrancar() {
+  var g = svLeer();
+  P = g || pNuevo();
+  var base = pNuevo(), k;
+  for (k in base) { if (base.hasOwnProperty(k) && P[k] === undefined) { P[k] = base[k]; } }
+  escalar();
+  window.addEventListener('resize', escalar, false);
+  document.addEventListener('keydown', flKey, false);
+  document.addEventListener('keyup', flKeyup, false);
+  document.addEventListener('contextmenu', function (e) {
+    if (G.pant !== 'juego') { return; }
+    var t = e.target;
+    while (t && t !== document) { if (t.id === 'simIn') { return; } t = t.parentNode; }
+    e.preventDefault();
+  }, false);
+  flMostrar('portada');
+  flPortada();
+}
+window.onload = flArrancar;
+</script>
+</body></html>

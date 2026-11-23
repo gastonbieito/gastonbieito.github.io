@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Robotito pintor · Colegio Sagrado Corazón</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:#1d2340;font-family:"Segoe UI","Helvetica Neue",Roboto,Arial,sans-serif;color:#2b2b3a;user-select:none;-webkit-user-select:none;cursor:default}
+#marco{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+#stage{position:relative;width:1280px;height:720px;flex:none;overflow:hidden;background:#fff6e8}
+.pant{position:absolute;inset:0;display:none}
+.pant.on{display:block}
+button{font-family:inherit;border:0;background:none;cursor:pointer;outline:none;color:inherit}
+svg{display:block}
+.btnR{width:78px;height:78px;border-radius:50%;background:#fff;box-shadow:0 6px 0 rgba(0,0,0,.13),0 10px 24px rgba(0,0,0,.08);display:flex;align-items:center;justify-content:center;transition:transform .12s}
+.btnR:hover{transform:translateY(-3px)}
+.btnR:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.15)}
+.btnR svg{width:44px;height:44px}
+/* fondo de taller de arte */
+.taller{position:absolute;inset:0;background:radial-gradient(circle at 15% 20%,#ffe3ef 0,rgba(255,227,239,0) 30%),radial-gradient(circle at 85% 80%,#dff4ff 0,rgba(223,244,255,0) 35%),radial-gradient(circle at 80% 15%,#fff3c4 0,rgba(255,243,196,0) 30%),#fff8ee}
+.mancha{position:absolute;border-radius:50% 45% 55% 50%/55% 50% 45% 50%;opacity:.5}
+
+/* ---------- inicio ---------- */
+#inicio .titulo{position:absolute;left:0;right:0;top:40px;text-align:center}
+#inicio .titulo h1{font-size:76px;font-weight:900;letter-spacing:-2px;line-height:1}
+#inicio .titulo h1 span{display:inline-block;animation:letra 2.4s ease-in-out infinite}
+@keyframes letra{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+#robots{position:absolute;left:0;right:0;top:220px;display:flex;justify-content:center;gap:34px}
+.robCard{width:220px;height:270px;border-radius:36px;background:#fff;display:flex;align-items:center;justify-content:center;transition:transform .2s,box-shadow .2s;box-shadow:0 8px 0 rgba(0,0,0,.07)}
+.robCard svg{width:190px;height:190px}
+.robCard:hover,.robCard.sel{transform:translateY(-10px) scale(1.04);box-shadow:0 14px 0 rgba(0,0,0,.08),0 0 0 8px #ffcc1f}
+.robCard.sel .rob{animation:saltito .6s ease-in-out infinite}
+#marcaIni{position:absolute;left:24px;bottom:18px;display:flex;align-items:center;gap:10px;font-size:14px;font-weight:700;color:#2b5d8a;background:#fff;padding:8px 16px 8px 8px;border-radius:30px;box-shadow:0 4px 0 rgba(0,0,0,.06)}
+#marcaIni svg{width:40px;height:40px}
+@keyframes saltito{50%{transform:translateY(-8px)}}
+.manito{position:absolute;width:90px;height:90px;pointer-events:none;z-index:60;filter:drop-shadow(0 6px 8px rgba(0,0,0,.25));transition:left .6s cubic-bezier(.4,0,.2,1),top .6s cubic-bezier(.4,0,.2,1)}
+.manito.toca svg{animation:toca .5s ease-in-out}
+@keyframes toca{50%{transform:scale(.82) translateY(6px)}}
+
+/* ---------- tutorial ---------- */
+#tuto .tablero{position:absolute;left:290px;top:110px;width:700px;height:460px;border-radius:40px;background:#fff;box-shadow:0 10px 0 rgba(0,0,0,.06)}
+#teclado{position:absolute;left:390px;top:300px;width:500px;height:250px}
+.tecla{position:absolute;width:140px;height:110px;border-radius:24px;background:#eef1f7;box-shadow:0 10px 0 #c9cfdc;display:flex;align-items:center;justify-content:center;transition:background .2s,transform .1s,box-shadow .1s}
+.tecla svg{width:60px;height:60px}
+.tecla.brilla{background:#ffcc1f;box-shadow:0 10px 0 #e0a800,0 0 0 10px rgba(255,204,31,.35);animation:brillaT 1s ease-in-out infinite}
+@keyframes brillaT{50%{box-shadow:0 10px 0 #e0a800,0 0 0 22px rgba(255,204,31,.15)}}
+.tecla.ok{background:#69db7c;box-shadow:0 4px 0 #2f9e44;transform:translateY(6px)}
+.tecla.mal{animation:sacude .35s}
+@keyframes sacude{20%,60%{transform:translateX(-10px)}40%,80%{transform:translateX(10px)}}
+#tutoRobot{position:absolute;width:160px;height:160px;left:560px;top:120px;transition:transform .35s cubic-bezier(.3,1.5,.5,1)}
+#tutoPuntos{position:absolute;left:0;right:0;top:610px;display:flex;justify-content:center;gap:16px}
+#tutoPuntos i{width:30px;height:30px;border-radius:50%;background:#e9e2d6;transition:background .3s,transform .3s}
+#tutoPuntos i.ok{background:#ffcc1f;transform:scale(1.2)}
+
+/* ---------- nivel ---------- */
+#camino{position:absolute;left:210px;right:210px;top:30px;height:40px;display:flex;align-items:center;justify-content:center;gap:8px}
+#camino i{width:22px;height:22px;border-radius:7px;background:#ebe3d4;transition:all .3s}
+#camino i.hecho{transform:scale(.9)}
+#camino i.ahora{width:34px;height:34px;border-radius:10px;box-shadow:0 0 0 5px rgba(255,204,31,.6)}
+#bLibre{position:absolute;left:24px;top:14px}
+#bGaleria{position:absolute;left:114px;top:14px}
+#bRepetir{position:absolute;right:24px;top:14px}
+#tablero{position:absolute;border-radius:26px;background:#fff;box-shadow:0 12px 0 rgba(0,0,0,.06),0 0 0 6px #f3e9d8;padding:12px}
+.celda{position:absolute;border-radius:12px;background:#f6f1e8;transition:background .25s}
+.celda.pint{animation:pinta .35s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pinta{0%{transform:scale(.6)}100%{transform:scale(1)}}
+.guia{position:absolute;border-radius:50%;pointer-events:none;transition:opacity .3s}
+.balde{position:absolute;display:flex;align-items:center;justify-content:center}
+.balde svg{width:100%;height:100%}
+.balde.toma svg{animation:balde .5s}
+@keyframes balde{40%{transform:scale(1.25) rotate(-10deg)}}
+#robot{position:absolute;transition:left .28s cubic-bezier(.4,.1,.3,1),top .28s cubic-bezier(.4,.1,.3,1);z-index:5}
+#robot .giro{width:100%;height:100%;transition:transform .2s}
+#robot .rob{width:100%;height:100%}
+#robot .pincel{position:absolute;right:-12%;bottom:4%;width:42%;height:42%}
+#robot.choca .giro{animation:choca .4s}
+@keyframes choca{20%{transform:translateX(-8px) rotate(-6deg)}40%{transform:translateX(8px) rotate(6deg)}60%{transform:translateX(-5px)}80%{transform:translateX(4px)}}
+#robot.festeja .rob{animation:festejaA .6s ease-in-out infinite}
+@keyframes festejaA{0%,100%{transform:translateY(0) scale(1)}40%{transform:translateY(-24px) scale(.95,1.08)}70%{transform:translateY(0) scale(1.08,.92)}}
+
+#panelD{position:absolute;right:28px;top:100px;width:330px;bottom:20px}
+#modelo{position:absolute;left:35px;top:0;width:260px;height:250px;border-radius:26px;background:#fff;box-shadow:0 8px 0 rgba(0,0,0,.06);padding:18px;display:flex;align-items:center;justify-content:center}
+#modelo:before{content:"";position:absolute;inset:8px;border:4px solid #c9a46b;border-radius:20px;pointer-events:none}
+#modelo svg{max-width:100%;max-height:100%;width:100%;height:100%}
+#modelo .pinza{position:absolute;top:-18px;left:50%;margin-left:-22px;width:44px;height:30px;border-radius:8px;background:#ff8a1f;box-shadow:0 4px 0 #d96b00}
+#pinturaAct{position:absolute;left:35px;top:262px;width:260px;height:44px;border-radius:22px;background:#fff;box-shadow:0 5px 0 rgba(0,0,0,.06);display:flex;align-items:center;justify-content:center;gap:10px}
+#pinturaAct i{width:120px;height:22px;border-radius:11px;display:block;background:#e3ddd2;transition:background .3s}
+#pinturaAct svg{width:32px;height:32px}
+#pad{position:absolute;left:40px;top:322px;width:250px;height:250px}
+.flecha{position:absolute;width:80px;height:80px;border-radius:22px;background:#fff;box-shadow:0 7px 0 rgba(0,0,0,.12);display:flex;align-items:center;justify-content:center;transition:transform .1s,background .2s,box-shadow .1s}
+.flecha svg{width:46px;height:46px}
+.flecha.apreta{transform:translateY(6px);box-shadow:0 1px 0 rgba(0,0,0,.12);background:#ffe066}
+.flecha.pistaF{animation:pistaFl 1s ease-in-out infinite}
+@keyframes pistaFl{0%,100%{box-shadow:0 7px 0 rgba(0,0,0,.12),0 0 0 0 rgba(255,204,31,.9)}50%{box-shadow:0 7px 0 rgba(0,0,0,.12),0 0 0 14px rgba(255,204,31,0);background:#fff3bf}}
+#fArr{left:85px;top:0}#fIzq{left:0;top:85px}#fDer{left:170px;top:85px}#fAba{left:85px;top:170px}
+#centroPad{position:absolute;left:85px;top:85px;width:80px;height:80px;display:flex;align-items:center;justify-content:center}
+#centroPad svg{width:76px;height:76px}
+
+/* programa (etapa 4): bandeja debajo del tablero */
+#programa{position:absolute;left:40px;top:560px;width:850px;height:140px;display:none}
+#programa.on{display:block}
+#bandeja{position:absolute;left:0;top:0;width:620px;height:140px;border-radius:24px;background:#fff;box-shadow:0 8px 0 rgba(0,0,0,.06)}
+.slot{position:absolute;width:62px;height:56px;border-radius:14px;background:#f6f1e8;border:3px dashed #e3d8c6}
+.carta{position:absolute;width:62px;height:56px;border-radius:14px;background:#9b6bff;box-shadow:0 5px 0 #7a4be0;display:flex;align-items:center;justify-content:center;animation:cartaIn .25s cubic-bezier(.3,1.6,.5,1)}
+.carta svg{width:34px;height:34px}
+.carta.activa{background:#ffcc1f;box-shadow:0 5px 0 #e0a800,0 0 0 5px rgba(255,204,31,.4)}
+@keyframes cartaIn{from{transform:scale(.3)}to{transform:scale(1)}}
+#bPlay{position:absolute;left:640px;top:8px;width:130px;height:80px;border-radius:40px;background:#40c057;box-shadow:0 8px 0 #2b8a3e;display:flex;align-items:center;justify-content:center}
+#bPlay svg{width:44px;height:44px}
+#bPlay.apreta{transform:translateY(6px);box-shadow:0 2px 0 #2b8a3e}
+#bBorrar,#bLimpiar{position:absolute;top:98px;width:60px;height:42px;border-radius:21px;background:#fff;box-shadow:0 5px 0 rgba(0,0,0,.12);display:flex;align-items:center;justify-content:center}
+#bBorrar{left:640px}#bLimpiar{left:710px}
+#bBorrar svg,#bLimpiar svg{width:28px;height:28px}
+
+/* ganaste: el dibujo cobra vida */
+#ganaste{position:absolute;inset:0;background:rgba(40,30,20,.5);display:none;z-index:40}
+#ganaste.on{display:block;animation:fadeIn .3s}
+@keyframes fadeIn{from{opacity:0}}
+#gCuadro{position:absolute;left:410px;top:46px;width:460px;height:440px;border-radius:30px;background:#fff;box-shadow:0 0 0 18px #c9a46b,0 0 0 26px #a8854d,0 30px 60px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;padding:50px;animation:popIn .6s cubic-bezier(.3,1.5,.5,1)}
+@keyframes popIn{from{transform:scale(.4) rotate(-8deg);opacity:0}}
+#gDib{width:100%;height:100%}
+#gDib svg{width:100%;height:100%}
+.vida-late{animation:vLate .9s ease-in-out infinite}
+@keyframes vLate{0%,100%{transform:scale(1)}15%{transform:scale(1.12)}30%{transform:scale(1)}45%{transform:scale(1.08)}}
+.vida-gira{animation:vGira 3s ease-in-out infinite}
+@keyframes vGira{0%{transform:rotate(0) scale(1)}50%{transform:rotate(180deg) scale(.9)}100%{transform:rotate(360deg) scale(1)}}
+.vida-salta{animation:vSalta .8s ease-in-out infinite}
+@keyframes vSalta{0%,100%{transform:translateY(0) scale(1.04,.96)}50%{transform:translateY(-34px) scale(.97,1.04)}}
+.vida-balancea{animation:vBal 1.6s ease-in-out infinite;transform-origin:50% 100%}
+@keyframes vBal{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}}
+.vida-nada{animation:vNada 2.4s ease-in-out infinite}
+@keyframes vNada{0%,100%{transform:translateX(-40px) rotate(-4deg)}50%{transform:translateX(40px) rotate(4deg)}}
+.vida-vuela{animation:vVuela 2.2s ease-in-out infinite}
+@keyframes vVuela{0%,100%{transform:translateY(20px) rotate(-3deg)}50%{transform:translateY(-50px) rotate(3deg)}}
+.vida-brilla{animation:vBrilla 1.2s ease-in-out infinite}
+@keyframes vBrilla{0%,100%{transform:scale(1);filter:brightness(1)}50%{transform:scale(1.06);filter:brightness(1.25) drop-shadow(0 0 18px #ffcc1f)}}
+.vida-avanza{animation:vAvanza 1.8s ease-in-out infinite}
+@keyframes vAvanza{0%,100%{transform:translateX(-30px)}50%{transform:translateX(30px)}}
+.vida-aletea{animation:vAletea .5s ease-in-out infinite}
+@keyframes vAletea{0%,100%{transform:scaleX(1)}50%{transform:scaleX(.7)}}
+#gBot{position:absolute;left:0;right:0;top:580px;display:flex;justify-content:center;gap:26px;align-items:center}
+#gSig{width:150px;height:100px;border-radius:50px;background:#40c057;box-shadow:0 9px 0 #2b8a3e;display:flex;align-items:center;justify-content:center;animation:latido 1.2s ease-in-out infinite}
+#gSig svg{width:60px;height:60px}
+@keyframes latido{50%{transform:scale(1.07)}}
+
+/* modo libre */
+#libre .taller{background:#fff8ee}
+#paleta{position:absolute;right:28px;top:110px;width:330px;display:flex;flex-wrap:wrap;gap:14px;justify-content:center}
+.baldeP{width:92px;height:92px;border-radius:24px;background:#fff;box-shadow:0 7px 0 rgba(0,0,0,.1);position:relative;display:flex;align-items:center;justify-content:center;transition:transform .15s,box-shadow .15s}
+.baldeP svg{width:70px;height:70px}
+.baldeP b{position:absolute;left:8px;top:6px;font-size:18px;font-weight:900;color:#8a7f6e}
+.baldeP.sel{transform:translateY(-6px);box-shadow:0 7px 0 rgba(0,0,0,.1),0 0 0 6px #2b2b3a}
+#libreBot{position:absolute;right:28px;bottom:26px;width:330px;display:flex;justify-content:center;gap:22px}
+#bGuardar{width:150px;height:84px;border-radius:42px;background:#40c057;box-shadow:0 8px 0 #2b8a3e;display:flex;align-items:center;justify-content:center}
+#bGuardar svg{width:48px;height:48px}
+#flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:45}
+#flash.on{animation:flash .5s}
+@keyframes flash{0%{opacity:.9}100%{opacity:0}}
+
+/* galería */
+#galCuadros{position:absolute;left:120px;right:120px;top:104px;bottom:20px;padding:14px;display:flex;flex-wrap:wrap;gap:22px;justify-content:center;align-content:flex-start;overflow:hidden}
+.marcoG{width:150px;height:150px;border-radius:14px;background:#fff;box-shadow:0 0 0 8px #c9a46b,0 10px 20px rgba(0,0,0,.12);padding:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .2s}
+.marcoG:hover{transform:rotate(-3deg) scale(1.05)}
+.marcoG svg{width:100%;height:100%}
+.marcoG.vivo svg{animation:vSalta .8s ease-in-out 2}
+#bVolverGal{position:absolute;left:24px;top:14px}
+
+/* docente (igual que en Robotito) */
+#bloqueo{position:absolute;inset:0;background:rgba(10,15,35,.75);z-index:90;display:none}
+#bloqueo.on{display:block}
+#pinCaja{position:absolute;left:440px;top:80px;width:400px;height:560px;border-radius:32px;background:#fff;padding:26px;text-align:center}
+#pinCaja h2{font-size:22px}
+#pinPuntos{display:flex;justify-content:center;gap:14px;margin:18px 0 20px}
+#pinPuntos i{width:22px;height:22px;border-radius:50%;background:#e3e7f0}
+#pinPuntos i.si{background:#9b6bff}
+#pinPuntos.mal{animation:sacude .35s}
+#pinTeclas{display:grid;grid-template-columns:repeat(3,96px);gap:12px;justify-content:center}
+#pinTeclas button{height:74px;border-radius:18px;background:#eef1f7;font-size:30px;font-weight:800}
+#docPanel{position:absolute;left:370px;top:40px;width:540px;height:640px;border-radius:32px;background:#fff;padding:28px;display:none}
+#docPanel.on{display:block}
+#docPanel h2{font-size:24px;margin-bottom:4px}
+#docPanel p{font-size:14px;color:#666;margin-bottom:14px}
+#docPanel .fila{display:flex;gap:10px;margin-bottom:12px}
+.docB{display:block;width:100%;height:52px;border-radius:16px;background:#eef1f7;font-size:16px;font-weight:700;margin-bottom:10px;text-align:left;padding:0 18px;color:#2b2b3a}
+.fila .docB{text-align:center;margin:0;padding:0 8px}
+.docB.prim{background:#9b6bff;color:#fff}
+.docB.peligro{background:#ffe3e3;color:#c92a2a}
+#salida{position:absolute;inset:0;background:#1d2340;z-index:95;display:none;color:#fff;text-align:center;padding-top:260px}
+#salida.on{display:block}
+#salida h2{font-size:40px}
+#salida p{font-size:22px;opacity:.8;margin-top:14px}
+#pantallaC{position:absolute;inset:0;background:rgba(20,30,60,.7);z-index:85;display:none;align-items:center;justify-content:center}
+#pantallaC.on{display:flex}
+#pantallaC button{width:200px;height:200px;border-radius:50%;background:#40c057;box-shadow:0 12px 0 #2b8a3e;display:flex;align-items:center;justify-content:center;animation:latido 1.2s ease-in-out infinite}
+#pantallaC svg{width:100px;height:100px}
+#esquina{position:absolute;left:0;top:0;width:40px;height:40px;z-index:80}
+#fx{position:absolute;inset:0;pointer-events:none;z-index:70}
+.rob .antena{transform-box:fill-box;transform-origin:50% 100%;animation:antena 2s ease-in-out infinite}
+@keyframes antena{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg)}}
+.rob .ojosR{transform-box:fill-box;transform-origin:center;animation:parpadea 3.2s infinite}
+@keyframes parpadea{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+.rob .luz{animation:luzR 1.4s ease-in-out infinite}
+@keyframes luzR{50%{fill:#ff6b6b}}
+</style>
+</head>
+<body>
+<div id="marco"><div id="stage">
+
+<div id="inicio" class="pant on">
+  <div class="taller"></div>
+  <div class="titulo"><h1 id="titulo"></h1></div>
+  <div id="robots"></div>
+  <div id="marcaIni"></div>
+</div>
+
+<div id="tuto" class="pant">
+  <div class="taller"></div>
+  <div class="tablero"></div>
+  <div id="tutoRobot"></div>
+  <div id="teclado"></div>
+  <div id="tutoPuntos"></div>
+</div>
+
+<div id="nivel" class="pant">
+  <div class="taller"></div>
+  <button class="btnR" id="bLibre" aria-label="Pintar libre"></button>
+  <button class="btnR" id="bGaleria" aria-label="Mis dibujos"></button>
+  <div id="camino"></div>
+  <button class="btnR" id="bRepetir" aria-label="Empezar de nuevo"></button>
+  <div id="tablero"></div>
+  <div id="panelD">
+    <div id="modelo"><div class="pinza"></div><div id="modeloDib" style="width:100%;height:100%"></div></div>
+    <div id="pinturaAct"></div>
+    <div id="pad">
+      <button class="flecha" id="fArr"></button>
+      <button class="flecha" id="fIzq"></button>
+      <div id="centroPad"></div>
+      <button class="flecha" id="fDer"></button>
+      <button class="flecha" id="fAba"></button>
+    </div>
+  </div>
+  <div id="programa">
+    <div id="bandeja"></div>
+    <button id="bPlay" aria-label="Ejecutar"></button>
+    <button id="bBorrar" aria-label="Borrar la última"></button>
+    <button id="bLimpiar" aria-label="Borrar todo"></button>
+  </div>
+  <div id="ganaste"><div id="gCuadro"><div id="gDib"></div></div><div id="gBot"><button class="btnR" id="gLibre"></button><button id="gSig" aria-label="Siguiente"></button><button class="btnR" id="gOtra"></button></div></div>
+</div>
+
+<div id="libre" class="pant">
+  <div class="taller"></div>
+  <button class="btnR" id="bVolverLib" aria-label="Volver" style="position:absolute;left:24px;top:14px"></button>
+  <button class="btnR" id="bGaleria2" aria-label="Mis dibujos" style="position:absolute;left:114px;top:14px"></button>
+  <div id="paleta"></div>
+  <div id="libreBot"><button id="bGuardar" aria-label="Guardar"></button><button class="btnR" id="bNuevo" aria-label="Hoja nueva"></button></div>
+</div>
+
+<div id="galeria" class="pant">
+  <div class="taller"></div>
+  <button class="btnR" id="bVolverGal" aria-label="Volver"></button>
+  <div id="galCuadros"></div>
+</div>
+
+<div id="flash"></div>
+<canvas id="fx" width="1280" height="720"></canvas>
+<div id="esquina"></div>
+<div id="pantallaC"><button id="bPantC" aria-label="Seguir"></button></div>
+<div id="bloqueo"><div id="pinCaja"><h2>Docente</h2><div id="pinPuntos"><i></i><i></i><i></i><i></i></div><div id="pinTeclas"></div></div>
+  <div id="docPanel"><h2>Panel del docente</h2><p>Los chicos no pueden salir del juego hasta que vos lo desbloquees acá.</p>
+    <button class="docB prim" id="dSeguir">Volver al juego</button>
+    <p style="margin:6px 0 8px;font-weight:700;color:#2b2b3a">Empezar desde:</p>
+    <div class="fila"><button class="docB" id="dIni">Inicial</button><button class="docB" id="dPri">1.º</button><button class="docB" id="dSeg">2.º</button></div>
+    <div class="fila"><button class="docB" id="dSaltar">Saltar este dibujo</button><button class="docB" id="dLibreD">Pintar libre</button></div>
+    <div class="fila"><button class="docB" id="dMus">Música: sí</button><button class="docB" id="dVoz">Voz: sí</button></div>
+    <button class="docB peligro" id="dBorrar">Borrar la galería de dibujos</button>
+    <button class="docB peligro" id="dSalir">Desbloquear y salir</button>
+  </div>
+</div>
+<div id="salida"><h2>Juego desbloqueado</h2><p>Ya podés cerrar la ventana con Alt + F4.</p></div>
+</div></div>
+<script>
+/* ============ AUDIO ============ */
+var AU = { ctx: null, master: null, mus: null, sfx: null, rev: null, ruido: null, musOn: true, sfxOn: true, timer: null, paso: 0, prox: 0, sonando: false, ultVoz: 0, notaIdx: 4 };
+
+function auInit() {
+  if (AU.ctx) { try { if (AU.ctx.state === 'suspended') AU.ctx.resume(); } catch (e) {} return; }
+  try {
+    var C = window.AudioContext || window.webkitAudioContext;
+    if (!C) return;
+    var c = AU.ctx = new C();
+    var comp = c.createDynamicsCompressor();
+    comp.threshold.value = -20; comp.knee.value = 8; comp.ratio.value = 12; comp.attack.value = 0.004; comp.release.value = 0.2;
+    AU.master = c.createGain(); AU.master.gain.value = 0.8;
+    AU.master.connect(comp); comp.connect(c.destination);
+    AU.mus = c.createGain(); AU.mus.gain.value = AU.musOn ? 0.32 : 0; AU.mus.connect(AU.master);
+    AU.sfx = c.createGain(); AU.sfx.gain.value = AU.sfxOn ? 0.75 : 0; AU.sfx.connect(AU.master);
+    // eco suave para lo mágico
+    var d = c.createDelay(); d.delayTime.value = 0.23;
+    var fb = c.createGain(); fb.gain.value = 0.32;
+    var lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 2600;
+    AU.rev = c.createGain(); AU.rev.gain.value = 0.5;
+    AU.rev.connect(d); d.connect(lp); lp.connect(fb); fb.connect(d); lp.connect(AU.sfx);
+    var len = c.sampleRate, buf = c.createBuffer(1, len, c.sampleRate), dd = buf.getChannelData(0), i;
+    for (i = 0; i < len; i++) dd[i] = Math.random() * 2 - 1;
+    AU.ruido = buf;
+  } catch (e) { AU.ctx = null; }
+}
+
+function hz(n) { return 440 * Math.pow(2, (n - 69) / 12); }
+function env(g, t, a, sus, rel, v) {
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.linearRampToValueAtTime(v, t + a);
+  if (sus > 0) g.gain.setValueAtTime(v, t + a + sus);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + a + sus + rel);
+  return t + a + sus + rel;
+}
+/* oscilador con todo lo necesario */
+function osc(o) {
+  if (!AU.ctx) return;
+  var c = AU.ctx, t = o.t || c.currentTime + 0.005, s = c.createOscillator(), g = c.createGain(), out = g;
+  s.type = o.tipo || 'sine';
+  s.frequency.setValueAtTime(o.f, t);
+  if (o.curva) { var k; for (k = 0; k < o.curva.length; k++) s.frequency.linearRampToValueAtTime(o.curva[k][1], t + o.curva[k][0]); }
+  if (o.vib) { var l = c.createOscillator(), lg = c.createGain(); l.frequency.value = o.vib; lg.gain.value = o.vibA || o.f * 0.04; l.connect(lg); lg.connect(s.frequency); l.start(t); l.stop(t + 4); }
+  var cadena = s;
+  if (o.filtro) { var f = c.createBiquadFilter(); f.type = o.filtro; f.frequency.value = o.ff || 1200; if (o.q) f.Q.value = o.q; cadena.connect(f); cadena = f; }
+  cadena.connect(g);
+  var fin = env(g, t, o.a || 0.005, o.sus || 0, o.r || 0.2, o.v || 0.3);
+  if (o.trem) { var tl = c.createOscillator(), tg = c.createGain(), g2 = c.createGain(); g2.gain.value = 1; tl.frequency.value = o.trem; tg.gain.value = 0.6; tl.connect(tg); tg.connect(g2.gain); g.connect(g2); out = g2; tl.start(t); tl.stop(fin + 0.1); }
+  out.connect(o.dest || AU.sfx);
+  if (o.eco && AU.rev) out.connect(AU.rev);
+  s.start(t); s.stop(fin + 0.05);
+}
+function ruido(o) {
+  if (!AU.ctx || !AU.ruido) return;
+  var c = AU.ctx, t = o.t || c.currentTime + 0.005, src = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain();
+  src.buffer = AU.ruido; src.loop = true;
+  f.type = o.filtro || 'bandpass'; f.frequency.setValueAtTime(o.ff || 2000, t); if (o.q) f.Q.value = o.q;
+  if (o.ff2) f.frequency.exponentialRampToValueAtTime(o.ff2, t + (o.a || 0.005) + (o.sus || 0) + (o.r || 0.2));
+  src.connect(f); f.connect(g); g.connect(o.dest || AU.sfx);
+  var fin = env(g, t, o.a || 0.003, o.sus || 0, o.r || 0.15, o.v || 0.3);
+  src.start(t, Math.random() * 0.5); src.stop(fin + 0.05);
+}
+
+/* ---- las voces de los animales (de dibujito) ---- */
+var VOCES = {
+  gato: function (t) { osc({ t: t, f: 520, tipo: 'sawtooth', filtro: 'bandpass', ff: 1300, q: 3, curva: [[0.12, 820], [0.38, 900], [0.62, 560]], a: 0.04, sus: 0.42, r: 0.18, v: 0.85, vib: 6, vibA: 18 }); osc({ t: t, f: 1040, tipo: 'sine', curva: [[0.12, 1640], [0.38, 1800], [0.62, 1120]], a: 0.04, sus: 0.42, r: 0.18, v: 0.08 }); },
+  perro: function (t) { var i; for (i = 0; i < 2; i++) { osc({ t: t + i * 0.26, f: 330, tipo: 'sawtooth', filtro: 'lowpass', ff: 1100, curva: [[0.05, 380], [0.14, 190]], a: 0.008, sus: 0.06, r: 0.09, v: 0.6 }); ruido({ t: t + i * 0.26, ff: 900, q: 1, a: 0.004, r: 0.1, v: 0.25 }); } },
+  vaca: function (t) { osc({ t: t, f: 150, tipo: 'sawtooth', filtro: 'lowpass', ff: 700, curva: [[0.15, 135], [0.9, 120], [1.1, 100]], a: 0.12, sus: 0.85, r: 0.25, v: 0.6, vib: 5, vibA: 3 }); osc({ t: t, f: 300, tipo: 'triangle', curva: [[0.9, 240]], a: 0.12, sus: 0.85, r: 0.25, v: 0.12 }); },
+  oveja: function (t) { osc({ t: t, f: 420, tipo: 'sawtooth', filtro: 'bandpass', ff: 1400, q: 2, curva: [[0.6, 380]], a: 0.04, sus: 0.55, r: 0.15, v: 0.5, trem: 13 }); },
+  chancho: function (t) { var i; for (i = 0; i < 2; i++) { osc({ t: t + i * 0.22, f: 220, tipo: 'square', filtro: 'bandpass', ff: 900, q: 4, curva: [[0.09, 330], [0.15, 260]], a: 0.01, sus: 0.08, r: 0.06, v: 0.8 }); ruido({ t: t + i * 0.22, ff: 600, q: 2, a: 0.01, sus: 0.06, r: 0.06, v: 0.3 }); } },
+  rana: function (t) { var i; for (i = 0; i < 3; i++) osc({ t: t + i * 0.1, f: 140 - i * 6, tipo: 'square', filtro: 'lowpass', ff: 700, a: 0.006, sus: 0.04, r: 0.05, v: 0.55 }); osc({ t: t + 0.42, f: 110, tipo: 'square', filtro: 'lowpass', ff: 600, curva: [[0.2, 90]], a: 0.01, sus: 0.16, r: 0.08, v: 0.5 }); },
+  leon: function (t) { ruido({ t: t, filtro: 'lowpass', ff: 300, ff2: 1500, q: 3, a: 0.15, sus: 0.5, r: 0.5, v: 0.8 }); osc({ t: t, f: 95, tipo: 'sawtooth', filtro: 'lowpass', ff: 500, curva: [[0.4, 120], [1.1, 70]], a: 0.15, sus: 0.5, r: 0.5, v: 0.55, vib: 22, vibA: 8 }); },
+  dino: function (t) { ruido({ t: t, filtro: 'lowpass', ff: 200, ff2: 900, q: 6, a: 0.2, sus: 0.6, r: 0.6, v: 0.8 }); osc({ t: t, f: 70, tipo: 'sawtooth', filtro: 'lowpass', ff: 380, curva: [[0.5, 95], [1.3, 50]], a: 0.2, sus: 0.6, r: 0.6, v: 0.6, vib: 14, vibA: 6 }); },
+  elefante: function (t) { osc({ t: t, f: 330, tipo: 'sawtooth', filtro: 'bandpass', ff: 1500, q: 1.5, curva: [[0.15, 700], [0.6, 640], [0.9, 520]], a: 0.03, sus: 0.7, r: 0.25, v: 0.55, vib: 7, vibA: 20, eco: 1 }); osc({ t: t, f: 660, tipo: 'square', filtro: 'lowpass', ff: 2200, curva: [[0.15, 1400], [0.9, 1040]], a: 0.03, sus: 0.7, r: 0.25, v: 0.08 }); },
+  mono: function (t) { var i, n = [300, 420, 520, 700]; for (i = 0; i < 4; i++) osc({ t: t + i * 0.16, f: n[i], tipo: 'triangle', curva: [[0.1, n[i] * 1.5]], a: 0.01, sus: 0.06, r: 0.06, v: 0.5 }); },
+  abeja: function (t) { osc({ t: t, f: 210, tipo: 'sawtooth', filtro: 'lowpass', ff: 1400, curva: [[0.4, 240], [0.8, 200], [1.1, 230]], a: 0.05, sus: 0.9, r: 0.2, v: 0.35, trem: 34 }); },
+  ballena: function (t) { osc({ t: t, f: 220, tipo: 'sine', curva: [[0.5, 420], [1.1, 300], [1.6, 160]], a: 0.2, sus: 1.2, r: 0.4, v: 0.35, vib: 4, vibA: 10, eco: 1 }); osc({ t: t, f: 440, tipo: 'triangle', curva: [[0.5, 840], [1.1, 600], [1.6, 320]], a: 0.2, sus: 1.2, r: 0.4, v: 0.06, eco: 1 }); },
+  foca: function (t) { var i; for (i = 0; i < 3; i++) osc({ t: t + i * 0.18, f: 560, tipo: 'square', filtro: 'bandpass', ff: 1200, q: 3, curva: [[0.08, 460]], a: 0.008, sus: 0.05, r: 0.06, v: 0.85 }); },
+  hipo: function (t) { osc({ t: t, f: 90, tipo: 'sine', curva: [[0.5, 70]], a: 0.05, sus: 0.45, r: 0.2, v: 0.5, trem: 9 }); var i; for (i = 0; i < 4; i++) osc({ t: t + 0.55 + i * 0.09, f: 500 + i * 160, tipo: 'sine', curva: [[0.05, 900 + i * 160]], a: 0.004, r: 0.06, v: 0.3 }); },
+  jirafa: function (t) { osc({ t: t, f: 200, tipo: 'sine', curva: [[0.3, 900]], a: 0.005, sus: 0.05, r: 0.3, v: 0.75, vib: 18, vibA: 40 }); osc({ t: t + 0.45, f: 1600, tipo: 'sine', curva: [[0.04, 2400]], a: 0.003, r: 0.06, v: 0.3 }); },
+  koala: function (t) { ruido({ t: t, filtro: 'lowpass', ff: 400, q: 4, a: 0.3, sus: 0.3, r: 0.3, v: 0.9 }); ruido({ t: t + 1.0, filtro: 'bandpass', ff: 2500, q: 1, a: 0.2, sus: 0.1, r: 0.3, v: 0.2 }); },
+  serpiente: function (t) { ruido({ t: t, filtro: 'highpass', ff: 5000, a: 0.08, sus: 0.8, r: 0.3, v: 0.35 }); },
+  tortuga: function (t) { var n = [79, 76, 72, 67, 64], i; for (i = 0; i < n.length; i++) osc({ t: t + i * 0.2, f: hz(n[i]), tipo: 'sine', a: 0.004, r: 0.35, v: 0.4 }); },
+  unicornio: function (t) { var n = [72, 76, 79, 84, 88, 91, 96, 100], i; for (i = 0; i < n.length; i++) { osc({ t: t + i * 0.055, f: hz(n[i]), tipo: 'triangle', a: 0.003, r: 0.6, v: 0.18, eco: 1 }); osc({ t: t + i * 0.055, f: hz(n[i]) * 2, tipo: 'sine', a: 0.003, r: 0.3, v: 0.05, eco: 1 }); } },
+  zorro: function (t) { var i; for (i = 0; i < 3; i++) osc({ t: t + i * 0.15, f: 700, tipo: 'sawtooth', filtro: 'bandpass', ff: 1800, q: 2, curva: [[0.05, 1300], [0.11, 900]], a: 0.005, sus: 0.04, r: 0.06, v: 0.8 }); }
+};
+function voz(nombre) {
+  if (!AU.ctx || !AU.sfxOn) return;
+  var t = AU.ctx.currentTime;
+  if (t - AU.ultVoz < 0.12) return;
+  AU.ultVoz = t;
+  if (VOCES[nombre]) VOCES[nombre](t + 0.02);
+}
+
+/* ---- notas que acompañan (pentatónica de Do: siempre suenan bien con la música) ---- */
+var PENTA = [60, 62, 64, 67, 69, 72, 74, 76, 79, 81, 84, 86, 88];
+function notaMagica(alta) {
+  if (!AU.ctx || !AU.sfxOn) return;
+  var paso = [-2, -1, 1, 1, 2, 2, 3][Math.floor(Math.random() * 7)];
+  AU.notaIdx = Math.max(2, Math.min(PENTA.length - 1, AU.notaIdx + paso));
+  var n = PENTA[AU.notaIdx] + (alta ? 12 : 0), t = AU.ctx.currentTime + 0.005;
+  osc({ t: t, f: hz(n), tipo: 'sine', a: 0.003, r: 0.9, v: 0.22, eco: 1 });
+  osc({ t: t, f: hz(n) * 3, tipo: 'sine', a: 0.003, r: 0.25, v: 0.05 });
+  osc({ t: t, f: hz(n) * 2, tipo: 'triangle', a: 0.003, r: 0.4, v: 0.06 });
+}
+function sfx(n) {
+  if (!AU.ctx || !AU.sfxOn) return;
+  var t = AU.ctx.currentTime + 0.005, i;
+  if (n === 'pop') { osc({ t: t, f: 380, tipo: 'sine', curva: [[0.06, 1100]], a: 0.002, r: 0.08, v: 0.4 }); ruido({ t: t, ff: 3000, q: 1, r: 0.04, v: 0.15 }); }
+  if (n === 'boing') osc({ t: t, f: 160, tipo: 'sine', curva: [[0.12, 420], [0.25, 300]], a: 0.004, sus: 0.08, r: 0.2, v: 0.45, vib: 16, vibA: 30 });
+  if (n === 'whoosh') ruido({ t: t, ff: 600, ff2: 3000, q: 1.2, a: 0.08, r: 0.25, v: 0.25 });
+  if (n === 'cohete') { ruido({ t: t, ff: 800, ff2: 4000, q: 1, a: 0.05, sus: 0.4, r: 0.1, v: 0.25 }); osc({ t: t, f: 300, tipo: 'sine', curva: [[0.5, 1400]], a: 0.02, sus: 0.4, r: 0.1, v: 0.12 }); }
+  if (n === 'estallido') { ruido({ t: t, filtro: 'lowpass', ff: 1800, ff2: 200, a: 0.003, r: 0.6, v: 0.6 }); for (i = 0; i < 8; i++) osc({ t: t + 0.05 + Math.random() * 0.5, f: 2000 + Math.random() * 2000, tipo: 'sine', a: 0.002, r: 0.08, v: 0.08 }); }
+  if (n === 'acorde') { var ac = [60, 64, 67, 72, 76]; for (i = 0; i < ac.length; i++) osc({ t: t + i * 0.04, f: hz(ac[i]), tipo: 'triangle', a: 0.005, r: 1.4, v: 0.14, eco: 1 }); }
+  if (n === 'arcoiris') { for (i = 0; i < 14; i++) osc({ t: t + i * 0.06, f: hz(PENTA[i % PENTA.length] + (i >= PENTA.length ? 12 : 0)), tipo: 'triangle', a: 0.003, r: 0.7, v: 0.15, eco: 1 }); }
+  if (n === 'globo') osc({ t: t, f: 500, tipo: 'sine', curva: [[0.15, 900]], a: 0.01, r: 0.15, v: 0.3 });
+  if (n === 'brillo') osc({ t: t, f: hz(96 + Math.floor(Math.random() * 5) * 2), tipo: 'sine', a: 0.002, r: 0.2, v: 0.05 });
+  if (n === 'flor') { osc({ t: t, f: hz(84), tipo: 'sine', curva: [[0.1, hz(91)]], a: 0.003, r: 0.3, v: 0.15, eco: 1 }); }
+  if (n === 'fiesta') { var m = [72, 76, 79, 84, 79, 84, 88, 91, 96]; for (i = 0; i < m.length; i++) osc({ t: t + i * 0.12, f: hz(m[i]), tipo: 'square', filtro: 'lowpass', ff: 3000, a: 0.005, sus: 0.06, r: 0.15, v: 0.12 }); sfx('acorde'); }
+}
+
+/* ---- la música: alegre, en Do mayor ---- */
+var ACORDES = [[48, [60, 64, 67]], [45, [57, 60, 64]], [41, [57, 60, 65]], [43, [55, 59, 62]], [48, [60, 64, 67]], [45, [57, 60, 64]], [41, [57, 60, 65]], [43, [55, 59, 62, 65]]];
+var MELO = [
+  [76, 0, 79, 0, 81, 79, 76, 0, 74, 0, 72, 0, 74, 76, 0, 0],
+  [72, 0, 76, 0, 79, 0, 76, 0, 72, 0, 69, 0, 72, 0, 0, 0],
+  [77, 0, 76, 0, 74, 0, 72, 0, 69, 0, 72, 0, 74, 0, 0, 0],
+  [74, 0, 76, 0, 79, 0, 81, 79, 77, 0, 76, 0, 74, 0, 0, 0],
+  [76, 0, 79, 0, 84, 0, 81, 0, 79, 0, 76, 0, 79, 81, 0, 0],
+  [84, 0, 81, 0, 79, 0, 76, 0, 72, 0, 76, 0, 79, 0, 0, 0],
+  [77, 0, 81, 0, 84, 0, 81, 0, 77, 0, 74, 0, 72, 0, 74, 0],
+  [79, 0, 0, 0, 77, 0, 76, 0, 74, 0, 0, 0, 72, 0, 0, 0]
+];
+var BPM = 108;
+function musicaOn() {
+  if (!AU.ctx || AU.sonando) return;
+  AU.sonando = true; AU.paso = 0; AU.prox = AU.ctx.currentTime + 0.1;
+  if (!AU.timer) AU.timer = setInterval(tick, 40);
+}
+function musicaOff() { AU.sonando = false; }
+function tick() {
+  if (!AU.ctx || !AU.sonando) return;
+  var s16 = 60 / BPM / 4;
+  while (AU.prox < AU.ctx.currentTime + 0.15) {
+    var p = AU.paso % 128, comp = Math.floor(p / 16), d = p % 16, t = AU.prox, ac = ACORDES[comp], i, sw = (d % 2) ? s16 * 0.12 : 0;
+    t += sw;
+    // bajo
+    if (d === 0 || d === 8 || d === 14) osc({ t: t, f: hz(ac[0] + (d === 14 ? 7 : 0)), tipo: 'triangle', filtro: 'lowpass', ff: 600, a: 0.005, sus: 0.12, r: 0.18, v: 0.5, dest: AU.mus });
+    // ukelele: rasguido
+    if (d === 2 || d === 6 || d === 10 || d === 13) for (i = 0; i < ac[1].length; i++) osc({ t: t + i * 0.012, f: hz(ac[1][i]), tipo: 'triangle', filtro: 'lowpass', ff: 2400, a: 0.003, r: d === 13 ? 0.12 : 0.3, v: 0.11, dest: AU.mus });
+    // carrillón
+    var m = MELO[comp][d];
+    if (m) { osc({ t: t, f: hz(m), tipo: 'sine', a: 0.003, r: 0.55, v: 0.2, dest: AU.mus }); osc({ t: t, f: hz(m) * 4, tipo: 'sine', a: 0.002, r: 0.12, v: 0.035, dest: AU.mus }); }
+    // percusión suave
+    if (d === 0 || d === 8) osc({ t: t, f: 120, tipo: 'sine', curva: [[0.08, 50]], a: 0.002, r: 0.12, v: 0.4, dest: AU.mus });
+    if (d === 4 || d === 12) ruido({ t: t, ff: 2500, q: 0.8, r: 0.1, v: 0.12, dest: AU.mus });
+    if (d % 2 === 0) ruido({ t: t, filtro: 'highpass', ff: 7000, r: 0.03, v: d % 4 ? 0.05 : 0.08, dest: AU.mus });
+    AU.prox += s16; AU.paso++;
+  }
+}
+function setMus(on) { AU.musOn = on; if (AU.mus) AU.mus.gain.value = on ? 0.32 : 0; }
+function setSon(on) { AU.sfxOn = on; if (AU.sfx) AU.sfx.gain.value = on ? 0.75 : 0; }
+var ROBOTS = [
+  { id: 'azul', c: '#4d8df7', c2: '#2f6fd9' }, { id: 'rojo', c: '#ff6b6b', c2: '#e04848' },
+  { id: 'verde', c: '#3cc47c', c2: '#22a05f' }, { id: 'violeta', c: '#a26bff', c2: '#7f47e6' }
+];
+function robotSVG(r, expr) {
+  var c = r.c, c2 = r.c2, s = '<svg class="rob" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">';
+  s += '<ellipse cx="100" cy="188" rx="60" ry="9" fill="#000" opacity=".15"/>';
+  // antena
+  s += '<g class="antena"><path d="M100 40 V16" stroke="#5b6475" stroke-width="6" stroke-linecap="round"/><circle cx="100" cy="14" r="10" fill="#ffd43b"/><circle cx="96" cy="10" r="3.5" fill="#fff" opacity=".8"/></g>';
+  // ruedas
+  s += '<rect x="44" y="160" width="112" height="28" rx="14" fill="#3d4454"/>';
+  s += '<g class="ruedas"><circle cx="62" cy="174" r="10" fill="#6b7385"/><circle cx="100" cy="174" r="10" fill="#6b7385"/><circle cx="138" cy="174" r="10" fill="#6b7385"/></g>';
+  // cuerpo
+  s += '<rect x="56" y="118" width="88" height="48" rx="16" fill="' + c2 + '"/><circle cx="100" cy="142" r="11" fill="#fff" opacity=".9"/><circle cx="100" cy="142" r="6" fill="#ffd43b" class="luz"/>';
+  // brazos
+  s += '<g class="brazoI"><path d="M58 132 Q34 132 30 112" stroke="' + c2 + '" stroke-width="11" fill="none" stroke-linecap="round"/><circle cx="30" cy="108" r="9" fill="#5b6475"/></g>';
+  s += '<g class="brazoD"><path d="M142 132 Q166 132 170 112" stroke="' + c2 + '" stroke-width="11" fill="none" stroke-linecap="round"/><circle cx="170" cy="108" r="9" fill="#5b6475"/></g>';
+  // cabeza
+  s += '<rect x="36" y="38" width="128" height="86" rx="30" fill="' + c + '"/><rect x="44" y="44" width="58" height="16" rx="8" fill="#fff" opacity=".25"/>';
+  s += '<rect x="26" y="66" width="12" height="30" rx="6" fill="#5b6475"/><rect x="162" y="66" width="12" height="30" rx="6" fill="#5b6475"/>';
+  s += '<rect x="50" y="54" width="100" height="58" rx="20" fill="#1f2433"/>';
+  // cara
+  if (expr === 'triste') s += '<g fill="#6ee7ff"><ellipse cx="78" cy="80" rx="9" ry="7"/><ellipse cx="122" cy="80" rx="9" ry="7"/></g><path d="M84 102 q16 -10 32 0" stroke="#6ee7ff" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M66 70 l16 4 M134 70 l-16 4" stroke="#6ee7ff" stroke-width="4" stroke-linecap="round"/>';
+  else if (expr === 'sorpresa') s += '<g fill="#6ee7ff"><circle cx="78" cy="80" r="11"/><circle cx="122" cy="80" r="11"/></g><ellipse cx="100" cy="101" rx="7" ry="8" fill="#6ee7ff"/>';
+  else if (expr === 'feliz') s += '<path d="M66 84 q12 -16 24 0 M110 84 q12 -16 24 0" stroke="#6ee7ff" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M80 96 q20 18 40 0 Z" fill="#6ee7ff"/>';
+  else s += '<g class="ojosR" fill="#6ee7ff"><ellipse cx="78" cy="80" rx="10" ry="12"/><ellipse cx="122" cy="80" rx="10" ry="12"/></g><circle cx="82" cy="75" r="3.5" fill="#fff"/><circle cx="126" cy="75" r="3.5" fill="#fff"/><path d="M86 98 q14 10 28 0" stroke="#6ee7ff" stroke-width="5" fill="none" stroke-linecap="round"/>';
+  s += '<ellipse cx="64" cy="98" rx="7" ry="4" fill="#ff8fa3" opacity=".7"/><ellipse cx="136" cy="98" rx="7" ry="4" fill="#ff8fa3" opacity=".7"/>';
+  return s + '</svg>';
+}
+
+/* ============ ROBOTITO PINTOR: dibujos ============
+   Letra minúscula = casilla a pintar de ese color · MAYÚSCULA = balde de pintura · . = vacío
+   ini = [fila, columna] donde arranca el robot */
+var CLAVE = '2026';   // clave del docente para salir (se puede cambiar)
+
+var COLORES = {
+  r: { c: '#ff5c5c', n: 'rojo' }, a: { c: '#ffcc1f', n: 'amarillo' }, v: { c: '#3ec45a', n: 'verde' },
+  z: { c: '#3d8ff5', n: 'azul' }, n: { c: '#ff8a1f', n: 'naranja' }, m: { c: '#a9673e', n: 'marrón' },
+  k: { c: '#2f3442', n: 'negro' }, p: { c: '#ff7eb6', n: 'rosa' }, l: { c: '#9b6bff', n: 'violeta' }
+};
+// colores del modo libre (se eligen con los números)
+var PALETA = ['r', 'a', 'v', 'z', 'n', 'p', 'l', 'k'];
+
+// etapas: 1 = Inicial, 2 = 1.º, 3 = 1.º y 2.º, 4 = 2.º
+var ETAPAS = [
+  { n: 1, color: '#3ec45a', guia: true, prog: false },
+  { n: 2, color: '#ff9f1c', guia: true, prog: false },
+  { n: 3, color: '#3d8ff5', guia: false, prog: false },
+  { n: 4, color: '#9b6bff', guia: true, prog: true }
+];
+var DIBUJOS = [
+  // ---- etapa 1: un color, con puntitos guía ----
+  { e: 0, vida: 'avanza', m: ['.....', 'rrrrr', '.....'], ini: [1, 0] },
+  { e: 0, vida: 'salta', m: ['.z.', '.z.', '.z.', '.z.'], ini: [0, 1] },
+  { e: 0, vida: 'salta', m: ['aa...', '.aa..', '..aa.', '...aa'], ini: [0, 0] },
+  { e: 0, vida: 'gira', m: ['vvvv', 'v..v', 'v..v', 'vvvv'], ini: [0, 0] },
+  { e: 0, vida: 'gira', m: ['..z..', '..z..', 'zzzzz', '..z..', '..z..'], ini: [2, 2] },
+  { e: 0, vida: 'late', m: ['.r.r.', 'rrrrr', 'rrrrr', '.rrr.', '..r..'], ini: [1, 0] },
+  // ---- etapa 2: dos colores, baldes de pintura ----
+  { e: 1, vida: 'balancea', m: ['R.r..', '.rar.', '..r.A', '.....'], ini: [3, 2] },
+  { e: 1, vida: 'gira', m: ['A.n.n.', '..aaa.', '.naaan', '..aaa.', 'N.n.n.'], ini: [2, 0] },
+  { e: 1, vida: 'balancea', m: ['.vvv.V', 'vvvvv.', '.vvv..', '..m..M', '..m...'], ini: [4, 0] },
+  { e: 1, vida: 'salta', m: ['.rrr.R', 'rrrrr.', '.aaa..', '.aaa.A'], ini: [3, 4] },
+  { e: 1, vida: 'brilla', m: ['..r...', '.rrr.R', 'rrrrr.', '.aaa..', '.aaa.A'], ini: [4, 4] },
+  { e: 1, vida: 'nada', m: ['.nnn.z', 'nnnnzz', '.nnn.z', 'N....Z'], ini: [3, 2] },
+  // ---- etapa 3: sin puntitos, hay que copiar el modelo ----
+  { e: 2, vida: 'balancea', m: ['P.p..', '.ppp.', '..n..', '..n.N', '.....'], ini: [4, 0] },
+  { e: 2, vida: 'salta', m: ['A.....K', '.aaaaa.', '.akaka.', '.aaaaa.', '.kaaak.', '.akkka.'], ini: [5, 0] },
+  { e: 2, vida: 'vuela', m: ['R..r..Z', '...z...', '..zzz..', '..zzz..', '.rzzzr.', 'N..n...'], ini: [5, 6] },
+  { e: 2, vida: 'aletea', m: ['.l...l.', '.llkll.', '.llkll.', '.l.k.l.', 'L.....K'], ini: [4, 3] },
+  { e: 2, vida: 'balancea', m: ['.n...n.', '.nnnnn.', '.nknkn.', '.nnnnn.', '..nkn..', 'N.....K'], ini: [5, 3] },
+  { e: 2, vida: 'salta', m: ['.zzzzz.', '.zazaz.', '.zzzzz.', '.zrrrz.', '.zzzzz.', 'Z..A..R'], ini: [5, 1] },
+  // ---- etapa 4: programar (el robot pinta mientras camina) ----
+  { e: 3, vida: 'avanza', m: ['.....', 'vvvv.', '.....'], ini: [1, 0] },
+  { e: 3, vida: 'salta', m: ['zz...', '.zz..', '..zz.'], ini: [0, 0] },
+  { e: 3, vida: 'gira', m: ['rrr', 'r.r', 'rrr'], ini: [0, 0] },
+  { e: 3, vida: 'brilla', m: ['A....', 'aaaaa', '..a..', '..a..'], ini: [0, 1] },
+  { e: 3, vida: 'avanza', m: ['Rrrr.', 'Zzzz.'], ini: [0, 0] },
+  { e: 3, vida: 'late', m: ['.r.r.', 'rrrrr', '.rrr.', '..r..'], ini: [1, 0] }
+];
+// dónde arranca cada grado
+var INICIO_GRADO = { inicial: 0, primero: 6, segundo: 12 };
+
+// pinta un dibujo como SVG de cuadraditos (para el modelo, el cuadro y la galería)
+function dibujoSVG(m, soloPintura, colores) {
+  var F = m.length, C = m[0].length, s = '<svg viewBox="0 0 ' + (C * 10) + ' ' + (F * 10) + '" xmlns="http://www.w3.org/2000/svg">', f, c, ch;
+  for (f = 0; f < F; f++) for (c = 0; c < C; c++) {
+    ch = m[f].charAt(c);
+    if (COLORES[ch]) s += '<rect x="' + (c * 10 + 0.4) + '" y="' + (f * 10 + 0.4) + '" width="9.2" height="9.2" rx="1.8" fill="' + COLORES[ch].c + '"/>';
+  }
+  return s + '</svg>';
+}
+/* ============ ROBOTITO PINTOR ============ */
+function $(id) { return document.getElementById(id); }
+function h(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
+function pantalla(id) { var p = document.querySelectorAll('.pant'), i; for (i = 0; i < p.length; i++) p[i].className = 'pant' + (p[i].id === id ? ' on' : ''); }
+function escalar() { var s = Math.min(window.innerWidth / 1280, window.innerHeight / 720); $('stage').style.transform = 'scale(' + s + ')'; }
+window.addEventListener('resize', escalar);
+
+/* ---------- íconos ---------- */
+var IC = {
+  arr: '<svg viewBox="0 0 24 24"><path d="M12 3l8 9h-5v9H9v-9H4z" fill="#3b5bdb"/></svg>',
+  aba: '<svg viewBox="0 0 24 24"><path d="M12 21l8-9h-5V3H9v9H4z" fill="#3b5bdb"/></svg>',
+  izq: '<svg viewBox="0 0 24 24"><path d="M3 12l9-8v5h9v6h-9v5z" fill="#3b5bdb"/></svg>',
+  der: '<svg viewBox="0 0 24 24"><path d="M21 12l-9-8v5H3v6h9v5z" fill="#3b5bdb"/></svg>',
+  casa: '<svg viewBox="0 0 24 24"><path d="M3 11l9-7.5 9 7.5v9.5a1 1 0 0 1-1 1h-5.5v-6h-5v6H4a1 1 0 0 1-1-1z" fill="#ff8a3d"/></svg>',
+  repetir: '<svg viewBox="0 0 24 24"><path d="M12 5V2L7 6l5 4V7a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7z" fill="#7c6cf2"/></svg>',
+  play: '<svg viewBox="0 0 24 24"><path d="M7 4.5v15a1 1 0 0 0 1.5.9l12-7.5a1 1 0 0 0 0-1.8l-12-7.5A1 1 0 0 0 7 4.5z" fill="#fff"/></svg>',
+  borrar: '<svg viewBox="0 0 24 24"><path d="M9 5h11a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H9l-6-7z" fill="#ff6b6b"/><path d="M12 9l6 6M18 9l-6 6" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></svg>',
+  limpiar: '<svg viewBox="0 0 24 24"><path d="M5 7h14l-1.2 13a1 1 0 0 1-1 .9H7.2a1 1 0 0 1-1-.9z" fill="#868e96"/><rect x="3" y="4" width="18" height="3" rx="1.5" fill="#495057"/><rect x="9" y="2" width="6" height="3" rx="1" fill="#495057"/></svg>',
+  candado: '<svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="3" fill="#868e96"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="#868e96" stroke-width="2.6" fill="none"/></svg>',
+  refugio: '<svg viewBox="0 0 24 24"><path d="M3 11l9-7.5 9 7.5v9.5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z" fill="#ff8fab"/><path d="M12 18.5s-4-2.4-4.9-4.8c-.7-1.7.4-3.6 2.2-3.6 1.1 0 1.9.7 2.2 1.3h1c.3-.6 1.1-1.3 2.2-1.3 1.8 0 2.9 1.9 2.2 3.6C16 16.1 12 18.5 12 18.5z" fill="#fff"/></svg>',
+  teclas: '<svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="6" rx="1.5" fill="#3b5bdb"/><rect x="2" y="11" width="6" height="6" rx="1.5" fill="#3b5bdb"/><rect x="9" y="11" width="6" height="6" rx="1.5" fill="#3b5bdb"/><rect x="16" y="11" width="6" height="6" rx="1.5" fill="#3b5bdb"/><path d="M12 4.5l1.8 2.5h-3.6zM12 15.5l1.8-2.5h-3.6zM3.5 14l2.5-1.8v3.6zM20.5 14L18 12.2v3.6z" fill="#fff"/></svg>',
+  mano: '<svg viewBox="0 0 64 64"><path d="M24 34V12a5 5 0 0 1 10 0v16m0-4a5 5 0 0 1 10 0v6m0-3a5 5 0 0 1 10 0v13c0 11-7 18-17 18-7 0-11-3-15-9l-8-12a5 5 0 0 1 8-6l2 3" fill="#ffd8b5" stroke="#2b2b3a" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/></svg>'
+};
+var EST_ON = '<svg viewBox="0 0 100 100"><path d="M50 8 L62 36 L92 38 L69 58 L77 88 L50 72 L23 88 L31 58 L8 38 L38 36 Z" fill="#ffd43b" stroke="#f0a400" stroke-width="6" stroke-linejoin="round"/></svg>';
+function logoColegio() {
+  return '<svg viewBox="0 0 100 100" width="100%" height="100%"><circle cx="50" cy="50" r="47" fill="#fdf6dc"/><circle cx="50" cy="50" r="42" fill="#2e86b5"/>' +
+    '<rect x="46" y="16" width="8" height="46" rx="1.5" fill="#fff"/><rect x="33" y="27" width="34" height="7" rx="1.5" fill="#fff"/>' +
+    '<path d="M68 20 l2 4.5 5 .6 -3.7 3.4 1 5 -4.3 -2.5 -4.3 2.5 1 -5 -3.7 -3.4 5 -.6 Z" fill="#f2d25a"/>' +
+    '<path d="M22 66 Q36 60 48 70 M22 72 Q36 66 48 76 M78 66 Q64 60 52 70 M78 72 Q64 66 52 76" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/><path d="M48 70 L50 80 L52 70" fill="none" stroke="#fff" stroke-width="3" stroke-linejoin="round"/><path d="M40 82 h20" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>';
+}
+var DIR = { arr: [-1, 0], aba: [1, 0], izq: [0, -1], der: [0, 1] };
+var TECLA_DIR = { 37: 'izq', 38: 'arr', 39: 'der', 40: 'aba' };
+
+/* ---------- voz ---------- */
+var VOZ = { on: true, v: null };
+function elegirVoz() {
+  if (!window.speechSynthesis) return;
+  var vs = speechSynthesis.getVoices(), pref = ['es-UY', 'es-AR', 'es-419', 'es-MX', 'es-US', 'es-ES'], i, j;
+  for (j = 0; j < pref.length && !VOZ.v; j++) for (i = 0; i < vs.length; i++) if (vs[i].lang.replace('_', '-') === pref[j]) { VOZ.v = vs[i]; break; }
+  if (!VOZ.v) for (i = 0; i < vs.length; i++) if (vs[i].lang.indexOf('es') === 0) { VOZ.v = vs[i]; break; }
+}
+if (window.speechSynthesis) { elegirVoz(); speechSynthesis.onvoiceschanged = elegirVoz; }
+function hablar(t, demora) {
+  if (!VOZ.on || !window.speechSynthesis) return;
+  setTimeout(function () {
+    try {
+      speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(t); u.lang = VOZ.v ? VOZ.v.lang : 'es-ES'; if (VOZ.v) u.voice = VOZ.v;
+      u.rate = 0.95; u.pitch = 1.15; u.volume = 1;
+      speechSynthesis.speak(u);
+    } catch (e) {}
+  }, demora || 0);
+}
+function azar(a) { return a[Math.floor(Math.random() * a.length)]; }
+
+/* ---------- partículas ---------- */
+var FX = { p: [], cx: null };
+function fxIniciar() { FX.cx = $('fx').getContext('2d'); requestAnimationFrame(fxPaso); }
+function lluvia(x, y, n, tipo, cols) {
+  var i; cols = cols || ['#ff5c8a', '#ffd43b', '#69db7c', '#4dabf7', '#b197fc', '#ff922b'];
+  for (i = 0; i < n; i++) FX.p.push({ x: x, y: y, vx: (Math.random() - 0.5) * 14, vy: -Math.random() * 13 - 3, r: Math.random() * 6, vr: (Math.random() - 0.5) * 0.3, t: tipo || 'confeti', c: cols[i % cols.length], s: 8 + Math.random() * 10, v: 1 });
+}
+function fxPaso() {
+  var cx = FX.cx, i, p;
+  cx.clearRect(0, 0, 1280, 720);
+  for (i = FX.p.length - 1; i >= 0; i--) {
+    p = FX.p[i]; p.vy += 0.4; p.x += p.vx; p.y += p.vy; p.r += p.vr; p.v -= 0.008;
+    if (p.y > 760 || p.v <= 0) { FX.p.splice(i, 1); continue; }
+    cx.save(); cx.globalAlpha = Math.min(1, p.v * 2); cx.translate(p.x, p.y); cx.rotate(p.r); cx.fillStyle = p.c;
+    if (p.t === 'corazon') { var s = p.s / 10; cx.scale(s, s); cx.beginPath(); cx.moveTo(0, 3); cx.bezierCurveTo(-8, -3, -4, -10, 0, -5); cx.bezierCurveTo(4, -10, 8, -3, 0, 3); cx.fill(); }
+    else if (p.t === 'estrella') { cx.beginPath(); for (var k = 0; k < 10; k++) { var rr = k % 2 ? p.s * 0.4 : p.s; cx.lineTo(Math.cos(k * Math.PI / 5) * rr, Math.sin(k * Math.PI / 5) * rr); } cx.fill(); }
+    else cx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2);
+    cx.restore();
+  }
+  requestAnimationFrame(fxPaso);
+}
+
+/* ---------- manito que enseña ---------- */
+var MANO = null;
+function mano(x, y) { if (!MANO) { MANO = h('div', 'manito', IC.mano); $('stage').appendChild(MANO); } MANO.style.display = 'block'; MANO.style.left = (x - 41) + 'px'; MANO.style.top = (y - 10) + 'px'; }
+function manoToca() { if (!MANO) return; MANO.className = 'manito'; void MANO.offsetWidth; MANO.className = 'manito toca'; }
+function manoFuera() { if (MANO) MANO.style.display = 'none'; }
+
+/* =========================================================
+   INICIO: elegir robot
+   ========================================================= */
+var FASE = 'inicio', selRobot = 0;
+function irInicio() {
+  FASE = 'inicio'; pantalla('inicio');
+  var s = '', i;
+  for (i = 0; i < ROBOTS.length; i++) s += '<button class="robCard' + (i === P.robot ? ' sel' : '') + '" data-i="' + i + '">' + robotSVG(ROBOTS[i]) + '</button>';
+  $('robots').innerHTML = s;
+  selRobot = P.robot;
+  var b = $('robots').children;
+  for (i = 0; i < b.length; i++) b[i].onclick = function () { elegirRobot(+this.getAttribute('data-i')); };
+  $('marcaIni').innerHTML = logoColegio() + 'Colegio Sagrado Corazón · Informática y Robótica';
+  armarTitulo();
+  hablar('¡Hola! Elegí tu robot.', 400);
+}
+function marcarRobot(i) { var b = $('robots').children, k; for (k = 0; k < b.length; k++) b[k].className = 'robCard' + (k === i ? ' sel' : ''); selRobot = i; sfx('pop'); notaMagica(); }
+function elegirRobot(i) {
+  marcarRobot(i);
+  P.robot = i; guardar();
+  sfx('acorde');
+  lluvia(250 + i * 254, 360, 40, 'estrella');
+  setTimeout(function () { if (!P.tuto) irTuto(empezarJuego); else empezarJuego(); }, 700);
+}
+
+/* =========================================================
+   TUTORIAL: aprender las flechas
+   ========================================================= */
+var TU = null;
+function irTuto(despues) {
+  FASE = 'tuto'; pantalla('tuto');
+  TU = { seq: mezclar(['der', 'izq', 'arr', 'aba', 'der', 'arr', 'izq', 'aba']), i: 0, despues: despues, espera: false };
+  var pos = { arr: [180, 0], izq: [20, 128], aba: [180, 128], der: [340, 128] }, s = '', d;
+  for (d in pos) s += '<div class="tecla" id="t_' + d + '" style="left:' + pos[d][0] + 'px;top:' + pos[d][1] + 'px">' + IC[d] + '</div>';
+  $('teclado').innerHTML = s;
+  $('tutoRobot').innerHTML = robotSVG(ROBOTS[P.robot], 'feliz');
+  var p = ''; for (var i = 0; i < TU.seq.length; i++) p += '<i></i>'; $('tutoPuntos').innerHTML = p;
+  hablar('¡Hola! Vamos a practicar con las flechas del teclado. Tocá la flecha que brilla.', 300);
+  tutoSiguiente();
+}
+function mezclar(a) { var i, j, t; a = a.slice(0); for (i = a.length - 1; i > 0; i--) { j = Math.floor(Math.random() * (i + 1)); t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+function tutoSiguiente() {
+  var d = TU.seq[TU.i], k;
+  for (k in DIR) $('t_' + k).className = 'tecla';
+  $('t_' + d).className = 'tecla brilla';
+  var t = $('t_' + d), x = 390 + parseInt(t.style.left, 10) + 70, y = 300 + parseInt(t.style.top, 10) + 70;
+  if (TU.i < 2) { mano(x, y); manoToca(); clearInterval(TU.mt); TU.mt = setInterval(manoToca, 1200); } else { manoFuera(); clearInterval(TU.mt); }
+  TU.espera = false;
+}
+function tutoTecla(d) {
+  if (TU.espera) return;
+  var obj = TU.seq[TU.i];
+  if (d !== obj) { var e = $('t_' + d); e.className = 'tecla mal'; sfx('boing'); setTimeout(function () { if (e.className === 'tecla mal') e.className = 'tecla'; }, 400); return; }
+  TU.espera = true;
+  $('t_' + d).className = 'tecla ok';
+  var v = DIR[d]; $('tutoRobot').style.transform = 'translate(' + (v[1] * 120) + 'px,' + (v[0] * 60) + 'px)';
+  setTimeout(function () { $('tutoRobot').style.transform = ''; }, 380);
+  notaMagica(true); sfx('pop');
+  $('tutoPuntos').children[TU.i].className = 'ok';
+  TU.i++;
+  if (TU.i >= TU.seq.length) {
+    clearInterval(TU.mt); manoFuera();
+    sfx('fiesta'); lluvia(640, 300, 90); hablar('¡Muy bien! ¡Ya sabés usar las flechas!');
+    P.tuto = true; guardar();
+    setTimeout(function () { var f = TU.despues; TU = null; f(); }, 2400);
+  } else {
+    if (TU.i % 3 === 0) hablar(azar(['¡Muy bien!', '¡Genial!', '¡Eso!']));
+    setTimeout(tutoSiguiente, 450);
+  }
+}
+
+
+/* ---------- íconos propios del pintor ---------- */
+IC.paleta = '<svg viewBox="0 0 24 24"><path d="M12 3C6.5 3 2 6.9 2 11.8 2 15.2 4.7 18 8 18h1.4c.9 0 1.6.7 1.6 1.6 0 .4-.1.7-.4 1-.3.3-.4.7-.4 1.1 0 .9.8 1.3 1.8 1.3 5.5 0 10-4.4 10-9.8C22 7 17.5 3 12 3z" fill="#f3d7a8"/><circle cx="7" cy="11" r="1.8" fill="#ff5c5c"/><circle cx="10" cy="7" r="1.8" fill="#ffcc1f"/><circle cx="15" cy="7" r="1.8" fill="#3ec45a"/><circle cx="18" cy="11.5" r="1.8" fill="#3d8ff5"/></svg>';
+IC.galeria = '<svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="18" rx="2" fill="#c9a46b"/><rect x="4.5" y="5.5" width="15" height="13" rx="1" fill="#fff"/><path d="M5 17l4.5-5 3 3 2.5-2.5 4 4.5z" fill="#3ec45a"/><circle cx="15.5" cy="9" r="1.8" fill="#ffcc1f"/></svg>';
+IC.camara = '<svg viewBox="0 0 24 24"><path d="M4 7h3l1.6-2.2h6.8L17 7h3a1.5 1.5 0 0 1 1.5 1.5v10A1.5 1.5 0 0 1 20 20H4a1.5 1.5 0 0 1-1.5-1.5v-10A1.5 1.5 0 0 1 4 7z" fill="#fff"/><circle cx="12" cy="13.2" r="4.2" fill="#40c057"/><circle cx="12" cy="13.2" r="2.2" fill="#fff"/></svg>';
+IC.hoja = '<svg viewBox="0 0 24 24"><path d="M6 2h8l5 5v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z" fill="#fff" stroke="#8a93a6" stroke-width="1.6"/><path d="M14 2v5h5" fill="#e3e7f0" stroke="#8a93a6" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 11v7M8.5 14.5h7" stroke="#40c057" stroke-width="2.4" stroke-linecap="round"/></svg>';
+IC.volver = '<svg viewBox="0 0 24 24"><path d="M10 5L3 12l7 7v-4.5h6a4 4 0 0 0 0-8h-1v3h1a1 1 0 0 1 0 2h-6V5z" fill="#ff8a3d"/></svg>';
+function baldeSVG(col) {
+  return '<svg viewBox="0 0 100 100"><ellipse cx="50" cy="92" rx="30" ry="5" fill="#000" opacity=".12"/><path d="M22 38 L30 88 Q50 96 70 88 L78 38 Z" fill="#dfe3ea"/><path d="M22 38 L26 62 Q50 70 74 62 L78 38 Z" fill="#cfd5df"/>' +
+    '<ellipse cx="50" cy="38" rx="28" ry="9" fill="' + col + '"/><path d="M30 41 q2 18 -2 24 q8 4 8 -8 q0 -10 4 -15 Z" fill="' + col + '"/><path d="M22 38 Q50 4 78 38" fill="none" stroke="#8a93a6" stroke-width="4"/><ellipse cx="42" cy="36" rx="8" ry="2.5" fill="#fff" opacity=".45"/></svg>';
+}
+function pincelSVG(col) {
+  return '<svg viewBox="0 0 100 100"><path d="M78 8 L92 22 L50 64 L36 50 Z" fill="#c9a46b"/><path d="M36 50 L50 64 L44 70 L30 56 Z" fill="#adb5bd"/><path d="M30 56 L44 70 Q30 92 8 92 Q8 70 30 56 Z" fill="' + (col || '#e3ddd2') + '"/></svg>';
+}
+var GOMA = '<svg viewBox="0 0 100 100"><path d="M20 62 L56 26 Q62 20 68 26 L84 42 Q90 48 84 54 L52 86 H34 L20 72 Q14 66 20 62 Z" fill="#ff9fc4"/><path d="M20 62 L40 82 L34 86 L20 72 Q14 66 20 62 Z" fill="#fff" opacity=".6"/><path d="M38 44 L68 74" stroke="#e86a9f" stroke-width="5"/></svg>';
+
+/* ---------- progreso ---------- */
+var P = { robot: 0, tuto: false, gal: [] };
+function cargar() { try { var t = localStorage.getItem('robotito_pintor_v1'); if (t) { var o = JSON.parse(t), k; for (k in o) P[k] = o[k]; } } catch (e) {} }
+function guardar() { try { localStorage.setItem('robotito_pintor_v1', JSON.stringify(P)); } catch (e) {} }
+var G = { nivel: 0, hechos: {}, demoHecha: false };
+(function () { var hs = (location.hash || '').replace('#', '').toLowerCase(); if (INICIO_GRADO[hs] != null) G.nivel = INICIO_GRADO[hs]; })();
+
+function armarTitulo() {
+  var t = 'Robotito pintor', s = '', i, cols = ['#ff5c5c', '#ff8a1f', '#ffcc1f', '#3ec45a', '#3d8ff5', '#9b6bff', '#ff7eb6'], k = 0;
+  for (i = 0; i < t.length; i++) { if (t.charAt(i) === ' ') { s += ' '; continue; } s += '<span style="color:' + cols[k % cols.length] + ';animation-delay:' + (k * 0.12) + 's">' + t.charAt(i) + '</span>'; k++; }
+  $('titulo').innerHTML = s;
+}
+function empezarJuego() { jugar(G.nivel); }
+
+/* =========================================================
+   TABLERO (lo usan los niveles y el modo libre)
+   ========================================================= */
+function crearTablero(el, F, C, area) {
+  var cs = Math.floor(Math.min((area.w - 24) / C, (area.h - 24) / F, 110)), w = C * cs + 24, hh = F * cs + 24;
+  el.style.width = w + 'px'; el.style.height = hh + 'px';
+  el.style.left = Math.round(area.x + (area.w - w) / 2) + 'px'; el.style.top = Math.round(area.y + (area.h - hh) / 2) + 'px';
+  el.innerHTML = '';
+  var T = { el: el, F: F, C: C, cs: cs, celdas: [], pint: [], guias: {}, robot: null, pos: null }, f, c;
+  for (f = 0; f < F; f++) {
+    T.celdas.push([]); T.pint.push([]);
+    for (c = 0; c < C; c++) {
+      var cel = h('div', 'celda');
+      cel.style.cssText = 'left:' + (12 + c * cs + 3) + 'px;top:' + (12 + f * cs + 3) + 'px;width:' + (cs - 6) + 'px;height:' + (cs - 6) + 'px';
+      el.appendChild(cel); T.celdas[f].push(cel); T.pint[f].push('');
+    }
+  }
+  var r = h('div'); r.id = 'robot';
+  r.innerHTML = '<div class="giro">' + robotSVG(ROBOTS[P.robot]) + '</div><div class="pincel">' + pincelSVG('') + '</div>';
+  r.style.width = r.style.height = Math.round(cs * 0.86) + 'px';
+  el.appendChild(r); T.robot = r;
+  return T;
+}
+function ponerRobot(T, f, c, sinAnim) {
+  var cs = T.cs, r = T.robot, tam = Math.round(cs * 0.86);
+  if (sinAnim) r.style.transition = 'none';
+  r.style.left = (12 + c * cs + (cs - tam) / 2) + 'px'; r.style.top = (12 + f * cs + (cs - tam) / 2 - cs * 0.04) + 'px';
+  if (sinAnim) { void r.offsetWidth; r.style.transition = ''; }
+  T.pos = { f: f, c: c };
+}
+function pintarCelda(T, f, c, col) {
+  var cel = T.celdas[f][c];
+  T.pint[f][c] = col;
+  cel.style.background = col ? COLORES[col].c : '';
+  cel.className = 'celda'; void cel.offsetWidth; cel.className = 'celda' + (col ? ' pint' : '');
+}
+function pincelRobot(T, col) { T.robot.querySelector('.pincel').innerHTML = col === 'goma' ? GOMA : pincelSVG(col ? COLORES[col].c : ''); }
+function chocar(T) {
+  var r = T.robot; r.className = ''; void r.offsetWidth; r.className = 'choca'; sfx('boing');
+  setTimeout(function () { r.className = ''; }, 420);
+}
+function centroCelda(T, f, c) { return { x: parseInt(T.el.style.left, 10) + 12 + (c + 0.5) * T.cs, y: parseInt(T.el.style.top, 10) + 12 + (f + 0.5) * T.cs }; }
+
+/* =========================================================
+   NIVELES
+   ========================================================= */
+var L = null, IDLE = null;
+function jugar(n) {
+  if (n >= DIBUJOS.length) { irLibre(true); return; }
+  FASE = 'nivel'; pantalla('nivel'); manoFuera();
+  G.nivel = n;
+  var d = DIBUJOS[n], et = ETAPAS[d.e], F = d.m.length, C = d.m[0].length;
+  L = { n: n, d: d, et: et, prog: [], corriendo: false, ganado: false, ultAccion: Date.now(), pistaDada: false, avisoColor: false, avisoBalde: false, mov: false };
+  var area = et.prog ? { x: 30, y: 96, w: 860, h: 456 } : { x: 30, y: 96, w: 860, h: 610 };
+  var T = L.T = crearTablero($('tablero'), F, C, area), f, c, ch, colores = {}, baldes = 0;
+  L.objetivo = [];
+  for (f = 0; f < F; f++) for (c = 0; c < C; c++) {
+    ch = d.m[f].charAt(c);
+    if (COLORES[ch]) {
+      L.objetivo.push({ f: f, c: c, col: ch }); colores[ch] = 1;
+      if (et.guia) {
+        var g = h('div', 'guia'), tam = Math.round(T.cs * 0.34);
+        g.style.cssText = 'left:' + (12 + c * T.cs + (T.cs - tam) / 2) + 'px;top:' + (12 + f * T.cs + (T.cs - tam) / 2) + 'px;width:' + tam + 'px;height:' + tam + 'px;background:' + COLORES[ch].c + ';opacity:.55';
+        T.el.insertBefore(g, T.robot); T.guias[f + ',' + c] = g;
+      }
+    } else if (COLORES[ch.toLowerCase()] && ch !== ch.toLowerCase()) {
+      var b = h('div', 'balde', baldeSVG(COLORES[ch.toLowerCase()].c)), tb = Math.round(T.cs * 0.8);
+      b.style.cssText = 'left:' + (12 + c * T.cs + (T.cs - tb) / 2) + 'px;top:' + (12 + f * T.cs + (T.cs - tb) / 2) + 'px;width:' + tb + 'px;height:' + tb + 'px';
+      T.el.insertBefore(b, T.robot); baldes++;
+      T.baldes = T.baldes || {}; T.baldes[f + ',' + c] = { col: ch.toLowerCase(), el: b };
+    }
+  }
+  L.baldes = T.baldes || {};
+  // si hay un solo color y no hay baldes, el robot ya viene con pintura
+  var lista = []; for (ch in colores) lista.push(ch);
+  L.color = (lista.length === 1 && !baldes) ? lista[0] : '';
+  ponerRobot(T, d.ini[0], d.ini[1], true);
+  pincelRobot(T, L.color);
+  entrarCelda(d.ini[0], d.ini[1], true);
+  // panel
+  $('modeloDib').innerHTML = dibujoSVG(d.m);
+  pintarPintura();
+  $('fArr').innerHTML = IC.arr; $('fAba').innerHTML = IC.aba; $('fIzq').innerHTML = IC.izq; $('fDer').innerHTML = IC.der;
+  $('centroPad').innerHTML = robotSVG(ROBOTS[P.robot], 'feliz');
+  $('bLibre').innerHTML = IC.paleta; $('bGaleria').innerHTML = IC.galeria; $('bRepetir').innerHTML = IC.repetir;
+  $('programa').className = et.prog ? 'on' : '';
+  $('bPlay').innerHTML = IC.play; $('bBorrar').innerHTML = IC.borrar; $('bLimpiar').innerHTML = IC.limpiar;
+  pintarBandeja();
+  pintarCamino();
+  $('ganaste').className = '';
+  // consigna
+  var primeroDeEtapa = n === 0 || DIBUJOS[n - 1].e !== d.e;
+  if (et.prog) {
+    if (!G.demoHecha) { G.demoHecha = true; demoPrograma(); }
+    else hablar(primeroDeEtapa ? 'Ahora vas a programar. Armá el camino con las flechas y tocá el botón verde. El robot pinta mientras camina.' : 'Armá el camino y tocá el botón verde.', 300);
+  } else if (d.e === 0) hablar(primeroDeEtapa ? '¡Vamos a pintar! Pasá con tu robot por todos los puntitos.' : '¡Pintá todos los puntitos!', 300);
+  else if (d.e === 1) hablar(primeroDeEtapa ? 'Ahora hay baldes de pintura. Pasá por un balde para cargar ese color, y pintá cada puntito con su color.' : 'Cargá pintura en los baldes y pintá.', 300);
+  else hablar(primeroDeEtapa ? 'Ahora no hay puntitos. Mirá el cuadro de la derecha y copialo.' : 'Mirá el cuadro y copialo.', 300);
+  clearInterval(IDLE); IDLE = setInterval(revisarPista, 1000);
+}
+function pintarPintura() {
+  var col = L ? L.color : '';
+  $('pinturaAct').innerHTML = pincelSVG(col ? COLORES[col].c : '') + '<i style="background:' + (col ? COLORES[col].c : '#e3ddd2') + '"></i>';
+}
+function pintarCamino() {
+  var s = '', i;
+  for (i = 0; i < DIBUJOS.length; i++) {
+    var col = ETAPAS[DIBUJOS[i].e].color, hecho = G.hechos[i];
+    s += '<i class="' + (i === G.nivel ? 'ahora' : hecho ? 'hecho' : '') + '" style="background:' + (hecho || i === G.nivel ? col : '') + ';' + (!hecho && i !== G.nivel ? 'box-shadow:inset 0 0 0 3px ' + col + '55' : '') + '"></i>';
+  }
+  $('camino').innerHTML = s;
+}
+function objetivoEn(f, c) { var i; for (i = 0; i < L.objetivo.length; i++) if (L.objetivo[i].f === f && L.objetivo[i].c === c) return L.objetivo[i]; return null; }
+function entrarCelda(f, c, inicio) {
+  var T = L.T, b = L.baldes[f + ',' + c];
+  if (b) {
+    L.color = b.col; pincelRobot(T, L.color); pintarPintura();
+    b.el.className = 'balde'; void b.el.offsetWidth; b.el.className = 'balde toma';
+    sfx('globo'); var p = centroCelda(T, f, c); lluvia(p.x, p.y, 12, 'confeti', [COLORES[b.col].c]);
+    return;
+  }
+  var o = objetivoEn(f, c);
+  if (!o) return;
+  if (!L.color) {
+    if (!inicio && !L.avisoBalde) { L.avisoBalde = true; hablar('Primero cargá pintura en un balde.'); }
+    return;
+  }
+  // lo que ya está bien pintado queda seco: no se arruina al pasar por encima
+  if (T.pint[f][c] === o.col || T.pint[f][c] === L.color) return;
+  pintarCelda(T, f, c, L.color);
+  var g = T.guias[f + ',' + c];
+  if (L.color === o.col) { if (g) g.style.opacity = '0'; sfx('pop'); notaMagica(true); }
+  else {
+    if (g) g.style.opacity = '.9';
+    sfx('pop');
+    if (!L.avisoColor && L.et.guia) { L.avisoColor = true; hablar('¡Ese color no va ahí! Buscá el balde del color del puntito.'); }
+  }
+  revisarTerminado();
+}
+function revisarTerminado() {
+  var i, o;
+  for (i = 0; i < L.objetivo.length; i++) { o = L.objetivo[i]; if (L.T.pint[o.f][o.c] !== o.col) return; }
+  L.ganado = true; L.T.robot.className = 'festeja';
+  sfx('arcoiris');
+  setTimeout(ganar, 900);
+}
+function mover(d, alTerminar) {
+  var T = L.T, v = DIR[d], nf = T.pos.f + v[0], nc = T.pos.c + v[1];
+  T.robot.querySelector('.giro').style.transform = d === 'izq' ? 'scaleX(-1)' : '';
+  if (nf < 0 || nc < 0 || nf >= T.F || nc >= T.C) { chocar(T); return false; }
+  ponerRobot(T, nf, nc);
+  sfx('whoosh');
+  setTimeout(function () { entrarCelda(nf, nc); if (alTerminar) alTerminar(); }, 280);
+  return true;
+}
+
+/* ---------- programar (etapa 4) ---------- */
+var MAXP = 16;
+function pintarBandeja(activa) {
+  var s = '', i;
+  for (i = 0; i < MAXP; i++) {
+    var x = 14 + (i % 8) * 75, y = 14 + Math.floor(i / 8) * 64;
+    if (L && i < L.prog.length) s += '<div class="carta' + (i === activa ? ' activa' : '') + '" style="left:' + x + 'px;top:' + y + 'px">' + IC[L.prog[i]].replace(/#3b5bdb/g, '#fff') + '</div>';
+    else s += '<div class="slot" style="left:' + x + 'px;top:' + y + 'px"></div>';
+  }
+  $('bandeja').innerHTML = s;
+}
+function agregarOrden(d) {
+  if (L.corriendo || L.ganado) return;
+  if (L.prog.length >= MAXP) { sfx('boing'); return; }
+  L.prog.push(d); pintarBandeja(); sfx('pop'); notaMagica();
+}
+function borrarOrden() { if (L.corriendo || !L.prog.length) return; L.prog.pop(); pintarBandeja(); sfx('globo'); }
+function limpiarOrdenes() { if (L.corriendo || !L.prog.length) return; L.prog = []; pintarBandeja(); sfx('whoosh'); }
+function ejecutar() {
+  if (L.corriendo || L.ganado) return;
+  if (!L.prog.length) { sfx('boing'); hablar('Primero poné flechas.'); return; }
+  L.corriendo = true;
+  $('bPlay').className = 'apreta'; setTimeout(function () { $('bPlay').className = ''; }, 200);
+  sfx('cohete');
+  var paso = 0;
+  (function siguiente() {
+    if (L.ganado) { L.corriendo = false; pintarBandeja(); return; }
+    if (paso >= L.prog.length) { casi(false); return; }
+    pintarBandeja(paso);
+    var ok = mover(L.prog[paso], function () { paso++; setTimeout(siguiente, 140); });
+    if (!ok) casi(true);
+  })();
+}
+function casi(choco) {
+  L.T.robot.querySelector('.giro').innerHTML = robotSVG(ROBOTS[P.robot], choco ? 'sorpresa' : 'triste');
+  hablar(choco ? '¡Uy! Se salió del papel. Probá otra vez.' : '¡Casi! Mirá qué falta pintar y probá otra vez.');
+  setTimeout(function () { var prog = L.prog, v = VOZ.on; VOZ.on = false; jugar(L.n); VOZ.on = v; L.prog = prog; pintarBandeja(); }, 1600);
+}
+function demoPrograma() {
+  hablar('Mirá. Tocás las flechas y aparecen abajo. Después tocás el botón verde y el robot pinta el camino.', 200);
+  L.corriendo = true;
+  var pad = { x: 1280 - 28 - 330 + 40, y: 100 + 322 };
+  setTimeout(function () { mano(pad.x + 170 + 40, pad.y + 85 + 40); }, 300);
+  setTimeout(function () { manoToca(); $('fDer').className = 'flecha apreta'; L.prog.push('der'); pintarBandeja(); sfx('pop'); }, 1400);
+  setTimeout(function () { $('fDer').className = 'flecha'; }, 1700);
+  setTimeout(function () { mano(40 + 640 + 65, 560 + 8 + 40); }, 2400);
+  setTimeout(function () {
+    manoToca(); sfx('cohete'); pintarBandeja(0);
+    mover('der', function () {
+      setTimeout(function () {
+        manoFuera(); L.corriendo = false;
+        var v = VOZ.on; VOZ.on = false; jugar(L.n); VOZ.on = v;
+        hablar('¡Ahora vos! Armá todo el camino.');
+      }, 900);
+    });
+  }, 3400);
+}
+
+/* ---------- pistas ---------- */
+function revisarPista() {
+  if (FASE !== 'nivel' || !L || L.ganado || L.corriendo || L.et.prog) return;
+  if ((Date.now() - L.ultAccion) / 1000 < 9) return;
+  var T = L.T, meta = null, mejor = 1e9, i, o, k;
+  if (L.color) for (i = 0; i < L.objetivo.length; i++) { o = L.objetivo[i]; if (o.col === L.color && T.pint[o.f][o.c] !== o.col) { var dd = Math.abs(o.f - T.pos.f) + Math.abs(o.c - T.pos.c); if (dd < mejor) { mejor = dd; meta = o; } } }
+  if (!meta) for (k in L.baldes) {
+    var falta = false; for (i = 0; i < L.objetivo.length; i++) { o = L.objetivo[i]; if (o.col === L.baldes[k].col && T.pint[o.f][o.c] !== o.col) falta = true; }
+    if (!falta) continue;
+    var p = k.split(','), d2 = Math.abs(+p[0] - T.pos.f) + Math.abs(+p[1] - T.pos.c);
+    if (d2 < mejor) { mejor = d2; meta = { f: +p[0], c: +p[1] }; }
+  }
+  if (!meta) return;
+  var dir = meta.c > T.pos.c ? 'der' : meta.c < T.pos.c ? 'izq' : meta.f > T.pos.f ? 'aba' : 'arr';
+  $({ arr: 'fArr', aba: 'fAba', izq: 'fIzq', der: 'fDer' }[dir]).className = 'flecha pistaF';
+  if (!L.pistaDada) { L.pistaDada = true; hablar('Probá con esta flecha.'); }
+  L.ultAccion = Date.now() - 4000;
+}
+
+/* ---------- terminar un dibujo ---------- */
+function ganar() {
+  G.hechos[L.n] = true;
+  var limpio = L.d.m.map(function (fila) { return fila.replace(/[A-Z]/g, '.'); });
+  P.gal.unshift({ m: limpio, vida: L.d.vida }); if (P.gal.length > 40) P.gal.length = 40; guardar();
+  $('gDib').innerHTML = dibujoSVG(limpio);
+  $('gDib').className = '';
+  $('gLibre').innerHTML = IC.paleta; $('gOtra').innerHTML = IC.repetir; $('gSig').innerHTML = IC.play;
+  $('ganaste').className = 'on'; FASE = 'ganaste';
+  sfx('fiesta'); lluvia(640, 140, 140);
+  hablar(azar(['¡Qué lindo dibujo! ¡Mirá cómo cobra vida!', '¡Sos un artista!', '¡Quedó hermoso!']));
+  setTimeout(function () { $('gDib').className = 'vida-' + L.d.vida; }, 650);
+  pintarCamino();
+}
+function siguienteDibujo() {
+  if (L.n + 1 >= DIBUJOS.length) { irLibre(true); return; }
+  jugar(L.n + 1);
+}
+
+/* =========================================================
+   MODO LIBRE
+   ========================================================= */
+var LB = null;
+function irLibre(fin) {
+  FASE = 'libre'; pantalla('libre'); manoFuera(); clearInterval(IDLE);
+  if (!LB) {
+    var tb = h('div'); tb.id = 'tableroL'; tb.style.cssText = 'position:absolute;border-radius:26px;background:#fff;box-shadow:0 12px 0 rgba(0,0,0,.06),0 0 0 6px #f3e9d8;padding:12px';
+    $('libre').appendChild(tb);
+    LB = { T: null, color: 'r' };
+  }
+  var tbEl = document.getElementById('tableroL');
+  if (!LB.T) { LB.T = crearTablero(tbEl, 7, 9, { x: 30, y: 96, w: 860, h: 610 }); ponerRobot(LB.T, 3, 4, true); }
+  else { tbEl.appendChild(LB.T.robot); }
+  pincelRobot(LB.T, LB.color);
+  var s = '', i;
+  for (i = 0; i < PALETA.length; i++) s += '<button class="baldeP' + (LB.color === PALETA[i] ? ' sel' : '') + '" data-c="' + PALETA[i] + '"><b>' + (i + 1) + '</b>' + baldeSVG(COLORES[PALETA[i]].c) + '</button>';
+  s += '<button class="baldeP' + (LB.color === 'goma' ? ' sel' : '') + '" data-c="goma"><b>9</b>' + GOMA + '</button>';
+  $('paleta').innerHTML = s;
+  var bs = $('paleta').children;
+  for (i = 0; i < bs.length; i++) bs[i].onclick = function () { elegirColorLibre(this.getAttribute('data-c')); };
+  $('bVolverLib').innerHTML = IC.volver; $('bGaleria2').innerHTML = IC.galeria;
+  $('bGuardar').innerHTML = IC.camara; $('bNuevo').innerHTML = IC.hoja;
+  if (fin) { sfx('fiesta'); lluvia(640, 120, 160); hablar('¡Terminaste todos los dibujos! Ahora pintá lo que quieras. Elegí un color con los números.'); }
+  else hablar('¡Pintá lo que quieras! Elegí un color con los números.', 200);
+}
+function elegirColorLibre(c) {
+  LB.color = c; sfx('globo'); pincelRobot(LB.T, c);
+  var bs = $('paleta').children, i; for (i = 0; i < bs.length; i++) bs[i].className = 'baldeP' + (bs[i].getAttribute('data-c') === c ? ' sel' : '');
+  pintarLibre(LB.T.pos.f, LB.T.pos.c);
+}
+function pintarLibre(f, c) {
+  var col = LB.color === 'goma' ? '' : LB.color;
+  if (LB.T.pint[f][c] === col) return;
+  pintarCelda(LB.T, f, c, col); if (col) notaMagica(true);
+}
+function moverLibre(d) {
+  var T = LB.T, v = DIR[d], nf = T.pos.f + v[0], nc = T.pos.c + v[1];
+  T.robot.querySelector('.giro').style.transform = d === 'izq' ? 'scaleX(-1)' : '';
+  if (nf < 0 || nc < 0 || nf >= T.F || nc >= T.C) { chocar(T); return; }
+  ponerRobot(T, nf, nc); sfx('whoosh');
+  setTimeout(function () { pintarLibre(nf, nc); }, 200);
+}
+function guardarLibre() {
+  var T = LB.T, m = [], f, c, s, alguno = false;
+  for (f = 0; f < T.F; f++) { s = ''; for (c = 0; c < T.C; c++) { s += T.pint[f][c] || '.'; if (T.pint[f][c]) alguno = true; } m.push(s); }
+  if (!alguno) { sfx('boing'); hablar('Primero pintá algo.'); return; }
+  P.gal.unshift({ m: m, vida: 'salta' }); if (P.gal.length > 40) P.gal.length = 40; guardar();
+  var fl = $('flash'); fl.className = ''; void fl.offsetWidth; fl.className = 'on';
+  sfx('acorde'); lluvia(640, 200, 60, 'estrella');
+  hablar('¡Guardado en tu galería!');
+}
+function hojaNueva() {
+  var T = LB.T, f, c; for (f = 0; f < T.F; f++) for (c = 0; c < T.C; c++) if (T.pint[f][c]) pintarCelda(T, f, c, '');
+  sfx('whoosh');
+}
+
+/* =========================================================
+   GALERÍA
+   ========================================================= */
+var volverA = null;
+function irGaleria(desde) {
+  volverA = desde; FASE = 'galeria'; pantalla('galeria'); clearInterval(IDLE);
+  var s = '', i;
+  for (i = 0; i < P.gal.length && i < 18; i++) s += '<div class="marcoG" data-i="' + i + '">' + dibujoSVG(P.gal[i].m) + '</div>';
+  $('galCuadros').innerHTML = s || '';
+  var ms = $('galCuadros').children;
+  for (i = 0; i < ms.length; i++) ms[i].onclick = function () { var e = this; e.className = 'marcoG'; void e.offsetWidth; e.className = 'marcoG vivo'; sfx('pop'); notaMagica(true); };
+  $('bVolverGal').innerHTML = IC.volver;
+  hablar(P.gal.length ? 'Estos son tus dibujos.' : 'Todavía no hay dibujos. ¡A pintar!');
+}
+function salirGaleria() { if (volverA === 'libre') irLibre(); else jugar(G.nivel); }
+
+/* =========================================================
+   TECLAS Y BOTONES
+   ========================================================= */
+var BLOQ = { activo: true, pin: '', abierto: false, panel: false, fs: false };
+function teclaJuego(k) {
+  if (FASE === 'inicio') {
+    if (k === 37) marcarRobot((selRobot + ROBOTS.length - 1) % ROBOTS.length);
+    else if (k === 39) marcarRobot((selRobot + 1) % ROBOTS.length);
+    else if (k === 13 || k === 32) elegirRobot(selRobot);
+  } else if (FASE === 'tuto') { if (TECLA_DIR[k]) tutoTecla(TECLA_DIR[k]); }
+  else if (FASE === 'nivel' && L) {
+    var d = TECLA_DIR[k];
+    if (d) apretarFlecha(d);
+    else if (L.et.prog && (k === 13 || k === 32)) ejecutar();
+    else if (L.et.prog && k === 8) borrarOrden();
+  } else if (FASE === 'ganaste') { if (k === 13 || k === 32 || k === 39) siguienteDibujo(); }
+  else if (FASE === 'libre') {
+    if (TECLA_DIR[k]) moverLibre(TECLA_DIR[k]);
+    else if (k >= 49 && k <= 56) elegirColorLibre(PALETA[k - 49]);
+    else if (k >= 97 && k <= 104) elegirColorLibre(PALETA[k - 97]);
+    else if (k === 57 || k === 105 || k === 48 || k === 96) elegirColorLibre('goma');
+  }
+}
+function apretarFlecha(d) {
+  if (!L || L.ganado) return;
+  L.ultAccion = Date.now();
+  var b = $({ arr: 'fArr', aba: 'fAba', izq: 'fIzq', der: 'fDer' }[d]);
+  var bs = document.querySelectorAll('.flecha'), i; for (i = 0; i < bs.length; i++) bs[i].className = 'flecha';
+  b.className = 'flecha apreta'; setTimeout(function () { b.className = 'flecha'; }, 160);
+  if (L.et.prog) { agregarOrden(d); return; }
+  if (L.mov) return;
+  L.mov = true; setTimeout(function () { L.mov = false; }, 250);
+  mover(d);
+}
+function armarBotones() {
+  var fl = { fArr: 'arr', fAba: 'aba', fIzq: 'izq', fDer: 'der' }, k;
+  for (k in fl) (function (id, d) { $(id).onclick = function () { if (FASE === 'nivel') apretarFlecha(d); }; })(k, fl[k]);
+  $('bRepetir').onclick = function () { if (L && !L.corriendo) { sfx('whoosh'); jugar(L.n); } };
+  $('bLibre').onclick = function () { if (L && L.corriendo) return; irLibre(); };
+  $('bGaleria').onclick = function () { if (L && L.corriendo) return; irGaleria('nivel'); };
+  $('bPlay').onclick = function () { if (L) { L.ultAccion = Date.now(); ejecutar(); } };
+  $('bBorrar').onclick = function () { if (L) borrarOrden(); };
+  $('bLimpiar').onclick = function () { if (L) limpiarOrdenes(); };
+  $('gSig').onclick = siguienteDibujo;
+  $('gOtra').onclick = function () { jugar(L.n); };
+  $('gLibre').onclick = function () { irLibre(); };
+  $('bVolverLib').onclick = function () { jugar(G.nivel); };
+  $('bGaleria2').onclick = function () { irGaleria('libre'); };
+  $('bGuardar').onclick = guardarLibre;
+  $('bNuevo').onclick = hojaNueva;
+  $('bVolverGal').onclick = salirGaleria;
+}
+window.addEventListener('keydown', function (e) {
+  var k = e.keyCode;
+  primerGesto();
+  // combinación del docente: Ctrl + Shift + P
+  if (e.ctrlKey && e.shiftKey && k === 80) { e.preventDefault(); e.stopPropagation(); abrirPin(); return; }
+  if (BLOQ.abierto) { e.preventDefault(); e.stopPropagation(); if (!BLOQ.panel) { if (k >= 48 && k <= 57) pinDigito(String(k - 48)); else if (k >= 96 && k <= 105) pinDigito(String(k - 96)); else if (k === 8) { BLOQ.pin = BLOQ.pin.slice(0, -1); pintarPin(); } else if (k === 27) cerrarPin(); } else if (k === 27) cerrarPin(); return; }
+  if (!BLOQ.activo) return;
+  e.preventDefault(); e.stopPropagation();
+  if (e.ctrlKey || e.altKey || e.metaKey) return;
+  if (e.repeat && !TECLA_DIR[k]) return;
+  teclaJuego(k);
+}, true);
+window.addEventListener('keyup', function (e) { if (BLOQ.activo) { e.preventDefault(); e.stopPropagation(); } }, true);
+document.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+document.addEventListener('dragstart', function (e) { e.preventDefault(); });
+document.addEventListener('selectstart', function (e) { e.preventDefault(); });
+window.addEventListener('wheel', function (e) { if (e.ctrlKey) e.preventDefault(); }, { passive: false });
+window.addEventListener('beforeunload', function (e) { if (BLOQ.activo) { e.preventDefault(); e.returnValue = ''; return ''; } });
+document.addEventListener('mousedown', function (e) { primerGesto(); var t = e.target; while (t && t !== document) { if (t.tagName === 'BUTTON') { e.preventDefault(); return; } t = t.parentNode; } });
+
+var gestoHecho = false;
+function primerGesto() {
+  auInit(); if (AU.musOn) musicaOn();
+  if (gestoHecho) return; gestoHecho = true;
+  entrarPantalla();
+}
+function entrarPantalla() {
+  var d = document.documentElement, pr = null;
+  try { pr = d.requestFullscreen ? d.requestFullscreen() : (d.webkitRequestFullscreen ? d.webkitRequestFullscreen() : null); } catch (e) {}
+  var bloquear = function () { BLOQ.fs = true; try { if (navigator.keyboard && navigator.keyboard.lock) navigator.keyboard.lock(); } catch (e) {} };
+  if (pr && pr.then) pr.then(bloquear, function () {}); else setTimeout(bloquear, 300);
+}
+document.addEventListener('fullscreenchange', function () {
+  if (!document.fullscreenElement && BLOQ.activo && BLOQ.fs) $('pantallaC').className = 'on';
+});
+function salirDelBloqueo() {
+  BLOQ.activo = false;
+  try { if (navigator.keyboard && navigator.keyboard.unlock) navigator.keyboard.unlock(); } catch (e) {}
+  try { if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen(); } catch (e) {}
+  musicaOff(); try { speechSynthesis.cancel(); } catch (e) {}
+  $('bloqueo').className = ''; $('salida').className = 'on';
+  try { window.close(); } catch (e) {}
+}
+/* clave */
+function abrirPin() {
+  BLOQ.abierto = true; BLOQ.panel = false; BLOQ.pin = '';
+  $('bloqueo').className = 'on'; $('pinCaja').style.display = ''; $('docPanel').className = '';
+  var s = '', i, ns = [1, 2, 3, 4, 5, 6, 7, 8, 9, 'x', 0, '<'];
+  for (i = 0; i < ns.length; i++) s += '<button data-k="' + ns[i] + '">' + (ns[i] === 'x' ? '&#10005;' : ns[i] === '<' ? '&#9003;' : ns[i]) + '</button>';
+  $('pinTeclas').innerHTML = s;
+  var bs = $('pinTeclas').children;
+  for (i = 0; i < bs.length; i++) bs[i].onclick = function () { var k = this.getAttribute('data-k'); if (k === 'x') cerrarPin(); else if (k === '<') { BLOQ.pin = BLOQ.pin.slice(0, -1); pintarPin(); } else pinDigito(k); };
+  pintarPin();
+}
+function pintarPin() { var p = $('pinPuntos').children, i; for (i = 0; i < 4; i++) p[i].className = i < BLOQ.pin.length ? 'si' : ''; }
+function pinDigito(d) {
+  if (BLOQ.pin.length >= 4) return;
+  BLOQ.pin += d; pintarPin();
+  if (BLOQ.pin.length === 4) {
+    if (BLOQ.pin === CLAVE) setTimeout(abrirPanel, 200);
+    else setTimeout(function () { var pp = $('pinPuntos'); pp.className = 'mal'; setTimeout(function () { pp.className = ''; BLOQ.pin = ''; pintarPin(); }, 400); }, 200);
+  }
+}
+function cerrarPin() { BLOQ.abierto = false; BLOQ.panel = false; $('bloqueo').className = ''; }
+function abrirPanel() {
+  BLOQ.panel = true; $('pinCaja').style.display = 'none'; $('docPanel').className = 'on';
+  $('dMus').innerHTML = 'Música: ' + (AU.musOn ? 'sí' : 'no'); $('dVoz').innerHTML = 'Voz: ' + (VOZ.on ? 'sí' : 'no');
+  $('dBorrar').innerHTML = 'Borrar la galería de dibujos'; $('dBorrar')._conf = false;
+}
+function armarDocente() {
+  $('dSeguir').onclick = cerrarPin;
+  var ir = function (n) { return function () { cerrarPin(); G.hechos = {}; if (FASE === 'inicio' || FASE === 'tuto') { G.nivel = n; } else jugar(n); }; };
+  $('dIni').onclick = ir(INICIO_GRADO.inicial); $('dPri').onclick = ir(INICIO_GRADO.primero); $('dSeg').onclick = ir(INICIO_GRADO.segundo);
+  $('dSaltar').onclick = function () { cerrarPin(); if (FASE === 'nivel' || FASE === 'ganaste') jugar(Math.min(G.nivel + 1, DIBUJOS.length)); };
+  $('dLibreD').onclick = function () { cerrarPin(); irLibre(); };
+  $('dMus').onclick = function () { setMus(!AU.musOn); if (AU.musOn) musicaOn(); abrirPanel(); };
+  $('dVoz').onclick = function () { VOZ.on = !VOZ.on; abrirPanel(); };
+  $('dBorrar').onclick = function () {
+    if (!this._conf) { this._conf = true; this.innerHTML = 'Tocá otra vez para confirmar'; return; }
+    P.gal = []; guardar(); this._conf = false; this.innerHTML = 'Galería borrada';
+  };
+  $('dSalir').onclick = salirDelBloqueo;
+  var toques = [];
+  $('esquina').onclick = function () { var t = Date.now(); toques.push(t); toques = toques.filter(function (x) { return t - x < 3000; }); if (toques.length >= 5) { toques = []; abrirPin(); } };
+  $('bPantC').innerHTML = IC.play; $('bPantC').onclick = function () { $('pantallaC').className = ''; entrarPantalla(); };
+}
+
+/* ---------- arranque ---------- */
+cargar();
+escalar();
+fxIniciar();
+armarBotones();
+armarDocente();
+irInicio();
+</script>
+</body></html>

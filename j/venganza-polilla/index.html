@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>La venganza de Polilla</title>
+<style>
+  body{ margin:0; background:#110A1D; color:#EEE8F7; font-family:Verdana,Arial,Helvetica,sans-serif; font-size:15px; overflow-x:hidden; }
+  #caja{ width:1000px; margin:0 auto; padding:12px 0 40px; position:relative; }
+  button{ font-family:Verdana,Arial,Helvetica,sans-serif; }
+  .limpiar{ clear:both; }
+
+  #barra{ overflow:hidden; padding:4px 0 10px; }
+  #titulo{ float:left; font-size:24px; font-weight:bold; letter-spacing:-0.5px; margin-top:6px; }
+  #titulo span{ color:#B98CFF; }
+  #bateria{ float:right; width:250px; margin-top:4px; }
+  #batTxt{ font-size:11px; color:#9D8DB8; margin-bottom:4px; overflow:hidden; letter-spacing:1px; }
+  #batTxt b{ float:right; font-size:14px; color:#7CFFB2; letter-spacing:0; }
+  #batMarco{ position:relative; height:16px; border:2px solid #4A3B66; border-radius:6px; padding:2px; }
+  #batMarco:after{ content:''; position:absolute; right:-7px; top:4px; width:4px; height:8px; background:#4A3B66; border-radius:0 2px 2px 0; }
+  #batBarra{ height:16px; width:100%; background:#7CFFB2; border-radius:3px; transition:width .5s, background .5s; }
+  #quien{ float:right; margin:8px 22px 0 0; font-size:12px; color:#9D8DB8; }
+  #quien b{ color:#EEE8F7; }
+  #sonido{ background:none; border:0; color:#6F5F8C; font-size:11px; cursor:pointer; text-decoration:underline; padding:0; margin-left:8px; }
+
+  /* salas */
+  #salas{ margin:6px 0 12px; overflow:hidden; }
+  .tab{ float:left; margin-right:7px; width:104px; height:50px; border-radius:12px; background:#1C1330; color:#6F5F8C;
+        cursor:pointer; border:2px solid #1C1330; text-align:center; padding-top:6px; box-sizing:border-box; font-size:10px; font-weight:bold; }
+  .tab svg{ display:block; margin:0 auto 3px; }
+  .tab.hecha{ color:#110A1D; background:#7CFFB2; border-color:#7CFFB2; }
+  .tab.ahora{ border-color:#FFC857; color:#FFC857; }
+  .tab.cerrada{ opacity:.4; cursor:default; }
+  .tab.final{ width:112px; }
+  .tab.bonus{ background:#2A1847; border-color:#2A1847; color:#B98CFF; }
+
+  #izq{ float:left; width:660px; }
+  #der{ float:right; width:322px; }
+
+  .sala{ background:#1C1330; border:1px solid #2E2148; border-radius:18px; padding:18px 22px 22px; min-height:430px; }
+  .sala h1{ margin:0 0 2px; font-size:13px; letter-spacing:3px; color:#9D8DB8; font-weight:bold; }
+  .acert h2{ font-size:22px; margin:6px 0 4px; color:#FFC857; }
+  .linea{ font-size:15.5px; color:#DCD3EC; margin:0 0 14px; }
+  .linea b{ color:#7CFFB2; }
+  .hecho{ background:#16282A; border:1px solid #2F6B5A; border-radius:10px; padding:7px 12px; margin-bottom:6px; color:#7CFFB2; font-size:13px; }
+  .codigo{ font-family:'Courier New',monospace; font-size:34px; letter-spacing:8px; background:#0B0614; border:1px solid #2E2148; border-radius:12px;
+           padding:14px 18px; margin:4px 0 12px; color:#7CFFB2; text-align:center; }
+  .fila{ margin-top:10px; }
+  input.resp{ font-size:20px; padding:9px 12px; width:250px; border-radius:10px; border:2px solid #4A3B66; background:#0B0614; color:#fff;
+              font-family:'Courier New',monospace; letter-spacing:3px; text-transform:uppercase; vertical-align:middle; }
+  .btn{ display:inline-block; vertical-align:middle; border:0; border-radius:11px; padding:11px 20px; margin-left:6px; cursor:pointer;
+        font-size:15px; font-weight:bold; background:#FFC857; color:#110A1D; border-bottom:4px solid #B98A2C; }
+  .btn:active{ border-bottom-width:2px; margin-top:2px; }
+  .btn.sec{ background:#2E2148; color:#DCD3EC; border-bottom-color:#1A1129; }
+  .msj{ min-height:22px; margin-top:10px; font-size:14px; font-weight:bold; }
+  .msj.mal{ color:#FF6B8B; } .msj.bien{ color:#7CFFB2; }
+
+  /* teclado */
+  .teclado{ margin:2px 0 4px; }
+  .tfila{ margin-bottom:5px; white-space:nowrap; }
+  .tecla{ display:inline-block; width:40px; height:38px; line-height:38px; text-align:center; margin-right:5px; border-radius:7px;
+          background:#2E2148; color:#EEE8F7; font-weight:bold; font-size:15px; cursor:pointer; border:0; border-bottom:3px solid #1A1129; padding:0; }
+  .tecla:hover{ background:#3F2E62; }
+  .tecla.ancha{ width:84px; font-size:11px; }
+  .tecla.esp{ width:180px; font-size:11px; }
+
+  /* atajos */
+  .atajos{ margin:6px 0 4px; white-space:nowrap; }
+  .atajo{ display:inline-block; width:132px; margin-right:10px; text-align:center; background:#0B0614; border-radius:14px; padding:14px 0 12px; }
+  .atajo svg{ display:block; margin:0 auto 10px; }
+  .atajo span{ font-size:15px; font-weight:bold; color:#9D8DB8; vertical-align:middle; }
+  .atajo input{ width:38px; height:38px; font-size:22px; text-align:center; border-radius:8px; border:2px solid #4A3B66; background:#1C1330; color:#fff;
+                font-family:'Courier New',monospace; text-transform:uppercase; vertical-align:middle; margin-left:4px; }
+
+  /* simon */
+  .simon{ width:260px; height:260px; position:relative; margin:6px 0 10px; }
+  .pad{ position:absolute; width:122px; height:122px; cursor:pointer; opacity:.35; transition:opacity .08s, box-shadow .08s; }
+  .pad.p0{ left:0; top:0; background:#2ECC71; border-radius:122px 14px 14px 14px; }
+  .pad.p1{ left:138px; top:0; background:#FF5470; border-radius:14px 122px 14px 14px; }
+  .pad.p2{ left:0; top:138px; background:#FFC857; border-radius:14px 14px 14px 122px; }
+  .pad.p3{ left:138px; top:138px; background:#4D8BFF; border-radius:14px 14px 122px 14px; }
+  .pad.luz{ opacity:1; box-shadow:0 0 30px rgba(255,255,255,.55); }
+  .simonCentro{ position:absolute; left:85px; top:85px; width:90px; height:90px; border-radius:50%; background:#110A1D; border:4px solid #2E2148;
+                text-align:center; line-height:90px; font-size:26px; font-weight:bold; color:#FFC857; cursor:pointer; }
+  .rondas span{ display:inline-block; width:18px; height:18px; border-radius:50%; background:#2E2148; margin-right:6px; }
+  .rondas span.ok{ background:#7CFFB2; }
+
+  /* lámparas */
+  .mini{ white-space:nowrap; margin:5px 0; }
+  .mini span{ display:inline-block; width:24px; height:24px; border-radius:50%; margin-right:8px; background:#2E2148; border:2px solid #3F2E62; vertical-align:middle; }
+  .mini span.on{ background:#FFE27A; border-color:#FFF2B8; box-shadow:0 0 10px rgba(255,226,122,.6); }
+  .mini span.num{ background:none; border:0; box-shadow:none; text-align:center; font-weight:bold; font-size:11px; color:#9D8DB8; line-height:24px; }
+  .lamparas{ white-space:nowrap; margin:6px 0; }
+  .lampara{ display:inline-block; width:62px; margin-right:6px; text-align:center; cursor:pointer; }
+  .foco{ width:46px; height:46px; margin:0 auto 4px; border-radius:50%; background:#2E2148; border:3px solid #3F2E62; transition:background .15s, box-shadow .15s; }
+  .lampara.on .foco{ background:#FFE27A; border-color:#FFF2B8; box-shadow:0 0 20px rgba(255,226,122,.75); }
+  .lampara b{ color:#9D8DB8; font-size:13px; }
+
+  /* rompecabezas */
+  .puzzle{ position:relative; width:300px; height:300px; background:#0B0614; border-radius:10px; margin:4px 0 10px; display:inline-block; vertical-align:top; }
+  .ficha{ position:absolute; width:96px; height:96px; border-radius:6px; cursor:pointer; transition:left .12s, top .12s; box-shadow:inset 0 0 0 1px rgba(255,255,255,.15); }
+  .modelo{ display:inline-block; vertical-align:top; margin-left:18px; text-align:center; color:#6F5F8C; font-size:11px; }
+  .modelo div{ width:120px; height:120px; border-radius:6px; margin-bottom:6px; opacity:.6; filter:blur(3px); }
+
+  /* diferencias */
+  .difs{ white-space:nowrap; margin:6px 0 4px; }
+  .pgrid{ display:inline-block; vertical-align:top; margin-right:26px; background:#0B0614; padding:6px; border-radius:8px; position:relative; }
+  .pfila{ height:20px; }
+  .pp{ display:inline-block; width:20px; height:20px; }
+  .pgrid.clic .pp{ cursor:pointer; }
+  .pp.marcada{ box-shadow:inset 0 0 0 3px #FF5470; border-radius:50%; }
+  .pp.error{ box-shadow:inset 0 0 0 3px #FFFFFF; }
+
+  /* archivos */
+  .cartas{ margin:6px 0; }
+  .carta{ display:inline-block; vertical-align:top; width:136px; margin:0 8px 10px 0; background:#0B0614; border:2px solid #2E2148; border-radius:12px;
+          padding:10px 8px; text-align:center; cursor:pointer; position:relative; }
+  .carta .ico{ width:34px; height:40px; margin:0 auto 6px; border-radius:4px 12px 4px 4px; font-size:10px; font-weight:bold; color:#fff; line-height:40px; }
+  .carta .nom{ font-size:12px; color:#DCD3EC; word-wrap:break-word; }
+  .carta .tam{ font-size:16px; font-weight:bold; color:#FFC857; margin-top:4px; }
+  .carta.ok{ border-color:#7CFFB2; background:#16282A; }
+  .carta.sel{ border-color:#FF5470; background:#2A1325; }
+  .carta .orden{ position:absolute; left:-8px; top:-8px; width:26px; height:26px; border-radius:50%; background:#7CFFB2; color:#110A1D; font-weight:bold; line-height:26px; font-size:13px; }
+  .leyenda{ font-size:13px; color:#9D8DB8; margin-bottom:6px; }
+  .toggle{ display:inline-block; font-size:12.5px; padding:6px 12px; border-radius:8px; border:1px solid #4A3B66; background:#110A1D; color:#DCD3EC; cursor:pointer; margin-bottom:8px; }
+  .toggle.on{ border-color:#7CFFB2; color:#7CFFB2; }
+
+  /* caños */
+  .canos{ position:relative; display:inline-block; background:#0B0614; padding:10px 50px; border-radius:12px; margin:4px 0 8px; }
+  .cfila{ height:64px; }
+  .cano{ display:inline-block; width:64px; height:64px; cursor:pointer; vertical-align:top; }
+  .cano svg{ display:block; }
+  .extremo{ position:absolute; top:138px; width:40px; text-align:center; font-size:10px; color:#9D8DB8; font-weight:bold; }
+
+  /* paquetes */
+  .paquetes{ margin:8px 0; white-space:nowrap; }
+  .paquete{ display:inline-block; width:104px; margin-right:10px; background:#0B0614; border:2px solid #2E2148; border-radius:12px; text-align:center; padding:12px 0; cursor:pointer; }
+  .paquete .bin{ font-family:'Courier New',monospace; font-size:24px; font-weight:bold; color:#FFC857; letter-spacing:2px; }
+  .paquete .txt{ font-size:12px; color:#6F5F8C; margin-top:4px; }
+  .paquete.usado{ opacity:.25; cursor:default; }
+  .mensaje{ font-family:'Courier New',monospace; font-size:24px; letter-spacing:3px; min-height:34px; background:#0B0614; border-radius:10px; padding:10px 14px; color:#7CFFB2; }
+
+  /* final */
+  table.arch{ border-collapse:collapse; width:100%; font-size:13.5px; margin:4px 0 8px; }
+  table.arch th{ text-align:left; color:#9D8DB8; font-size:11px; letter-spacing:1px; padding:6px 8px; border-bottom:1px solid #2E2148; }
+  table.arch td{ padding:7px 8px; border-bottom:1px solid #251A3B; }
+  table.arch tr.f{ cursor:pointer; }
+  table.arch tr.f:hover td{ background:#2A1E40; }
+  table.arch tr.tachada td{ color:#4A3B66; text-decoration:line-through; }
+  table.arch tr.elegida td{ background:#2A1325; }
+
+  /* luces apagar */
+  .lo{ display:inline-block; background:#0B0614; padding:8px; border-radius:10px; }
+  .lo div{ height:62px; }
+  .lo span{ display:inline-block; width:56px; height:56px; margin:3px; border-radius:10px; background:#2E2148; cursor:pointer; }
+  .lo span.on{ background:#FFE27A; box-shadow:0 0 16px rgba(255,226,122,.6); }
+
+  /* columna derecha */
+  .panel{ background:#1C1330; border:1px solid #2E2148; border-radius:16px; padding:12px 14px; margin-bottom:10px; }
+  .panel .t{ font-size:10.5px; letter-spacing:2px; color:#9D8DB8; font-weight:bold; margin-bottom:8px; }
+  #polCaja{ text-align:center; position:relative; padding-top:14px; }
+  #globo{ position:relative; display:inline-block; background:#EEE8F7; color:#110A1D; font-size:14px; font-weight:bold; padding:9px 14px; border-radius:14px;
+          margin-bottom:6px; max-width:260px; min-height:18px; line-height:1.35; }
+  #globo:after{ content:''; position:absolute; left:50%; bottom:-8px; margin-left:-8px; border-left:8px solid transparent; border-right:8px solid transparent; border-top:8px solid #EEE8F7; }
+  .poder{ margin-top:4px; }
+  .poder span{ display:inline-block; width:40px; height:10px; border-radius:5px; background:#B98CFF; margin:0 3px; }
+  .poder span.no{ background:#2E2148; }
+  .pista{ background:#110A1D; border-radius:10px; padding:7px 10px; margin-bottom:6px; font-size:12.5px; color:#DCD3EC; }
+  .pista b{ color:#7CFFB2; }
+  .pista.vacia{ color:#4A3B66; }
+  #ayuda .una{ font-size:13px; line-height:1.45; margin-bottom:6px; color:#DCD3EC; }
+  #ayuda .una b{ color:#FFC857; }
+  #bPista{ width:100%; margin:4px 0 0; }
+
+  /* Polilla */
+  .pol{ display:block; margin:0 auto; overflow:visible; }
+  .pol .ala{ transform-origin:60px 52px; animation:aleteo .22s ease-in-out infinite alternate; }
+  .pol .ala.d{ animation-delay:.0s; }
+  @keyframes aleteo{ from{ transform:scaleX(1); } to{ transform:scaleX(.82); } }
+  .pol .ojoP{ animation:mirar 4s ease-in-out infinite; }
+  @keyframes mirar{ 0%,40%{ transform:translateX(0); } 50%,70%{ transform:translateX(2px); } 80%,100%{ transform:translateX(-1px); } }
+  .pol .parp{ transform-origin:60px 40px; animation:parpadeo 3.8s infinite; }
+  @keyframes parpadeo{ 0%,94%,100%{ transform:scaleY(1); } 97%{ transform:scaleY(.1); } }
+  .pol .ceja{ opacity:0; transition:opacity .2s; }
+  .pol.enojada .ceja{ opacity:1; }
+  .pol.enojada .ojoP{ fill:#FF3355; }
+  .pol.jiji{ animation:rebote .35s ease 3; }
+  @keyframes rebote{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-10px); } }
+  .pol.derrotada{ opacity:.6; }
+  .pol.derrotada .ala{ animation:none; transform:scaleX(.7) rotate(8deg); }
+  .pol.mareada{ animation:mareo 1s ease-in-out infinite; }
+  @keyframes mareo{ 0%,100%{ transform:rotate(-12deg); } 50%{ transform:rotate(12deg); } }
+  #vuelo{ position:fixed; top:40%; left:-140px; z-index:40; pointer-events:none; display:none; }
+  #vuelo.va{ display:block; animation:cruzar 1.6s ease-in-out forwards; }
+  @keyframes cruzar{ 0%{ left:-140px; top:55%; } 25%{ top:30%; } 50%{ top:60%; } 75%{ top:35%; } 100%{ left:105%; top:50%; } }
+
+  /* pantallas completas */
+  .pantalla{ display:none; }
+  .hoja{ background:#1C1330; border:1px solid #2E2148; border-radius:20px; padding:30px 36px; margin-top:16px; text-align:center; }
+  .hoja h1{ font-size:40px; margin:6px 0 4px; }
+  .hoja h1 span{ color:#B98CFF; }
+  .hoja p{ font-size:17px; line-height:1.55; color:#DCD3EC; margin:6px 0; }
+  input.nombre{ font-size:20px; padding:10px 14px; border-radius:12px; border:2px solid #4A3B66; background:#0B0614; color:#fff; width:280px; text-align:center; }
+  .grande{ display:inline-block; border:0; border-radius:12px; padding:14px 28px; margin:14px 8px 0; cursor:pointer; font-size:17px; font-weight:bold;
+           background:#FFC857; color:#110A1D; border-bottom:4px solid #B98A2C; }
+  .grande.sec{ background:transparent; color:#9D8DB8; border:2px solid #2E2148; font-size:13px; padding:10px 16px; }
+  .chips span{ display:inline-block; background:#110A1D; border-radius:10px; padding:7px 12px; margin:4px; font-size:13px; color:#DCD3EC; }
+  .chips b{ color:#FFC857; }
+  .diploma{ display:inline-block; background:#1C1330; border:2px solid #4A3B66; border-radius:18px; padding:20px 40px; margin-top:12px; }
+  .diploma td{ padding:5px 14px; color:#9D8DB8; text-align:left; font-size:14px; }
+  .diploma td.v{ color:#EEE8F7; font-weight:bold; text-align:right; font-size:17px; }
+  .temblor{ animation:tiembla .35s linear; }
+  @keyframes tiembla{ 0%,100%{ transform:translateX(0); } 20%{ transform:translateX(-7px); } 40%{ transform:translateX(7px); } 60%{ transform:translateX(-4px); } 80%{ transform:translateX(4px); } }
+  .aparece{ animation:aparece .4s ease; }
+  @keyframes aparece{ from{ opacity:0; transform:scale(.9); } to{ opacity:1; transform:none; } }
+</style>
+</head>
+<body>
+<div id="vuelo"></div>
+<div id="caja">
+  <div id="barra">
+    <div id="titulo">La venganza de <span>Polilla</span></div>
+    <div id="bateria"><div id="batTxt">BATERÍA <b id="batPct">100 %</b></div><div id="batMarco"><div id="batBarra"></div></div></div>
+    <div id="quien"></div>
+  </div>
+  <div id="inicio" class="pantalla"></div>
+  <div id="juego" class="pantalla">
+    <div id="salas"></div>
+    <div id="izq"></div>
+    <div id="der">
+      <div class="panel" id="polCaja"></div>
+      <div class="panel"><div class="t">¿DÓNDE SE ESCONDE POLILLA?</div><div id="pistasP"></div></div>
+      <div class="panel"><div class="t">AYUDA</div><div id="ayuda"></div><button class="btn sec" id="bPista" onclick="pedirPista()">Pedir ayuda</button></div>
+    </div>
+    <div class="limpiar"></div>
+  </div>
+  <div id="fin" class="pantalla"></div>
+</div>
+<script>
+/* ════════════════════════════════════════════════════════════════
+   LA VENGANZA DE POLILLA · sala de escape para 6.º
+   Un solo archivo, sin internet, JavaScript ES5.
+   ════════════════════════════════════════════════════════════════ */
+function $(id){ return document.getElementById(id); }
+function esc(t){ return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function norm(s){
+  s = String(s || '').toUpperCase();
+  s = s.replace(/[ÁÀÄ]/g, 'A').replace(/[ÉÈË]/g, 'E').replace(/[ÍÌÏ]/g, 'I').replace(/[ÓÒÖ]/g, 'O').replace(/[ÚÙÜ]/g, 'U');
+  return s.replace(/[^A-Z0-9Ñ]/g, '');
+}
+function azar(a){ return a[Math.floor(Math.random() * a.length)]; }
+
+/* ── sonido ─────────────────────────────────────────────────────── */
+var AC = null, sonido = true;
+function tono(f, dur, tipo, vol, hasta, demora){
+  if (!sonido) return;
+  try {
+    if (!AC){ var C = window.AudioContext || window.webkitAudioContext; if (!C) return; AC = new C(); }
+    if (AC.state === 'suspended' && AC.resume) AC.resume();
+    var t = AC.currentTime + (demora || 0), o = AC.createOscillator(), g = AC.createGain();
+    o.type = tipo; o.frequency.setValueAtTime(f, t);
+    if (hasta) o.frequency.exponentialRampToValueAtTime(hasta, t + dur);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(AC.destination); o.start(t); o.stop(t + dur + 0.03);
+  } catch(e){}
+}
+function sonClic(){ tono(520, 0.05, 'triangle', 0.08); }
+function sonBien(){ tono(660, 0.12, 'sine', 0.16); tono(880, 0.2, 'sine', 0.14, 0, 0.1); }
+function sonMal(){ tono(200, 0.25, 'square', 0.09, 120); }
+function sonJiji(){ tono(1300, 0.07, 'square', 0.05, 900, 0); tono(1400, 0.07, 'square', 0.05, 950, 0.1); tono(1500, 0.09, 'square', 0.05, 1000, 0.2); }
+function sonGrr(){ tono(110, 0.35, 'sawtooth', 0.10, 80); }
+function sonPuerta(){ var n = [392, 523, 659, 784], i; for (i = 0; i < 4; i++) tono(n[i], i === 3 ? 0.35 : 0.12, 'sine', 0.16, 0, i * 0.11); }
+var TONOS_SIMON = [330, 392, 494, 587];
+
+/* ── estado y guardado ──────────────────────────────────────────── */
+var CLAVE = 'venganza_polilla_v1', guardaOK = true, TOTAL = 45 * 60 * 1000;
+var COSTO = {ayuda: 90000, error: 20000, chico: 10000, final: 60000};
+var S = nuevo();
+function nuevo(){ return {nombre:'', fase:'inicio', t:TOTAL, hecho:{}, ayudas:{}, errores:0, sala:0, p:{}, salida:null}; }
+function guardar(){ try { window.localStorage.setItem(CLAVE, JSON.stringify(S)); } catch(e){ guardaOK = false; } }
+function cargar(){
+  try { var r = window.localStorage.getItem(CLAVE); if (r){ var o = JSON.parse(r); if (o && o.hecho) S = o; } } catch(e){ guardaOK = false; }
+  try { window.localStorage.setItem('vp_prueba', '1'); window.localStorage.removeItem('vp_prueba'); } catch(e){ guardaOK = false; }
+}
+function P(id){ if (!S.p[id]) S.p[id] = {}; return S.p[id]; }
+
+/* ── Polilla ────────────────────────────────────────────────────── */
+function polSVG(w, id){
+  return '<svg class="pol" ' + (id ? 'id="' + id + '" ' : '') + 'width="' + w + '" height="' + Math.round(w * 0.86) + '" viewBox="0 0 120 103">' +
+    '<g class="ala"><ellipse cx="33" cy="42" rx="30" ry="22" fill="#7E5BC4"/><ellipse cx="38" cy="74" rx="20" ry="15" fill="#9C7CE0"/>' +
+    '<circle cx="30" cy="40" r="8" fill="#D9C9FF"/><circle cx="30" cy="40" r="3.5" fill="#3A2A5E"/><circle cx="38" cy="76" r="4" fill="#D9C9FF"/></g>' +
+    '<g class="ala d"><ellipse cx="87" cy="42" rx="30" ry="22" fill="#7E5BC4"/><ellipse cx="82" cy="74" rx="20" ry="15" fill="#9C7CE0"/>' +
+    '<circle cx="90" cy="40" r="8" fill="#D9C9FF"/><circle cx="90" cy="40" r="3.5" fill="#3A2A5E"/><circle cx="82" cy="76" r="4" fill="#D9C9FF"/></g>' +
+    '<rect x="52" y="36" width="16" height="58" rx="8" fill="#3A2A5E"/><path d="M54 52h12M54 62h12M54 72h12M55 82h10" stroke="#5A4385" stroke-width="2"/>' +
+    '<path d="M54 22 Q48 8 40 6" stroke="#3A2A5E" stroke-width="2.5" fill="none"/><path d="M66 22 Q72 8 80 6" stroke="#3A2A5E" stroke-width="2.5" fill="none"/>' +
+    '<circle cx="40" cy="6" r="3.5" fill="#FFC857"/><circle cx="80" cy="6" r="3.5" fill="#FFC857"/>' +
+    '<circle cx="60" cy="33" r="16" fill="#4A3577"/>' +
+    '<g class="parp"><circle cx="53.5" cy="31" r="5.5" fill="#FFFFFF"/><circle cx="66.5" cy="31" r="5.5" fill="#FFFFFF"/>' +
+    '<circle class="ojoP" cx="54.5" cy="31.5" r="2.6" fill="#110A1D"/><circle class="ojoP" cx="67.5" cy="31.5" r="2.6" fill="#110A1D"/></g>' +
+    '<path class="ceja" d="M47 22 L58 27 M73 22 L62 27" stroke="#FF3355" stroke-width="3" stroke-linecap="round"/>' +
+    '<path d="M53 40 Q60 46 67 40" stroke="#FFE27A" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M57 42.5 l1 3 l1.5-2.6" fill="#FFFFFF"/></svg>';
+}
+var polTimer = null;
+function polilla(txt, estado){
+  var g = $('globo'), p = $('polImg');
+  if (g && txt){ g.innerHTML = txt; g.className = ''; void g.offsetWidth; g.className = 'aparece'; }
+  if (p){
+    p.setAttribute('class', 'pol' + (estado ? ' ' + estado : ''));
+    if (polTimer) clearTimeout(polTimer);
+    if (estado === 'jiji' || estado === 'enojada') polTimer = setTimeout(function(){ var q = $('polImg'); if (q && S.fase === 'juego') q.setAttribute('class', 'pol'); }, 1600);
+  }
+}
+function volar(){
+  var v = $('vuelo'); v.innerHTML = polSVG(110); v.className = ''; void v.offsetWidth; v.className = 'va';
+  setTimeout(function(){ v.className = ''; }, 1700);
+}
+var BURLAS = ['¡Jijiji!', 'Casi… no.', 'Mmm, qué rica batería.', 'Error. Me encanta.', 'Seguí probando, jiji.'];
+var QUEJAS = ['¡No! ¿Cómo hiciste?', 'Grrr.', 'Suerte de principiante.', 'Eso no vale.', 'Bueno, ese era fácil.'];
+
+/* ── íconos de salas ────────────────────────────────────────────── */
+var ICO = [
+  '<svg width="24" height="18" viewBox="0 0 22 16"><rect x="1" y="2" width="20" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="4" y="5" width="3" height="2" fill="currentColor"/><rect x="9" y="5" width="3" height="2" fill="currentColor"/><rect x="14" y="5" width="3" height="2" fill="currentColor"/><rect x="6" y="9" width="10" height="2" fill="currentColor"/></svg>',
+  '<svg width="24" height="18" viewBox="0 0 22 16"><rect x="3" y="3" width="16" height="10" rx="1" fill="none" stroke="currentColor" stroke-width="2"/><rect x="6" y="6" width="3" height="4" fill="currentColor"/><rect x="13" y="6" width="3" height="4" fill="currentColor"/><path d="M5 1v2M9 1v2M13 1v2M17 1v2M5 13v2M9 13v2M13 13v2M17 13v2" stroke="currentColor" stroke-width="1.5"/></svg>',
+  '<svg width="24" height="18" viewBox="0 0 22 16"><rect x="1" y="1" width="20" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="8" y="12" width="6" height="2" fill="currentColor"/><rect x="5" y="14" width="12" height="1.5" fill="currentColor"/></svg>',
+  '<svg width="24" height="18" viewBox="0 0 22 16"><ellipse cx="11" cy="4" rx="9" ry="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M2 4v8c0 1.7 4 3 9 3s9-1.3 9-3V4" fill="none" stroke="currentColor" stroke-width="2"/></svg>',
+  '<svg width="24" height="18" viewBox="0 0 22 16"><circle cx="11" cy="3" r="2.5" fill="currentColor"/><circle cx="4" cy="13" r="2.5" fill="currentColor"/><circle cx="18" cy="13" r="2.5" fill="currentColor"/><path d="M11 3L4 13M11 3l7 10M4 13h14" stroke="currentColor" stroke-width="1.8" fill="none"/></svg>',
+  '<svg width="24" height="18" viewBox="0 0 22 16"><circle cx="9" cy="7" r="5.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M13 11l6 4" stroke="currentColor" stroke-width="2.5"/></svg>',
+  '<svg width="22" height="18" viewBox="0 0 18 16"><path d="M9 1l2.4 4.9 5.4.8-3.9 3.8.9 5.3L9 13.3 4.2 15.8l.9-5.3L1.2 6.7l5.4-.8z" fill="currentColor"/></svg>',
+  '<svg width="24" height="18" viewBox="0 0 22 16"><rect x="4" y="7" width="14" height="8" rx="2" fill="currentColor"/><path d="M7 7V5a4 4 0 0 1 8 0v2" stroke="currentColor" stroke-width="2" fill="none"/></svg>'
+];
+var SALAS = [
+  {nom:'Teclado', pol:'Esta vez no salís. Jijiji.'},
+  {nom:'Memoria', pol:'¿Tenés buena memoria? Yo no.'},
+  {nom:'Pantalla', pol:'Te rompí la pantalla.'},
+  {nom:'Disco', pol:'Mis programas están disfrazados.'},
+  {nom:'Red', pol:'Corté todos los cables.'},
+  {nom:'¡Atrapala!', pol:'No me vas a encontrar nunca.'},
+  {nom:'Secretos', pol:'Mis acertijos más difíciles.'}
+];
+
+/* ── los acertijos ──────────────────────────────────────────────── */
+var AC_ = [
+  {id:'T1', sala:0, tit:'Una fila más arriba', resp:['NO ES UNA FOTO'], pista:'No es una foto',
+   ayuda:['Mirá tu teclado: ¿qué tecla está arriba de la N?', 'Para leerlo, buscá la tecla de abajo de cada letra o número. Abajo del 9 está la O.', 'Empieza con NO ES… y son cuatro palabras.']},
+  {id:'T2', sala:0, tit:'Los atajos', resp:['ZXCV'],
+   ayuda:['Son atajos para editar texto. Probalos en tu teclado.', 'Copiar es Ctrl + C. Pegar es la tecla de al lado.', 'Mirá la fila de abajo de tu teclado: las cuatro letras están juntas.']},
+  {id:'M1', sala:1, tit:'Simón dice',
+   ayuda:['Tocá el botón del medio para ver la secuencia.', 'Decí los colores en voz baja mientras los mirás.', 'Si te equivocás, se repite la misma. Agrupalos de a dos: verde-rojo, azul-amarillo.']},
+  {id:'M2', sala:1, tit:'La palabra encendida', resp:['JUEGOS'], pista:'Está en la carpeta Juegos',
+   ayuda:['Cada lámpara vale el número que tiene arriba.', 'Sumá las prendidas de cada fila. La primera da 10.', 'Son 10, 21, 5, 7, 15 y 19. La letra 10 es la J.']},
+  {id:'P1', sala:2, tit:'La pantalla rota', pista:'Pesa más de 3 MB',
+   ayuda:['Solo se mueve una ficha que esté al lado del hueco.', 'Armá primero la fila de arriba y no la toques más.', 'Después la del medio. Las últimas se acomodan dando vueltas alrededor del hueco.']},
+  {id:'P2', sala:2, tit:'Tres diferencias',
+   ayuda:['Compará fila por fila, de arriba a abajo.', 'Mirá los ojos, la sonrisa y el pie de la pantalla.', 'Hay una en la fila 3, una en la 8 y una en la 12.']},
+  {id:'D1', sala:3, tit:'Del más liviano al más pesado',
+   ayuda:['B, KB, MB, GB: cada una es mil veces más grande que la anterior.', '0,5 GB es medio GB, o sea 500 MB.', 'Nota, foto, canción, libro, película, video, juego.']},
+  {id:'D2', sala:3, tit:'Programas disfrazados', pista:'No es un programa (.exe)',
+   ayuda:['Tocá Mostrar extensiones.', 'Un programa termina en .exe, aunque antes diga .jpg o .mp4.', 'Son fotos_cumple, minecraft_gratis y video_gracioso.']},
+  {id:'R1', sala:4, tit:'Los caños',
+   ayuda:['Tocá un caño para girarlo. Los que se pintan de verde ya tienen señal.', 'Empezá desde el router y avanzá de a uno.', 'El camino sube, va por arriba hasta el medio, baja dos, vuelve a subir y sale.']},
+  {id:'R2', sala:4, tit:'Paquetes mezclados', pista:'Se guardó un martes',
+   ayuda:['Los números están en binario: lámparas de 4, 2 y 1.', '001 es uno, 010 es dos, 011 es tres.', 'El orden es 001, 010, 011, 100, 101.']},
+  {id:'F', sala:5, tit:'¿Dónde está Polilla?',
+   ayuda:['Tocá un archivo para tacharlo cuando no cumple una pista.', 'Empezá por la carpeta: dejá solo los de Juegos.', 'De los de Juegos sacá la foto, el programa, el liviano y el que no es de un martes.']},
+  {id:'X1', sala:6, tit:'Apagá todo',
+   ayuda:['Cada luz que tocás cambia ella y sus vecinas de arriba, abajo y costados.', 'No hace falta tocar las prendidas. Probá con las del borde.', 'Tocá la de arriba al medio, la del medio a la izquierda y la de abajo a la derecha.']},
+  {id:'X2', sala:6, tit:'El candado', resp:['815'],
+   ayuda:['Empezá por la pista de nada correcto: tachá esos tres números.', 'Fijate en el 8: está en dos pistas en el mismo lugar.', 'Es 8 _ 5. El del medio es el único número que no aparece en ninguna pista.']},
+  {id:'X3', sala:6, tit:'La rueda', resp:['EL MAS DIFICIL'],
+   ayuda:['Apretá la flecha de la derecha y mirá cómo cambia la línea de abajo del mensaje.', 'Cuando esa línea se pueda leer en castellano, frená: esa es la respuesta.', 'Con la rueda en 3 se lee EL MAS DIFICIL.']}
+];
+var AX = {}; (function(){ for (var i = 0; i < AC_.length; i++) AX[AC_[i].id] = AC_[i]; })();
+var PISTA_IDS = ['T1', 'M2', 'P1', 'D2', 'R2'];
+
+/* ── batería ────────────────────────────────────────────────────── */
+function gastar(ms){ if (S.salida) return; S.t = Math.max(0, S.t - ms); dibujarBateria(); }
+function pct(){ return Math.round(S.t / TOTAL * 100); }
+function dibujarBateria(){
+  var p = pct(), b = $('batBarra'), min = Math.floor(S.t / 60000), seg = Math.floor(S.t % 60000 / 1000);
+  b.style.width = p + '%'; b.style.background = p > 50 ? '#7CFFB2' : (p > 20 ? '#FFC857' : '#FF5470');
+  $('batPct').innerHTML = p + ' % <span style="font-size:10px;color:#6F5F8C;font-weight:normal">(' + min + ':' + (seg < 10 ? '0' : '') + seg + ')</span>';
+}
+var ticks = 0, avisoCero = false;
+function tic(){
+  if (S.fase !== 'juego' || S.salida) return;
+  if (S.t > 0){ S.t = Math.max(0, S.t - 1000); dibujarBateria(); }
+  else if (!avisoCero){ avisoCero = true; polilla('¡Sin batería! Igual podés seguir.', 'jiji'); }
+  if (++ticks % 5 === 0) guardar();
+}
+
+/* ── estructura ─────────────────────────────────────────────────── */
+function mostrar(id){ var ids = ['inicio', 'juego', 'fin'], i; for (i = 0; i < ids.length; i++) $(ids[i]).style.display = ids[i] === id ? 'block' : 'none'; window.scrollTo(0, 0); }
+function salaHecha(n){ var i; for (i = 0; i < AC_.length; i++) if (AC_[i].sala === n && !S.hecho[AC_[i].id]) return false; return true; }
+function salaAbierta(n){ if (n === 6) return !!S.salida; return n === 0 || salaHecha(n - 1); }
+function actual(){ var i; for (i = 0; i < AC_.length; i++) if (AC_[i].sala === S.sala && !S.hecho[AC_[i].id]) return AC_[i]; return null; }
+function salasHechas(){ var n = 0, i; for (i = 0; i < 5; i++) if (salaHecha(i)) n++; return n; }
+
+function render(){
+  var h = '', i, c, t;
+  for (i = 0; i < 7; i++){
+    if (i === 6 && !S.salida) continue;
+    c = 'tab' + (i === 5 ? ' final' : '') + (i === 6 ? ' bonus' : '') + (salaHecha(i) ? ' hecha' : '') + (i === S.sala ? ' ahora' : '') + (!salaAbierta(i) ? ' cerrada' : '');
+    t = salaAbierta(i) ? ICO[i] : ICO[7];
+    h += '<div class="' + c + '" onclick="irSala(' + i + ')">' + t + (i < 5 ? (i + 1) + ' · ' : '') + SALAS[i].nom + '</div>';
+  }
+  $('salas').innerHTML = h;
+  $('quien').innerHTML = '<b>' + esc(S.nombre) + '</b><button id="sonido" onclick="alternarSonido()">' + (sonido ? 'sonido: sí' : 'sonido: no') + '</button>';
+  dibujarPolilla(); dibujarPistasPol(); dibujarAyuda(); dibujarSala(); dibujarBateria();
+}
+function dibujarPolilla(){
+  var g = $('globo'), txt = g ? g.innerHTML : SALAS[S.sala].pol, h = '<div id="globo">' + txt + '</div>' + polSVG(150, 'polImg') + '<div class="poder">', i, n = salasHechas();
+  for (i = 0; i < 5; i++) h += '<span' + (i < 5 - n ? '' : ' class="no"') + '></span>';
+  $('polCaja').innerHTML = h + '</div><div style="font-size:10px;color:#6F5F8C;letter-spacing:2px;margin-top:5px">PODER DE POLILLA</div>';
+  if (n >= 5 && S.hecho.F) $('polImg').setAttribute('class', 'pol derrotada');
+}
+function irSala(n){
+  if (!salaAbierta(n)){ polilla('Cerrada. Terminá la anterior.', 'jiji'); return; }
+  S.sala = n; guardar(); render(); polilla(SALAS[n].pol);
+}
+function alternarSonido(){ sonido = !sonido; render(); }
+function dibujarPistasPol(){
+  var h = '', i, a;
+  for (i = 0; i < PISTA_IDS.length; i++){
+    a = AX[PISTA_IDS[i]];
+    h += S.hecho[a.id] ? '<div class="pista">' + (i + 1) + '. <b>' + a.pista + '</b></div>' : '<div class="pista vacia">' + (i + 1) + '. Sala de ' + SALAS[a.sala].nom.toLowerCase() + ': ?</div>';
+  }
+  $('pistasP').innerHTML = h;
+}
+function dibujarAyuda(){
+  var a = actual(), h = '', n, i;
+  if (!a){ $('ayuda').innerHTML = '<div class="una" style="color:#6F5F8C">Nada pendiente acá.</div>'; $('bPista').style.display = 'none'; return; }
+  n = S.ayudas[a.id] || 0;
+  for (i = 0; i < n; i++) h += '<div class="una"><b>' + (i + 1) + '.</b> ' + a.ayuda[i] + '</div>';
+  if (!n) h = '<div class="una" style="color:#6F5F8C">Cada ayuda gasta batería' + (a.sala === 6 ? ' (acá no)' : '') + '.</div>';
+  $('ayuda').innerHTML = h;
+  $('bPista').style.display = n >= 3 ? 'none' : 'block';
+  $('bPista').innerHTML = 'Pedir ayuda (' + (n + 1) + ' de 3)';
+}
+function pedirPista(){
+  var a = actual(); if (!a) return;
+  var n = S.ayudas[a.id] || 0; if (n >= 3) return;
+  S.ayudas[a.id] = n + 1; if (a.sala !== 6) gastar(COSTO.ayuda);
+  tono(700, 0.08, 'sine', 0.1); guardar(); dibujarAyuda();
+  if (n === 0) polilla('¿Ya pedís ayuda? Jijiji.', 'jiji');
+}
+
+/* ── resolver y fallar ──────────────────────────────────────────── */
+function resolver(id){
+  var a = AX[id], antes = salasHechas();
+  S.hecho[id] = true; sonBien();
+  if (id === 'F'){ guardar(); render(); return; }
+  guardar(); render();
+  if (a.pista) polilla('¡Encontraste una pista! Pero no me vas a encontrar.', 'enojada');
+  else polilla(azar(QUEJAS), 'enojada');
+  if (salasHechas() > antes){ sonPuerta(); volar(); polilla('¡Me queda menos poder!', 'enojada'); sonGrr(); }
+}
+function fallar(id, txt, costo){
+  if (AX[id].sala !== 6){ S.errores++; gastar(costo === undefined ? COSTO.error : costo); }
+  sonMal(); sonJiji(); guardar();
+  var m = $('m_' + id); if (m){ m.className = 'msj mal'; m.innerHTML = txt || 'No es eso.'; }
+  var c = $('c_' + id); if (c){ c.className = 'acert'; void c.offsetWidth; c.className = 'acert temblor'; }
+  polilla(azar(BURLAS), 'jiji');
+  if (Math.random() < 0.3) volar();
+}
+function probar(id){
+  var a = AX[id], v = norm($('r_' + id).value), i;
+  if (!v){ var m0 = $('m_' + id); if (m0){ m0.className = 'msj mal'; m0.innerHTML = 'Escribí algo primero.'; } return; }
+  for (i = 0; i < a.resp.length; i++) if (v === norm(a.resp[i])){ resolver(id); return; }
+  fallar(id);
+}
+function tecla(id, ch){ var r = $('r_' + id); if (!r) return; sonClic(); if (ch === '<') r.value = r.value.slice(0, -1); else r.value += ch; }
+
+/* ── piezas comunes ─────────────────────────────────────────────── */
+var FILAS = ['1234567890', 'QWERTYUIOP', 'ASDFGHJKLÑ', 'ZXCVBNM'];
+function teclado(id){
+  var h = '<div class="teclado">', f, i, ch;
+  for (f = 0; f < FILAS.length; f++){
+    h += '<div class="tfila" style="padding-left:' + (f * 16) + 'px">';
+    for (i = 0; i < FILAS[f].length; i++){ ch = FILAS[f].charAt(i); h += '<button class="tecla" onclick="tecla(\'' + id + '\',\'' + ch + '\')">' + ch + '</button>'; }
+    if (f === 3) h += '<button class="tecla ancha" onclick="tecla(\'' + id + '\',\'<\')">BORRAR</button>';
+    h += '</div>';
+  }
+  return h + '<div class="tfila" style="padding-left:112px"><button class="tecla esp" onclick="tecla(\'' + id + '\',\' \')">ESPACIO</button></div></div>';
+}
+function cajaResp(id, ph){
+  return '<div class="fila"><input class="resp" id="r_' + id + '" placeholder="' + (ph || '') + '" autocomplete="off" onkeydown="if(event.keyCode===13)probar(\'' + id + '\')">' +
+         '<button class="btn" onclick="probar(\'' + id + '\')">Probar</button></div><div class="msj" id="m_' + id + '"></div>';
+}
+
+function dibujarSala(){
+  var n = S.sala, h = '<div class="sala"><h1>' + (n < 5 ? 'SALA ' + (n + 1) + ' · ' + SALAS[n].nom.toUpperCase() : (n === 5 ? 'LA ÚLTIMA SALA' : 'ARCHIVOS SECRETOS · SIN BATERÍA')) + '</h1>', i, a, pend = false;
+  for (i = 0; i < AC_.length; i++){
+    a = AC_[i]; if (a.sala !== n) continue;
+    if (S.hecho[a.id]){ h += '<div class="hecho">&#10003; ' + a.tit + (a.pista ? ' · pista: <b style="color:#FFC857">' + a.pista + '</b>' : '') + '</div>'; continue; }
+    if (pend && n !== 6) continue;
+    pend = true;
+    h += '<div class="acert" id="c_' + a.id + '"><h2>' + a.tit + '</h2>' + CUERPO[a.id]() + '</div>';
+  }
+  if (n < 5 && salaHecha(n)) h += '<div class="fila" style="margin-top:16px"><button class="btn" onclick="irSala(' + (n + 1) + ')">' + (n < 4 ? 'Pasar a la sala ' + (n + 2) : 'Ir a buscar a Polilla') + ' &#9654;</button></div>';
+  if (n === 5 && S.hecho.F && !S.salida) h += finalPapelera();
+  if (n === 6) h += '<div class="fila" style="margin-top:14px"><button class="btn sec" onclick="mostrarFin()">Volver al resumen</button></div>';
+  $('izq').innerHTML = h + '</div>';
+  if (n === 4 && !S.hecho.R1) dibujarCanos();
+}
+
+/* ════════ los cuerpos de cada acertijo ════════ */
+var CUERPO = {};
+
+/* T1 · una fila más arriba */
+CUERPO.T1 = function(){
+  return '<p class="linea">Polilla escribió con la mano <b>una fila más arriba</b>. ¿Qué dice?</p><div class="codigo">H9 3W 7HQ R959</div>' + teclado('T1') + cajaResp('T1', 'el mensaje');
+};
+
+/* T2 · atajos */
+var ICO_ATAJO = [
+  ['Deshacer', '<svg width="54" height="54" viewBox="0 0 54 54"><path d="M20 12 L8 24 L20 36" fill="none" stroke="#7CFFB2" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 24 H32 a12 12 0 0 1 0 24 H22" fill="none" stroke="#7CFFB2" stroke-width="5" stroke-linecap="round"/></svg>'],
+  ['Cortar', '<svg width="54" height="54" viewBox="0 0 54 54"><circle cx="16" cy="40" r="7" fill="none" stroke="#FF5470" stroke-width="4"/><circle cx="38" cy="40" r="7" fill="none" stroke="#FF5470" stroke-width="4"/><path d="M20 34 L40 6 M34 34 L14 6" stroke="#EEE8F7" stroke-width="4" stroke-linecap="round"/></svg>'],
+  ['Copiar', '<svg width="54" height="54" viewBox="0 0 54 54"><rect x="8" y="6" width="26" height="32" rx="3" fill="none" stroke="#9D8DB8" stroke-width="4"/><rect x="20" y="16" width="26" height="32" rx="3" fill="#1C1330" stroke="#FFC857" stroke-width="4"/></svg>'],
+  ['Pegar', '<svg width="54" height="54" viewBox="0 0 54 54"><rect x="10" y="10" width="34" height="40" rx="4" fill="none" stroke="#4D8BFF" stroke-width="4"/><rect x="19" y="5" width="16" height="10" rx="3" fill="#4D8BFF"/><path d="M18 28h18M18 37h12" stroke="#EEE8F7" stroke-width="3"/></svg>']
+];
+CUERPO.T2 = function(){
+  var h = '<p class="linea">Polilla te borró los atajos. <b>Ctrl + ¿qué letra?</b></p><div class="atajos">', i;
+  for (i = 0; i < 4; i++) h += '<div class="atajo">' + ICO_ATAJO[i][1] + '<div style="font-size:12px;color:#9D8DB8;margin-bottom:8px">' + ICO_ATAJO[i][0] + '</div><span>Ctrl +</span><input maxlength="1" id="at' + i + '" autocomplete="off"></div>';
+  return h + '</div><div class="fila"><button class="btn" style="margin-left:0" onclick="probarAtajos()">Probar</button></div><div class="msj" id="m_T2"></div>';
+};
+function probarAtajos(){
+  var r = 'ZXCV', mal = 0, i, v = '';
+  for (i = 0; i < 4; i++){ var c = norm($('at' + i).value); v += c; if (c !== r.charAt(i)) mal++; }
+  if (!mal){ resolver('T2'); return; }
+  fallar('T2', mal === 1 ? 'Hay 1 mal.' : 'Hay ' + mal + ' mal.');
+}
+
+/* M1 · Simón dice */
+var LARGOS = [4, 5, 6, 7], simonOcupado = false;
+function simonSt(){ var st = P('M1'), i; if (!st.seq){ st.seq = []; for (i = 0; i < 7; i++) st.seq.push(Math.floor(Math.random() * 4)); st.r = 0; st.k = 0; } return st; }
+CUERPO.M1 = function(){
+  var st = simonSt(), h = '<p class="linea">Mirá la secuencia y <b>repetila</b>. Son 4 rondas.</p><div class="simon">', i;
+  for (i = 0; i < 4; i++) h += '<div class="pad p' + i + '" id="pad' + i + '" onclick="tocarPad(' + i + ')"></div>';
+  h += '<div class="simonCentro" id="simonPlay" onclick="verSimon()">&#9654;</div></div><div class="rondas">';
+  for (i = 0; i < 4; i++) h += '<span' + (i < st.r ? ' class="ok"' : '') + '></span>';
+  return h + '</div><div class="msj" id="m_M1"></div>';
+};
+function luzPad(i, ms){ var p = $('pad' + i); if (!p) return; p.className = 'pad p' + i + ' luz'; tono(TONOS_SIMON[i], ms / 1000, 'sine', 0.15); setTimeout(function(){ var q = $('pad' + i); if (q) q.className = 'pad p' + i; }, ms); }
+function verSimon(){
+  var st = simonSt(), n = LARGOS[st.r], k = 0;
+  if (simonOcupado) return;
+  simonOcupado = true; st.k = 0;
+  var b = $('simonPlay'); if (b) b.innerHTML = '…';
+  function paso(){
+    if (S.sala !== 1 || S.hecho.M1){ simonOcupado = false; return; }
+    if (k >= n){ simonOcupado = false; var bb = $('simonPlay'); if (bb) bb.innerHTML = '&#9654;'; var m = $('m_M1'); if (m){ m.className = 'msj bien'; m.innerHTML = '¡Tu turno!'; } return; }
+    luzPad(st.seq[k], 380); k++;
+    setTimeout(paso, 560);
+  }
+  setTimeout(paso, 300);
+}
+function tocarPad(i){
+  var st = simonSt(), n = LARGOS[st.r];
+  if (simonOcupado) return;
+  luzPad(i, 200);
+  if (st.seq[st.k] !== i){
+    st.k = 0; fallar('M1', 'Otra vez. Mirá de nuevo.', COSTO.chico);
+    setTimeout(verSimon, 900); return;
+  }
+  st.k++;
+  if (st.k >= n){
+    st.r++; st.k = 0; guardar();
+    if (st.r >= LARGOS.length){ resolver('M1'); return; }
+    sonBien(); dibujarSala(); var m = $('m_M1'); m.className = 'msj bien'; m.innerHTML = '¡Bien! Ahora una más larga.';
+    setTimeout(verSimon, 1000);
+  }
+}
+
+/* M2 · palabra en binario */
+CUERPO.M2 = function(){
+  var w = [10, 21, 5, 7, 15, 19], v = [16, 8, 4, 2, 1], h = '<p class="linea">Cada fila es una letra. <b>A = 1, B = 2, C = 3…</b></p><div style="background:#0B0614;border-radius:12px;padding:10px 16px;display:inline-block"><div class="mini">', i, b;
+  for (b = 0; b < 5; b++) h += '<span class="num">' + v[b] + '</span>';
+  h += '</div>';
+  for (i = 0; i < w.length; i++){ h += '<div class="mini">'; for (b = 0; b < 5; b++) h += '<span' + (w[i] & v[b] ? ' class="on"' : '') + '></span>'; h += '</div>'; }
+  h += '</div><div style="font-size:12px;color:#6F5F8C;margin-top:8px;line-height:1.7;font-family:Courier New,monospace">A1 B2 C3 D4 E5 F6 G7 H8 I9 J10 K11 L12 M13<br>N14 O15 P16 Q17 R18 S19 T20 U21 V22 W23 X24 Y25 Z26</div>';
+  return h + cajaResp('M2', 'la palabra');
+};
+
+/* P1 · rompecabezas deslizante */
+var IMG_P1 = null;
+function imagenP1(){
+  if (IMG_P1) return IMG_P1;
+  var s = '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300">' +
+    '<rect width="300" height="300" fill="#22134A"/><rect x="0" y="0" width="300" height="100" fill="#2C1A5C"/><rect x="0" y="200" width="300" height="100" fill="#1A0F38"/>' +
+    '<g stroke="#3D2A75" stroke-width="2"><path d="M0 50H300M0 250H300M50 0V300M250 0V300"/></g>' +
+    '<circle cx="40" cy="45" r="22" fill="#B98CFF"/><circle cx="40" cy="45" r="9" fill="#22134A"/>' +
+    '<text x="150" y="58" font-family="Arial" font-size="26" font-weight="bold" fill="#B98CFF" text-anchor="middle">POLILLA</text>' +
+    '<rect x="230" y="22" width="50" height="50" rx="10" fill="#FF5470"/><path d="M243 47h24M255 35v24" stroke="#fff" stroke-width="6"/>' +
+    '<text x="150" y="168" font-family="Arial" font-size="46" font-weight="bold" fill="#7CFFB2" text-anchor="middle">PESA MÁS</text>' +
+    '<text x="150" y="258" font-family="Arial" font-size="60" font-weight="bold" fill="#FFC857" text-anchor="middle">DE 3 MB</text>' +
+    '<path d="M10 290 L40 270 L70 290 Z" fill="#4D8BFF"/><rect x="258" y="270" width="30" height="22" rx="3" fill="#7CFFB2"/></svg>';
+  IMG_P1 = 'url("data:image/svg+xml;charset=utf-8,' + encodeURIComponent(s).replace(/'/g, '%27') + '")';
+  return IMG_P1;
+}
+function vecinas(c){ var r = Math.floor(c / 3), k = c % 3, v = []; if (r > 0) v.push(c - 3); if (r < 2) v.push(c + 3); if (k > 0) v.push(c - 1); if (k < 2) v.push(c + 1); return v; }
+function p1St(){
+  var st = P('P1'), i, b, v, prev = -1, n;
+  if (!st.pos){
+    st.pos = [0, 1, 2, 3, 4, 5, 6, 7, 8]; st.hist = []; b = 8;
+    for (i = 0; i < 70; i++){
+      v = vecinas(b); do { n = v[Math.floor(Math.random() * v.length)]; } while (n === prev);
+      st.hist.push(b); st.pos[b] = st.pos[n]; st.pos[n] = 8; prev = b; b = n;
+    }
+    if (resuelto(st.pos)){ n = vecinas(b)[0]; st.hist.push(b); st.pos[b] = st.pos[n]; st.pos[n] = 8; }
+  }
+  return st;
+}
+function resuelto(p){ for (var i = 0; i < 9; i++) if (p[i] !== i) return false; return true; }
+CUERPO.P1 = function(){
+  var st = p1St(), h = '<p class="linea">Polilla rompió la pantalla. <b>Ordenala.</b></p><div class="puzzle" id="puzzle">', c, t;
+  for (c = 0; c < 9; c++){
+    t = st.pos[c]; if (t === 8) continue;
+    h += '<div class="ficha" id="fi' + c + '" onclick="moverFicha(' + c + ')" style="left:' + ((c % 3) * 100 + 2) + 'px;top:' + (Math.floor(c / 3) * 100 + 2) + 'px;background-image:' + imagenP1().replace(/"/g, '&quot;') +
+         ';background-size:300px 300px;background-position:-' + ((t % 3) * 100 + 2) + 'px -' + (Math.floor(t / 3) * 100 + 2) + 'px"></div>';
+  }
+  h += '</div><div class="modelo"><div style="background-image:' + imagenP1().replace(/"/g, '&quot;') + ';background-size:120px 120px"></div>así tiene que quedar</div>';
+  return h + '<div class="msj" id="m_P1"></div>';
+};
+function moverFicha(c){
+  var st = p1St(), b = st.pos.indexOf(8);
+  if (vecinas(b).indexOf(c) < 0){ return; }
+  st.pos[b] = st.pos[c]; st.pos[c] = 8; sonClic(); guardar();
+  if (resuelto(st.pos)){ resolver('P1'); return; }
+  dibujarSala();
+}
+
+/* P2 · tres diferencias */
+var PIX = ['............', '.1111111111.', '.1222222221.', '.1232222321.', '.1222222221.', '.1222222221.', '.1242222421.', '.1224444221.', '.1222222221.', '.1111111111.', '....1111....', '..11111111..'];
+var COLPIX = {'.':'#0B0614', '1':'#9AA3B5', '2':'#3A6FD8', '3':'#FFFFFF', '4':'#FFC857'};
+var DIFS = [[2, 4, '3'], [7, 6, '2'], [11, 3, '.']];
+function pixDif(y, x){ for (var i = 0; i < DIFS.length; i++) if (DIFS[i][0] === y && DIFS[i][1] === x) return i; return -1; }
+CUERPO.P2 = function(){
+  var st = P('P2'), enc = st.enc || [], h = '<p class="linea">Encontrá las <b>3 diferencias</b>. Tocalas en la de la derecha.</p><div class="difs">', lado, y, x, c, d;
+  for (lado = 0; lado < 2; lado++){
+    h += '<div class="pgrid' + (lado ? ' clic' : '') + '">';
+    for (y = 0; y < 12; y++){
+      h += '<div class="pfila">';
+      for (x = 0; x < 12; x++){
+        d = pixDif(y, x); c = PIX[y].charAt(x);
+        if (lado && d >= 0) c = DIFS[d][2];
+        h += '<span class="pp' + (lado && d >= 0 && enc.indexOf(d) >= 0 ? ' marcada' : '') + '" style="background:' + COLPIX[c] + '"' + (lado ? ' id="px' + y + '_' + x + '" onclick="tocarPix(' + y + ',' + x + ')"' : '') + '></span>';
+      }
+      h += '</div>';
+    }
+    h += '</div>';
+  }
+  return h + '</div><div style="font-size:13px;color:#9D8DB8">Encontradas: <b style="color:#FFC857">' + enc.length + ' de 3</b></div><div class="msj" id="m_P2"></div>';
+};
+function tocarPix(y, x){
+  var st = P('P2'), d = pixDif(y, x);
+  if (!st.enc) st.enc = [];
+  if (d < 0){ var el = $('px' + y + '_' + x); if (el){ el.className = 'pp error'; } fallar('P2', 'Ahí no hay nada.', COSTO.chico); return; }
+  if (st.enc.indexOf(d) >= 0) return;
+  st.enc.push(d); sonBien(); guardar();
+  if (st.enc.length >= 3){ resolver('P2'); return; }
+  dibujarSala();
+}
+
+/* D1 · ordenar por tamaño */
+var TAM = [['video.mp4', '700 MB', 7e8, 'MP4', '#E67E22'], ['nota.txt', '500 B', 500, 'TXT', '#6F7F7A'], ['juego.exe', '1 GB', 1e9, 'EXE', '#555'], ['foto.jpg', '900 KB', 9e5, 'JPG', '#2E9E6B'],
+           ['pelicula.mkv', '0,5 GB', 5e8, 'MKV', '#C0392B'], ['cancion.mp3', '2 MB', 2e6, 'MP3', '#8E44AD'], ['libro.pdf', '15 MB', 15e6, 'PDF', '#B03A2E']];
+function ordenTam(){ var o = [], i; for (i = 0; i < TAM.length; i++) o.push(i); o.sort(function(a, b){ return TAM[a][2] - TAM[b][2]; }); return o; }
+CUERPO.D1 = function(){
+  var st = P('D1'), hechos = st.h || [], h = '<p class="linea">Tocá del <b>más liviano</b> al <b>más pesado</b>.</p><div class="leyenda">1 KB = 1000 B &nbsp;·&nbsp; 1 MB = 1000 KB &nbsp;·&nbsp; 1 GB = 1000 MB</div><div class="cartas">', i, k;
+  for (i = 0; i < TAM.length; i++){
+    k = hechos.indexOf(i);
+    h += '<div class="carta' + (k >= 0 ? ' ok' : '') + '" id="ta' + i + '" onclick="tocarTam(' + i + ')">' + (k >= 0 ? '<span class="orden">' + (k + 1) + '</span>' : '') +
+         '<div class="ico" style="background:' + TAM[i][4] + '">' + TAM[i][3] + '</div><div class="nom">' + TAM[i][0] + '</div><div class="tam">' + TAM[i][1] + '</div></div>';
+  }
+  return h + '</div><div class="msj" id="m_D1"></div>';
+};
+function tocarTam(i){
+  var st = P('D1'), o = ordenTam();
+  if (!st.h) st.h = [];
+  if (st.h.indexOf(i) >= 0) return;
+  if (o[st.h.length] !== i){ fallar('D1', 'Ese no va ahora. Hay uno más liviano.', COSTO.chico); var el = $('ta' + i); if (el){ el.className = 'carta temblor'; } return; }
+  st.h.push(i); sonClic(); guardar();
+  if (st.h.length >= TAM.length){ resolver('D1'); return; }
+  dibujarSala();
+}
+
+/* D2 · programas disfrazados */
+var DISF = [['fotos_cumple.jpg', 'exe'], ['tarea', 'docx'], ['minecraft_gratis', 'exe'], ['cancion', 'mp3'], ['video_gracioso.mp4', 'exe'], ['notas', 'txt'], ['mapa', 'png'], ['boletin', 'pdf']];
+var COLEXT = {jpg:'#2E9E6B', png:'#2E9E6B', docx:'#2B5BB8', mp3:'#8E44AD', mp4:'#E67E22', txt:'#6F7F7A', pdf:'#B03A2E', exe:'#555', app:'#555'};
+CUERPO.D2 = function(){
+  var st = P('D2'), sel = st.sel || [], ver = !!st.ver, h, i, f, nom, ico;
+  h = '<p class="linea">Polilla escondió <b>3 programas</b> disfrazados. Marcalos.</p><div class="toggle' + (ver ? ' on' : '') + '" onclick="verExt()">' + (ver ? '&#10003; ' : '') + 'Mostrar extensiones</div><div class="cartas">';
+  for (i = 0; i < DISF.length; i++){
+    f = DISF[i]; nom = f[0] + (ver ? '.' + f[1] : '');
+    ico = f[0].indexOf('.') >= 0 ? f[0].split('.').pop() : (f[1] === 'exe' && !ver ? 'app' : f[1]);
+    h += '<div class="carta' + (sel.indexOf(i) >= 0 ? ' sel' : '') + '" onclick="marcarDisf(' + i + ')"><div class="ico" style="background:' + (COLEXT[ico] || '#555') + '">' + ico.toUpperCase() + '</div><div class="nom">' + nom + '</div></div>';
+  }
+  return h + '</div><div class="fila"><button class="btn" style="margin-left:0" onclick="probarDisf()">Listo</button></div><div class="msj" id="m_D2"></div>';
+};
+function verExt(){ var st = P('D2'); st.ver = !st.ver; sonClic(); guardar(); dibujarSala(); }
+function marcarDisf(i){ var st = P('D2'), k; if (!st.sel) st.sel = []; k = st.sel.indexOf(i); if (k >= 0) st.sel.splice(k, 1); else st.sel.push(i); sonClic(); guardar(); dibujarSala(); }
+function probarDisf(){
+  var st = P('D2'), sel = st.sel || [], i, bien = 0;
+  for (i = 0; i < sel.length; i++) if (DISF[sel[i]][1] === 'exe') bien++;
+  if (bien === 3 && sel.length === 3){ resolver('D2'); return; }
+  fallar('D2', sel.length !== 3 ? 'Tienen que ser 3.' : 'No. Alguno no es un programa.');
+}
+
+/* R1 · caños */
+var CAMINO = {'2_0':9, '1_0':6, '1_1':10, '1_2':12, '2_2':5, '3_2':3, '3_3':9, '2_3':6, '2_4':10};
+var SENUELO = [5, 3, 7, 10, 6, 12, 9, 11, 13, 14, 5, 3, 7, 6, 9, 12];
+function rotar(m){ return ((m << 1) | (m >> 3)) & 15; }
+function canoBase(r, c){ var k = r + '_' + c; return CAMINO[k] !== undefined ? CAMINO[k] : SENUELO[(r * 5 + c) % SENUELO.length]; }
+function canoMask(st, r, c){ var m = canoBase(r, c), i; for (i = 0; i < st.rot[r * 5 + c]; i++) m = rotar(m); return m; }
+function r1St(){
+  var st = P('R1'), i;
+  if (!st.rot){ st.rot = []; for (i = 0; i < 25; i++) st.rot.push(Math.floor(Math.random() * 4)); if (conectado(st).ok) st.rot[12] = (st.rot[12] + 1) % 4; }
+  return st;
+}
+function conectado(st){
+  var vis = {}, cola = [], ok = false, DIR = [[-1, 0, 1, 4], [0, 1, 2, 8], [1, 0, 4, 1], [0, -1, 8, 2]], cur, m, d, nr, nc;
+  if (!(canoMask(st, 2, 0) & 8)) return {vis:vis, ok:false};
+  vis['2_0'] = 1; cola.push([2, 0]);
+  while (cola.length){
+    cur = cola.shift(); m = canoMask(st, cur[0], cur[1]);
+    if (cur[0] === 2 && cur[1] === 4 && (m & 2)) ok = true;
+    for (d = 0; d < 4; d++){
+      if (!(m & DIR[d][2])) continue;
+      nr = cur[0] + DIR[d][0]; nc = cur[1] + DIR[d][1];
+      if (nr < 0 || nr > 4 || nc < 0 || nc > 4 || vis[nr + '_' + nc]) continue;
+      if (canoMask(st, nr, nc) & DIR[d][3]){ vis[nr + '_' + nc] = 1; cola.push([nr, nc]); }
+    }
+  }
+  return {vis:vis, ok:ok};
+}
+CUERPO.R1 = function(){
+  return '<p class="linea">Girá los caños para <b>conectar el router con la compu</b>.</p><div class="canos" id="canos"></div><div class="msj" id="m_R1"></div>';
+};
+function svgCano(m, lit){
+  var col = lit ? '#7CFFB2' : '#6F5F8C', h = '<svg width="64" height="64" viewBox="0 0 64 64"><rect x="2" y="2" width="60" height="60" rx="8" fill="#1C1330"/>';
+  if (m & 1) h += '<rect x="26" y="0" width="12" height="38" fill="' + col + '"/>';
+  if (m & 2) h += '<rect x="26" y="26" width="38" height="12" fill="' + col + '"/>';
+  if (m & 4) h += '<rect x="26" y="26" width="12" height="38" fill="' + col + '"/>';
+  if (m & 8) h += '<rect x="0" y="26" width="38" height="12" fill="' + col + '"/>';
+  return h + '<circle cx="32" cy="32" r="8" fill="' + col + '"/></svg>';
+}
+function dibujarCanos(){
+  var st = r1St(), con = conectado(st), h = '<div class="extremo" style="left:4px">' + ICO[4].replace('width="24"', 'width="30"') + 'ROUTER</div><div class="extremo" style="right:4px">' + ICO[2].replace('width="24"', 'width="30"') + 'PC</div>', r, c;
+  for (r = 0; r < 5; r++){
+    h += '<div class="cfila">';
+    for (c = 0; c < 5; c++) h += '<span class="cano" id="ca' + r + '_' + c + '" onclick="girarCano(' + r + ',' + c + ')">' + svgCano(canoMask(st, r, c), !!con.vis[r + '_' + c]) + '</span>';
+    h += '</div>';
+  }
+  var cont = $('canos'); if (cont) cont.innerHTML = h;
+}
+function girarCano(r, c){
+  var st = r1St(); st.rot[r * 5 + c] = (st.rot[r * 5 + c] + 1) % 4; tono(300 + r * 40 + c * 30, 0.05, 'triangle', 0.08); guardar();
+  if (conectado(st).ok){ dibujarCanos(); resolver('R1'); return; }
+  dibujarCanos();
+}
+
+/* R2 · paquetes */
+var PAQ = [[3, 'DÓ UN'], [1, 'SE'], [5, 'TES'], [2, 'GUAR'], [4, 'MAR']];
+function bin3(n){ return (n & 4 ? '1' : '0') + (n & 2 ? '1' : '0') + (n & 1 ? '1' : '0'); }
+CUERPO.R2 = function(){
+  var st = P('R2'), k = st.k || 0, h = '<p class="linea">Los paquetes llegaron mezclados. <b>Ordenalos por número.</b></p><div class="paquetes">', i, msg = [], j;
+  for (i = 0; i < PAQ.length; i++) h += '<div class="paquete' + (PAQ[i][0] <= k ? ' usado' : '') + '" onclick="tocarPaq(' + i + ')"><div class="bin">' + bin3(PAQ[i][0]) + '</div><div class="txt">paquete</div></div>';
+  for (j = 1; j <= k; j++) for (i = 0; i < PAQ.length; i++) if (PAQ[i][0] === j) msg.push(PAQ[i][1]);
+  return h + '</div><div class="mensaje">' + (msg.length ? msg.join(' ').replace('GUAR DÓ', 'GUARDÓ').replace('MAR TES', 'MARTES') : '&nbsp;') + '</div><div class="msj" id="m_R2"></div>';
+};
+function tocarPaq(i){
+  var st = P('R2'); if (!st.k) st.k = 0;
+  if (PAQ[i][0] <= st.k) return;
+  if (PAQ[i][0] !== st.k + 1){ fallar('R2', 'Ese no es el que sigue.', COSTO.chico); return; }
+  st.k++; sonClic(); guardar();
+  if (st.k >= 5){ resolver('R2'); return; }
+  dibujarSala();
+}
+
+/* F · ¿dónde está Polilla? */
+var ARCHS = [['vacaciones.jpg', 'Fotos', '4 MB', 'lunes'], ['mapa.png', 'Juegos', '6 MB', 'martes'], ['truco.txt', 'Juegos', '2 KB', 'martes'],
+             ['niveles.dat', 'Juegos', '12 MB', 'jueves'], ['musica.mp3', 'Descargas', '5 MB', 'martes'], ['instalador.exe', 'Juegos', '40 MB', 'martes'],
+             ['tarea.docx', 'Documentos', '1 MB', 'viernes'], ['partida.sav', 'Juegos', '8 MB', 'martes'], ['fondo.gif', 'Fotos', '2 MB', 'martes'], ['notas.txt', 'Documentos', '15 KB', 'miércoles']];
+var POLILLA_EN = 7;
+CUERPO.F = function(){
+  var st = P('F'), tach = st.tach || [], h = '<p class="linea">Usá las 5 pistas. <b>Tachá</b> los que no son y <b>atrapá</b> a Polilla.</p><table class="arch"><tr><th>ARCHIVO</th><th>CARPETA</th><th>TAMAÑO</th><th>DÍA</th><th></th></tr>', i, a;
+  for (i = 0; i < ARCHS.length; i++){
+    a = ARCHS[i];
+    h += '<tr class="f' + (tach.indexOf(i) >= 0 ? ' tachada' : '') + '" id="fa' + i + '"><td onclick="tachar(' + i + ')">' + a[0] + '</td><td onclick="tachar(' + i + ')">' + a[1] + '</td><td onclick="tachar(' + i + ')">' + a[2] + '</td><td onclick="tachar(' + i + ')">' + a[3] + '</td>' +
+         '<td><button class="btn sec" style="padding:5px 10px;font-size:12px" onclick="atrapar(' + i + ')">Atrapar</button></td></tr>';
+  }
+  return h + '</table><div style="font-size:12px;color:#6F5F8C">Tocá un archivo para tacharlo o destacharlo. Las pistas están a la derecha.</div><div class="msj" id="m_F"></div>';
+};
+function tachar(i){ var st = P('F'), k; if (!st.tach) st.tach = []; k = st.tach.indexOf(i); if (k >= 0) st.tach.splice(k, 1); else st.tach.push(i); sonClic(); guardar(); dibujarSala(); }
+function atrapar(i){
+  var n = 0, k; for (k = 0; k < PISTA_IDS.length; k++) if (S.hecho[PISTA_IDS[k]]) n++;
+  if (i !== POLILLA_EN){ fallar('F', '¡No estaba ahí! Perdiste un minuto.', COSTO.final); volar(); return; }
+  resolver('F'); polilla('¡Noooo! ¡Me encontraste!', 'mareada');
+}
+function finalPapelera(){
+  return '<div class="hecho" style="text-align:center;padding:16px;margin-top:12px;font-size:16px">Polilla está en la papelera.<br><button class="grande" onclick="vaciarPapelera()">Vaciar la papelera</button></div>';
+}
+function vaciarPapelera(){
+  sonGrr(); polilla('¡Nooooooo…!', 'derrotada');
+  var p = $('polImg'); if (p) p.style.opacity = '0.2';
+  S.salida = {bat: pct(), usado: TOTAL - S.t}; guardar();
+  setTimeout(function(){ sonPuerta(); mostrarFin(); }, 900);
+}
+
+/* X1 · apagá todo */
+var LO_INICIO = [0, 1, 1, 1, 0, 1, 1, 1, 1];
+CUERPO.X1 = function(){
+  var st = P('X1'), on = st.on || LO_INICIO.slice(0), h = '<p class="linea">Apagá <b>todas</b> las luces.</p><div class="lo">', r, c;
+  for (r = 0; r < 3; r++){ h += '<div>'; for (c = 0; c < 3; c++) h += '<span id="lo' + (r * 3 + c) + '" class="' + (on[r * 3 + c] ? 'on' : '') + '" onclick="tocarLO(' + (r * 3 + c) + ')"></span>'; h += '</div>'; }
+  return h + '</div><div class="fila"><button class="btn sec" style="margin-left:0" onclick="reiniciarLO()">Empezar de nuevo</button></div><div class="msj" id="m_X1"></div>';
+};
+function tocarLO(i){
+  var st = P('X1'), r = Math.floor(i / 3), c = i % 3, t = [i], k, todo = true;
+  if (!st.on) st.on = LO_INICIO.slice(0);
+  if (r > 0) t.push(i - 3); if (r < 2) t.push(i + 3); if (c > 0) t.push(i - 1); if (c < 2) t.push(i + 1);
+  for (k = 0; k < t.length; k++) st.on[t[k]] = st.on[t[k]] ? 0 : 1;
+  tono(600 + i * 40, 0.06, 'sine', 0.1);
+  for (k = 0; k < 9; k++) if (st.on[k]) todo = false;
+  guardar();
+  if (todo){ resolver('X1'); return; }
+  dibujarSala();
+}
+function reiniciarLO(){ P('X1').on = LO_INICIO.slice(0); guardar(); dibujarSala(); }
+
+/* X2 · candado */
+CUERPO.X2 = function(){
+  var pistas = [['8 3 5', 'dos bien y en su lugar'], ['6 5 4', 'uno bien, en otro lugar'], ['9 2 8', 'uno bien, en otro lugar'], ['2 0 7', 'nada'], ['8 6 2', 'uno bien y en su lugar']], h = '<p class="linea">El candado tiene <b>3 números distintos</b>.</p><div class="codigo" style="font-size:15px;letter-spacing:1px;text-align:left;font-family:Verdana,Arial,sans-serif;color:#DCD3EC;line-height:2">', i;
+  for (i = 0; i < pistas.length; i++) h += '<b style="font-family:Courier New,monospace;font-size:22px;letter-spacing:4px;color:#7CFFB2;display:inline-block;width:110px">' + pistas[i][0] + '</b>' + pistas[i][1] + '<br>';
+  return h + '</div>' + cajaResp('X2', '3 números');
+};
+
+/* X3 · la rueda */
+var ABC = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+CUERPO.X3 = function(){
+  var st = P('X3'), k = st.k || 0, MSJ = 'HO PDV GLILFLO', h, a = '', b = '', i, c, dec = '';
+  for (i = 0; i < MSJ.length; i++){ c = MSJ.charAt(i); dec += c === ' ' ? ' ' : ABC.charAt((ABC.indexOf(c) - k + 26) % 26); }
+  for (i = 0; i < 26; i++){
+    c = ABC.charAt(i);
+    a += MSJ.indexOf(c) >= 0 ? '<b style="color:#FFC857;text-decoration:underline">' + c + '</b>' : c;
+    b += ABC.charAt((i - k + 26) % 26);
+  }
+  h = '<p class="linea">Girá la rueda hasta que el mensaje <b>se lea</b>.</p><div class="codigo" style="font-size:28px">HO PDV GLILFLO</div>' +
+      '<div style="text-align:center;margin:-4px 0 12px"><span style="font-size:11px;color:#6F5F8C;letter-spacing:2px">CON LA RUEDA EN ' + k + ' DICE</span><div style="font-family:Courier New,monospace;font-size:26px;letter-spacing:6px;color:' + (k === 3 ? '#7CFFB2' : '#9D8DB8') + '">' + dec + '</div></div>' +
+      '<div style="background:#0B0614;border-radius:10px;padding:10px 14px;font-family:Courier New,monospace;font-size:16px;letter-spacing:4px;line-height:1.6;white-space:nowrap">' +
+      '<span style="display:inline-block;width:70px;font-family:Verdana,Arial,sans-serif;font-size:10px;letter-spacing:1px;color:#6F5F8C">MENSAJE</span><span style="color:#9D8DB8">' + a + '</span><br>' +
+      '<span style="display:inline-block;width:70px;font-family:Verdana,Arial,sans-serif;font-size:10px;letter-spacing:1px;color:#6F5F8C">SE LEE</span><span style="color:#7CFFB2">' + b + '</span></div>' +
+      '<div class="fila"><button class="btn sec" style="margin-left:0" onclick="rueda(-1)">&#9664;</button><span style="display:inline-block;width:110px;text-align:center;color:#9D8DB8">rueda: ' + k + '</span><button class="btn sec" onclick="rueda(1)">&#9654;</button></div>';
+  return h + cajaResp('X3', 'el mensaje');
+};
+function rueda(d){ var st = P('X3'); st.k = ((st.k || 0) + d + 26) % 26; sonClic(); guardar(); dibujarSala(); }
+
+/* ── inicio y final ─────────────────────────────────────────────── */
+function vistaInicio(){
+  var h = '<div class="hoja">' + polSVG(190, 'polIni') + '<h1>La venganza de <span>Polilla</span></h1>' +
+    '<p>Polilla volvió y te encerró <b style="color:#FFC857">adentro de la compu</b>.<br>Pasá las 5 salas, juntá las pistas y <b style="color:#7CFFB2">atrapala</b>.</p>' +
+    '<div class="chips"><span><b>45 min</b> de batería</span><span>Ayudas y errores <b>gastan batería</b></span><span>Tu teclado es parte del juego</span></div>';
+  if (!guardaOK) h += '<p style="color:#FF5470;font-size:13px">Este navegador no guarda el avance: no cierres la página.</p>';
+  if (S.fase !== 'inicio' && S.nombre) h += '<button class="grande" onclick="continuar()">Continuar como ' + esc(S.nombre) + '</button><br><button class="grande sec" onclick="deCero()">Empezar de cero</button>';
+  else h += '<p style="margin-top:18px">¿Cómo te llamás?</p><input class="nombre" id="nom" maxlength="24" onkeydown="if(event.keyCode===13)empezar()"><div id="nomAviso" style="color:#FF5470;font-size:13px;min-height:18px;margin-top:6px"></div><button class="grande" onclick="empezar()">Entrar &#9654;</button>';
+  $('inicio').innerHTML = h + '</div>';
+  mostrar('inicio'); dibujarBateria();
+}
+function empezar(){
+  var v = String($('nom').value || '').replace(/^\s+|\s+$/g, '');
+  if (!v){ $('nomAviso').innerHTML = 'Escribí tu nombre.'; return; }
+  S = nuevo(); S.nombre = v; S.fase = 'juego'; guardar(); entrar(); sonJiji();
+}
+function continuar(){ if (S.salida && S.sala !== 6){ mostrarFin(); return; } entrar(); }
+function deCero(){ if (!window.confirm('Se borra todo el avance de esta computadora. ¿Seguro?')) return; S = nuevo(); guardar(); vistaInicio(); }
+function entrar(){ S.fase = 'juego'; guardar(); mostrar('juego'); render(); polilla(SALAS[S.sala].pol); }
+function contarBonus(){ return (S.hecho.X1 ? 1 : 0) + (S.hecho.X2 ? 1 : 0) + (S.hecho.X3 ? 1 : 0); }
+function mostrarFin(){
+  var s = S.salida, na = 0, k;
+  for (k in S.ayudas) if (S.ayudas.hasOwnProperty(k) && AX[k] && AX[k].sala < 6) na += S.ayudas[k];
+  $('fin').innerHTML = '<div class="hoja">' + polSVG(120, 'polFin').replace('class="pol"', 'class="pol derrotada"') +
+    '<h1 style="color:#7CFFB2">¡Atrapaste a Polilla!</h1><p>' + esc(S.nombre) + ', vaciaste la papelera y saliste de la compu.</p>' +
+    '<div class="diploma"><table>' +
+    '<tr><td>Batería que te quedó</td><td class="v" style="color:#7CFFB2;font-size:30px">' + s.bat + ' %</td></tr>' +
+    '<tr><td>Ayudas pedidas</td><td class="v">' + na + '</td></tr>' +
+    '<tr><td>Errores</td><td class="v">' + S.errores + '</td></tr>' +
+    '<tr><td>Archivos secretos</td><td class="v">' + contarBonus() + ' de 3</td></tr></table></div>' +
+    '<p style="color:#9D8DB8;margin-top:12px">Avisale al profe cuánta batería te quedó.</p>' +
+    (contarBonus() < 3 ? '<button class="grande" onclick="irBonus()">Abrir los archivos secretos</button>' : '<p style="color:#B98CFF;font-weight:bold">Resolviste los archivos secretos. Sos leyenda.</p>') + '</div>';
+  mostrar('fin');
+}
+function irBonus(){ S.sala = 6; S.fase = 'juego'; guardar(); mostrar('juego'); render(); polilla(SALAS[6].pol); }
+
+function init(){
+  cargar();
+  setInterval(tic, 1000);
+  vistaInicio();
+}
+init();
+
+</script>
+</body>
+</html>

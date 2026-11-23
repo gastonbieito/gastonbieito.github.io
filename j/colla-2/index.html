@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Colla 2 · La pared del mundo</title>
+<style>
+  body{ margin:0; background:#140F22; color:#EDE8F7;
+        font-family:Arial,Helvetica,sans-serif; font-size:15px; }
+  #caja{ width:980px; margin:0 auto; padding:16px 0 50px; }
+
+  #barra{ overflow:hidden; padding:8px 0 14px; border-bottom:2px solid #2A2340; }
+  #titulo{ float:left; font-size:26px; font-weight:bold; letter-spacing:-0.5px; }
+  #titulo span{ color:#FF9F43; }
+  #sub{ float:left; clear:left; font-size:12px; color:#7A6E98; letter-spacing:1px; margin-top:3px; }
+  #chip{ float:right; margin-top:10px; background:#241D3A; padding:7px 16px;
+         border-radius:20px; font-size:13px; color:#A99BC8; }
+  #chip b{ color:#38D6C8; font-size:16px; }
+  #chip i{ font-style:normal; color:#FF9F43; font-weight:bold; }
+  #cambiar{ float:right; clear:right; margin-top:7px; font-size:11px; color:#5E5478;
+            background:none; border:0; cursor:pointer; font-family:Arial,Helvetica,sans-serif; }
+  #cambiar:hover{ color:#A99BC8; text-decoration:underline; }
+
+  /* ── pantalla de inicio ────────────────────────────── */
+  #inicio{ padding:40px 0 20px; text-align:center; }
+  #inicio h1{ font-size:40px; margin:0 0 6px; }
+  #inicio h1 span{ color:#FF9F43; }
+  #inicio .baja{ color:#A99BC8; font-size:17px; line-height:1.6; margin:0 0 34px; }
+  #inicio h2{ font-size:12px; letter-spacing:3px; color:#8577A8; margin:0 0 18px; }
+  .grado{ display:inline-block; width:200px; margin:0 9px; padding:26px 0 22px;
+          background:#1B1530; border:2px solid #2E2749; border-radius:16px; cursor:pointer;
+          font-family:Arial,Helvetica,sans-serif; color:#EDE8F7; vertical-align:top; }
+  .grado:hover{ border-color:#38D6C8; background:#221A3C; }
+  .grado .num{ display:block; font-size:38px; font-weight:bold; color:#38D6C8; margin-bottom:8px; }
+  .grado .que{ display:block; font-size:12.5px; color:#A99BC8; line-height:1.55; padding:0 18px; }
+  #inicio .pie{ color:#5E5478; font-size:12.5px; margin-top:30px; line-height:1.6; }
+
+  #juego{ display:none; }
+  #izq{ float:left; width:462px; }
+  #der{ float:right; width:488px; }
+  .limpiar{ clear:both; }
+  h2.rot{ font-size:11px; letter-spacing:3px; color:#8577A8; margin:18px 0 10px; font-weight:bold; }
+
+  #marco{ background:#1B1530; border-radius:14px; padding:16px;
+          box-shadow:inset 0 0 0 1px #2A2340; display:inline-block; }
+  #tablero{ position:relative; }
+  .celda{ position:absolute; border-radius:9px; background:#2A2340;
+          border-bottom:3px solid #1F1931; }
+  .prende{ background:#463D68; border-bottom-color:#332C4E; }
+  .marca{ position:absolute; left:36%; top:34%; width:28%; height:28%;
+          border-radius:50%; opacity:.75; }
+  .p0{ background:#FF9F43; border-bottom-color:#C9761F; box-shadow:0 0 18px rgba(255,159,67,.5); }
+  .p1{ background:#38D6C8; border-bottom-color:#1F9D92; box-shadow:0 0 18px rgba(56,214,200,.5); }
+  .p2{ background:#FF5E7D; border-bottom-color:#C73855; box-shadow:0 0 18px rgba(255,94,125,.5); }
+  .p3{ background:#A77BF3; border-bottom-color:#7A54C0; box-shadow:0 0 18px rgba(167,123,243,.5); }
+  .pop{ animation:pop .3s ease; }
+  @keyframes pop{ 0%{transform:scale(1)} 45%{transform:scale(1.18)} 100%{transform:scale(1)} }
+
+  #robot{ position:absolute; z-index:5; transition:left .2s ease, top .2s ease; }
+  #cuerpo{ position:absolute; left:4px; top:7px; width:34px; height:30px;
+           background:#38D6C8; border-radius:9px; border-bottom:3px solid #1F9D92; }
+  .ojo{ position:absolute; width:9px; height:9px; border-radius:50%; background:#140F22; }
+  #antena{ position:absolute; left:19px; top:0; width:4px; height:8px; background:#1F9D92; }
+  #bombita{ position:absolute; left:16px; top:-5px; width:10px; height:10px;
+            border-radius:50%; background:#FF9F43; }
+  #nariz{ position:absolute; width:18px; height:18px; line-height:18px; text-align:center;
+          font-size:17px; color:#FFFFFF; text-shadow:0 0 4px #140F22, 0 0 2px #140F22; }
+
+  #mensaje{ min-height:26px; margin-top:12px; font-size:16px; font-weight:bold; color:#FF5E7D; }
+  #mensaje.ok{ color:#38D6C8; }
+  #consigna{ font-size:16px; line-height:1.5; margin-bottom:12px; }
+  #consigna b{ color:#FF9F43; }
+
+  #progreso{ margin-bottom:12px; }
+  .punto{ display:inline-block; width:19px; height:19px; line-height:19px; text-align:center;
+          font-size:10px; margin-right:3px; border-radius:50%; background:#241D3A; color:#6F6391; }
+  .punto.hecho{ background:#38D6C8; color:#140F22; font-weight:bold; }
+  .punto.ahora{ background:#FF9F43; color:#140F22; font-weight:bold;
+                box-shadow:0 0 12px rgba(255,159,67,.6); }
+
+  #pista{ font-size:13px; color:#A99BC8; line-height:1.6; background:#1B1530;
+          padding:12px 14px; border-radius:10px; border-left:4px solid #FF9F43; }
+  #dato{ display:none; margin-top:10px; font-size:13px; color:#D6CEE8; line-height:1.65;
+         background:#231B3C; padding:12px 14px; border-radius:10px; border-left:4px solid #FF5E7D; }
+  #dato b{ color:#FF5E7D; }
+  #dato .tit{ display:block; color:#FF5E7D; font-weight:bold; margin-bottom:3px; }
+
+  .orden{ display:inline-block; background:#2E2749; color:#EDE8F7; border:0;
+          border-bottom:4px solid #1F1931; border-radius:11px; padding:11px 0 9px;
+          width:111px; margin:0 6px 8px 0; cursor:pointer;
+          font-family:Arial,Helvetica,sans-serif; font-size:11.5px; font-weight:bold; letter-spacing:.3px; }
+  .orden:hover{ background:#3B3260; }
+  .orden:active{ border-bottom-width:2px; margin-top:2px; }
+  .orden .g{ display:block; font-size:20px; margin-bottom:3px; }
+  .orden.enc{ background:#A35A13; border-bottom-color:#73400C; }
+  .orden.enc:hover{ background:#C06C1A; }
+  .orden.tur{ background:#1F9D92; border-bottom-color:#13655E; }
+  .orden.tur:hover{ background:#28BCAF; }
+  .orden.proc{ background:#5B3F8C; border-bottom-color:#402C64; }
+  .orden.proc:hover{ background:#704FA8; }
+  .orden.proc2{ background:#8C3F70; border-bottom-color:#642C50; }
+  .orden.proc2:hover{ background:#A84F87; }
+
+  .prog{ background:#1B1530; padding:11px 13px; margin-bottom:9px; border-radius:12px;
+         border:2px solid #1B1530; cursor:pointer; }
+  .prog.activo{ border-color:#38D6C8; }
+  .prog .cab{ font-size:12px; color:#8577A8; letter-spacing:1px; margin-bottom:8px; }
+  .prog .cab b{ color:#EDE8F7; font-size:13px; }
+  .prog .cab i{ color:#38D6C8; font-style:normal; }
+  .ranura{ display:inline-block; vertical-align:top; width:40px; height:36px; margin:0 5px 5px 0; background:#140F22;
+           border:2px dashed #2E2749; border-radius:9px; text-align:center; line-height:34px;
+           font-size:17px; cursor:pointer; }
+  .ranura.llena{ background:#2E2749; border:2px solid #473C6E; border-bottom-width:4px; }
+  .ranura.enc{ background:#A35A13; border-color:#D07E25; }
+  .ranura.tur{ background:#1F9D92; border-color:#2ECBBD; }
+  .ranura.proc{ background:#5B3F8C; border-color:#8A6AC4; font-size:12px; font-weight:bold; }
+  .ranura.proc2{ background:#8C3F70; border-color:#C45FA0; font-size:12px; font-weight:bold; }
+
+  .accion{ display:inline-block; border:0; border-radius:11px; padding:14px 24px;
+           margin:8px 8px 0 0; cursor:pointer; font-size:15px; font-weight:bold;
+           font-family:Arial,Helvetica,sans-serif; }
+  #bEjec{ background:#38D6C8; color:#140F22; border-bottom:4px solid #1F9D92; }
+  #bBorrar{ background:transparent; color:#8577A8; border:2px solid #2E2749; }
+  #bSig{ background:#FF9F43; color:#140F22; border-bottom:4px solid #C9761F; display:none; }
+
+  #sonido{ float:right; clear:right; margin-top:7px; font-size:11px; color:#5E5478;
+           background:none; border:0; cursor:pointer; font-family:Arial,Helvetica,sans-serif; }
+  #sonido:hover{ color:#A99BC8; text-decoration:underline; }
+  #mensaje.bucle{ color:#A77BF3; }
+  #bucle{ display:none; margin-top:10px; font-size:13px; color:#E6DEF8; line-height:1.65;
+          background:#241A3E; padding:12px 14px; border-radius:10px; border-left:4px solid #A77BF3; }
+  #bucle b{ color:#A77BF3; }
+  #bucle .tit{ display:block; color:#A77BF3; font-weight:bold; margin-bottom:3px; }
+
+  #fin{ display:none; text-align:center; padding:50px 0; }
+  #fin h1{ font-size:42px; color:#38D6C8; margin:0 0 10px; }
+  #fin p{ color:#A99BC8; font-size:18px; line-height:1.6; }
+  #diploma{ display:inline-block; margin-top:26px; padding:26px 44px; background:#1B1530;
+            border-radius:16px; border:2px solid #2E2749; }
+  #diploma .t{ font-size:12px; letter-spacing:3px; color:#8577A8; }
+  #diploma .n{ font-size:26px; color:#FF9F43; font-weight:bold; margin:8px 0 4px; }
+  .festejo{ animation:subir .5s ease; }
+  @keyframes subir{ from{opacity:0; transform:translateY(20px)} to{opacity:1; transform:none} }
+</style>
+</head>
+<body>
+<div id="caja">
+
+  <div id="barra">
+    <div id="titulo">Colla 2 <span>·</span> La pared del <span>mundo</span></div>
+    <div id="sub">3.º &nbsp;·&nbsp; 4.º &nbsp;·&nbsp; 5.º &nbsp;·&nbsp; PARTE 2</div>
+    <div id="chip" style="display:none">GRADO <i id="chipGrado">3</i>.º &nbsp;·&nbsp; NIVEL <b id="numNivel">1</b> / 20</div>
+    <button id="cambiar" onclick="volverInicio()" style="display:none">cambiar de grado</button>
+    <button id="sonido" onclick="alternarSonido()">sonido: sí</button>
+  </div>
+  <div class="limpiar"></div>
+
+  <!-- ── pantalla de inicio ─────────────────────────── -->
+  <div id="inicio">
+    <h1>Colla volvió, y trajo <span>veinte paredes</span>.</h1>
+    <p class="baja">Son veinte para todos. Lo que cambia es qué aparece y cuándo.<br>
+       Entre pared y pared, Colla cuenta cosas que averiguó dando vueltas por el mundo.</p>
+    <h2>¿EN QUÉ GRADO ESTÁS?</h2>
+    <button class="grado" onclick="arrancar('3')">
+      <span class="num">3.º</span>
+      <span class="que">Avanzar, girar, esquivar huecos y pintar de dos colores.<br>Al final, procedimientos.</span>
+    </button>
+    <button class="grado" onclick="arrancar('4')">
+      <span class="num">4.º</span>
+      <span class="que">Todo lo anterior antes, y sobre el final dos procedimientos trabajando juntos.</span>
+    </button>
+    <button class="grado" onclick="arrancar('5')">
+      <span class="num">5.º</span>
+      <span class="que">El camino completo, con recursión: un procedimiento que se llama a sí mismo.</span>
+    </button>
+    <p class="pie">Si elegís uno y te queda chico o te queda grande, arriba a la derecha podés cambiarlo.<br>
+       No es una nota. Es para que cada uno trabaje donde le sirve.</p>
+  </div>
+
+  <!-- ── juego ──────────────────────────────────────── -->
+  <div id="juego">
+    <div id="izq">
+      <h2 class="rot">LA PARED</h2>
+      <div id="marco"><div id="tablero"></div></div>
+      <div id="mensaje"></div>
+      <div id="consigna"></div>
+      <div id="progreso"></div>
+      <div id="pista"></div>
+      <div id="dato"></div>
+      <div id="bucle"></div>
+    </div>
+
+    <div id="der">
+      <h2 class="rot">LAS ÓRDENES</h2>
+      <div id="botones"></div>
+
+      <h2 class="rot">TU PROGRAMA</h2>
+      <div class="prog activo" id="cajaM" onclick="elegir('M')">
+        <div class="cab"><b>PRINCIPAL</b> &nbsp;·&nbsp; <span id="cuentaM"></span>
+          <i id="aquiM"> &nbsp;·&nbsp; escribiendo acá</i></div>
+        <div id="ranurasM"></div>
+      </div>
+
+      <div class="prog" id="caja1" onclick="elegir('1')" style="display:none">
+        <div class="cab"><b>P1</b> &nbsp;·&nbsp; <span id="cuenta1"></span>
+          <i id="aqui1" style="display:none"> &nbsp;·&nbsp; escribiendo acá</i></div>
+        <div id="ranuras1"></div>
+      </div>
+
+      <div class="prog" id="caja2" onclick="elegir('2')" style="display:none">
+        <div class="cab"><b>P2</b> &nbsp;·&nbsp; <span id="cuenta2"></span>
+          <i id="aqui2" style="display:none"> &nbsp;·&nbsp; escribiendo acá</i></div>
+        <div id="ranuras2"></div>
+      </div>
+
+      <button class="accion" id="bEjec" onclick="ejecutar()">&#9654; EJECUTAR</button>
+      <button class="accion" id="bBorrar" onclick="borrarTodo()">Borrar todo</button>
+      <button class="accion" id="bSig" onclick="siguiente()">SIGUIENTE &#9654;</button>
+    </div>
+    <div class="limpiar"></div>
+  </div>
+
+  <div id="fin">
+    <h1>&#9733; Veinte paredes. Mural terminado.</h1>
+    <p id="finTexto"></p>
+    <div id="diploma">
+      <div class="t">MURALISTA PROGRAMADOR</div>
+      <div class="n" id="finGrado"></div>
+      <div class="t" id="finCaidas"></div>
+    </div>
+    <p style="margin-top:26px;font-size:16px">Colla se cayó del andamio unas cuantas veces antes de que te saliera.<br>
+      A todos los programadores del mundo les pasa lo mismo.</p>
+  </div>
+
+</div>
+
+<script>
+/* .  piso   #  vacío   o  pintar de cualquier color
+   n  naranja   t  turquesa   R  arranque
+   dir: 0 derecha · 1 abajo · 2 izquierda · 3 arriba          */
+
+/* ── paredes, compartidas por los tres grados ─────────────────── */
+var A2  = ["Roo"],
+    A3  = ["Rooo"],
+    A4  = ["Roooo"],
+    L1  = ["Ro",
+           ".o"],
+    L2  = ["Roo",
+           "..o"],
+    L3  = ["Rooo",
+           "...o",
+           "...o"],
+    U1  = ["Rooo",
+           "...o",
+           "oooo"],
+    H1  = ["Roo",
+           "#.#",
+           "ooo"],
+    H2  = ["Rooo",
+           "#.##",
+           "oooo"],
+    R3  = ["Roo",
+           "o#o",
+           "ooo"],
+    R4  = ["Rooo",
+           "o##o",
+           "o##o",
+           "oooo"],
+    R5  = ["Roooo",
+           "o###o",
+           "o###o",
+           "o###o",
+           "ooooo"],
+    S8  = ["Roooooooo"],
+    S11 = ["Rooooooooooo"],
+    C4  = ["Rntnt"],
+    C6  = ["Rntntnt"],
+    CL  = ["Rnt",
+           "..n",
+           "..t"],
+    C12 = ["Rntntntntntnt"],
+    C14 = ["Rntntntntntntnt"],
+    C3x = ["Rnntnntnntnnt"],
+    N4T4= ["Rnnnntttt"],
+    NT6 = ["Rnntt",
+           "....t",
+           "....t"],
+    RC4 = ["Rnnn",
+           "t##t",
+           "t##t",
+           "nnnt"],
+    RC5 = ["Rnnnn",
+           "t###t",
+           "t###t",
+           "t###t",
+           "nnnnt"];
+
+/* ── pistas que se repiten ────────────────────────────────────── */
+var P_BASE   = "AVANZAR lo mueve un tramo. PINTAR pinta el que está pisando. Si te equivocás, hacé clic en una ranura para borrarla.",
+    P_GIRO   = "DERECHA no lo mueve de lugar: solo lo hace mirar para otro lado. Fijate los ojos y la flecha.",
+    P_OSCURO = "Los tramos oscuros se pisan, pero no se pintan. No gastes órdenes en ellos.",
+    P_U      = "Bajá por la derecha hasta el fondo y volvé pintando para el otro lado.",
+    P_HUECO  = "Donde no hay nada, Colla se cae. Hay un solo camino para bajar y está en el medio.",
+    P_HUECO2 = "Pintá todo arriba, volvé hasta la columna que tiene piso, y recién ahí bajá.",
+    P_MANO   = "Son cuatro lados iguales. Vas a escribir casi lo mismo cuatro veces. Acordate de esta sensación.",
+    P_LARGO  = "Sí, son muchísimos clics. Contá cuántas órdenes gastaste: más adelante eso se va a terminar.",
+    P_P1     = "Apareció P1. Guardá adentro de P1 el pedacito que se repite y después poné el botón P1 varias veces en PRINCIPAL. Para escribir dentro de P1, primero hacé clic en el recuadro de P1.",
+    P_P1_AN  = "Un lado entero entra en P1: avanzar, pintar, avanzar, pintar, girar. Después fijate qué tramo queda suelto.",
+    P_P1_MAS = "Lo mismo que el anillo anterior, pero cada lado tiene un tramo más.",
+    P_COLOR  = "Ahora hay dos botones de pintar. Si usás el color equivocado no pasa nada: el tramo queda gris y perdiste la orden.",
+    P_COLOR2 = "Mirá el puntito de cada tramo antes de decidir el botón.",
+    P_COL_P1 = "El pedacito que se repite ya no son dos órdenes. Fijate bien dónde empieza a repetirse el dibujo.",
+    P_P2     = "Apareció P2. Guardá el pedazo naranja en P1 y el turquesa en P2.",
+    P_P2_CORTO = "P1 puede ser solo avanzar y pintar naranja. P2, avanzar y pintar turquesa. El giro va en PRINCIPAL.",
+    P_P2_AN  = "Cada lado completo entra en un procedimiento, giro incluido. P1 = un lado naranja + girar. P2 = un lado turquesa + girar. Después PRINCIPAL es cortísimo.",
+    P_P2_MAS = "No cambia nada de la idea anterior. Solo se alargan P1 y P2.",
+    P_RECUR  = "Probá poner el botón P1 adentro del propio P1. Colla lo va a repetir solo, una y otra vez, hasta que no quede gris.",
+    P_RECUR_C= "Juntá las dos cosas que aprendiste hoy: los dos colores adentro de P1, y P1 llamándose a sí mismo al final.";
+
+/* ── los tres recorridos ──────────────────────────────────────── */
+var RECORRIDOS = {};
+
+RECORRIDOS['3'] = [
+  { mapa:A2,  dir:0, max:6,  texto:"Colla tiene que pintar <b>los dos tramos grises</b>.", pista:P_BASE },
+  { mapa:A3,  dir:0, max:8,  texto:"Lo mismo, una pared más larga.", pista:"Avanzar, pintar, avanzar, pintar, y así hasta el final." },
+  { mapa:A4,  dir:0, max:10, texto:"Una más, y ya le agarrás la mano.", pista:"Siempre el mismo par de órdenes, una y otra vez." },
+  { mapa:L1,  dir:0, max:8,  texto:"La pared dobla.", pista:P_GIRO },
+  { mapa:L2,  dir:0, max:10, texto:"Pintá hasta la punta y después bajá.", pista:"Primero todo a la derecha. Recién cuando no podés seguir, girá." },
+  { mapa:L3,  dir:0, max:14, texto:"Una esquina más alta.", pista:P_OSCURO },
+  { mapa:U1,  dir:0, max:22, texto:"Una vuelta en U completa.", pista:P_U },
+  { mapa:H1,  dir:0, max:26, texto:"Cuidado: hay <b>huecos</b> en el andamio.", pista:P_HUECO },
+  { mapa:C4,  dir:0, max:12, colores:true, texto:"Te dieron <b>dos baldes de pintura</b>. Cada tramo tiene un puntito que dice de qué color va.", pista:P_COLOR },
+  { mapa:CL,  dir:0, max:14, colores:true, texto:"Dos colores y una esquina.", pista:P_COLOR2 },
+  { mapa:C6,  dir:0, max:16, colores:true, texto:"Seis tramos, uno de cada color.", pista:"Naranja, turquesa, naranja, turquesa. No te apures." },
+  { mapa:R3,  dir:0, max:24, texto:"Una vuelta entera alrededor del hueco. <b>Todo a mano.</b>", pista:P_MANO },
+  { mapa:S8,  dir:0, max:6,  maxP:4, texto:"Ocho tramos y <b>solo 6 ranuras</b>.", pista:P_P1 },
+  { mapa:R3,  dir:0, max:7,  maxP:5, texto:"El mismo anillo del nivel 12. Ahora con P1.", pista:P_P1_AN },
+  { mapa:S11, dir:0, max:8,  maxP:4, texto:"Once tramos derechos.", pista:"Con P1 de dos pares, cada vez que lo llamás pinta dos tramos. Contá cuántas veces lo necesitás." },
+  { mapa:R4,  dir:0, max:9,  maxP:7, texto:"Anillo más grande.", pista:P_P1_MAS },
+  { mapa:C12, dir:0, max:8,  maxP:4, colores:true, texto:"Doce tramos alternados, con P1.", pista:P_COL_P1 },
+  { mapa:C14, dir:0, max:9,  maxP:4, colores:true, texto:"La pared más larga de todas.", pista:"Es el mismo P1 del nivel anterior. Solo hay que llamarlo más veces." },
+  { mapa:R5,  dir:0, max:10, maxP:9, texto:"El anillo grande.", pista:"Cada lado tiene cuatro tramos. Eso entero va adentro de P1, con el giro al final." },
+  { mapa:C3x, dir:0, max:6,  maxP:7, colores:true, texto:"El último. Mirá bien el dibujo antes de empezar: <b>no es naranja y turquesa</b>.", pista:"Naranja, naranja, turquesa. Y de nuevo. Eso es lo que se repite." }
+];
+
+RECORRIDOS['4'] = [
+  { mapa:A2,  dir:0, max:6,  texto:"Colla tiene que pintar <b>los dos tramos grises</b>.", pista:P_BASE },
+  { mapa:L1,  dir:0, max:8,  texto:"La pared dobla.", pista:P_GIRO },
+  { mapa:L2,  dir:0, max:10, texto:"Pintá hasta la punta y después bajá.", pista:"Primero todo a la derecha. Recién cuando no podés seguir, girá." },
+  { mapa:L3,  dir:0, max:14, texto:"Una esquina más alta.", pista:P_OSCURO },
+  { mapa:U1,  dir:0, max:20, texto:"Una vuelta en U completa.", pista:P_U },
+  { mapa:H1,  dir:0, max:24, texto:"Cuidado: hay <b>huecos</b> en el andamio.", pista:P_HUECO },
+  { mapa:H2,  dir:0, max:28, texto:"Lo mismo, pero el hueco no está en el medio.", pista:P_HUECO2 },
+  { mapa:R3,  dir:0, max:24, texto:"Una vuelta entera alrededor del hueco. <b>Todo a mano.</b>", pista:P_MANO },
+  { mapa:S8,  dir:0, max:4,  maxP:4, texto:"Ocho tramos y <b>solo 4 ranuras</b> en PRINCIPAL.", pista:P_P1 },
+  { mapa:R3,  dir:0, max:6,  maxP:5, texto:"El mismo anillo del nivel 8. Ahora con P1.", pista:P_P1_AN },
+  { mapa:S11, dir:0, max:8,  maxP:4, texto:"Once tramos derechos.", pista:"P1 pinta de a dos. Fijate cuántas veces entra en once y qué sobra." },
+  { mapa:R4,  dir:0, max:8,  maxP:7, texto:"Anillo más grande.", pista:P_P1_MAS },
+  { mapa:C4,  dir:0, max:12, colores:true, texto:"Te dieron <b>dos baldes de pintura</b>. Cada tramo tiene un puntito que dice de qué color va.", pista:P_COLOR },
+  { mapa:CL,  dir:0, max:14, colores:true, texto:"Dos colores y una esquina.", pista:P_COLOR2 },
+  { mapa:C12, dir:0, max:6,  maxP:4, colores:true, texto:"Doce tramos alternados y <b>6 ranuras</b>.", pista:P_COL_P1 },
+  { mapa:C14, dir:0, max:8,  maxP:4, colores:true, texto:"La pared más larga. El mismo P1.", pista:"No cambia P1. Cambia cuántas veces lo llamás." },
+  { mapa:N4T4,dir:0, max:5,  maxP:4, maxP2:4, colores:true, texto:"Apareció <b>P2</b>. Ahora tenés dos procedimientos distintos.", pista:P_P2 },
+  { mapa:NT6, dir:0, max:8,  maxP:2, maxP2:2, colores:true, texto:"P1 y P2 bien cortitos, mezclados con un giro.", pista:P_P2_CORTO },
+  { mapa:RC4, dir:0, max:5,  maxP:7, maxP2:7, colores:true, texto:"Un anillo de dos colores: arriba y abajo naranja, los costados turquesa.", pista:P_P2_AN },
+  { mapa:RC5, dir:0, max:5,  maxP:9, maxP2:9, colores:true, texto:"El último. El mismo anillo, un tramo más grande por lado.", pista:P_P2_MAS }
+];
+
+RECORRIDOS['5'] = [
+  { mapa:A2,  dir:0, max:6,  texto:"Colla tiene que pintar <b>los dos tramos grises</b>.", pista:P_BASE },
+  { mapa:L1,  dir:0, max:8,  texto:"La pared dobla.", pista:P_GIRO },
+  { mapa:L3,  dir:0, max:14, texto:"Una esquina más alta.", pista:P_OSCURO },
+  { mapa:U1,  dir:0, max:20, texto:"Una vuelta en U completa.", pista:P_U },
+  { mapa:H1,  dir:0, max:24, texto:"Cuidado: hay <b>huecos</b> en el andamio.", pista:P_HUECO },
+  { mapa:H2,  dir:0, max:28, texto:"Lo mismo, pero el hueco no está en el medio.", pista:P_HUECO2 },
+  { mapa:R3,  dir:0, max:24, texto:"Una vuelta entera alrededor del hueco. <b>Todo a mano.</b>", pista:P_MANO },
+  { mapa:S11, dir:0, max:24, texto:"Once tramos derechos. Sigue siendo a mano.", pista:P_LARGO },
+  { mapa:S8,  dir:0, max:4,  maxP:4, texto:"Ocho tramos y <b>solo 4 ranuras</b> en PRINCIPAL.", pista:P_P1 },
+  { mapa:R3,  dir:0, max:6,  maxP:5, texto:"El mismo anillo del nivel 7. Ahora con P1.", pista:P_P1_AN },
+  { mapa:R4,  dir:0, max:8,  maxP:7, texto:"Anillo más grande.", pista:P_P1_MAS },
+  { mapa:S11, dir:0, max:2,  maxP:3, texto:"Once tramos y <b>2 ranuras</b>. Ahora sí parece imposible.", pista:P_RECUR },
+  { mapa:C4,  dir:0, max:12, colores:true, texto:"Te dieron <b>dos baldes de pintura</b>. Cada tramo tiene un puntito que dice de qué color va.", pista:P_COLOR },
+  { mapa:CL,  dir:0, max:14, colores:true, texto:"Dos colores y una esquina.", pista:P_COLOR2 },
+  { mapa:C12, dir:0, max:6,  maxP:4, colores:true, texto:"Doce tramos alternados y <b>6 ranuras</b>.", pista:P_COL_P1 },
+  { mapa:N4T4,dir:0, max:5,  maxP:4, maxP2:4, colores:true, texto:"Apareció <b>P2</b>. Ahora tenés dos procedimientos distintos.", pista:P_P2 },
+  { mapa:NT6, dir:0, max:8,  maxP:2, maxP2:2, colores:true, texto:"P1 y P2 bien cortitos, mezclados con un giro.", pista:P_P2_CORTO },
+  { mapa:RC4, dir:0, max:5,  maxP:7, maxP2:7, colores:true, texto:"Un anillo de dos colores: arriba y abajo naranja, los costados turquesa.", pista:P_P2_AN },
+  { mapa:RC5, dir:0, max:5,  maxP:9, maxP2:9, colores:true, texto:"El mismo anillo, un tramo más grande por lado.", pista:P_P2_MAS },
+  { mapa:C14, dir:0, max:2,  maxP:5, colores:true, texto:"El último. Catorce tramos alternados y <b>2 ranuras</b>.", pista:P_RECUR_C }
+];
+
+/* ── lo que Colla averiguó dando vueltas por el mundo ──────────
+   Van por número de nivel, iguales para los tres grados.        */
+var DATOS = {
+  2:  ["La palabra del año",
+       "En 2024 el diccionario de Oxford eligió <b>brain rot</b> como palabra del año: su uso creció 230% en un año. No es una enfermedad ni te pasa algo en el cerebro. Es el nombre que le pusieron a esa sensación de haber estado dos horas mirando cosas y no acordarte de ninguna."],
+  4:  ["Y es mucho más vieja de lo que parece",
+       "La escribió <b>Henry Thoreau en 1854</b>, en un libro llamado <i>Walden</i>. Decía que todo el mundo se preocupaba por curar la podredumbre de las papas y nadie por curar la del cerebro. Hace más de 170 años, cuando no existía ninguna pantalla."],
+  6:  ["La pantalla no tiene fondo porque alguien lo decidió",
+       "El <b>scroll infinito</b> lo inventó Aza Raskin en 2006, para que no hubiera que apretar «página siguiente». Años después dijo en público que se arrepentía de haberlo hecho."],
+  8:  ["El truco de «una más»",
+       "Las recompensas sorpresa de los juegos funcionan con el mismo principio que las máquinas de los casinos: <b>no saber qué te va a tocar</b> es justamente lo que te hace seguir. Está diseñado así. No es que vos no te puedas controlar."],
+  10: ["Nadie elige ver el siguiente video",
+       "Se reproduce solo. Entre <b>decidir ver algo</b> y <b>no frenar a tiempo</b> hay una diferencia enorme, y el reproducir automático existe para que no la notes."],
+  12: ["Tus ojos",
+       "Frente a una pantalla parpadeás menos y se te secan los ojos. Los oftalmólogos recomiendan la <b>regla 20-20-20</b>: cada 20 minutos, mirar algo lejos durante 20 segundos. Probala ahora, que llevás doce niveles."],
+  14: ["Dormir",
+       "Si usás la pantalla hasta el momento de acostarte, cuesta más dormirse. Y no es solo por la luz: también porque <b>lo que estabas mirando te dejó despierto</b>."],
+  15: ["Lo que ves no lo ve nadie más",
+       "A cada persona le muestran algo distinto. Cuando alguien dice «todo el mundo está viendo esto», en realidad está hablando de <b>lo que le muestran a él</b>."],
+  16: ["Tu teléfono sabe cuánto lo usás",
+       "Tiene una pantalla que dice las horas exactas de cada día, en los ajustes. Casi nadie la mira. <b>Andá a verla hoy</b>: ese número es tuyo, no es un promedio de nadie."],
+  18: ["Una foto que mandás deja de ser tuya",
+       "Del otro lado se puede sacar una captura, aunque diga que se borra. Y muchas fotos guardan además <b>dónde y cuándo</b> se sacaron. No es para asustarse: es para saberlo antes de mandarla."],
+  20: ["Alguien programó el juego que estás jugando",
+       "Este también. <b>Jugar y hacer no son lo mismo</b>, y lo segundo se aprende. Acabás de hacerlo veinte veces seguidas."]
+};
+
+var FRASES_CAIDA = [
+  "Colla se cayó del andamio.",
+  "Se fue derechito al vacío. No sabe volar.",
+  "Colla confiaba en vos. Fijate otra vez.",
+  "Ahí va, al piso, con pintura y todo.",
+  "Se cayó. Avisale antes de mandarlo para allá."
+];
+var FRASES_GANA = [
+  "&#9733; ¡Bien ahí!",
+  "&#9733; Quedó pintada entera.",
+  "&#9733; Listo. Siguiente pared.",
+  "&#9733; Eso. Ni una orden de más.",
+  "&#9733; ¡Lo lograste!"
+];
+var FRASES_FALTA = [
+  "Se acabaron las órdenes y quedó pared sin pintar.",
+  "Colla se quedó esperando. Todavía falta gris.",
+  "Te quedaste corto. Mirá cuántos tramos quedan grises."
+];
+function azar(a){ return a[Math.floor(Math.random() * a.length)]; }
+
+/* ── sonido ──────────────────────────────────────────────────── */
+var AC = null, sonido = true, pintados = 0, desborde = false;
+
+function audio(){
+  if (AC) return AC;
+  var C = window.AudioContext || window.webkitAudioContext;
+  if (!C) return null;
+  try { AC = new C(); } catch(e){ AC = null; }
+  return AC;
+}
+
+function tono(f, dur, tipo, vol, hasta, demora){
+  if (!sonido) return;
+  var c = audio(); if (!c) return;
+  if (c.state === 'suspended' && c.resume) c.resume();
+  var t = c.currentTime + (demora || 0);
+  var o = c.createOscillator(), g = c.createGain();
+  o.type = tipo;
+  o.frequency.setValueAtTime(f, t);
+  if (hasta) o.frequency.exponentialRampToValueAtTime(hasta, t + dur);
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(vol, t + 0.012);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g); g.connect(c.destination);
+  o.start(t); o.stop(t + dur + 0.03);
+}
+
+/* el paso: un golpecito seco y grave */
+function sonPaso(){ tono(190, 0.08, 'triangle', 0.13, 125); }
+
+/* la pintura: sube de tono con cada tramo pintado del nivel */
+function sonPinta(){
+  var n = pintados > 13 ? 13 : pintados;
+  var f = 523 * Math.pow(1.0595, n);
+  tono(f, 0.13, 'sine', 0.20);
+  tono(f * 2, 0.07, 'sine', 0.06);
+}
+
+function sonCaida(){ tono(240, 0.30, 'sawtooth', 0.16, 70); }
+
+function sonGana(){
+  tono(523, 0.12, 'sine', 0.18, 0, 0);
+  tono(659, 0.12, 'sine', 0.18, 0, 0.10);
+  tono(784, 0.30, 'sine', 0.20, 0, 0.20);
+}
+
+function alternarSonido(){
+  sonido = !sonido;
+  var b = $('sonido');
+  if (b) b.innerHTML = sonido ? 'sonido: s\u00ed' : 'sonido: no';
+  if (sonido) tono(660, 0.10, 'sine', 0.15);
+}
+
+var CEL = 50, SEP = 6, ANCHO_MAX = 430;
+var NIVELES = null, grado = '3';
+var nivel = 0, prog = [], p1 = [], p2 = [], corriendo = false;
+var mapa = [], rob = null, destino = 'M';
+var reloj = null, elRobot = null, elNariz = null, caidas = 0;
+
+var FLECHA = ['▶', '▼', '◀', '▲'];
+var POSFLE = [[34, 12], [12, 32], [-10, 12], [12, -11]];
+var POSOJO = [[2, 0], [0, 2], [-2, 0], [0, -2]];
+
+function $(id){ return document.getElementById(id); }
+
+function arrancar(g){
+  grado = g;
+  NIVELES = RECORRIDOS[g];
+  nivel = 0; caidas = 0;
+  $('inicio').style.display = 'none';
+  $('juego').style.display = 'block';
+  $('fin').style.display = 'none';
+  $('chip').style.display = 'block';
+  $('cambiar').style.display = 'block';
+  $('chipGrado').innerHTML = g;
+  cargar();
+}
+
+function volverInicio(){
+  if (reloj) clearInterval(reloj);
+  corriendo = false;
+  $('juego').style.display = 'none';
+  $('fin').style.display = 'none';
+  $('chip').style.display = 'none';
+  $('cambiar').style.display = 'none';
+  $('inicio').style.display = 'block';
+}
+
+function armarMapa(){
+  var L = NIVELES[nivel];
+  mapa = [];
+  for (var y = 0; y < L.mapa.length; y++) mapa.push(L.mapa[y].split(''));
+  for (y = 0; y < mapa.length; y++){
+    for (var x = 0; x < mapa[y].length; x++){
+      if (mapa[y][x] === 'R'){ rob = { x:x, y:y, d:L.dir }; mapa[y][x] = '.'; }
+    }
+  }
+}
+
+function construirTablero(){
+  var t = $('tablero'), h = '', ancho = 0, y, x, c;
+
+  for (y = 0; y < mapa.length; y++) if (mapa[y].length > ancho) ancho = mapa[y].length;
+
+  CEL = Math.min(50, Math.floor((ANCHO_MAX - (ancho - 1) * SEP) / ancho));
+  if (CEL < 20) CEL = 20;
+  var k = CEL / 50;
+
+  for (y = 0; y < mapa.length; y++){
+    for (x = 0; x < mapa[y].length; x++){
+      c = mapa[y][x];
+      if (c === '#') continue;
+      var gris = (c === 'o' || c === 'n' || c === 't');
+      var dentro = '';
+      if (c === 'n') dentro = '<div class="marca" style="background:#FF9F43"></div>';
+      if (c === 't') dentro = '<div class="marca" style="background:#38D6C8"></div>';
+      h += '<div class="celda' + (gris ? ' prende' : '') +
+           '" id="c' + x + '_' + y + '" style="left:' + (x*(CEL+SEP)) + 'px;top:' +
+           (y*(CEL+SEP)) + 'px;width:' + CEL + 'px;height:' + CEL + 'px">' + dentro + '</div>';
+    }
+  }
+  h += '<div id="robot" style="width:42px;height:40px;' +
+         'transform:scale(' + k + ');-webkit-transform:scale(' + k + ');' +
+         'transform-origin:0 0;-webkit-transform-origin:0 0">' +
+         '<div id="antena"></div><div id="bombita"></div>' +
+         '<div id="cuerpo"><div class="ojo" id="ojoI"></div><div class="ojo" id="ojoD"></div></div>' +
+         '<div id="nariz"></div></div>';
+  t.innerHTML = h;
+  t.style.width  = (ancho*(CEL+SEP) - SEP) + 'px';
+  t.style.height = (mapa.length*(CEL+SEP) - SEP) + 'px';
+  elRobot = $('robot'); elNariz = $('nariz');
+  ubicarRobot();
+}
+
+function ubicarRobot(){
+  var k = CEL / 50;
+  elRobot.style.left = (rob.x*(CEL+SEP) + 4*k) + 'px';
+  elRobot.style.top  = (rob.y*(CEL+SEP) + 5*k) + 'px';
+  elNariz.innerHTML  = FLECHA[rob.d];
+  elNariz.style.left = POSFLE[rob.d][0] + 'px';
+  elNariz.style.top  = POSFLE[rob.d][1] + 'px';
+  var ox = POSOJO[rob.d][0], oy = POSOJO[rob.d][1];
+  var i = $('ojoI'), d = $('ojoD');
+  if (i){ i.style.left = (7 + ox) + 'px';  i.style.top = (9 + oy) + 'px'; }
+  if (d){ d.style.left = (19 + ox) + 'px'; d.style.top = (9 + oy) + 'px'; }
+}
+
+function cargar(){
+  var L = NIVELES[nivel];
+  armarMapa();
+  prog = []; p1 = []; p2 = []; corriendo = false;
+  $('numNivel').innerHTML = (nivel + 1);
+  $('consigna').innerHTML = L.texto;
+  $('pista').innerHTML = '<b style="color:#FF9F43">Pista.</b> ' + L.pista;
+  var d = DATOS[nivel + 1];
+  if (d){ $('dato').style.display = 'block';
+          $('dato').innerHTML = '<span class="tit">&#9632; Colla te cuenta: ' + d[0] + '</span>' + d[1]; }
+  else { $('dato').style.display = 'none'; }
+  $('caja1').style.display = L.maxP  > 0 ? 'block' : 'none';
+  $('caja2').style.display = L.maxP2 > 0 ? 'block' : 'none';
+  $('bSig').style.display = 'none';
+  $('bucle').style.display = 'none';
+  pintados = 0;
+  $('mensaje').innerHTML = ''; $('mensaje').className = '';
+  elegir('M');
+  dibujarBotones(); construirTablero(); dibujarProg(); dibujarProgreso();
+}
+
+function dibujarBotones(){
+  var L = NIVELES[nivel], h = '';
+  h += '<button class="orden" onclick="agregar(\'A\')"><span class="g">&#9650;</span>AVANZAR</button>';
+  h += '<button class="orden" onclick="agregar(\'I\')"><span class="g">&#8630;</span>IZQUIERDA</button>';
+  h += '<button class="orden" onclick="agregar(\'D\')"><span class="g">&#8631;</span>DERECHA</button>';
+  if (L.colores){
+    h += '<button class="orden enc" onclick="agregar(\'N\')"><span class="g">&#9679;</span>NARANJA</button>';
+    h += '<button class="orden tur" onclick="agregar(\'T\')"><span class="g">&#9679;</span>TURQUESA</button>';
+  } else {
+    h += '<button class="orden enc" onclick="agregar(\'E\')"><span class="g">&#9679;</span>PINTAR</button>';
+  }
+  if (L.maxP  > 0) h += '<button class="orden proc" onclick="agregar(\'1\')"><span class="g">&#8634;</span>P1</button>';
+  if (L.maxP2 > 0) h += '<button class="orden proc2" onclick="agregar(\'2\')"><span class="g">&#8634;</span>P2</button>';
+  $('botones').innerHTML = h;
+}
+
+function icono(c){
+  if (c === 'A') return '&#9650;';
+  if (c === 'I') return '&#8630;';
+  if (c === 'D') return '&#8631;';
+  if (c === '1') return 'P1';
+  if (c === '2') return 'P2';
+  return '&#9679;';
+}
+
+function clase(c){
+  if (c === 'E' || c === 'N') return ' enc';
+  if (c === 'T') return ' tur';
+  if (c === '1') return ' proc';
+  if (c === '2') return ' proc2';
+  return '';
+}
+
+function lista(cual){ return cual === 'M' ? prog : (cual === '1' ? p1 : p2); }
+function tope(cual){
+  var L = NIVELES[nivel];
+  return cual === 'M' ? L.max : (cual === '1' ? (L.maxP || 0) : (L.maxP2 || 0));
+}
+
+function dibujarProg(){
+  var L = NIVELES[nivel];
+  $('cuentaM').innerHTML = prog.length + ' de ' + L.max;
+  $('ranurasM').innerHTML = ranuras(prog, L.max, 'M');
+  if (L.maxP > 0){
+    $('cuenta1').innerHTML = p1.length + ' de ' + L.maxP;
+    $('ranuras1').innerHTML = ranuras(p1, L.maxP, '1');
+  }
+  if (L.maxP2 > 0){
+    $('cuenta2').innerHTML = p2.length + ' de ' + L.maxP2;
+    $('ranuras2').innerHTML = ranuras(p2, L.maxP2, '2');
+  }
+}
+
+function ranuras(arr, max, cual){
+  var h = '';
+  for (var i = 0; i < max; i++){
+    var c = arr[i];
+    h += '<div class="ranura' + (c ? ' llena' + clase(c) : '') +
+         '" onclick="quitar(\'' + cual + '\',' + i + ')">' + (c ? icono(c) : '') + '</div>';
+  }
+  return h;
+}
+
+function elegir(cual){
+  destino = cual;
+  $('cajaM').className = 'prog' + (cual === 'M' ? ' activo' : '');
+  $('caja1').className = 'prog' + (cual === '1' ? ' activo' : '');
+  $('caja2').className = 'prog' + (cual === '2' ? ' activo' : '');
+  $('aquiM').style.display = cual === 'M' ? 'inline' : 'none';
+  $('aqui1').style.display = cual === '1' ? 'inline' : 'none';
+  $('aqui2').style.display = cual === '2' ? 'inline' : 'none';
+}
+
+function agregar(c){
+  if (corriendo) return;
+  var arr = lista(destino), max = tope(destino);
+  if (max > 0 && arr.length < max) arr.push(c);
+  dibujarProg();
+}
+
+function quitar(cual, i){
+  if (corriendo) return;
+  var arr = lista(cual);
+  if (i < arr.length) arr.splice(i, 1);
+  dibujarProg();
+}
+
+function borrarTodo(){
+  if (corriendo) return;
+  if (reloj) clearInterval(reloj);
+  prog = []; p1 = []; p2 = []; corriendo = false;
+  $('bucle').style.display = 'none';
+  $('mensaje').innerHTML = ''; $('mensaje').className = '';
+  armarMapa(); construirTablero(); dibujarProg();
+}
+
+function aplanar(){
+  var salida = [], limite = 400, llamadas = 0;
+  desborde = false;
+  function correr(arr, prof){
+    /* presupuesto global: sin esto, P1 = [P1,P1] genera 2^90 caminos y cuelga el navegador */
+    if (++llamadas > 20000 || prof > 90){ desborde = true; return; }
+    for (var i = 0; i < arr.length; i++){
+      if (salida.length > limite){ desborde = true; return; }
+      if (arr[i] === '1') correr(p1, prof + 1);
+      else if (arr[i] === '2') correr(p2, prof + 1);
+      else salida.push(arr[i]);
+    }
+  }
+  correr(prog, 0);
+  return salida;
+}
+
+function todoPintado(){
+  for (var y = 0; y < mapa.length; y++)
+    for (var x = 0; x < mapa[y].length; x++){
+      var c = mapa[y][x];
+      if (c === 'o' || c === 'n' || c === 't') return false;
+    }
+  return true;
+}
+
+function ejecutar(){
+  if (corriendo) return;
+  armarMapa(); construirTablero();
+  $('bucle').style.display = 'none';
+  pintados = 0;
+  var pasos = aplanar();
+  if (pasos.length === 0){
+    if (desborde || hayCiclo()) mostrarBucle('quieto');
+    else aviso('Primero armale un programa a Colla.');
+    return;
+  }
+  if (desborde && pasos.join('').indexOf('A') < 0){ mostrarBucle('quieto'); return; }
+  $('mensaje').innerHTML = ''; $('mensaje').className = '';
+  corriendo = true;
+  var i = 0;
+  reloj = setInterval(function(){
+    if (todoPintado()){ clearInterval(reloj); corriendo = false; ganaste(); return; }
+    if (i >= pasos.length){
+      clearInterval(reloj); corriendo = false;
+      if (desborde || hayCiclo()) mostrarBucle('agotado'); else aviso(azar(FRASES_FALTA));
+      return;
+    }
+    var ok = paso(pasos[i]); i++;
+    if (todoPintado()){ clearInterval(reloj); corriendo = false; ganaste(); return; }
+    if (!ok){ clearInterval(reloj); corriendo = false;
+                if (hayCiclo()) mostrarBucle('caida'); }
+  }, 300);
+}
+
+function pintar(busca, cls){
+  if (mapa[rob.y][rob.x] !== busca) return;
+  mapa[rob.y][rob.x] = '*';
+  pintados++; sonPinta();
+  var cel = $('c' + rob.x + '_' + rob.y);
+  if (cel){ cel.innerHTML = ''; cel.className = 'celda ' + cls + ' pop'; }
+}
+
+function paso(c){
+  if (c === 'I'){ rob.d = (rob.d + 3) % 4; ubicarRobot(); return true; }
+  if (c === 'D'){ rob.d = (rob.d + 1) % 4; ubicarRobot(); return true; }
+  if (c === 'E'){ pintar('o', 'p' + ((rob.x + rob.y) % 4)); return true; }
+  if (c === 'N'){ pintar('n', 'p0'); return true; }
+  if (c === 'T'){ pintar('t', 'p1'); return true; }
+  var dx = [1,0,-1,0][rob.d], dy = [0,1,0,-1][rob.d];
+  var nx = rob.x + dx, ny = rob.y + dy;
+  if (ny < 0 || ny >= mapa.length || nx < 0 || nx >= mapa[ny].length || mapa[ny][nx] === '#'){
+    caidas++; sonCaida(); aviso(azar(FRASES_CAIDA)); return false;
+  }
+  rob.x = nx; rob.y = ny; ubicarRobot(); sonPaso();
+  return true;
+}
+
+function ganaste(){
+  sonGana();
+  var m = $('mensaje');
+  m.className = 'ok festejo';
+  m.innerHTML = (nivel === NIVELES.length - 1) ? '&#9733; ¡Último mural terminado!' : azar(FRASES_GANA);
+  $('bSig').style.display = 'inline-block';
+}
+
+/* ¿los procedimientos se llaman en círculo? No alcanza con mirar si el
+   programa se quedó sin pasos: con un ciclo, Colla suele caerse antes.   */
+function hayCiclo(){
+  var a1 = p1.join(''), a2 = p2.join('');
+  if (a1.indexOf('1') >= 0) return 'propio';
+  if (a2.indexOf('2') >= 0) return 'propio';
+  if (a1.indexOf('2') >= 0 && a2.indexOf('1') >= 0) return 'cruzado';
+  return '';
+}
+
+function mostrarBucle(modo){
+  var tipo = hayCiclo();
+  var m = $('mensaje'), b = $('bucle');
+  if (modo !== 'caida'){
+    m.className = 'bucle';
+    m.innerHTML = 'Esto no termina nunca. Lo fren\u00e9 yo.';
+  }
+  var cola;
+  if (modo === 'caida'){
+    cola = 'Colla no fren\u00f3 solo: sigui\u00f3 avanzando hasta caerse del andamio. ' +
+           'No se cay\u00f3 por una orden de m\u00e1s, se cay\u00f3 porque el programa <b>no ten\u00eda c\u00f3mo terminar</b>.';
+  } else if (modo === 'quieto'){
+    cola = 'Colla ni siquiera lleg\u00f3 a moverse: el programa da vueltas sobre s\u00ed mismo sin avanzar nunca.';
+  } else {
+    cola = 'Colla seguir\u00eda para siempre, as\u00ed que lo par\u00e9 yo.';
+  }
+  var cuerpo;
+  if (tipo === 'cruzado'){
+    cuerpo = '<b>P1 llama a P2, y P2 llama a P1.</b> Cada uno manda al otro, y el otro lo manda de vuelta. ' +
+             'As\u00ed escrito el programa no llega nunca al final, porque no hay final. ';
+  } else if (tipo === 'propio'){
+    cuerpo = 'Un procedimiento se est\u00e1 <b>llamando a s\u00ed mismo</b>. Eso est\u00e1 permitido y tiene nombre: ' +
+             '<b>recursi\u00f3n</b>. Pero solo sirve si cada vuelta avanza un poco hacia el final. ' +
+             'Si no avanza, no termina jam\u00e1s. ';
+  } else {
+    cuerpo = 'Los procedimientos se est\u00e1n llamando entre ellos sin salida. ';
+  }
+  b.style.display = 'block';
+  b.innerHTML = '<span class="tit">&#9632; Bucle infinito</span>' + cuerpo + cola +
+    '<br><br>Es uno de los errores m\u00e1s famosos de la programaci\u00f3n, y le pasa a todo el mundo.';
+}
+
+function aviso(t){ var m = $('mensaje'); m.className = ''; m.innerHTML = t; }
+
+var CIERRE = {
+  '3': 'Secuencias, giros, huecos, dos colores y procedimientos.',
+  '4': 'Secuencias, huecos, dos colores y dos procedimientos trabajando juntos.',
+  '5': 'Secuencias, procedimientos, recursión y dos colores.'
+};
+
+function siguiente(){
+  nivel++;
+  if (nivel >= NIVELES.length){
+    $('juego').style.display = 'none';
+    $('fin').style.display = 'block';
+    $('fin').className = 'festejo';
+    $('chip').innerHTML = 'TERMINADO';
+    $('finTexto').innerHTML = CIERRE[grado] +
+      '<br>Eso que hiciste tiene los mismos nombres en cualquier lenguaje de programación.';
+    $('finGrado').innerHTML = grado + '.º grado';
+    $('finCaidas').innerHTML = 'SE CAYÓ ' + caidas + (caidas === 1 ? ' VEZ' : ' VECES');
+    return;
+  }
+  cargar();
+}
+
+function dibujarProgreso(){
+  var h = '';
+  for (var i = 0; i < NIVELES.length; i++){
+    var cls = 'punto' + (i < nivel ? ' hecho' : (i === nivel ? ' ahora' : ''));
+    h += '<div class="' + cls + '">' + (i+1) + '</div>';
+  }
+  $('progreso').innerHTML = h;
+}
+</script>
+</body>
+</html>

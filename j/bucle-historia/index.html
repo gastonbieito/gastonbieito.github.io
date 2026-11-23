@@ -1,0 +1,2294 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>bucle · modo historia</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;background:#050508;overflow:hidden;font-family:"Segoe UI","Helvetica Neue",Roboto,Arial,sans-serif;color:#fff;-webkit-font-smoothing:antialiased;user-select:none;-webkit-user-select:none}
+#marco{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+#stage{position:relative;width:1280px;height:720px;flex:none;transform-origin:center center;overflow:hidden;background:#07070b}
+.pant{position:absolute;inset:0;display:none}
+.pant.on{display:block}
+button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit;outline:none}
+
+/* ---------- portada ---------- */
+#portada{background:radial-gradient(900px 600px at 70% 20%,#2a1240 0%,rgba(0,0,0,0) 60%),radial-gradient(800px 600px at 15% 90%,#0f2a3a 0%,rgba(0,0,0,0) 60%),#07070b}
+#pLogo{position:absolute;left:0;right:0;top:150px;text-align:center}
+#pLogo svg{width:120px;height:72px}
+#pLogo .marca{font-size:96px;font-weight:800;letter-spacing:-5px;line-height:1;margin-top:6px;background:linear-gradient(90deg,#ff5fa2,#ffb36b 50%,#5ee7ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+#pLogo .sub{font-size:20px;color:#a9a9bd;margin-top:14px;font-weight:400}
+#pForm{position:absolute;left:390px;width:500px;top:450px;text-align:center}
+#pForm label{display:block;font-size:15px;color:#a9a9bd;margin-bottom:10px}
+#nombre{width:100%;height:58px;border-radius:16px;border:1px solid #2c2c3d;background:#11111a;color:#fff;font-size:22px;text-align:center;font-family:inherit;outline:none;transition:border-color .2s}
+#nombre:focus{border-color:#ff5fa2}
+#bEmpezar{margin-top:16px;width:100%;height:58px;border-radius:16px;font-size:20px;font-weight:700;background:linear-gradient(90deg,#ff5fa2,#ff8a5c);box-shadow:0 10px 30px rgba(255,95,162,.3);transition:transform .15s,box-shadow .15s}
+#bEmpezar:hover{transform:translateY(-2px);box-shadow:0 14px 34px rgba(255,95,162,.4)}
+#pOpc{position:absolute;right:28px;bottom:22px;display:flex;gap:10px}
+.chipBtn{height:34px;padding:0 14px;border-radius:17px;border:1px solid #2c2c3d;background:#11111a;color:#a9a9bd;font-size:13px}
+.chipBtn.on{color:#fff;border-color:#ff5fa2}
+#pPie{position:absolute;left:28px;bottom:26px;font-size:12px;color:#55556a}
+
+/* ---------- feed ---------- */
+#feedP{background:#07070b}
+#glow{position:absolute;left:240px;top:-200px;width:800px;height:1120px;background:radial-gradient(closest-side,rgba(255,146,43,.32),rgba(0,0,0,0));transition:background 1s}
+#lateral{position:absolute;left:36px;top:28px;width:250px;bottom:28px}
+.logoMini{display:flex;align-items:center;gap:8px;font-size:34px;font-weight:800;letter-spacing:-2px}
+.logoMini svg{width:44px;height:28px}
+#nav{margin-top:34px}
+.nItem{display:flex;align-items:center;gap:14px;height:48px;padding:0 14px;border-radius:12px;color:#8a8aa0;font-size:17px;font-weight:600}
+.nItem svg{width:24px;height:24px}
+.nItem.act{color:#fff;background:#15151f}
+.nItem.act svg{color:#ff5fa2}
+#sugeridos{margin-top:26px;border-top:1px solid #1b1b27;padding-top:18px}
+#sugeridos h4{font-size:13px;color:#6a6a80;font-weight:600;margin-bottom:12px}
+.sug{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:14px;color:#c9c9d6}
+.av{width:34px;height:34px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:#fff}
+#yo{position:absolute;left:0;bottom:0;display:flex;align-items:center;gap:10px;font-size:14px;color:#c9c9d6}
+#hud{position:absolute;left:36px;top:150px;width:260px;display:none}
+#hud.on{display:block}
+.hudCaja{background:#11111a;border:1px solid #23233a;border-radius:20px;padding:20px}
+.hudCaja .t{font-size:13px;color:#8a8aa0;font-weight:600;letter-spacing:.5px;text-transform:uppercase}
+.hudCaja .obj{display:inline-flex;align-items:center;gap:8px;margin:10px 0 4px;padding:8px 16px;border-radius:22px;font-size:20px;font-weight:800;color:#111}
+.hudCaja .n{font-size:46px;font-weight:800;letter-spacing:-2px;margin-top:4px}
+.hudCaja .n small{font-size:15px;color:#8a8aa0;letter-spacing:0;font-weight:600;margin-left:6px}
+#racha{display:flex;gap:10px;margin-top:12px}
+#racha span{width:44px;height:44px;border-radius:12px;background:#1b1b27;border:1px solid #2c2c3d;transition:background .3s,transform .3s}
+#racha span.si{transform:scale(1.06)}
+.hudReg{font-size:13px;color:#8a8aa0;margin-top:12px;line-height:1.45}
+
+#feed{position:absolute;left:442px;top:8px;width:396px;height:704px;border-radius:22px;overflow:hidden;background:#000;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.card{position:absolute;left:0;top:0;width:396px;height:704px;transition:transform .5s cubic-bezier(.22,.8,.2,1);will-change:transform}
+.card .esc{position:absolute;inset:0;width:100%;height:100%;display:block}
+.card .sombraInf{position:absolute;left:0;right:0;bottom:0;height:300px;background:linear-gradient(to top,rgba(0,0,0,.72),rgba(0,0,0,0));pointer-events:none}
+.card .sombraSup{position:absolute;left:0;right:0;top:0;height:110px;background:linear-gradient(to bottom,rgba(0,0,0,.35),rgba(0,0,0,0));pointer-events:none}
+.tabs{position:absolute;top:18px;left:0;right:0;text-align:center;font-size:16px;font-weight:700;color:rgba(255,255,255,.65);pointer-events:none}
+.tabs b{color:#fff;margin-left:18px;padding-bottom:5px;border-bottom:2.5px solid #fff}
+.info{position:absolute;left:18px;right:70px;bottom:34px;pointer-events:none}
+.info .autor{font-size:17px;font-weight:700;display:flex;align-items:center;gap:8px}
+.info .autor i{font-style:normal;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;background:rgba(255,255,255,.18)}
+.info .tit{font-size:16px;line-height:1.35;margin-top:7px;color:#f1f1f6;text-shadow:0 1px 4px rgba(0,0,0,.4)}
+.info .tag{color:#fff;font-weight:700}
+.sonido{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:14px;color:#e9e9f1;overflow:hidden;white-space:nowrap}
+.sonido svg{width:16px;height:16px;flex:none}
+.sonido .mq{display:inline-block;animation:marquee 9s linear infinite}
+@keyframes marquee{from{transform:translateX(30%)}to{transform:translateX(-100%)}}
+.prog{position:absolute;left:0;right:0;bottom:0;height:4px;background:rgba(255,255,255,.18)}
+.prog div{height:100%;width:0;background:#fff}
+.pub{position:absolute;left:18px;right:18px;bottom:120px;background:rgba(255,255,255,.96);color:#111;border-radius:18px;padding:16px 18px;display:flex;align-items:center;gap:14px;box-shadow:0 14px 40px rgba(0,0,0,.35)}
+.pub .ico{width:58px;height:58px;border-radius:14px;flex:none;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;color:#fff}
+.pub .pn{font-size:17px;font-weight:800}
+.pub .ps{font-size:13px;color:#555;margin-top:2px;line-height:1.3}
+.pub .pc{margin-left:auto;flex:none;height:38px;padding:0 16px;border-radius:12px;background:#111;color:#fff;font-size:14px;font-weight:700;display:flex;align-items:center}
+.pubTag{position:absolute;bottom:222px;left:18px;font-size:12px;font-weight:800;letter-spacing:.6px;padding:5px 10px;border-radius:8px;background:#ffd43b;color:#111;text-transform:uppercase}
+#ayuda{position:absolute;left:442px;top:8px;width:396px;height:704px;border-radius:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;background:rgba(0,0,0,.55);transition:opacity .5s;pointer-events:none}
+#ayuda.fuera{opacity:0}
+.ayItem{display:flex;align-items:center;gap:16px;font-size:18px;font-weight:600;background:rgba(0,0,0,.45);padding:14px 22px;border-radius:18px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.ayItem svg{width:40px;height:40px}
+.ayFlecha{animation:ayMueve 1.4s ease-in-out infinite}
+@keyframes ayMueve{50%{transform:translateY(-8px)}}
+
+#acciones{position:absolute;left:856px;top:240px;width:72px;display:flex;flex-direction:column;align-items:center;gap:20px}
+.acc{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:13px;font-weight:700;color:#d9d9e3}
+.acc .bola{width:56px;height:56px;border-radius:50%;background:#15151f;display:flex;align-items:center;justify-content:center;transition:transform .15s,background .2s}
+.acc .bola:hover{background:#1f1f2c}
+.acc .bola:active{transform:scale(.9)}
+.acc svg{width:28px;height:28px}
+#bLike.on .bola{background:#2a0f1c}
+#bLike.on svg{color:#ff2d6f}
+#bLike.on svg path{fill:#ff2d6f}
+#avAutor{position:relative;width:56px;height:56px;border-radius:50%;border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;cursor:pointer}
+#avAutor span{position:absolute;left:50%;bottom:-10px;margin-left:-11px;width:22px;height:22px;border-radius:50%;background:#ff2d6f;font-size:18px;line-height:20px;text-align:center;font-weight:800;transition:transform .25s,background .25s}
+#avAutor.sigo span{background:#fff;color:#ff2d6f;transform:rotate(360deg)}
+#disco{width:50px;height:50px;border-radius:50%;background:conic-gradient(#333,#111,#333,#111,#333);display:flex;align-items:center;justify-content:center;animation:gira 4s linear infinite}
+#disco div{width:20px;height:20px;border-radius:50%}
+#flechas{position:absolute;right:52px;top:290px;display:flex;flex-direction:column;gap:14px}
+#flechas button{width:54px;height:54px;border-radius:50%;background:#15151f;display:flex;align-items:center;justify-content:center;transition:background .2s,transform .15s}
+#flechas button:hover{background:#23233a}
+#flechas button:active{transform:scale(.92)}
+#flechas svg{width:24px;height:24px}
+.corazonFx{position:absolute;width:110px;height:110px;margin:-55px 0 0 -55px;pointer-events:none;animation:corFx .9s ease-out forwards}
+@keyframes corFx{0%{transform:scale(.2) rotate(-12deg);opacity:0}25%{transform:scale(1.15) rotate(6deg);opacity:1}55%{transform:scale(1) rotate(0)}100%{transform:scale(1.3) translateY(-80px);opacity:0}}
+#coments{position:absolute;left:950px;top:8px;width:300px;height:704px;border-radius:22px;background:#12121b;border:1px solid #23233a;box-shadow:0 30px 80px rgba(0,0,0,.6);transform:translateX(40px);opacity:0;pointer-events:none;transition:transform .35s cubic-bezier(.22,.8,.2,1),opacity .25s;z-index:6;display:flex;flex-direction:column}
+#coments.on{transform:none;opacity:1;pointer-events:auto}
+#coments .cab{display:flex;align-items:center;justify-content:space-between;padding:20px 20px 14px;border-bottom:1px solid #1f1f2e;font-size:17px;font-weight:800}
+#coments .cab small{color:#8a8aa0;font-weight:600;margin-left:6px}
+#cCerrar{width:36px;height:36px;border-radius:50%;background:#1f1f2e;display:flex;align-items:center;justify-content:center;transition:background .2s}
+#cCerrar:hover{background:#2c2c3d}
+#cLista{flex:1;overflow-y:auto;padding:8px 20px}
+.com{display:flex;gap:12px;padding:12px 0}
+.com .av{width:36px;height:36px;font-size:14px}
+.com .cu{font-size:13px;color:#8a8aa0;font-weight:700}
+.com .ct{font-size:15px;line-height:1.4;margin-top:3px;color:#ececf3}
+.com .cm{font-size:12px;color:#6a6a80;margin-top:5px}
+.com .cl{margin-left:auto;display:flex;flex-direction:column;align-items:center;font-size:11px;color:#8a8aa0;cursor:pointer;flex:none}
+.com .cl svg{width:18px;height:18px}
+.com .cl.on svg path{fill:#ff2d6f}
+#cPie{padding:14px 20px 18px;border-top:1px solid #1f1f2e}
+#cPie div{height:44px;border-radius:22px;background:#1b1b27;color:#6a6a80;font-size:14px;display:flex;align-items:center;padding:0 18px}
+#cPie small{display:block;font-size:12px;color:#55556a;margin-top:8px;text-align:center}
+#feedP.modoEsc #acciones{top:70px}
+#feedP.modoEsc #bComp,#feedP.modoEsc #disco{display:none}
+#feedP.conComents #flechas{opacity:0;pointer-events:none}
+#flechas{transition:opacity .2s}
+#toast{position:absolute;left:640px;top:640px;transform:translate(-50%,20px);background:#fff;color:#111;font-size:15px;font-weight:600;padding:12px 20px;border-radius:14px;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;z-index:30;white-space:nowrap}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* notificación */
+#noti{position:absolute;left:390px;top:-130px;width:500px;background:rgba(30,30,44,.92);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.08);border-radius:24px;padding:18px 20px;display:flex;gap:16px;align-items:center;box-shadow:0 24px 60px rgba(0,0,0,.5);transition:top .55s cubic-bezier(.22,.9,.25,1.15);z-index:40}
+#noti.on{top:24px}
+#noti .ic{width:52px;height:52px;border-radius:14px;flex:none;background:linear-gradient(135deg,#ff5fa2,#ffb36b);display:flex;align-items:center;justify-content:center}
+#noti .ic svg{width:34px;height:22px}
+#noti .tx b{font-size:15px}
+#noti .tx b small{font-weight:400;color:#9a9ab0;margin-left:8px;font-size:13px}
+#noti .tx div{font-size:16px;margin-top:3px;color:#e9e9f1}
+#noti button{margin-left:auto;height:42px;padding:0 20px;border-radius:21px;background:#fff;color:#111;font-weight:800;font-size:15px;flex:none}
+#velo{position:absolute;inset:0;background:rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:opacity .5s;z-index:35}
+#velo.on{opacity:1;pointer-events:auto}
+
+/* ---------- revelación ---------- */
+#revP{background:#000}
+#barras{position:absolute;left:24px;right:24px;top:18px;display:flex;gap:6px;z-index:10}
+#barras div{flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,.25);overflow:hidden}
+#barras div i{display:block;height:100%;width:0;background:#fff;transition:width .4s}
+#barras div.ok i{width:100%}
+.slide{position:absolute;inset:0;display:none;overflow:hidden}
+.slide.on{display:block;animation:entra .6s cubic-bezier(.22,.8,.2,1)}
+@keyframes entra{from{opacity:0;transform:scale(1.04)}to{opacity:1;transform:scale(1)}}
+.sT{position:absolute;left:90px;right:90px;font-weight:800;letter-spacing:-2px;line-height:1.02}
+.sP{position:absolute;left:90px;right:90px;font-size:24px;line-height:1.45;color:rgba(255,255,255,.88);font-weight:500}
+.ap{opacity:0;animation:aparece .7s cubic-bezier(.22,.8,.2,1) forwards}
+@keyframes aparece{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+#revSig{position:absolute;right:30px;bottom:26px;height:50px;padding:0 24px;border-radius:25px;background:#fff;color:#111;font-weight:800;font-size:17px;z-index:10;display:flex;align-items:center;gap:8px;transition:transform .15s}
+#revSig:hover{transform:translateY(-2px)}
+#revAtras{position:absolute;left:30px;bottom:26px;height:50px;padding:0 20px;border-radius:25px;background:rgba(255,255,255,.14);color:#fff;font-weight:700;font-size:15px;z-index:10}
+.blobR{position:absolute;border-radius:50%;filter:blur(2px);opacity:.9}
+.num{font-variant-numeric:tabular-nums}
+.barraG{position:absolute;left:90px;height:58px;border-radius:16px;display:flex;align-items:center;padding:0 20px;font-size:22px;font-weight:800;color:#111;width:0;transition:width 1.1s cubic-bezier(.22,.8,.2,1);white-space:nowrap;overflow:hidden}
+.barraG span{margin-left:auto;padding-left:20px}
+#datos{position:absolute;left:90px;top:225px;width:1100px;display:flex;flex-direction:column;gap:18px}
+.dato{position:relative;width:1100px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);border-radius:24px;padding:22px 28px 22px 100px;font-size:23px;line-height:1.4;font-weight:500}
+.dato .di{position:absolute;left:24px;top:50%;margin-top:-28px;width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center}
+.dato .di svg{width:30px;height:30px}
+.dato b{font-weight:800}
+.punto{position:absolute;width:24px;height:24px;border-radius:7px;opacity:0;transform:scale(.3);transition:opacity .3s,transform .4s cubic-bezier(.3,1.6,.5,1)}
+.punto.v{opacity:1;transform:scale(1)}
+.chipC{display:inline-flex;align-items:center;gap:10px;height:54px;padding:0 24px;border-radius:27px;font-size:22px;font-weight:800;color:#111;margin:0 12px 14px 0}
+.chipC{transition:background .6s,color .6s}
+.chipC.apag{background:#2a2a36 !important;color:#6c6c80;text-decoration:line-through;text-decoration-thickness:2px}
+#burbuja{position:absolute;left:700px;top:120px;width:480px;height:480px;border-radius:50%;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.45),rgba(255,255,255,.08) 45%,rgba(255,255,255,.03) 70%);border:2px solid rgba(255,255,255,.45);box-shadow:inset 0 0 60px rgba(255,255,255,.15),0 0 80px rgba(94,231,255,.15);animation:respiraB 4s ease-in-out infinite}
+@keyframes respiraB{50%{transform:scale(1.03)}}
+.flot{position:absolute;animation:flotaC 5s ease-in-out infinite}
+@keyframes flotaC{50%{transform:translate(8px,-10px)}}
+.mini{position:absolute;width:150px;height:266px;border-radius:14px;overflow:hidden;background:#000;box-shadow:0 12px 30px rgba(0,0,0,.4)}
+.mini .esc{width:100%;height:100%;display:block}
+.mini .lb{position:absolute;left:8px;bottom:8px;font-size:12px;font-weight:800;padding:4px 9px;border-radius:9px;color:#111}
+
+/* comparar, desafío, cierre */
+.panel{position:absolute;inset:0}
+.btnG{height:60px;padding:0 34px;border-radius:30px;background:#fff;color:#111;font-size:19px;font-weight:800;transition:transform .15s,box-shadow .15s;box-shadow:0 12px 30px rgba(0,0,0,.25)}
+.btnG:hover{transform:translateY(-2px)}
+.btnS{height:60px;padding:0 30px;border-radius:30px;background:rgba(255,255,255,.12);color:#fff;font-size:18px;font-weight:700;border:1px solid rgba(255,255,255,.2)}
+.medalla{width:190px;height:190px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:900;color:#111;box-shadow:0 20px 60px rgba(0,0,0,.4),inset 0 -10px 0 rgba(0,0,0,.12);animation:medPop .8s cubic-bezier(.3,1.6,.5,1)}
+@keyframes medPop{from{transform:scale(.2) rotate(-30deg)}to{transform:none}}
+.cierreCard{position:absolute;top:300px;width:340px;height:300px;border-radius:28px;padding:30px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12)}
+.cierreCard .nn{font-size:64px;font-weight:800;letter-spacing:-3px;line-height:1}
+.cierreCard h3{font-size:26px;margin-top:16px;letter-spacing:-.5px}
+.cierreCard p{font-size:18px;color:rgba(255,255,255,.75);margin-top:12px;line-height:1.45}
+#confeti{position:absolute;inset:0;pointer-events:none;z-index:50}
+
+/* ---------- animaciones de las escenas ---------- */
+.esc *{animation-iteration-count:infinite;animation-timing-function:ease-in-out}
+.balanceo{animation-name:balanceo;animation-duration:2.6s}@keyframes balanceo{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+.respira{animation-name:respira;animation-duration:3s}@keyframes respira{50%{transform:scale(1.03,.97)}}
+.salta{animation-name:salta}@keyframes salta{0%,100%{transform:translateY(0) scale(1.06,.94)}20%{transform:translateY(0) scale(1)}50%{transform:translateY(-120px) scale(.97,1.04)}80%{transform:translateY(0)}}
+.asoma{animation-name:asoma}@keyframes asoma{0%,100%{transform:translateY(150px)}35%,75%{transform:translateY(0)}}
+.cola{animation-name:cola;animation-duration:1.8s}@keyframes cola{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(10deg)}}
+.colaPerro{animation-name:colaP;animation-duration:.35s}@keyframes colaP{0%,100%{transform:rotate(-14deg)}50%{transform:rotate(16deg)}}
+.oreja,.oreja2{animation-name:oreja;animation-duration:1.4s}@keyframes oreja{0%,100%{transform:rotate(0)}50%{transform:rotate(-6deg)}}
+.oreja2{animation-name:oreja2}@keyframes oreja2{50%{transform:rotate(6deg)}}
+.parpadea{animation-name:parpadea;animation-duration:3.8s}@keyframes parpadea{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+.lengua{animation-name:lengua;animation-duration:.5s}@keyframes lengua{50%{transform:scaleY(1.2)}}
+.rebota{animation-name:rebota;animation-timing-function:cubic-bezier(.3,0,.7,1)}@keyframes rebota{0%,100%{transform:translateY(0)}50%{transform:translateY(-90px)}}
+.laser{animation-name:laser;animation-timing-function:linear}@keyframes laser{0%,100%{transform:translateX(-140px)}25%{transform:translate(120px,-30px)}50%{transform:translate(20px,20px)}75%{transform:translate(150px,-10px)}}
+.cae{animation-name:cae;animation-timing-function:linear}@keyframes cae{from{transform:translateY(-20px)}to{transform:translateY(740px)}}
+.tw{animation-name:tw;animation-duration:2s}@keyframes tw{0%,100%{opacity:1}50%{opacity:.15}}
+.zz{animation-name:zz;animation-duration:3s;opacity:0}@keyframes zz{0%{opacity:0;transform:translate(0,0) scale(.6)}30%{opacity:1}100%{opacity:0;transform:translate(30px,-80px) scale(1.2)}}
+.saltito{animation-name:saltito}@keyframes saltito{50%{transform:translateY(-6px)}}
+.arquero{animation-name:arquero}@keyframes arquero{0%,100%{transform:translateX(-46px)}50%{transform:translateX(46px)}}
+.vuela{animation-name:vuela}@keyframes vuela{0%,40%,100%{transform:translateX(0) rotate(0)}60%,80%{transform:translate(-70px,-20px) rotate(-60deg)}}
+.golRecto{animation-name:golRecto;animation-timing-function:linear}@keyframes golRecto{0%,10%{transform:translate(222px,640px) scale(1.5);opacity:1}45%{transform:translate(250px,215px) scale(.7)}85%{transform:translate(250px,215px) scale(.7);opacity:1}86%,100%{opacity:0;transform:translate(222px,640px) scale(1.5)}}
+.golCurva{animation-name:golCurva;animation-timing-function:linear}@keyframes golCurva{0%,10%{transform:translate(222px,640px) scale(1.5)}25%{transform:translate(330px,430px) scale(1.1)}45%{transform:translate(150px,205px) scale(.7)}85%{transform:translate(150px,205px) scale(.7);opacity:1}86%,100%{opacity:0;transform:translate(222px,640px) scale(1.5)}}
+.golChilena{animation-name:golChilena;animation-timing-function:linear}@keyframes golChilena{0%,15%{transform:translate(198px,470px) scale(1.4)}30%{transform:translate(200px,400px) scale(1.2)}50%{transform:translate(260px,210px) scale(.7)}85%{transform:translate(260px,210px) scale(.7);opacity:1}86%,100%{opacity:0;transform:translate(198px,470px) scale(1.4)}}
+.golLargo{animation-name:golLargo;animation-timing-function:linear}@keyframes golLargo{0%,10%{transform:translate(222px,640px) scale(1.5)}30%{transform:translate(210px,120px) scale(1)}50%{transform:translate(230px,220px) scale(.7)}85%{transform:translate(230px,220px) scale(.7);opacity:1}86%,100%{opacity:0;transform:translate(222px,640px) scale(1.5)}}
+.golAtajada{animation-name:golAtajada;animation-timing-function:linear}@keyframes golAtajada{0%,10%{transform:translate(222px,640px) scale(1.5)}45%{transform:translate(140px,225px) scale(.7)}60%{transform:translate(90px,330px) scale(.8)}85%{transform:translate(60px,420px) scale(.9);opacity:1}86%,100%{opacity:0;transform:translate(222px,640px) scale(1.5)}}
+.toque{animation-name:toque;animation-timing-function:cubic-bezier(.3,0,.7,1)}@keyframes toque{0%,100%{transform:translateY(0)}50%{transform:translateY(-170px)}}
+.sticker{animation-name:sticker;animation-timing-function:ease-out}@keyframes sticker{0%,44%{transform:scale(0) rotate(-10deg)}52%{transform:scale(1.15) rotate(4deg)}58%,84%{transform:scale(1) rotate(-3deg)}90%,100%{transform:scale(0)}}
+.vapor{animation-name:vapor}@keyframes vapor{0%{opacity:0;transform:translateY(20px)}40%{opacity:.8}100%{opacity:0;transform:translateY(-70px)}}
+.voltea{animation-name:voltea}@keyframes voltea{0%,30%,100%{transform:translateY(0) scaleY(1)}50%{transform:translateY(-170px) scaleY(-1)}70%{transform:translateY(0) scaleY(1)}}
+.late{animation-name:late;animation-duration:1.6s}@keyframes late{50%{transform:scale(1.08)}}
+.gira{animation-name:gira;animation-timing-function:linear}@keyframes gira{to{transform:rotate(360deg)}}
+.llama{animation-name:llama;animation-duration:.5s}@keyframes llama{0%,100%{transform:scale(1,1)}50%{transform:scale(.85,1.15)}}
+.pop{animation-name:pop}@keyframes pop{0%,100%{transform:translateY(0) scale(1)}40%{transform:translateY(-120px) scale(1.15)}60%{transform:translateY(-140px) scale(1)}}
+.gota{animation-name:gota}@keyframes gota{50%{transform:scaleY(1.6)}}
+.nube{animation-name:nube;animation-timing-function:linear}@keyframes nube{from{transform:translateX(-120px)}to{transform:translateX(420px)}}
+.moneda{animation-name:moneda;animation-duration:.9s}@keyframes moneda{0%,100%{transform:scaleX(1)}50%{transform:scaleX(.15)}}
+.patrulla{animation-name:patrulla}@keyframes patrulla{0%,100%{transform:translateX(0)}50%{transform:translateX(70px)}}
+.saltaPix{animation-name:saltaPix;animation-timing-function:cubic-bezier(.3,0,.7,1)}@keyframes saltaPix{0%,100%{transform:translateY(0)}50%{transform:translateY(-150px)}}
+.onda{animation-name:onda;animation-timing-function:ease-out}@keyframes onda{0%{transform:scale(.6);opacity:.8}100%{transform:scale(1.6);opacity:0}}
+.eq{animation-name:eq}@keyframes eq{0%,100%{transform:scaleY(.25)}50%{transform:scaleY(1)}}
+.palo,.palo2{animation-name:palo}@keyframes palo{0%,100%{transform:rotate(-14deg)}50%{transform:rotate(10deg)}}
+.palo2{animation-name:palo2}@keyframes palo2{0%,100%{transform:rotate(14deg)}50%{transform:rotate(-10deg)}}
+.cuerda{animation-name:cuerda}@keyframes cuerda{0%,100%{transform:translateX(-1.5px)}50%{transform:translateX(1.5px)}}
+.tecla{animation-name:tecla}@keyframes tecla{0%,60%,100%{fill:#fff}70%,90%{fill:#ff8fc7}}
+.baila{animation-name:baila}@keyframes baila{0%,100%{transform:rotate(-7deg) translateY(0)}25%{transform:translateY(-14px)}50%{transform:rotate(7deg) translateY(0)}75%{transform:translateY(-14px)}}
+.brazo,.brazo2{animation-name:brazo}@keyframes brazo{0%,100%{transform:rotate(0)}50%{transform:rotate(-50deg)}}
+.brazo2{animation-name:brazo2}@keyframes brazo2{0%,100%{transform:rotate(0)}50%{transform:rotate(-80deg)}}
+.nota{animation-name:nota;animation-timing-function:linear}@keyframes nota{0%{transform:translateY(0);opacity:0}20%{opacity:1}100%{transform:translateY(-560px);opacity:0}}
+.erupcion{animation-name:erupcion;animation-timing-function:cubic-bezier(.2,.6,.4,1)}@keyframes erupcion{0%{transform:translate(0,0) scale(.4);opacity:0}15%{opacity:1}60%{transform:translate(var(--dx,0),-200px) scale(1)}100%{transform:translate(0,40px) scale(.6);opacity:0}}
+.blob{animation-name:blob;animation-duration:2.2s}@keyframes blob{0%,100%{transform:scale(1,1)}50%{transform:scale(1.08,.92)}}
+.flota{animation-name:flota}@keyframes flota{50%{transform:translateY(-16px) rotate(4deg)}}
+.burbuja{animation-name:burbuja;animation-timing-function:linear}@keyframes burbuja{0%{transform:translateY(0);opacity:0}20%{opacity:.9}100%{transform:translateY(-230px);opacity:0}}
+.infla{animation-name:infla}@keyframes infla{0%,100%{transform:scale(.35)}70%{transform:scale(1)}85%{transform:scale(1.04)}}
+.clip{animation-name:clip}@keyframes clip{50%{transform:rotate(8deg)}}
+.lavaSube{animation-name:lavaSube}@keyframes lavaSube{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-300px) scale(.8,1.2)}}
+.tiembla{animation-name:tiembla;animation-duration:.25s}@keyframes tiembla{0%,100%{transform:translate(0,0) rotate(0)}25%{transform:translate(-4px,1px) rotate(-1deg)}75%{transform:translate(4px,-1px) rotate(1deg)}}
+.parpadeo{animation-name:parpadeo;animation-duration:1s}@keyframes parpadeo{0%,49%{opacity:1}50%,100%{opacity:.2}}
+.relleno{animation-name:relleno;animation-timing-function:linear}@keyframes relleno{0%,55%{opacity:0}70%,92%{opacity:1}100%{opacity:0}}
+.dibuja{stroke-dasharray:1 1;animation-name:dibuja;animation-timing-function:linear}@keyframes dibuja{0%{stroke-dashoffset:1}55%,92%{stroke-dashoffset:0}100%{stroke-dashoffset:0;opacity:0}}
+.lapiz{animation-name:lapiz}@keyframes lapiz{0%,100%{transform:translate(0,0)}25%{transform:translate(-30px,-20px)}50%{transform:translate(-10px,10px)}75%{transform:translate(-40px,0)}}
+.halfpipe{animation-name:halfpipe;animation-direction:alternate}@keyframes halfpipe{0%{transform:translate(70px,390px) rotate(-62deg)}25%{transform:translate(120px,560px) rotate(-25deg)}50%{transform:translate(198px,596px) rotate(0)}75%{transform:translate(276px,560px) rotate(25deg)}100%{transform:translate(326px,390px) rotate(62deg)}}
+.grindeo{animation-name:grindeo;animation-timing-function:linear}@keyframes grindeo{0%{transform:translate(-60px,550px)}15%{transform:translate(50px,470px)}75%{transform:translate(330px,470px)}90%{transform:translate(420px,550px)}100%{transform:translate(460px,550px)}}
+.paseo{animation-name:paseo;animation-timing-function:linear}@keyframes paseo{from{transform:translate(-60px,640px)}to{transform:translate(460px,640px)}}
+.calle{animation-name:calle;animation-timing-function:linear}@keyframes calle{from{transform:translateX(0)}to{transform:translateX(-70px)}}
+.bmx{animation-name:bmx;animation-timing-function:linear}@keyframes bmx{0%{transform:translate(-40px,578px)}25%{transform:translate(110px,500px) rotate(-20deg)}40%{transform:translate(198px,420px) rotate(10deg)}55%{transform:translate(280px,500px) rotate(20deg)}75%{transform:translate(340px,578px)}100%{transform:translate(440px,578px)}}
+.ola{animation-name:ola;animation-timing-function:linear}@keyframes ola{from{transform:translateX(0)}to{transform:translateX(200px)}}
+.surf{animation-name:surf}@keyframes surf{0%,100%{transform:translate(0,0) rotate(-6deg)}50%{transform:translate(-30px,-24px) rotate(6deg)}}
+.derivaX{animation-name:derivaX;animation-timing-function:linear}@keyframes derivaX{from{transform:translateX(0)}to{transform:translateX(-280px)}}
+.humo{animation-name:humo}@keyframes humo{0%{transform:scale(.6);opacity:.8}100%{transform:scale(1.6) translateY(20px);opacity:0}}
+.flotaEsp{animation-name:flotaEsp}@keyframes flotaEsp{0%,100%{transform:translateY(0) rotate(-8deg)}50%{transform:translateY(-30px) rotate(8deg)}}
+
+/* ---------- modo historia ---------- */
+.mLogo{position:absolute;left:70px;top:46px;display:flex;align-items:center;gap:12px}
+.mLogo svg{width:64px;height:40px}
+.mLogo b{font-size:46px;font-weight:800;letter-spacing:-2px}
+.mLogo span{font-size:18px;color:#a9a9bd;font-weight:600;margin-left:4px;margin-top:12px}
+.mHola{position:absolute;left:72px;top:112px;font-size:22px;color:#d9d9e3}
+.mStats{position:absolute;right:70px;top:56px;display:flex;gap:12px;align-items:center}
+.mStats span,.mStats button{display:inline-flex;align-items:center;gap:8px;height:46px;padding:0 18px;border-radius:23px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);font-size:18px;font-weight:800;color:#fff}
+.mStats svg{width:24px;height:24px}
+.capCard{position:absolute;display:block;top:180px;width:360px;height:470px;border-radius:30px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);text-align:left;padding:0;overflow:hidden;transition:transform .2s,box-shadow .2s,border-color .2s;color:#fff}
+.capCard:hover{transform:translateY(-8px);border-color:var(--c);box-shadow:0 20px 50px rgba(0,0,0,.4)}
+.capCard.cerrado{opacity:.45}
+.capCard.cerrado:hover{transform:none}
+.mIlu{position:absolute;left:0;right:0;top:0;height:220px;overflow:hidden;background:#111}
+.mIlu .esc{width:100%;height:auto;position:absolute;top:-180px}
+.mIlu.dos{background:linear-gradient(135deg,#ffb36b,#ff5fa2);display:flex;justify-content:center;align-items:flex-end;gap:0}
+.mIlu.dos svg{width:170px;height:187px}
+.mIlu.tres{background:linear-gradient(135deg,#1a3a7a,#5ee7ff);display:flex;justify-content:center;align-items:flex-end}
+.mIlu.tres svg{width:180px;height:198px;position:relative;z-index:2}
+.mBur{position:absolute;left:80px;top:14px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.55),rgba(255,255,255,.08) 50%,rgba(255,255,255,.03) 70%);border:2px solid rgba(255,255,255,.6);z-index:3}
+.cNum{position:absolute;left:26px;top:232px;font-size:54px;font-weight:800;letter-spacing:-2px}
+.cTit{position:absolute;left:26px;top:300px;font-size:30px;font-weight:800;letter-spacing:-1px}
+.cSub{position:absolute;left:26px;right:26px;top:346px;font-size:17px;line-height:1.4;color:rgba(255,255,255,.75)}
+.mEst{position:absolute;left:26px;bottom:20px;display:flex;align-items:center;gap:8px;font-size:18px;font-weight:800}
+.mEst svg{width:26px;height:26px}
+.cCand{position:absolute;right:22px;top:236px;width:48px;height:48px;border-radius:50%;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center}
+.cCand svg{width:26px;height:26px}
+.ests{display:inline-flex;gap:4px}
+.ests i{display:block}
+.ests svg{width:100%;height:100%}
+.logroC{position:absolute;width:265px;height:140px;border-radius:22px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);padding:18px 18px 18px 84px;opacity:.5}
+.logroC.si{opacity:1;background:rgba(255,212,59,.12);border-color:rgba(255,212,59,.5)}
+.logroC .li{position:absolute;left:18px;top:20px;width:52px;height:52px;border-radius:16px;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center}
+.logroC .li svg{width:32px;height:32px;filter:grayscale(1)}
+.logroC.si .li svg{filter:none}
+.logroC b{display:block;font-size:18px;margin-bottom:6px}
+.logroC span{font-size:14px;color:#c9c9d6;line-height:1.35}
+.logroToast{position:absolute;right:24px;top:24px;z-index:80;display:flex;align-items:center;gap:14px;background:#fff;color:#111;border-radius:20px;padding:14px 22px 14px 14px;box-shadow:0 20px 50px rgba(0,0,0,.4);animation:ltIn .5s cubic-bezier(.3,1.5,.5,1);transition:opacity .4s,transform .4s}
+.logroToast.fuera{opacity:0;transform:translateY(-20px)}
+@keyframes ltIn{from{transform:translateY(-40px) scale(.8);opacity:0}}
+.logroToast .lt1{width:52px;height:52px;border-radius:16px;background:#111;display:flex;align-items:center;justify-content:center}
+.logroToast .lt1 svg{width:32px;height:32px}
+.logroToast b{display:block;font-size:13px;color:#888;text-transform:uppercase;letter-spacing:.5px}
+.logroToast span{font-size:20px;font-weight:800}
+.perCard{position:absolute;display:block;top:230px;width:208px;height:360px;border-radius:26px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:#fff;padding-top:14px;transition:transform .2s,border-color .2s}
+.perCard:hover{transform:translateY(-8px);border-color:#ffb36b}
+.perCard.cerrado{opacity:.35}
+.perCard svg{width:170px;height:187px;margin:0 auto}
+.perCard b{display:block;font-size:24px;margin-top:12px}
+.perCard span{display:block;font-size:15px;color:#c9c0b4;margin:4px 0 12px}
+.perCard .ests{justify-content:center}
+.introPer{position:absolute;left:90px;top:120px;width:380px;height:418px}
+.introPer svg{width:100%;height:100%}
+.reglas{position:absolute;top:330px;left:130px;right:130px;display:flex;gap:20px}
+.reglas div{flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:22px;padding:20px 22px;font-size:17px;line-height:1.45;color:#d9e2ec}
+.reglas b{display:block;font-size:21px;color:#fff;margin-bottom:6px}
+/* capítulo 2 */
+#aFondo{position:absolute;inset:0;background:radial-gradient(800px 600px at 20% 20%,#4a2a10,rgba(0,0,0,0)),radial-gradient(700px 500px at 90% 90%,#2a1240,rgba(0,0,0,0)),#0b0a08;transition:background 1s}
+#aFondo.noche{background:radial-gradient(800px 600px at 20% 20%,#1b2a6b,rgba(0,0,0,0)),#05060f}
+#aSalir{position:absolute;left:30px;top:24px;height:44px;font-size:14px;padding:0 18px}
+#aNombre{position:absolute;left:150px;top:24px;font-size:30px;font-weight:800;letter-spacing:-1px}
+#aNombre span{font-size:17px;color:#c9c0b4;font-weight:600;letter-spacing:0}
+.pill{position:absolute;top:24px;height:44px;padding:0 18px;border-radius:22px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:8px;font-size:18px;font-weight:800}
+.pill svg{width:24px;height:24px}
+#aMeta{left:470px}#aMon{right:30px}#aReloj{right:150px;font-variant-numeric:tabular-nums;color:#bac8ff}
+#aPersona{position:absolute;left:50px;top:120px;width:300px;height:330px}
+#aPersona svg{width:100%;height:100%}
+#aGlobo{position:absolute;left:250px;top:96px;max-width:220px;background:#fff;color:#111;font-size:21px;font-weight:800;padding:14px 20px;border-radius:22px;border-bottom-left-radius:4px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+#aGlobo.pop{animation:globoP .45s cubic-bezier(.3,1.6,.5,1)}
+@keyframes globoP{from{transform:scale(.4) translateY(20px);opacity:0}}
+.aLbl{position:absolute;left:50px;font-size:14px;color:#c9c0b4;font-weight:800;letter-spacing:.6px;text-transform:uppercase}
+#aTiempo{position:absolute;left:50px;top:486px;font-size:48px;font-weight:800;letter-spacing:-2px;font-variant-numeric:tabular-nums}
+.aBar{position:absolute;left:50px;width:340px;height:16px;border-radius:8px;background:rgba(255,255,255,.1);overflow:hidden}
+.aBar div{height:100%;width:0;border-radius:8px;transition:width .6s,background .6s}
+#aTBar{background:linear-gradient(90deg,#ffb36b,#ff5fa2)}
+#aDormir{position:absolute;left:50px;top:650px;height:52px;padding:0 22px;border-radius:26px;background:#bac8ff;color:#111;font-size:17px;font-weight:800;display:flex;align-items:center;gap:10px;animation:latido 1.6s ease-in-out infinite}
+@keyframes latido{50%{transform:scale(1.04)}}
+#aTel{position:absolute;left:470px;top:96px;width:300px;height:534px;border-radius:30px;overflow:hidden;background:#000;box-shadow:0 0 0 8px #1b1b25,0 30px 60px rgba(0,0,0,.5)}
+#aPantalla{position:absolute;inset:0}
+#aPantalla .esc{width:100%;height:100%;display:block}
+.aEspera{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;color:#a9a9bd;font-size:18px;font-weight:700;text-align:center;padding:30px}
+.aProg{position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(255,255,255,.2)}
+.aProg div{height:100%;width:0;background:#fff}
+#aHist{position:absolute;left:470px;top:654px;width:300px;display:flex;gap:6px;flex-wrap:wrap}
+#aHist span{width:24px;height:24px;border-radius:7px;font-size:13px;font-weight:900;color:#111;display:flex;align-items:center;justify-content:center}
+#aOpcTit{position:absolute;left:820px;top:96px;font-size:15px;color:#c9c0b4;font-weight:800;letter-spacing:.6px;text-transform:uppercase}
+#aOpciones{position:absolute;left:820px;top:126px;width:420px;display:flex;flex-direction:column;gap:14px}
+.opc{display:flex;gap:16px;align-items:center;height:172px;border-radius:22px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);padding:6px;text-align:left;color:#fff;transition:transform .15s,border-color .15s,opacity .2s}
+.opc:hover{transform:translateX(-6px);border-color:#ffb36b}
+.opc.elegida{border-color:#ffb36b;background:rgba(255,179,107,.15)}
+.opc.apagada{opacity:.3}
+.opc.esAd{border-color:rgba(255,212,59,.5)}
+.opMini{position:relative;width:90px;height:160px;border-radius:14px;overflow:hidden;flex:none;background:#000}
+.opMini .esc{width:100%;height:100%}
+.opAd{position:absolute;left:4px;right:4px;bottom:4px;background:#ffd43b;color:#111;font-size:11px;font-weight:900;border-radius:6px;padding:3px 4px;display:flex;align-items:center;gap:3px}
+.opAd svg{width:14px;height:14px}
+.opTx{display:flex;gap:12px;align-items:flex-start}
+.opTx .num{flex:none;width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:18px}
+.opTit{font-size:19px;font-weight:700;line-height:1.25;margin-bottom:10px}
+.chipM{display:inline-block;padding:5px 12px;border-radius:12px;font-size:14px;font-weight:800;color:#111}
+/* capítulo 3 */
+#hud.on .hudCaja.esc{padding:18px}
+.album{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.fig{height:44px;border-radius:12px;background:#1b1b27;border:1px dashed #3a3a52;color:#55556a;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center;color:#111}
+.fig:not(.si){color:#55556a}
+.fig.si{border:0;animation:figIn .5s cubic-bezier(.3,1.6,.5,1)}
+@keyframes figIn{from{transform:scale(.4) rotate(-10deg)}}
+.escFila{display:flex;justify-content:space-between;align-items:flex-end;margin-top:6px}
+.burb{text-align:center}
+.bC{width:74px;height:74px;margin-top:6px;display:flex;align-items:center;justify-content:center;border-radius:50%;border:1px dashed #3a3a52}
+.bC i{display:block;border-radius:50%;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.7),rgba(94,231,255,.25) 60%);border:2px solid rgba(255,255,255,.7);transition:width .6s,height .6s}
+.soloEsc{display:none}
+#feedP.modoEsc .soloEsc{display:flex}
+#feedP.modoEsc #hud{top:110px}
+#lupa{position:absolute;inset:0;background:rgba(0,0,0,.6);z-index:20;display:flex;align-items:center;justify-content:center}
+.lupaCaja{width:640px;background:#15151f;border:1px solid #2c2c3d;border-radius:28px;padding:28px;text-align:center}
+.lupaCaja b{display:block;font-size:26px;margin-bottom:18px}
+.lupaCaja div{margin-bottom:10px}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute"><defs><linearGradient id="lg0" x1="0" x2="1"><stop offset="0" stop-color="#ff5fa2"/><stop offset=".5" stop-color="#ffb36b"/><stop offset="1" stop-color="#5ee7ff"/></linearGradient></defs></svg>
+<div id="marco"><div id="stage">
+
+<!-- PORTADA -->
+<div id="portada" class="pant on">
+  <div id="pLogo">
+    <svg viewBox="0 0 100 60"><path d="M50 30 C38 10 10 10 10 30 C10 50 38 50 50 30 C62 10 90 10 90 30 C90 50 62 50 50 30 Z" fill="none" stroke="url(#lg0)" stroke-width="9" stroke-linecap="round" pathLength="1" style="stroke-dasharray:1 1;animation:logoDib 2.4s ease-out forwards"/></svg>
+    <div class="marca">bucle</div>
+    <div class="sub">Videos cortos. Infinitos. Para vos.</div>
+  </div>
+  <div id="pForm">
+    <label for="nombre">¿Cómo te llamamos?</label>
+    <input id="nombre" maxlength="16" autocomplete="off" placeholder="Tu nombre o apodo">
+    <button id="bEmpezar">Entrar a bucle</button>
+  </div>
+  <div id="pOpc"><button class="chipBtn on" id="bSfx">Sonidos: sí</button><button class="chipBtn" id="bMus">Música: no</button><button class="chipBtn" id="bFull">Pantalla completa</button></div>
+  <div id="pPie">Informática · modo historia</div>
+</div>
+
+<!-- FEED -->
+<div id="feedP" class="pant">
+  <div id="glow"></div>
+  <div id="lateral">
+    <div class="logoMini"><svg viewBox="0 0 100 60"><path d="M50 30 C38 10 10 10 10 30 C10 50 38 50 50 30 C62 10 90 10 90 30 C90 50 62 50 50 30 Z" fill="none" stroke="url(#lg0)" stroke-width="10" stroke-linecap="round"/></svg>bucle</div>
+    <div id="nav"></div>
+    <div id="sugeridos"></div>
+    <div id="yo"></div>
+  </div>
+  <div id="hud"></div>
+  <div id="feed"></div>
+  <div id="ayuda"></div>
+  <div id="acciones">
+    <button class="acc soloEsc" id="bLupa"><div class="bola"><svg viewBox="0 0 24 24" fill="none" stroke="#5ee7ff" stroke-width="2.6" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg></div><span>Lupa (<span id="nLupas">3</span>)</span></button>
+    <button class="acc soloEsc" id="bNoInt"><div class="bola"><svg viewBox="0 0 24 24" fill="none" stroke="#ff8787" stroke-width="2.6" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></svg></div><span>No me<br>interesa</span></button>
+    <div class="acc"><div id="avAutor"><span>+</span></div></div>
+    <button class="acc" id="bLike"><div class="bola"><svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.7 4.5c2.2 0 3.6 1.3 4.3 2.5h2c.7-1.2 2.1-2.5 4.3-2.5 3.7 0 5.8 3.9 4.3 7.3C19.5 16.4 12 21 12 21z" fill="currentColor"/></svg></div><span id="nLikes">0</span></button>
+    <button class="acc" id="bCom"><div class="bola"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.5 3 2 6.9 2 11.7c0 2.5 1.2 4.7 3.2 6.3L4.5 21l4-1.8c1.1.3 2.3.5 3.5.5 5.5 0 10-3.9 10-8.7S17.5 3 12 3z"/></svg></div><span id="nCom">0</span></button>
+    <button class="acc" id="bComp"><div class="bola"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 4l8 7.5-8 7.5v-4.6c-5.3 0-8.7 1.7-11 5.6.9-5.6 4-10.6 11-11.4V4z"/></svg></div><span>Compartir</span></button>
+    <div class="acc"><div id="disco"><div></div></div></div>
+  </div>
+  <div id="flechas">
+    <button id="bArriba" aria-label="Anterior"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15l6-6 6 6"/></svg></button>
+    <button id="bAbajo" aria-label="Siguiente"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+  </div>
+  <div id="coments"><div class="cab"><div>Comentarios<small id="cNum"></small></div><button id="cCerrar" aria-label="Cerrar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div id="cLista"></div><div id="cPie"><div>Agregá un comentario…</div><small>En esta clase los comentarios son de solo lectura</small></div></div>
+  <div id="velo"></div>
+  <div id="noti"><div class="ic"><svg viewBox="0 0 100 60"><path d="M50 30 C38 10 10 10 10 30 C10 50 38 50 50 30 C62 10 90 10 90 30 C90 50 62 50 50 30 Z" fill="none" stroke="#fff" stroke-width="11" stroke-linecap="round"/></svg></div><div class="tx"><b>bucle<small>ahora</small></b><div id="notiTx"></div></div><button id="notiBtn">Ver</button></div>
+</div>
+
+<!-- REVELACIÓN -->
+<div id="revP" class="pant">
+  <div id="barras"></div>
+  <div id="slides"></div>
+  <button id="revAtras">Atrás</button>
+  <button id="revSig">Seguir <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+</div>
+
+<!-- CAPÍTULO 2: SÉ EL ALGORITMO -->
+<div id="algoP" class="pant">
+  <div id="aFondo"></div>
+  <button class="btnS" id="aSalir">Salir</button>
+  <div id="aNombre"></div>
+  <div class="pill" id="aMeta"></div>
+  <div class="pill" id="aReloj"></div>
+  <div class="pill" id="aMon"></div>
+  <div id="aPersona"></div>
+  <div id="aGlobo"></div>
+  <div class="aLbl" style="top:462px">Tiempo en bucle</div>
+  <div id="aTiempo">0:00</div>
+  <div class="aBar" style="top:548px"><div id="aTBar"></div></div>
+  <div class="aLbl" style="top:580px">Aburrimiento</div>
+  <div class="aBar" style="top:606px"><div id="aAbBar"></div></div>
+  <button id="aDormir"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z" fill="#3b5bdb"/></svg>Dejar que se vaya a dormir</button>
+  <div id="aTel"><div id="aPantalla"></div></div>
+  <div id="aHist"></div>
+  <div id="aOpcTit">Elegí el próximo video</div>
+  <div id="aOpciones"></div>
+</div>
+
+<!-- COMPARAR / DESAFÍO / CIERRE -->
+<div id="otraP" class="pant"><div id="otra" class="panel"></div></div>
+<canvas id="confeti" width="1280" height="720"></canvas>
+<div id="toast"></div>
+</div></div>
+<style>@keyframes logoDib{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}</style>
+<script>
+/* ============ TEMAS Y VIDEOS ============ */
+var CATS = [
+  { id: 'animales', nombre: 'Animales', color: '#ff922b', c2: '#ffd8a8', fondo: ['#ffb26b', '#ff7a45'] },
+  { id: 'futbol', nombre: 'Fútbol', color: '#2fb344', c2: '#b2f2bb', fondo: ['#3ec46d', '#138a4a'] },
+  { id: 'cocina', nombre: 'Cocina', color: '#f03e3e', c2: '#ffc9c9', fondo: ['#ff8a7a', '#e8434f'] },
+  { id: 'juegos', nombre: 'Videojuegos', color: '#7048e8', c2: '#d0bfff', fondo: ['#6c4cf0', '#2b1a7a'] },
+  { id: 'musica', nombre: 'Música', color: '#e64980', c2: '#fcc2d7', fondo: ['#ff5fa2', '#8f2bd1'] },
+  { id: 'ciencia', nombre: 'Ciencia', color: '#15aabf', c2: '#99e9f2', fondo: ['#25c9e0', '#0b6f9e'] },
+  { id: 'humor', nombre: 'Humor', color: '#fcc419', c2: '#fff3bf', fondo: ['#ffe066', '#ffa94d'] },
+  { id: 'dibujo', nombre: 'Dibujo', color: '#b07a52', c2: '#f1dcc9', fondo: ['#fbf3e8', '#ecdcc8'] },
+  { id: 'skate', nombre: 'Skate', color: '#94d82d', c2: '#d8f5a2', fondo: ['#ffb36b', '#f76a8c'] },
+  { id: 'espacio', nombre: 'Espacio', color: '#4c6ef5', c2: '#bac8ff', fondo: ['#1b1f4b', '#05060f'] }
+];
+var CAT = {};
+(function () { for (var i = 0; i < CATS.length; i++) CAT[CATS[i].id] = CATS[i]; })();
+
+// [título, variante de escena]
+var TITULOS = {
+  animales: [
+    ['Mi gato descubrió el espejo', 'gato-espejo'], ['Mi perro cuando digo «plaza»', 'perro-salta'],
+    ['Gatito vs. caja de cartón', 'gato-caja'], ['Perro atrapa la pelota en el aire', 'perro-pelota'],
+    ['Gato durmiendo en el teclado', 'gato-duerme'], ['El perro más dormilón del barrio', 'perro-duerme'],
+    ['Gato persiguiendo un láser', 'gato-laser'], ['Cachorro ve nieve por primera vez', 'perro-nieve'],
+    ['El gato negro de los ojos gigantes', 'gato-negro']],
+  futbol: [
+    ['El penal más largo de la historia', 'penal'], ['Jueguito: 100 toques sin que caiga', 'jueguito'],
+    ['El arquero vuela y la saca del ángulo', 'atajada'], ['Gol de chilena en el recreo', 'chilena'],
+    ['Tiro libre que dobla en el aire', 'tirolibre'], ['Gol desde la mitad de la cancha', 'mitad'],
+    ['Atajada imposible en el último minuto', 'atajada'], ['Penal picado a lo Panenka', 'penal'],
+    ['El caño más lindo del campeonato', 'jueguito']],
+  cocina: [
+    ['Panqueques que se dan vuelta solos', 'panqueque'], ['Pizza casera en 5 pasos', 'pizza'],
+    ['La torta de chocolate más alta', 'torta'], ['Huevo frito perfecto (sin romperlo)', 'huevo'],
+    ['Pororó que explota en cámara lenta', 'pochoclo'], ['Alfajores caseros de la abuela', 'torta'],
+    ['Helado casero sin máquina', 'helado'], ['Tostadas con forma de gatito', 'huevo'],
+    ['Panqueques de dulce de leche', 'panqueque']],
+  juegos: [
+    ['Pasé el nivel imposible en 1 minuto', 'dia'], ['El bug más raro que encontré', 'cueva'],
+    ['Speedrun del castillo', 'noche'], ['Encontré la moneda secreta', 'dia'],
+    ['Jefe final sin perder vidas', 'noche'], ['Nivel de hielo: todo resbala', 'hielo'],
+    ['El salto que nadie puede hacer', 'cueva'], ['Construí una casa en 30 segundos', 'dia'],
+    ['Mi primera partida en modo difícil', 'hielo']],
+  musica: [
+    ['Batería con ollas y cucharas', 'bateria'], ['Este ritmo se te pega', 'eq'],
+    ['Guitarra en 30 segundos', 'guitarra'], ['Beat con un vaso y la mesa', 'eq'],
+    ['Piano con los pies', 'piano'], ['Coreografía fácil para el recreo', 'baile'],
+    ['Afiné el ukelele (por fin)', 'guitarra'], ['Canto con eco en la escalera', 'micro'],
+    ['Sonidos del bosque hechos con la boca', 'micro']],
+  ciencia: [
+    ['Volcán de bicarbonato que explota', 'volcan'], ['Slime que brilla en la oscuridad', 'slime'],
+    ['Huevo que flota en agua con sal', 'huevo'], ['Arcoíris en un vaso', 'arcoiris'],
+    ['Globo que se infla solo', 'globo'], ['Imán contra cien clips', 'iman'],
+    ['Lava casera en una botella', 'lava'], ['Cohete de botella', 'globo'],
+    ['La espuma de elefante', 'volcan']],
+  humor: [
+    ['Cuando se corta el wifi en lo mejor', 'wifi'], ['Lunes a la mañana en modo zombi', 'zombi'],
+    ['El chiste más malo del mundo', 'risa'], ['Cuando el video tarda en cargar', 'carga'],
+    ['Intento de truco de magia (sale mal)', 'magia'], ['Cuando suena la alarma y era sábado', 'alarma'],
+    ['Bailar cuando nadie mira', 'baile'], ['El estornudo más largo', 'risa'],
+    ['La silla que hace ruido raro', 'carga']],
+  dibujo: [
+    ['Un gato con un solo trazo', 'gato'], ['Estrella perfecta sin regla', 'estrella'],
+    ['Cómo dibujar una casa', 'casa'], ['Corazón con acuarela', 'corazon'],
+    ['Un cohete en 4 pasos', 'cohete'], ['Espiral hipnótica', 'espiral'],
+    ['Un árbol con los dedos', 'arbol'], ['Origami: barquito de papel', 'barco'],
+    ['Letras lindas para el cuaderno', 'estrella']],
+  skate: [
+    ['Mi primer ollie', 'rampa'], ['Bajando la rampa más alta', 'rampa'],
+    ['Truco en la baranda', 'baranda'], ['Kickflip en cámara lenta', 'baranda'],
+    ['Skate en la rambla al atardecer', 'rambla'], ['Caída épica (sin lastimarme)', 'rampa'],
+    ['BMX: salto doble', 'bmx'], ['Rampa casera en el patio', 'rambla'],
+    ['Surf: la ola más grande', 'surf']],
+  espacio: [
+    ['¿Qué pasa si caés en Júpiter?', 'jupiter'], ['La Luna se aleja cada año', 'luna'],
+    ['La Tierra desde la estación espacial', 'tierra'], ['Un día en Venus dura más que un año', 'venus'],
+    ['Cohete despegando en cámara lenta', 'cohete'], ['Saturno flotaría en una bañera gigante', 'saturno'],
+    ['Cómo duermen los astronautas', 'astronauta'], ['El planeta de diamante', 'saturno'],
+    ['Las estrellas que ya no existen', 'luna']]
+};
+var AUTORES = {
+  animales: ['michi_y_cia', 'patitas.uy', 'zoo_en_casa'], futbol: ['golazo_rec', 'cancha10', 'pibe_crack'],
+  cocina: ['cocina_con_vale', 'chef_mini', 'la_abuela_cocina'], juegos: ['nivel_99', 'joystick_loco', 'pixelmaster'],
+  musica: ['ritmo_ya', 'banda_del_fondo', 'beat_casero'], ciencia: ['ciencia_loca', 'labo_en_casa', 'profe_burbuja'],
+  humor: ['jaja_diario', 'modo_risa', 'el_chiste_malo'], dibujo: ['trazo_simple', 'lapiz_magico', 'arte_en_5'],
+  skate: ['rampa_sur', 'ruedas_libres', 'skate_rambla'], espacio: ['mas_alla', 'astro_dato', 'cohete_azul']
+};
+var ANUNCIOS = {
+  animales: ['Pelota que rebota sola', 'Para que tu mascota no se aburra nunca.'],
+  futbol: ['Botines Rayo', 'Patealos y sentí la diferencia.'],
+  cocina: ['Sartén Chef Junior', 'Panqueques perfectos desde el primer intento.'],
+  juegos: ['Joystick Turbo', 'Más rápido que tus amigos.'],
+  musica: ['Auriculares Pulso', 'Tu música, sin que nadie te moleste.'],
+  ciencia: ['Kit Volcán Explosivo', 'Hacé ciencia en tu casa.'],
+  humor: ['Libro de 1000 chistes', 'Para ser el más gracioso del recreo.'],
+  dibujo: ['Lápices Arcoíris x48', 'Todos los colores que te imagines.'],
+  skate: ['Rueditas Pro', 'Más velocidad, más trucos.'],
+  espacio: ['Telescopio Mini', 'Mirá los cráteres de la Luna desde tu ventana.']
+};
+
+var COMENTARIOS = {
+  animales: ['El mío hace exactamente lo mismo', 'Lo miré 5 veces y me sigo riendo', '¿Cómo se llama? Necesito saberlo', 'Quiero uno así ya', 'La cara del final lo es todo'],
+  futbol: ['Qué golazo, por favor', 'Eso no lo hace ni en la Play', 'Lo intenté en el recreo y casi rompo una ventana', 'El arquero no la vio venir', 'Esto merece repetición'],
+  cocina: ['Mañana lo hago sí o sí', '¿Se puede sin horno?', 'Mi abuela lo hace igual', 'Me dio hambre a las 9 de la mañana', 'Paso a paso, así da gusto'],
+  juegos: ['Ese nivel me costó una semana', '¿Cómo encontraste la moneda?', 'Speedrun récord, sin dudas', 'Yo me caí ahí mil veces', 'Pasá el truco porfa'],
+  musica: ['No me lo puedo sacar de la cabeza', 'Lo escuché todo el día', 'Talento puro', '¿Cómo se llama la canción?', 'Con ollas suena mejor que mi banda'],
+  ciencia: ['Lo probé y funcionó', 'La profe tiene que ver esto', 'Mi cocina quedó hecha un desastre', '¿Por qué pasa eso?', 'La ciencia es magia de verdad'],
+  humor: ['Me pasa todos los días', 'Me tenté en clase', 'Literal yo', 'Jajaja el final', 'Lo mandé a todo el grupo'],
+  dibujo: ['Qué paciencia', 'Lo intenté y salió una papa', 'Hacé uno de un dragón', 'Necesito ese lápiz', 'Arte en serio'],
+  skate: ['Sin miedo, impresionante', 'Yo con eso me rompo todo', '¿Dónde queda esa rampa?', 'En cámara lenta se ve todo', 'Algún día lo logro'],
+  espacio: ['Me voló la cabeza', 'Quiero ser astronauta', 'No puedo creer que sea real', 'El universo es demasiado grande', 'Más datos así, porfa']
+};
+var VIDEOS = [];
+(function () {
+  var id = 0, c, i, t, a;
+  for (c in TITULOS) {
+    for (i = 0; i < TITULOS[c].length; i++) {
+      t = TITULOS[c][i]; a = AUTORES[c][i % 3];
+      VIDEOS.push({ id: 'v' + (id++), cat: c, titulo: t[0], esc: t[1], autor: a, largo: 6 + ((i * 7 + id * 3) % 6), likes: likesTexto(id), semilla: id * 97 + 13 });
+    }
+  }
+  function likesTexto(n) {
+    var x = ((n * 7919) % 990) + 8;
+    if (n % 4 === 0) return x + ' mil';
+    return (x / 10).toFixed(1).replace('.', ',') + ' mil';
+  }
+})();
+/* ============ ESCENAS ANIMADAS (cada "video") ============
+   Todas en un lienzo de 396 x 704. Estilo plano, sin contornos, con degradados suaves. */
+var W = 396, H = 704, _gid = 0;
+
+function rnd(seed) { var s = seed % 2147483647; if (s <= 0) s += 2147483646; return function () { s = s * 16807 % 2147483647; return (s - 1) / 2147483646; }; }
+function A(cls, ox, oy, dur, del) {
+  var s = ' class="' + cls + '" style="transform-origin:' + ox + 'px ' + oy + 'px';
+  if (dur) s += ';animation-duration:' + dur + 's';
+  if (del) s += ';animation-delay:' + del + 's';
+  return s + '"';
+}
+function grad(c1, c2, vertical) {
+  var id = 'g' + (_gid++);
+  return { id: id, def: '<linearGradient id="' + id + '" x1="0" y1="0" x2="' + (vertical === false ? 1 : 0) + '" y2="' + (vertical === false ? 0 : 1) + '"><stop offset="0" stop-color="' + c1 + '"/><stop offset="1" stop-color="' + c2 + '"/></linearGradient>' };
+}
+function rgrad(c1, c2) {
+  var id = 'r' + (_gid++);
+  return { id: id, def: '<radialGradient id="' + id + '"><stop offset="0" stop-color="' + c1 + '"/><stop offset="1" stop-color="' + c2 + '"/></radialGradient>' };
+}
+function fondo(c1, c2) { var g = grad(c1, c2); return { defs: g.def, svg: '<rect width="396" height="704" fill="url(#' + g.id + ')"/>' }; }
+function envolver(defs, cuerpo) {
+  return '<svg class="esc" viewBox="0 0 396 704" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs>' + defs + '</defs>' + cuerpo + '</svg>';
+}
+function sombra(cx, cy, rx, op) { return '<ellipse cx="' + cx + '" cy="' + cy + '" rx="' + rx + '" ry="' + (rx * 0.18) + '" fill="#000" opacity="' + (op || 0.16) + '"/>'; }
+function estrellas(r, n, area, color) {
+  var s = '', i, x, y, rr;
+  for (i = 0; i < n; i++) {
+    x = r() * 396; y = r() * area; rr = 0.6 + r() * 1.6;
+    s += '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + rr.toFixed(1) + '" fill="' + (color || '#fff') + '"' + A('tw', x, y, 1.5 + r() * 2.5, -r() * 3) + '/>';
+  }
+  return s;
+}
+
+/* ---------------- ANIMALES ---------------- */
+function escAnimales(v, r) {
+  var e = v.esc, perro = e.indexOf('perro') === 0, defs = '', s = '';
+  var fondos = { 'gato-espejo': ['#ffe3c4', '#ffc38f'], 'gato-caja': ['#ffe9d6', '#f7c59f'], 'gato-duerme': ['#2d2a4a', '#1a1830'], 'gato-laser': ['#ffd6e0', '#f7a6b8'], 'gato-negro': ['#c9b8ff', '#7d6bd6'],
+    'perro-salta': ['#c5f6fa', '#74c0fc'], 'perro-pelota': ['#d3f9d8', '#8ce99a'], 'perro-duerme': ['#2b2f4a', '#161a2e'], 'perro-nieve': ['#dbe9ff', '#9fb7e8'] };
+  var f = fondo(fondos[e][0], fondos[e][1]); defs += f.defs; s += f.svg;
+  var noche = e.indexOf('duerme') > 0;
+  // piso
+  s += '<path d="M0 520 H396 V704 H0 Z" fill="' + (noche ? '#12142a' : '#fff') + '" opacity="' + (noche ? 0.6 : 0.35) + '"/>';
+  if (noche) { s += estrellas(r, 22, 300) + '<circle cx="310" cy="110" r="34" fill="#fff3bf"/><circle cx="296" cy="100" r="34" fill="' + fondos[e][0] + '"/>'; }
+  if (e === 'perro-nieve') { var i, x; for (i = 0; i < 28; i++) { x = r() * 396; s += '<circle cx="' + x.toFixed(0) + '" cy="-10" r="' + (2 + r() * 4).toFixed(1) + '" fill="#fff"' + A('cae', x, 0, 3 + r() * 4, -r() * 6) + '/>'; } }
+  if (e === 'gato-espejo') {
+    s += '<ellipse cx="300" cy="330" rx="74" ry="120" fill="#d9a066"/><ellipse cx="300" cy="330" rx="62" ry="108" fill="#e7f5ff"/><ellipse cx="300" cy="330" rx="62" ry="108" fill="#fff" opacity=".35"/>';
+    s += '<g opacity=".45" transform="translate(300 360) scale(-0.5 0.5) translate(-198 -330)">' + gato('#ff922b', 'normal', r) + '</g>';
+    s += '<path d="M262 250 l20 -24 M276 270 l26 -30" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".7"/>';
+  }
+  var cuerpo;
+  if (perro) cuerpo = perroSVG(e === 'perro-pelota' ? '#d9a066' : e === 'perro-nieve' ? '#fff' : e === 'perro-duerme' ? '#c08457' : '#e8b57d', noche ? 'duerme' : 'feliz', r);
+  else cuerpo = gato(e === 'gato-negro' ? '#2b2b3a' : e === 'gato-caja' ? '#adb5bd' : e === 'gato-duerme' ? '#ff922b' : e === 'gato-laser' ? '#f8f9fa' : '#ff922b', noche ? 'duerme' : (e === 'gato-negro' ? 'grandes' : 'normal'), r);
+  var dx = e === 'gato-espejo' ? -60 : 0;
+  if (e === 'perro-salta') s += sombra(198, 560, 90) + '<g' + A('salta', 198, 560, 0.9) + '>' + cuerpo + '</g>';
+  else if (e === 'gato-caja') {
+    s += '<g' + A('asoma', 198, 470, 2.6) + '>' + cuerpo + '</g>';
+    s += '<path d="M78 420 H318 V600 H78 Z" fill="#d9a066"/><path d="M78 420 H318 V448 H78 Z" fill="#c08457"/><path d="M78 420 L40 380 H130 L160 420 Z M318 420 L356 380 H266 L236 420 Z" fill="#e8b57d"/><path d="M180 500 h36" stroke="#a9734d" stroke-width="6" stroke-linecap="round"/>';
+  } else s += sombra(198 + dx, 560, 110) + '<g transform="translate(' + dx + ' 0)"><g' + A(noche ? 'respira' : 'balanceo', 198, 560, noche ? 3.2 : 2.6) + '>' + cuerpo + '</g></g>';
+  if (e === 'perro-pelota') s += sombra(198, 600, 30, 0.12) + '<g' + A('rebota', 198, 600, 1) + '><circle cx="198" cy="150" r="30" fill="#ffe066"/><path d="M172 140 q26 20 52 0 M172 160 q26 -20 52 0" stroke="#fff" stroke-width="5" fill="none" opacity=".8"/></g>';
+  if (e === 'gato-laser') s += '<g' + A('laser', 198, 600, 2.2) + '><circle cx="198" cy="600" r="9" fill="#ff1744"/><circle cx="198" cy="600" r="20" fill="#ff1744" opacity=".25"/></g>';
+  if (noche) s += zetas(270, 210);
+  return envolver(defs, s);
+}
+function zetas(x, y) {
+  var s = '', i;
+  for (i = 0; i < 3; i++) s += '<text x="' + (x + i * 22) + '" y="' + (y - i * 10) + '" font-family="Arial Black,Arial" font-weight="900" font-size="' + (26 + i * 8) + '" fill="#fff"' + A('zz', x + i * 22, y, 3, i * 1) + '>z</text>';
+  return s;
+}
+function gato(c, ojos, r) {
+  var claro = c === '#2b2b3a' ? '#4a4a5e' : c === '#f8f9fa' ? '#ffd6e0' : '#ffd8a8';
+  var s = '';
+  s += '<g' + A('cola', 280, 520, 1.8) + '><path d="M270 520 q70 -10 60 -90 q-4 -24 16 -30" stroke="' + c + '" stroke-width="22" fill="none" stroke-linecap="round"/></g>';
+  s += '<ellipse cx="198" cy="480" rx="96" ry="84" fill="' + c + '"/><ellipse cx="198" cy="500" rx="52" ry="54" fill="' + claro + '" opacity=".8"/>';
+  s += '<ellipse cx="150" cy="556" rx="30" ry="16" fill="' + c + '"/><ellipse cx="246" cy="556" rx="30" ry="16" fill="' + c + '"/>';
+  s += '<path d="M120 300 L130 200 L188 262 Z M276 300 L266 200 L208 262 Z" fill="' + c + '"/><path d="M134 284 L139 226 L172 262 Z M262 284 L257 226 L224 262 Z" fill="#ffa8b8"/>';
+  s += '<circle cx="198" cy="320" r="92" fill="' + c + '"/>';
+  if (ojos === 'duerme') s += '<path d="M148 322 q16 12 32 0 M216 322 q16 12 32 0" stroke="#2b2b3a" stroke-width="6" fill="none" stroke-linecap="round"/>';
+  else {
+    var R = ojos === 'grandes' ? 24 : 16, col = ojos === 'grandes' ? '#ffd43b' : '#2b2b3a';
+    s += '<g' + A('parpadea', 198, 316, 3.8) + '><ellipse cx="160" cy="316" rx="' + R + '" ry="' + (R * 1.2) + '" fill="' + col + '"/><ellipse cx="236" cy="316" rx="' + R + '" ry="' + (R * 1.2) + '" fill="' + col + '"/>' +
+      (ojos === 'grandes' ? '<ellipse cx="160" cy="318" rx="7" ry="20" fill="#2b2b3a"/><ellipse cx="236" cy="318" rx="7" ry="20" fill="#2b2b3a"/>' : '') +
+      '<circle cx="' + (166 + R * 0.1) + '" cy="306" r="5" fill="#fff"/><circle cx="' + (242 + R * 0.1) + '" cy="306" r="5" fill="#fff"/></g>';
+  }
+  s += '<path d="M190 350 h16 l-8 9 Z" fill="#ff8fa3"/><path d="M198 359 q-8 12 -18 6 M198 359 q8 12 18 6" stroke="' + (c === '#2b2b3a' ? '#868e96' : '#2b2b3a') + '" stroke-width="3.5" fill="none" stroke-linecap="round"/>';
+  s += '<g stroke="' + (c === '#2b2b3a' ? '#868e96' : '#fff') + '" stroke-width="3" stroke-linecap="round" opacity=".85"><path d="M140 352 l-48 -6 M140 362 l-46 8 M256 352 l48 -6 M256 362 l46 8"/></g>';
+  s += '<ellipse cx="140" cy="346" rx="12" ry="7" fill="#ff8fa3" opacity=".5"/><ellipse cx="256" cy="346" rx="12" ry="7" fill="#ff8fa3" opacity=".5"/>';
+  return s;
+}
+function perroSVG(c, modo, r) {
+  var oscuro = '#8d5a3b', s = '';
+  s += '<g' + A('colaPerro', 278, 470, 0.35) + '><path d="M272 470 q50 -30 44 -80" stroke="' + c + '" stroke-width="20" fill="none" stroke-linecap="round"/></g>';
+  s += '<ellipse cx="198" cy="480" rx="98" ry="84" fill="' + c + '"/><ellipse cx="198" cy="500" rx="50" ry="56" fill="#fff" opacity=".55"/>';
+  s += '<ellipse cx="150" cy="556" rx="30" ry="16" fill="' + c + '"/><ellipse cx="246" cy="556" rx="30" ry="16" fill="' + c + '"/>';
+  s += '<circle cx="198" cy="318" r="92" fill="' + c + '"/>';
+  s += '<g' + A('oreja', 116, 260, 1.4) + '><ellipse cx="112" cy="320" rx="30" ry="64" fill="' + oscuro + '" transform="rotate(14 112 320)"/></g>';
+  s += '<g' + A('oreja2', 280, 260, 1.4) + '><ellipse cx="284" cy="320" rx="30" ry="64" fill="' + oscuro + '" transform="rotate(-14 284 320)"/></g>';
+  s += '<ellipse cx="236" cy="296" rx="30" ry="26" fill="' + oscuro + '" opacity=".35"/>';
+  s += '<ellipse cx="198" cy="362" rx="54" ry="40" fill="#fff" opacity=".9"/>';
+  if (modo === 'duerme') s += '<path d="M150 312 q16 12 32 0 M214 312 q16 12 32 0" stroke="#2b2b3a" stroke-width="6" fill="none" stroke-linecap="round"/>';
+  else s += '<g' + A('parpadea', 198, 308, 4.2) + '><circle cx="164" cy="308" r="14" fill="#2b2b3a"/><circle cx="232" cy="308" r="14" fill="#2b2b3a"/><circle cx="169" cy="302" r="5" fill="#fff"/><circle cx="237" cy="302" r="5" fill="#fff"/></g>';
+  s += '<ellipse cx="198" cy="344" rx="18" ry="13" fill="#2b2b3a"/><path d="M198 357 v10 M198 367 q-12 10 -22 2 M198 367 q12 10 22 2" stroke="#2b2b3a" stroke-width="4" fill="none" stroke-linecap="round"/>';
+  if (modo !== 'duerme') s += '<g' + A('lengua', 198, 376, 0.5) + '><path d="M186 374 q12 36 24 0 Z" fill="#ff6b81"/></g>';
+  return s;
+}
+
+/* ---------------- FÚTBOL ---------------- */
+function escFutbol(v, r) {
+  var e = v.esc, defs = '', s = '', camisetas = ['#e03131', '#1c7ed6', '#f59f00', '#7048e8', '#0ca678'];
+  var cam = camisetas[Math.floor(r() * camisetas.length)];
+  var cielo = grad('#4dabf7', '#a5d8ff'); defs += cielo.def;
+  s += '<rect width="396" height="704" fill="url(#' + cielo.id + ')"/>';
+  // tribuna
+  var i, j;
+  s += '<rect y="120" width="396" height="130" fill="#343a40"/>';
+  for (j = 0; j < 6; j++) for (i = 0; i < 22; i++) s += '<circle cx="' + (9 + i * 18 + (j % 2) * 9) + '" cy="' + (134 + j * 19) + '" r="6" fill="' + ['#ffd43b', '#fff', '#ff8787', '#74c0fc', '#69db7c'][(i * 3 + j * 7) % 5] + '"' + (((i + j) % 4 === 0) ? A('saltito', 0, 0, 0.6 + ((i * j) % 5) * 0.12, -((i + j) % 7) * 0.1) : '') + '/>';
+  // cancha
+  var cancha = grad('#40c057', '#2b8a3e'); defs += cancha.def;
+  s += '<path d="M0 250 H396 V704 H0 Z" fill="url(#' + cancha.id + ')"/>';
+  for (i = 0; i < 6; i++) s += '<path d="M0 ' + (250 + i * 76) + ' H396 V' + (288 + i * 76) + ' H0 Z" fill="#fff" opacity=".05"/>';
+  s += '<path d="M60 250 L20 704 M336 250 L376 704 M30 600 H366" stroke="#fff" stroke-width="3" opacity=".55" fill="none"/>';
+  s += '<path d="M118 250 V340 H278 V250" stroke="#fff" stroke-width="3" opacity=".55" fill="none"/>';
+  // arco
+  s += '<g><path d="M110 260 V170 H286 V260" stroke="#fff" stroke-width="8" fill="none" stroke-linejoin="round"/>';
+  for (i = 0; i < 9; i++) s += '<path d="M' + (120 + i * 20) + ' 174 V258" stroke="#fff" stroke-width="1.5" opacity=".5"/>';
+  for (i = 0; i < 4; i++) s += '<path d="M114 ' + (184 + i * 20) + ' H282" stroke="#fff" stroke-width="1.5" opacity=".5"/>';
+  s += '</g>';
+  // arquero
+  var arq = '<g><rect x="186" y="200" width="24" height="34" rx="9" fill="#212529"/><circle cx="198" cy="190" r="11" fill="#f1c27d"/><path d="M186 208 l-16 -14 M210 208 l16 -14" stroke="#ffd43b" stroke-width="7" stroke-linecap="round"/><path d="M192 234 v18 M204 234 v18" stroke="#212529" stroke-width="7" stroke-linecap="round"/></g>';
+  s += '<g' + A(e === 'atajada' ? 'vuela' : 'arquero', 198, 250, e === 'atajada' ? 2.4 : 1.6) + '>' + arq + '</g>';
+  // pateador y pelota
+  var jug = '<g><rect x="-16" y="-58" width="32" height="44" rx="12" fill="' + cam + '"/><text x="0" y="-28" font-family="Arial" font-weight="900" font-size="18" fill="#fff" text-anchor="middle">10</text><circle cx="0" cy="-74" r="15" fill="#c68642"/><path d="M-14 -82 q14 -14 28 0" fill="#3b2a20"/><path d="M-8 -14 v26 M8 -14 v24" stroke="#fff" stroke-width="9" stroke-linecap="round"/><path d="M-8 12 v4 M8 10 v4" stroke="#212529" stroke-width="10" stroke-linecap="round"/></g>';
+  var pelota = '<g><circle r="16" fill="#fff"/><path d="M0 -8 l7 5 -3 8 h-8 l-3 -8 Z" fill="#212529"/><path d="M-16 0 h4 M12 -10 l3 -4 M12 10 l3 4" stroke="#212529" stroke-width="2"/></g>';
+  if (e === 'jueguito') {
+    s += '<g transform="translate(198 600)">' + jug.replace('<g>', '<g transform="scale(2.2)">') + '</g>';
+    s += '<g transform="translate(222 610)"><g' + A('toque', 0, 0, 0.7) + '>' + pelota.replace('<g>', '<g transform="scale(1.5)">') + '</g></g>';
+  } else {
+    var anim = { penal: 'golRecto', tirolibre: 'golCurva', chilena: 'golChilena', mitad: 'golLargo', atajada: 'golAtajada' }[e] || 'golRecto';
+    if (e === 'tirolibre') for (i = 0; i < 3; i++) s += '<g transform="translate(' + (168 + i * 30) + ' 410) scale(.9)">' + jug.replace(cam, '#495057').replace('>10<', '><') + '</g>';
+    s += '<g transform="translate(198 640)">' + jug.replace('<g>', '<g transform="scale(1.8)">') + '</g>';
+    s += '<g' + A(anim, 0, 0, 2.4) + '>' + pelota + '</g>';
+    if (e !== 'atajada') s += '<g transform="translate(198 120)"><g' + A('sticker', 0, 0, 2.4) + '><rect x="-110" y="-34" width="220" height="68" rx="18" fill="#ffd43b"/><text x="0" y="16" font-family="Arial Black,Arial" font-weight="900" font-size="44" fill="#212529" text-anchor="middle">¡GOOL!</text></g></g>';
+    else s += '<g transform="translate(198 120)"><g' + A('sticker', 0, 0, 2.4) + '><rect x="-120" y="-34" width="240" height="68" rx="18" fill="#fff"/><text x="0" y="16" font-family="Arial Black,Arial" font-weight="900" font-size="38" fill="#e03131" text-anchor="middle">¡ATAJADÓN!</text></g></g>';
+  }
+  return envolver(defs, s);
+}
+
+/* ---------------- COCINA ---------------- */
+function escCocina(v, r) {
+  var e = v.esc, defs = '', s = '', i, x;
+  var pared = grad('#fff4e6', '#ffe8cc'); defs += pared.def;
+  s += '<rect width="396" height="704" fill="url(#' + pared.id + ')"/>';
+  for (i = 0; i < 8; i++) for (x = 0; x < 6; x++) s += '<rect x="' + (x * 66 + 3) + '" y="' + (i * 56 + 3) + '" width="60" height="50" rx="6" fill="#fff" opacity=".55"/>';
+  var mesa = grad('#c08457', '#8d5a3b'); defs += mesa.def;
+  s += '<path d="M0 470 H396 V704 H0 Z" fill="url(#' + mesa.id + ')"/><path d="M0 470 H396 V486 H0 Z" fill="#000" opacity=".1"/>';
+  var vapor = function (cx, cy) { var t = '', k; for (k = 0; k < 3; k++) t += '<path d="M' + (cx - 30 + k * 30) + ' ' + cy + ' q-14 -24 0 -48 q14 -24 0 -48" stroke="#fff" stroke-width="9" fill="none" stroke-linecap="round" opacity=".8"' + A('vapor', cx, cy, 2.4, -k * 0.8) + '/>'; return t; };
+  if (e === 'panqueque' || e === 'huevo') {
+    s += sombra(198, 560, 150, 0.2);
+    s += '<path d="M330 520 L392 500" stroke="#343a40" stroke-width="22" stroke-linecap="round"/><ellipse cx="198" cy="520" rx="150" ry="70" fill="#343a40"/><ellipse cx="198" cy="512" rx="132" ry="58" fill="#495057"/>';
+    if (e === 'panqueque') {
+      s += vapor(198, 440);
+      s += '<g' + A('voltea', 198, 505, 1.6) + '><ellipse cx="198" cy="505" rx="92" ry="38" fill="#f5c26b"/><ellipse cx="198" cy="500" rx="78" ry="30" fill="#fcd581"/><ellipse cx="172" cy="494" rx="16" ry="6" fill="#e8a33d" opacity=".6"/><ellipse cx="222" cy="506" rx="12" ry="5" fill="#e8a33d" opacity=".6"/></g>';
+    } else {
+      s += '<path d="M120 510 q-6 -40 40 -42 q20 -30 62 -14 q46 -6 52 30 q30 20 0 44 q-30 30 -80 18 q-60 10 -74 -36 Z" fill="#fff"/>';
+      s += '<g' + A('late', 205, 498, 1.6) + '><circle cx="205" cy="498" r="30" fill="#ffb703"/><circle cx="195" cy="488" r="9" fill="#fff" opacity=".6"/></g>';
+      for (i = 0; i < 9; i++) { x = 110 + r() * 180; s += '<circle cx="' + x.toFixed(0) + '" cy="' + (480 + r() * 60).toFixed(0) + '" r="3" fill="#fff"' + A('tw', x, 500, 0.5 + r() * 0.8, -r()) + '/>'; }
+    }
+  } else if (e === 'pizza') {
+    s += sombra(198, 580, 160, 0.22) + '<ellipse cx="198" cy="540" rx="170" ry="74" fill="#e9ecef"/>';
+    s += '<g transform="translate(198 520) scale(1 .45)"><g' + A('gira', 0, 0, 14) + '><circle r="150" fill="#e8a33d"/><circle r="130" fill="#e03131"/><circle r="124" fill="#ffd43b" opacity=".9"/>';
+    for (i = 0; i < 9; i++) { var a = i * 0.7, d = 40 + (i % 3) * 30; s += '<circle cx="' + (Math.cos(a) * d).toFixed(0) + '" cy="' + (Math.sin(a) * d).toFixed(0) + '" r="16" fill="#c92a2a"/>'; }
+    for (i = 0; i < 6; i++) s += '<path d="M0 0 L' + (Math.cos(i * 1.047) * 150).toFixed(0) + ' ' + (Math.sin(i * 1.047) * 150).toFixed(0) + '" stroke="#e8a33d" stroke-width="4" opacity=".6"/>';
+    s += '<g fill="#2f9e44"><ellipse cx="-60" cy="30" rx="12" ry="7"/><ellipse cx="50" cy="-50" rx="12" ry="7"/><ellipse cx="20" cy="70" rx="12" ry="7"/></g></g></g>' + vapor(198, 430);
+  } else if (e === 'torta') {
+    s += sombra(198, 600, 140, 0.2) + '<ellipse cx="198" cy="590" rx="150" ry="30" fill="#f1f3f5"/>';
+    s += '<rect x="78" y="450" width="240" height="140" rx="20" fill="#7a4a2e"/><rect x="78" y="500" width="240" height="18" fill="#f8c4d4"/><rect x="98" y="350" width="200" height="110" rx="18" fill="#8d5a3b"/><rect x="98" y="396" width="200" height="14" fill="#f8c4d4"/>';
+    s += '<path d="M98 360 q20 30 40 0 q20 30 40 0 q20 30 40 0 q20 30 40 0 q20 30 40 0 V350 H98 Z" fill="#fff"/>';
+    for (i = 0; i < 3; i++) { x = 148 + i * 50; s += '<rect x="' + (x - 6) + '" y="290" width="12" height="60" rx="4" fill="' + ['#74c0fc', '#ff8787', '#ffd43b'][i] + '"/><g' + A('llama', x, 288, 0.5 + i * 0.1) + '><path d="M' + x + ' 262 q12 14 0 28 q-12 -14 0 -28 Z" fill="#ff922b"/><path d="M' + x + ' 272 q5 8 0 16 q-5 -8 0 -16 Z" fill="#ffe066"/></g>'; }
+  } else if (e === 'pochoclo') {
+    s += '<path d="M110 430 L140 620 H256 L286 430 Z" fill="#fff"/>';
+    for (i = 0; i < 5; i++) s += '<path d="M' + (118 + i * 36) + ' 430 L' + (144 + i * 24) + ' 620 H' + (160 + i * 24) + ' L' + (136 + i * 36) + ' 430 Z" fill="#e03131"/>';
+    for (i = 0; i < 16; i++) { x = 120 + r() * 156; var y = 380 + r() * 60; s += '<g' + A('pop', x, y, 1.2 + r(), -r() * 2) + '><circle cx="' + x.toFixed(0) + '" cy="' + y.toFixed(0) + '" r="16" fill="#fff8e1"/><circle cx="' + (x + 9).toFixed(0) + '" cy="' + (y - 8).toFixed(0) + '" r="11" fill="#fff3bf"/></g>'; }
+  } else if (e === 'helado') {
+    s += '<path d="M150 400 L198 640 L246 400 Z" fill="#e8a33d"/><path d="M160 420 l70 60 M170 470 l50 -40 M180 520 l30 -30" stroke="#c08457" stroke-width="4"/>';
+    s += '<g' + A('balanceo', 198, 600, 2.4) + '><circle cx="198" cy="380" r="62" fill="#ffc9de"/><circle cx="198" cy="300" r="54" fill="#8d5a3b"/><circle cx="198" cy="232" r="46" fill="#d3f9d8"/><circle cx="198" cy="180" r="14" fill="#e03131"/><path d="M150 410 q8 30 16 0" fill="#ffc9de"' + A('gota', 158, 410, 2) + '/></g>';
+  }
+  return envolver(defs, s);
+}
+
+/* ---------------- VIDEOJUEGOS ---------------- */
+var PIX_HEROE = ['..rrrr..', '.rrrrrr.', '.ssfsfs.', '.ssssss.', '..bbbb..', '.bbbbbb.', '.b.bb.b.', '..k..k..'];
+function pixel(mat, x, y, t, col) {
+  var s = '', i, j, ch;
+  for (i = 0; i < mat.length; i++) for (j = 0; j < mat[i].length; j++) { ch = mat[i][j]; if (ch !== '.') s += '<rect x="' + (x + j * t) + '" y="' + (y + i * t) + '" width="' + t + '" height="' + t + '" fill="' + col[ch] + '"/>'; }
+  return s;
+}
+function escJuegos(v, r) {
+  var e = v.esc, defs = '', s = '', i;
+  var pal = { dia: ['#74c0fc', '#d0ebff', '#51cf66', '#8d5a3b'], noche: ['#1b1f4b', '#3b3f8f', '#5c7cfa', '#495057'], cueva: ['#2b1d16', '#4a3427', '#a9734d', '#5c4033'], hielo: ['#a5d8ff', '#e7f5ff', '#e3fafc', '#74c0fc'] }[e];
+  var f = fondo(pal[0], pal[1]); defs += f.defs; s += f.svg;
+  if (e === 'noche') s += estrellas(r, 30, 400);
+  if (e === 'dia') s += '<g' + A('nube', 0, 0, 16) + '><path d="M40 160 h70 q0 -26 -26 -26 q-6 -18 -26 -10 q-18 2 -18 36 Z" fill="#fff"/></g><circle cx="320" cy="110" r="34" fill="#ffe066"/>';
+  // colinas de fondo
+  s += '<path d="M0 520 q60 -90 130 -20 q70 -100 150 -10 q60 -60 116 0 V704 H0 Z" fill="' + pal[2] + '" opacity=".45"/>';
+  // piso de bloques
+  for (i = 0; i < 9; i++) s += '<rect x="' + (i * 44) + '" y="560" width="44" height="44" fill="' + pal[3] + '"/><rect x="' + (i * 44 + 4) + '" y="564" width="36" height="8" fill="#fff" opacity=".18"/><rect x="' + (i * 44) + '" y="604" width="44" height="100" fill="' + pal[3] + '" opacity=".75"/>';
+  // plataforma con bloque sorpresa
+  for (i = 0; i < 3; i++) s += '<rect x="' + (110 + i * 44) + '" y="380" width="44" height="44" fill="' + (i === 1 ? '#fab005' : '#c2410c') + '"/>' + (i === 1 ? '<text x="198" y="414" font-family="Courier New,monospace" font-weight="900" font-size="34" fill="#fff" text-anchor="middle">?</text>' : '<path d="M' + (110 + i * 44) + ' 402 h44 M' + (132 + i * 44) + ' 380 v22" stroke="#7c2d12" stroke-width="3"/>');
+  // monedas
+  for (i = 0; i < 3; i++) s += '<g' + A('moneda', 270 + i * 34, 300, 0.9, -i * 0.2) + '><ellipse cx="' + (270 + i * 34) + '" cy="300" rx="11" ry="15" fill="#ffd43b"/><rect x="' + (267 + i * 34) + '" y="292" width="6" height="16" fill="#fab005"/></g>';
+  // enemigo
+  s += '<g' + A('patrulla', 300, 540, 3) + '>' + pixel(['..gggg..', '.gggggg.', 'gwkggwkg', 'gggggggg', '.gg..gg.'], 280, 520, 5, { g: e === 'hielo' ? '#4dabf7' : '#e03131', w: '#fff', k: '#212529' }) + '</g>';
+  // héroe
+  s += '<g' + A('saltaPix', 100, 560, 1.1) + '>' + pixel(PIX_HEROE, 70, 488, 9, { r: '#e03131', s: '#ffc078', f: '#212529', b: '#1c7ed6', k: '#5c4033' }) + '</g>';
+  // HUD
+  s += '<text x="22" y="96" font-family="Courier New,monospace" font-weight="900" font-size="22" fill="#fff">SCORE ' + (1000 + Math.floor(r() * 8999)) + '00</text>';
+  for (i = 0; i < 3; i++) s += pixel(['.r.r.', 'rrrrr', 'rrrrr', '.rrr.', '..r..'], 300 + i * 26, 78, 4, { r: '#ff6b6b' });
+  return envolver(defs, s);
+}
+
+/* ---------------- MÚSICA ---------------- */
+function escMusica(v, r) {
+  var e = v.esc, defs = '', s = '', i, c = ['#ff5fa2', '#8f2bd1', '#ffd43b', '#4dabf7'];
+  var f = fondo(['#2b0b3f', '#3a0d2e', '#0b1f3f'][Math.floor(r() * 3)], '#090412'); defs += f.defs; s += f.svg;
+  var g = rgrad('#ff5fa2', 'rgba(255,95,162,0)'); defs += g.def;
+  s += '<circle cx="198" cy="330" r="260" fill="url(#' + g.id + ')" opacity=".35"' + A('late', 198, 330, 0.55) + '/>';
+  for (i = 0; i < 4; i++) s += '<circle cx="198" cy="330" r="' + (80 + i * 50) + '" fill="none" stroke="' + c[i % 4] + '" stroke-width="3" opacity=".5"' + A('onda', 198, 330, 2.2, -i * 0.55) + '/>';
+  // ecualizador
+  for (i = 0; i < 18; i++) s += '<rect x="' + (12 + i * 21.5) + '" y="440" width="14" height="80" rx="7" fill="' + c[i % 3] + '"' + A('eq', 0, 520, 0.4 + (i % 5) * 0.09, -(i % 7) * 0.13) + '/>';
+  if (e === 'bateria') {
+    s += '<ellipse cx="198" cy="400" rx="110" ry="30" fill="#ced4da"/><rect x="88" y="300" width="220" height="100" fill="#e03131"/><ellipse cx="198" cy="300" rx="110" ry="30" fill="#f1f3f5"/><path d="M88 320 l220 60 M88 380 l220 -60" stroke="#ffd43b" stroke-width="5"/>';
+    s += '<g' + A('palo', 140, 200, 0.4) + '><path d="M120 190 L180 290" stroke="#e8a33d" stroke-width="10" stroke-linecap="round"/></g><g' + A('palo2', 256, 200, 0.4, 0.2) + '><path d="M276 190 L216 290" stroke="#e8a33d" stroke-width="10" stroke-linecap="round"/></g>';
+  } else if (e === 'eq') {
+    s += '<g' + A('gira', 198, 320, 2.5) + '><circle cx="198" cy="320" r="120" fill="#111"/>';
+    for (i = 0; i < 5; i++) s += '<circle cx="198" cy="320" r="' + (60 + i * 12) + '" fill="none" stroke="#333" stroke-width="2"/>';
+    s += '<circle cx="198" cy="320" r="42" fill="#ff5fa2"/><circle cx="198" cy="320" r="6" fill="#111"/><path d="M150 250 q20 -10 40 -6" stroke="#fff" stroke-width="6" opacity=".25" fill="none"/></g>';
+  } else if (e === 'guitarra') {
+    s += '<g' + A('balanceo', 198, 520, 1.2) + '><rect x="186" y="120" width="24" height="200" rx="6" fill="#5c4033"/><rect x="178" y="96" width="40" height="44" rx="10" fill="#3b2a20"/>';
+    s += '<path d="M198 300 q-100 -10 -96 70 q-30 40 0 90 q40 60 96 40 q56 20 96 -40 q30 -50 0 -90 q4 -80 -96 -70 Z" fill="#e8a33d"/><circle cx="198" cy="400" r="30" fill="#3b2a20"/>';
+    for (i = 0; i < 4; i++) s += '<path d="M' + (192 + i * 4) + ' 110 V470" stroke="#f1f3f5" stroke-width="1.5"' + A('cuerda', 192 + i * 4, 300, 0.12, -i * 0.03) + '/>';
+    s += '</g>';
+  } else if (e === 'piano') {
+    s += '<rect x="28" y="250" width="340" height="170" rx="12" fill="#212529"/>';
+    for (i = 0; i < 10; i++) s += '<rect x="' + (38 + i * 32.5) + '" y="262" width="30" height="148" rx="4" fill="#fff"' + (i % 3 === 0 ? A('tecla', 0, 262, 0.8, -i * 0.13) : '') + '/>';
+    for (i = 0; i < 9; i++) if (i % 7 !== 2 && i % 7 !== 6) s += '<rect x="' + (60 + i * 32.5) + '" y="262" width="20" height="90" rx="3" fill="#212529"/>';
+  } else if (e === 'baile') {
+    s += '<g' + A('baila', 198, 450, 0.9) + '><circle cx="198" cy="190" r="34" fill="#ffc078"/><path d="M164 182 q34 -40 68 0 q-10 -30 -34 -30 q-24 0 -34 30 Z" fill="#3b2a20"/><rect x="164" y="226" width="68" height="110" rx="26" fill="#ff5fa2"/>';
+    s += '<g' + A('brazo', 168, 240, 0.45) + '><path d="M168 240 L110 190" stroke="#ffc078" stroke-width="16" stroke-linecap="round"/></g><g' + A('brazo2', 228, 240, 0.45, 0.22) + '><path d="M228 240 L290 290" stroke="#ffc078" stroke-width="16" stroke-linecap="round"/></g>';
+    s += '<path d="M182 330 L168 430 M214 330 L232 430" stroke="#4dabf7" stroke-width="20" stroke-linecap="round"/></g>';
+  } else {
+    s += '<g' + A('balanceo', 198, 520, 1.6) + '><rect x="186" y="320" width="24" height="170" rx="10" fill="#495057"/><rect x="150" y="190" width="96" height="150" rx="48" fill="#adb5bd"/>';
+    for (i = 0; i < 5; i++) s += '<path d="M158 ' + (220 + i * 22) + ' H238" stroke="#868e96" stroke-width="4"/>';
+    s += '</g>';
+    for (i = 0; i < 3; i++) s += '<path d="M' + (270 + i * 22) + ' 220 q22 46 0 92" stroke="#ffd43b" stroke-width="6" fill="none" stroke-linecap="round"' + A('tw', 280, 260, 0.9, -i * 0.3) + '/>';
+  }
+  // notas
+  for (i = 0; i < 4; i++) s += '<g' + A('nota', 60 + i * 90, 540, 3, -i * 0.8) + '><circle cx="' + (60 + i * 90) + '" cy="540" r="12" fill="#fff"/><path d="M' + (72 + i * 90) + ' 540 V500 l18 8" stroke="#fff" stroke-width="5" fill="none"/></g>';
+  return envolver(defs, s);
+}
+
+/* ---------------- CIENCIA ---------------- */
+function escCiencia(v, r) {
+  var e = v.esc, defs = '', s = '', i, x;
+  var oscuro = e === 'slime' || e === 'lava';
+  var f = oscuro ? fondo('#0b1e2d', '#03080f') : fondo('#e3fafc', '#a5e8f0'); defs += f.defs; s += f.svg;
+  if (!oscuro) for (i = 0; i < 12; i++) s += '<path d="M0 ' + (i * 60) + ' H396 M' + (i * 36) + ' 0 V704" stroke="#15aabf" stroke-width="1" opacity=".12"/>';
+  s += '<path d="M0 560 H396 V704 H0 Z" fill="' + (oscuro ? '#111' : '#fff') + '" opacity=".6"/>';
+  if (e === 'volcan') {
+    s += '<path d="M80 560 L170 330 H226 L316 560 Z" fill="#a9734d"/><path d="M170 330 H226 L236 360 H160 Z" fill="#8d5a3b"/>';
+    for (i = 0; i < 12; i++) { x = 170 + r() * 56; s += '<circle cx="' + x.toFixed(0) + '" cy="330" r="' + (12 + r() * 14).toFixed(0) + '" fill="' + (i % 2 ? '#ff6b6b' : '#fff') + '"' + A('erupcion', x, 330, 1.4 + r() * 0.6, -r() * 2) + '/>'; }
+    s += '<path d="M170 334 q-20 60 -10 120 q10 -40 30 -60 q20 30 20 90 q16 -80 16 -150 Z" fill="#ff8787" opacity=".85"/>';
+  } else if (e === 'slime') {
+    var g = rgrad('#b2f2bb', 'rgba(64,192,87,0)'); defs += g.def;
+    s += '<circle cx="198" cy="400" r="200" fill="url(#' + g.id + ')" opacity=".6"' + A('late', 198, 400, 1.6) + '/>';
+    s += '<g' + A('blob', 198, 520, 2.2) + '><path d="M90 520 q-10 -120 60 -150 q50 -40 100 0 q70 30 60 150 q-50 30 -110 20 q-60 14 -110 -20 Z" fill="#69db7c"/><ellipse cx="160" cy="430" rx="26" ry="14" fill="#fff" opacity=".45"/></g>';
+    for (i = 0; i < 10; i++) { x = 100 + r() * 200; s += '<circle cx="' + x.toFixed(0) + '" cy="' + (380 + r() * 120).toFixed(0) + '" r="3" fill="#ebfbee"' + A('tw', x, 400, 0.8 + r(), -r()) + '/>'; }
+  } else if (e === 'huevo' || e === 'arcoiris') {
+    s += '<path d="M110 230 H286 L270 560 H126 Z" fill="#fff" opacity=".35"/>';
+    if (e === 'huevo') {
+      s += '<path d="M116 300 H280 L270 556 H126 Z" fill="#74c0fc" opacity=".55"/>';
+      s += '<g' + A('flota', 198, 420, 2.6) + '><ellipse cx="198" cy="420" rx="44" ry="56" fill="#fff4e6"/><ellipse cx="184" cy="400" rx="10" ry="16" fill="#fff" opacity=".8"/></g>';
+      for (i = 0; i < 8; i++) { x = 130 + r() * 136; s += '<circle cx="' + x.toFixed(0) + '" cy="540" r="4" fill="#fff" opacity=".8"' + A('burbuja', x, 540, 2 + r() * 2, -r() * 3) + '/>'; }
+    } else {
+      var cols = ['#e03131', '#fd7e14', '#fcc419', '#40c057', '#228be6', '#7048e8'];
+      for (i = 0; i < 6; i++) s += '<path d="M' + (116 + i * 0.8) + ' ' + (300 + i * 43) + ' H' + (280 - i * 0.8) + ' L' + (279 - i * 0.8) + ' ' + (343 + i * 43) + ' H' + (117 + i * 0.8) + ' Z" fill="' + cols[i] + '" opacity=".85"/>';
+      s += '<path d="M248 200 L230 320" stroke="#adb5bd" stroke-width="10" stroke-linecap="round"' + A('balanceo', 248, 200, 2) + '/>';
+      for (i = 0; i < 5; i++) { x = 90 + r() * 216; s += '<path d="M' + x.toFixed(0) + ' 200 l4 10 10 4 -10 4 -4 10 -4 -10 -10 -4 10 -4 Z" fill="#fff"' + A('tw', x, 214, 1 + r(), -r()) + '/>'; }
+    }
+    s += '<path d="M110 230 H286 L270 560 H126 Z" fill="none" stroke="#fff" stroke-width="6" opacity=".8"/>';
+  } else if (e === 'globo') {
+    s += '<path d="M160 560 V420 q0 -30 20 -40 V330 H216 V380 q20 10 20 40 V560 Z" fill="#a5d8ff" opacity=".7"/><path d="M168 470 H228 V556 H168 Z" fill="#ffd43b" opacity=".7"/>';
+    s += '<g' + A('infla', 198, 330, 3) + '><path d="M198 330 q-90 -40 -80 -150 q10 -80 80 -80 q70 0 80 80 q10 110 -80 150 Z" fill="#ff6b81"/><ellipse cx="160" cy="170" rx="18" ry="30" fill="#fff" opacity=".4"/></g>';
+    for (i = 0; i < 6; i++) { x = 176 + r() * 44; s += '<circle cx="' + x.toFixed(0) + '" cy="540" r="5" fill="#fff"' + A('burbuja', x, 540, 1.5 + r(), -r() * 2) + '/>'; }
+  } else if (e === 'iman') {
+    s += '<g' + A('balanceo', 198, 150, 1.8) + '><path d="M120 150 V280 a78 78 0 0 0 156 0 V150 H230 V280 a32 32 0 0 1 -64 0 V150 Z" fill="#e03131"/><rect x="120" y="150" width="46" height="40" fill="#dee2e6"/><rect x="230" y="150" width="46" height="40" fill="#dee2e6"/>';
+    for (i = 0; i < 5; i++) s += '<path d="M' + (150 + i * 24) + ' 370 v34 q0 10 10 10 h4 q10 0 10 -10 v-26" stroke="#adb5bd" stroke-width="5" fill="none"' + A('clip', 160 + i * 24, 360, 0.8 + i * 0.1) + '/>';
+    s += '</g>';
+    for (i = 0; i < 10; i++) { x = 60 + r() * 276; s += '<path d="M' + x.toFixed(0) + ' 540 v24 q0 8 8 8 h3 q8 0 8 -8 v-18" stroke="#adb5bd" stroke-width="4" fill="none" transform="rotate(' + (r() * 80 - 40).toFixed(0) + ' ' + x.toFixed(0) + ' 550)"/>'; }
+  } else if (e === 'lava') {
+    s += '<path d="M150 150 H246 L276 520 H120 Z" fill="#5f3dc4" opacity=".55"/>';
+    for (i = 0; i < 6; i++) { x = 160 + r() * 70; s += '<ellipse cx="' + x.toFixed(0) + '" cy="500" rx="' + (16 + r() * 18).toFixed(0) + '" ry="' + (20 + r() * 20).toFixed(0) + '" fill="#ff922b"' + A('lavaSube', x, 500, 5 + r() * 3, -r() * 6) + '/>'; }
+    s += '<path d="M140 120 H256 L250 150 H146 Z M112 520 H284 L270 580 H126 Z" fill="#adb5bd"/>';
+  }
+  return envolver(defs, s);
+}
+
+/* ---------------- HUMOR ---------------- */
+function escHumor(v, r) {
+  var e = v.esc, defs = '', s = '', i;
+  var col = { wifi: ['#ffe066', '#ff922b'], zombi: ['#b2f2bb', '#38d9a9'], risa: ['#ffe066', '#ffa94d'], carga: ['#d0bfff', '#9775fa'], magia: ['#ffc9c9', '#ff8787'], alarma: ['#ffec99', '#fab005'], baile: ['#a5d8ff', '#748ffc'] }[e];
+  var f = fondo(col[0], col[1]); defs += f.defs; s += f.svg;
+  s += '<g' + A('gira', 198, 330, 30) + '>';
+  for (i = 0; i < 16; i++) s += '<path d="M198 330 L' + (198 + Math.cos(i * 0.3927) * 700).toFixed(0) + ' ' + (330 + Math.sin(i * 0.3927) * 700).toFixed(0) + ' L' + (198 + Math.cos(i * 0.3927 + 0.2) * 700).toFixed(0) + ' ' + (330 + Math.sin(i * 0.3927 + 0.2) * 700).toFixed(0) + ' Z" fill="#fff" opacity=".18"/>';
+  s += '</g>';
+  var piel = e === 'zombi' ? '#8ce99a' : '#ffd43b';
+  var cara = '<circle cx="198" cy="360" r="120" fill="' + piel + '"/><ellipse cx="160" cy="300" rx="34" ry="18" fill="#fff" opacity=".35"/>';
+  var ojosBoca;
+  if (e === 'risa' || e === 'baile') ojosBoca = '<path d="M140 330 q20 -26 40 0 M216 330 q20 -26 40 0" stroke="#5c3d0c" stroke-width="10" fill="none" stroke-linecap="round"/><path d="M128 380 q70 100 140 0 Z" fill="#7a2335"/><path d="M160 420 q38 24 76 0 q-38 -16 -76 0" fill="#ff8787"/>' + (e === 'risa' ? '<path d="M128 340 q-10 30 -2 50 M268 340 q10 30 2 50" stroke="#4dabf7" stroke-width="10" fill="none" stroke-linecap="round"' + A('tw', 198, 360, 0.6) + '/>' : '');
+  else if (e === 'wifi' || e === 'magia') ojosBoca = '<circle cx="160" cy="330" r="24" fill="#fff"/><circle cx="236" cy="330" r="24" fill="#fff"/><circle cx="160" cy="334" r="11" fill="#212529"/><circle cx="236" cy="334" r="11" fill="#212529"/><ellipse cx="198" cy="420" rx="26" ry="32" fill="#7a2335"/>';
+  else if (e === 'zombi') ojosBoca = '<path d="M140 336 h40 M216 336 h40" stroke="#2b2b3a" stroke-width="10" stroke-linecap="round"/><path d="M150 312 q20 10 40 0 M206 312 q20 10 40 0" stroke="#2b2b3a" stroke-width="5" fill="none" opacity=".4"/><path d="M160 420 q38 -16 76 0" stroke="#2b2b3a" stroke-width="9" fill="none" stroke-linecap="round"/>';
+  else if (e === 'alarma') ojosBoca = '<path d="M136 310 l44 14 M260 310 l-44 14" stroke="#5c3d0c" stroke-width="9" stroke-linecap="round"/><circle cx="160" cy="342" r="11" fill="#212529"/><circle cx="236" cy="342" r="11" fill="#212529"/><path d="M160 430 q38 -30 76 0" stroke="#5c3d0c" stroke-width="10" fill="none" stroke-linecap="round"/>';
+  else ojosBoca = '<circle cx="160" cy="336" r="12" fill="#212529"/><circle cx="236" cy="336" r="12" fill="#212529"/><path d="M168 424 h60" stroke="#5c3d0c" stroke-width="10" stroke-linecap="round"/>';
+  var anim = { risa: 'tiembla', baile: 'baila', zombi: 'balanceo', alarma: 'tiembla', wifi: 'respira', carga: 'respira', magia: 'respira' }[e];
+  s += '<g' + A(anim, 198, 480, e === 'baile' ? 0.8 : e === 'zombi' ? 2.4 : e === 'risa' || e === 'alarma' ? 0.25 : 2.6) + '>' + cara + ojosBoca + '</g>';
+  // elementos
+  if (e === 'wifi') {
+    s += '<g transform="translate(198 150)"><g' + A('parpadeo', 0, 0, 1) + '><path d="M-70 0 a100 100 0 0 1 140 0 M-46 26 a66 66 0 0 1 92 0 M-22 52 a32 32 0 0 1 44 0" stroke="#fff" stroke-width="14" fill="none" stroke-linecap="round"/><circle cx="0" cy="76" r="10" fill="#fff"/></g><path d="M40 20 l40 40 M80 20 l-40 40" stroke="#e03131" stroke-width="14" stroke-linecap="round"/></g>';
+  } else if (e === 'carga') {
+    s += '<g transform="translate(198 150)"><g' + A('gira', 0, 0, 1) + '>';
+    for (i = 0; i < 8; i++) s += '<circle cx="' + (Math.cos(i * 0.785) * 46).toFixed(0) + '" cy="' + (Math.sin(i * 0.785) * 46).toFixed(0) + '" r="' + (4 + i * 1.3).toFixed(1) + '" fill="#fff" opacity="' + (0.2 + i * 0.1).toFixed(1) + '"/>';
+    s += '</g></g>';
+  } else if (e === 'alarma') {
+    s += '<g transform="translate(198 150)"><g' + A('tiembla', 0, 0, 0.12) + '><circle r="62" fill="#e03131"/><circle r="50" fill="#fff"/><path d="M0 0 V-34 M0 0 L22 10" stroke="#212529" stroke-width="7" stroke-linecap="round"/><circle cx="-46" cy="-50" r="18" fill="#e03131"/><circle cx="46" cy="-50" r="18" fill="#e03131"/></g></g>';
+  } else if (e === 'magia') {
+    s += '<g transform="translate(300 160) rotate(20)"><g' + A('balanceo', 0, 60, 1) + '><rect x="-6" y="-10" width="12" height="110" rx="4" fill="#212529"/><rect x="-6" y="-10" width="12" height="22" fill="#fff"/></g></g>';
+    for (i = 0; i < 7; i++) s += '<path d="M' + (230 + r() * 120).toFixed(0) + ' ' + (90 + r() * 120).toFixed(0) + ' l5 12 12 5 -12 5 -5 12 -5 -12 -12 -5 12 -5 Z" fill="#fff"' + A('tw', 290, 150, 0.6 + r(), -r()) + '/>';
+    s += '<g transform="translate(110 170)"><g' + A('pop', 0, 0, 2.2) + '><ellipse cx="0" cy="0" rx="50" ry="36" fill="#adb5bd"/><text x="0" y="12" font-family="Arial Black,Arial" font-size="34" font-weight="900" fill="#fff" text-anchor="middle">puf</text></g></g>';
+  } else if (e === 'zombi') {
+    s += '<text x="198" y="150" font-family="Arial Black,Arial" font-weight="900" font-size="64" fill="#fff" text-anchor="middle" opacity=".9"' + A('balanceo', 198, 150, 2.4) + '>LUNES</text>';
+  }
+  if (e === 'risa' || e === 'baile') s += '<g transform="translate(198 150)"><g' + A('sticker', 0, 0, 1.6) + '><rect x="-120" y="-36" width="240" height="72" rx="20" fill="#fff"/><text x="0" y="16" font-family="Arial Black,Arial" font-weight="900" font-size="42" fill="#f76707" text-anchor="middle">' + (e === 'risa' ? 'JAJAJA' : '¡VAMOS!') + '</text></g></g>';
+  return envolver(defs, s);
+}
+
+/* ---------------- DIBUJO ---------------- */
+var TRAZOS = {
+  gato: 'M120 470 q-10 -110 40 -150 l-10 -60 50 40 q38 -10 76 0 l50 -40 -10 60 q50 40 40 150 q-10 40 -118 40 q-108 0 -118 -40 Z M160 380 v10 M236 380 v10 M186 420 q12 12 24 0',
+  estrella: 'M198 230 L228 330 L332 334 L250 396 L280 496 L198 438 L116 496 L146 396 L64 334 L168 330 Z',
+  casa: 'M90 520 V360 L198 260 L306 360 V520 Z M90 360 H306 M170 520 V430 H226 V520 M120 400 H156 V436 H120 Z M240 400 H276 V436 H240 Z',
+  corazon: 'M198 520 C40 420 70 270 160 290 C190 296 198 320 198 340 C198 320 206 296 236 290 C326 270 356 420 198 520 Z',
+  cohete: 'M198 230 q60 70 50 220 H148 q-10 -150 50 -220 Z M148 400 l-40 70 h50 M248 400 l40 70 h-50 M198 330 m-22 0 a22 22 0 1 0 44 0 a22 22 0 1 0 -44 0 M170 450 q28 70 56 0',
+  espiral: 'M198 380 m0 0 a10 10 0 0 1 20 0 a20 20 0 0 1 -40 0 a30 30 0 0 1 60 0 a40 40 0 0 1 -80 0 a50 50 0 0 1 100 0 a60 60 0 0 1 -120 0 a70 70 0 0 1 140 0 a80 80 0 0 1 -160 0',
+  arbol: 'M186 520 V420 q-90 0 -80 -70 q-30 -70 40 -90 q20 -60 80 -40 q70 -20 80 50 q60 30 20 90 q0 60 -80 60 V520 Z',
+  barco: 'M90 440 H306 L270 500 H126 Z M198 440 V250 L290 420 H198 M198 270 L120 420 H198'
+};
+var RELLENOS = { gato: '#ffd8a8', estrella: '#ffe066', casa: '#ffc9c9', corazon: '#ff8fa3', cohete: '#d0ebff', espiral: 'none', arbol: '#b2f2bb', barco: '#a5d8ff' };
+function escDibujo(v, r) {
+  var e = v.esc, defs = '', s = '', i;
+  var f = fondo('#fbf6ee', '#efe3d2'); defs += f.defs; s += f.svg;
+  s += '<g transform="rotate(-3 198 380)"><rect x="40" y="130" width="316" height="470" rx="6" fill="#fff"/>';
+  for (i = 0; i < 14; i++) s += '<path d="M40 ' + (170 + i * 31) + ' H356" stroke="#a5d8ff" stroke-width="1.5" opacity=".6"/>';
+  s += '<path d="M80 130 V600" stroke="#ff8787" stroke-width="1.5" opacity=".6"/>';
+  if (RELLENOS[e] !== 'none') s += '<path d="' + TRAZOS[e] + '" fill="' + RELLENOS[e] + '"' + A('relleno', 198, 380, 6) + '/>';
+  s += '<path d="' + TRAZOS[e] + '" pathLength="1" fill="none" stroke="#343a40" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"' + A('dibuja', 198, 380, 6) + '/></g>';
+  // lápiz
+  s += '<g' + A('lapiz', 300, 520, 1.2) + '><g transform="translate(300 520) rotate(35)"><rect x="-10" y="-150" width="20" height="130" fill="#fcc419"/><rect x="-10" y="-160" width="20" height="14" fill="#ff8787"/><rect x="-10" y="-148" width="20" height="8" fill="#adb5bd"/><path d="M-10 -20 L0 6 L10 -20 Z" fill="#f1dcc9"/><path d="M-3 -2 L0 6 L3 -2 Z" fill="#343a40"/></g></g>';
+  return envolver(defs, s);
+}
+
+/* ---------------- SKATE ---------------- */
+function skater(tabla) {
+  return '<g><rect x="-42" y="-8" width="84" height="12" rx="6" fill="' + (tabla || '#7048e8') + '"/><circle cx="-26" cy="8" r="7" fill="#212529"/><circle cx="26" cy="8" r="7" fill="#212529"/>' +
+    '<path d="M-14 -8 L-6 -50 M14 -8 L6 -50" stroke="#1c7ed6" stroke-width="13" stroke-linecap="round"/><rect x="-18" y="-100" width="36" height="56" rx="14" fill="#f76707"/>' +
+    '<path d="M-16 -88 L-46 -66 M16 -88 L46 -104" stroke="#c68642" stroke-width="10" stroke-linecap="round"/><circle cx="0" cy="-118" r="17" fill="#c68642"/><path d="M-18 -122 q18 -26 36 0 Z" fill="#e03131"/></g>';
+}
+function escSkate(v, r) {
+  var e = v.esc, defs = '', s = '', i;
+  var f = e === 'surf' ? fondo('#74c0fc', '#d0ebff') : fondo('#ffb36b', '#f76a8c'); defs += f.defs; s += f.svg;
+  if (e !== 'surf') {
+    s += '<circle cx="198" cy="300" r="80" fill="#ffe066" opacity=".9"/>';
+    s += '<path d="M0 360 h40 v-60 h30 v40 h26 v-90 h40 v110 h30 v-50 h36 v70 h28 v-120 h44 v120 h30 v-40 h40 v60 h52 V704 H0 Z" fill="#b8467a"/>';
+    for (i = 0; i < 14; i++) s += '<rect x="' + (14 + (i * 53) % 370) + '" y="' + (300 + (i * 37) % 50) + '" width="8" height="10" fill="#ffd8a8" opacity=".7"/>';
+  }
+  if (e === 'rampa') {
+    s += '<path d="M0 360 H40 Q40 600 198 600 Q356 600 356 360 H396 V704 H0 Z" fill="#495057"/><path d="M40 360 Q40 600 198 600 Q356 600 356 360" stroke="#adb5bd" stroke-width="8" fill="none"/>';
+    s += '<g' + A('halfpipe', 0, 0, 2.6) + '>' + skater() + '</g>';
+  } else if (e === 'baranda' || e === 'rambla') {
+    s += '<path d="M0 560 H396 V704 H0 Z" fill="#495057"/><path d="M0 560 H396" stroke="#ced4da" stroke-width="6"/>';
+    if (e === 'baranda') s += '<path d="M40 470 H356 M80 470 V560 M316 470 V560" stroke="#dee2e6" stroke-width="10" stroke-linecap="round"/>';
+    else { s += '<path d="M0 470 q50 -12 100 0 q50 12 100 0 q50 -12 100 0 q50 12 96 0 V520 H0 Z" fill="#4dabf7" opacity=".7"/>'; for (i = 0; i < 6; i++) s += '<path d="M' + (i * 70) + ' 630 h36" stroke="#fff" stroke-width="6"' + A('calle', 0, 0, 0.8) + '/>'; }
+    s += '<g' + A(e === 'baranda' ? 'grindeo' : 'paseo', 0, 0, e === 'baranda' ? 2.4 : 3.2) + '>' + skater('#2fb344') + '</g>';
+  } else if (e === 'bmx') {
+    s += '<path d="M0 600 Q80 600 120 520 Q160 600 198 600 Q236 600 276 520 Q316 600 396 600 V704 H0 Z" fill="#a9734d"/>';
+    s += '<g' + A('bmx', 0, 0, 2.4) + '><g><circle cx="-30" cy="0" r="22" fill="none" stroke="#212529" stroke-width="6"/><circle cx="30" cy="0" r="22" fill="none" stroke="#212529" stroke-width="6"/><path d="M-30 0 L0 -2 L20 -30 M0 -2 L-14 -30 H8 M30 0 L20 -30" stroke="#e03131" stroke-width="6" fill="none"/>' +
+      '<path d="M-8 -34 L6 -70 M6 -70 L24 -36" stroke="#1c7ed6" stroke-width="10" stroke-linecap="round"/><circle cx="8" cy="-88" r="16" fill="#c68642"/><path d="M-10 -92 q18 -26 36 0 Z" fill="#212529"/></g></g>';
+  } else {
+    s += '<circle cx="320" cy="110" r="40" fill="#ffe066"/>';
+    s += '<g' + A('ola', 0, 0, 3) + '><path d="M-200 520 q50 -40 100 0 q50 40 100 0 q50 -40 100 0 q50 40 100 0 q50 -40 100 0 q50 40 100 0 q50 -40 100 0 V704 H-200 Z" fill="#1c7ed6"/></g>';
+    s += '<path d="M60 480 q60 -200 230 -170 q-110 40 -110 170 Z" fill="#339af0" opacity=".85"/><path d="M290 310 q-60 0 -80 40" stroke="#fff" stroke-width="10" fill="none" stroke-linecap="round"/>';
+    s += '<g' + A('surf', 198, 470, 2.2) + '><g transform="translate(198 470)">' + skater('#ffd43b').replace('<circle cx="-26" cy="8" r="7" fill="#212529"/><circle cx="26" cy="8" r="7" fill="#212529"/>', '') + '</g></g>';
+    s += '<path d="M0 560 q50 -20 100 0 q50 20 100 0 q50 -20 100 0 q50 20 96 0 V704 H0 Z" fill="#1971c2"/>';
+  }
+  return envolver(defs, s);
+}
+
+/* ---------------- ESPACIO ---------------- */
+function escEspacio(v, r) {
+  var e = v.esc, defs = '', s = '', i;
+  var f = fondo('#14183d', '#03040c'); defs += f.defs; s += f.svg;
+  var neb = rgrad('#7048e8', 'rgba(112,72,232,0)'); defs += neb.def;
+  s += '<circle cx="' + (80 + r() * 240).toFixed(0) + '" cy="' + (150 + r() * 300).toFixed(0) + '" r="220" fill="url(#' + neb.id + ')" opacity=".35"/>';
+  s += estrellas(r, 60, 704);
+  var planeta = function (cx, cy, R, c1, c2, bandas) {
+    var g = grad(c1, c2); defs += g.def; var t = '<circle cx="' + cx + '" cy="' + cy + '" r="' + R + '" fill="url(#' + g.id + ')"/>';
+    if (bandas) { var cid = 'c' + (_gid++); defs += '<clipPath id="' + cid + '"><circle cx="' + cx + '" cy="' + cy + '" r="' + R + '"/></clipPath>'; t += '<g clip-path="url(#' + cid + ')"><g' + A('derivaX', cx, cy, 8) + '>'; for (var k = 0; k < bandas.length; k++) t += '<path d="M' + (cx - R * 2) + ' ' + (cy - R + k * (2 * R / bandas.length)) + ' q' + R + ' 12 ' + (R * 2) + ' 0 t' + (R * 2) + ' 0 V' + (cy - R + (k + 0.6) * (2 * R / bandas.length)) + ' q-' + R + ' 12 -' + (R * 2) + ' 0 t-' + (R * 2) + ' 0 Z" fill="' + bandas[k] + '" opacity=".55"/>'; t += '</g></g>'; }
+    return t + '<circle cx="' + (cx - R * 0.3) + '" cy="' + (cy - R * 0.3) + '" r="' + (R * 0.45) + '" fill="#fff" opacity=".1"/><circle cx="' + cx + '" cy="' + cy + '" r="' + R + '" fill="none" stroke="#000" stroke-opacity=".15" stroke-width="' + (R * 0.12) + '"/>';
+  };
+  if (e === 'jupiter') {
+    s += planeta(198, 360, 140, '#f3d9b1', '#c08457', ['#d9a066', '#fff4e6', '#b07a52', '#f3d9b1', '#a9734d', '#fff4e6', '#c08457']) + '<ellipse cx="240" cy="410" rx="30" ry="16" fill="#c0392b" opacity=".75"/>';
+    s += '<g' + A('gira', 198, 360, 6) + '><circle cx="198" cy="160" r="14" fill="#dee2e6"/></g>';
+  } else if (e === 'luna' || e === 'tierra') {
+    var tierra = planeta(198, 360, e === 'tierra' ? 150 : 70, '#4dabf7', '#1864ab') + '<path d="M' + (e === 'tierra' ? '120 300 q40 -30 70 0 q20 40 -20 60 q-40 10 -50 -60 Z M220 380 q40 -20 60 20 q-10 50 -50 40 Z' : '170 340 q20 -16 34 0 q10 20 -10 30 q-20 4 -24 -30 Z M214 376 q20 -10 30 10 q-4 24 -24 20 Z') + '" fill="#51cf66"/>';
+    s += tierra;
+    if (e === 'luna') s += '<circle cx="198" cy="360" r="150" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="6 10" opacity=".4"/><g' + A('gira', 198, 360, 7) + '><circle cx="348" cy="360" r="26" fill="#dee2e6"/><circle cx="342" cy="352" r="6" fill="#adb5bd"/></g>';
+    else s += '<g' + A('gira', 198, 360, 5) + '><g transform="translate(198 180)"><rect x="-22" y="-4" width="44" height="8" fill="#adb5bd"/><rect x="-36" y="-10" width="14" height="20" fill="#4c6ef5"/><rect x="22" y="-10" width="14" height="20" fill="#4c6ef5"/></g></g>';
+  } else if (e === 'venus') {
+    var sol = rgrad('#fff3bf', 'rgba(255,146,43,0)'); defs += sol.def;
+    s += '<circle cx="340" cy="120" r="160" fill="url(#' + sol.id + ')"/>' + planeta(170, 400, 120, '#ffc078', '#e8590c', ['#ffd8a8', '#f76707', '#ffd8a8', '#e8590c']);
+  } else if (e === 'cohete') {
+    s += '<g' + A('tiembla', 198, 400, 0.15) + '><path d="M198 160 q70 80 56 280 H142 q-14 -200 56 -280 Z" fill="#f1f3f5"/><circle cx="198" cy="300" r="30" fill="#4dabf7"/><circle cx="198" cy="300" r="20" fill="#a5d8ff"/>' +
+      '<path d="M142 360 l-50 100 h56 Z M254 360 l50 100 h-56 Z" fill="#e03131"/><path d="M168 440 H228 L218 470 H178 Z" fill="#868e96"/></g>';
+    s += '<g' + A('llama', 198, 470, 0.18) + '><path d="M174 470 q24 140 24 140 q0 0 24 -140 Z" fill="#ff922b"/><path d="M186 470 q12 90 12 90 q0 0 12 -90 Z" fill="#ffe066"/></g>';
+    for (i = 0; i < 8; i++) s += '<circle cx="' + (130 + r() * 136).toFixed(0) + '" cy="640" r="' + (26 + r() * 20).toFixed(0) + '" fill="#dee2e6" opacity=".7"' + A('humo', 198, 640, 2 + r(), -r() * 2) + '/>';
+  } else if (e === 'saturno') {
+    s += '<g' + A('balanceo', 198, 360, 4) + '><ellipse cx="198" cy="360" rx="190" ry="44" fill="none" stroke="#e9d8a6" stroke-width="18" opacity=".8"/>' + planeta(198, 360, 110, '#ffe8a3', '#d9a066', ['#f3d9b1', '#fff4e6', '#e9c46a']) +
+      '<path d="M8 360 a190 44 0 0 0 380 0" fill="none" stroke="#e9d8a6" stroke-width="18" opacity=".9"/></g>';
+  } else if (e === 'astronauta') {
+    s += '<g' + A('flotaEsp', 198, 360, 6) + '><rect x="148" y="330" width="100" height="120" rx="40" fill="#f1f3f5"/><circle cx="198" cy="290" r="62" fill="#f1f3f5"/><ellipse cx="198" cy="292" rx="44" ry="36" fill="#343a40"/><ellipse cx="182" cy="280" rx="14" ry="8" fill="#fff" opacity=".4"/>' +
+      '<path d="M150 360 l-40 40 M246 360 l40 -30 M170 448 l-14 50 M226 448 l14 50" stroke="#f1f3f5" stroke-width="26" stroke-linecap="round"/><rect x="176" y="350" width="44" height="30" rx="6" fill="#4c6ef5"/></g>' + zetas(270, 220);
+  }
+  return envolver(defs, s);
+}
+
+var ESCENAS = { animales: escAnimales, futbol: escFutbol, cocina: escCocina, juegos: escJuegos, musica: escMusica, ciencia: escCiencia, humor: escHumor, dibujo: escDibujo, skate: escSkate, espacio: escEspacio };
+function escena(v) { return ESCENAS[v.cat](v, rnd(v.semilla)); }
+/* ============ EL ALGORITMO ============
+   Aprende de tres señales: cuánto tiempo mirás (respecto del largo del video),
+   si le das me gusta y si seguís a quien lo subió.
+   Al principio explora (muestra de todo); después se va encerrando en lo que más te retiene. */
+var ALGO = {
+  puntos: {}, vistos: [], usados: {}, ultimoPorCat: {},
+  modo: 'normal', objetivo: null,
+  reiniciar: function () {
+    var i;
+    this.puntos = {}; this.vistos = []; this.usados = {}; this.ultimoPorCat = {};
+    for (i = 0; i < CATS.length; i++) this.puntos[CATS[i].id] = 1;
+    this.orden0 = mezclar(CATS.map(function (c) { return c.id; }));
+  },
+  // registra un video que se dejó de mirar
+  registrar: function (v, seg, like, sigue, anuncio, coment) {
+    var L = v.largo, prop = seg / L, d;
+    if (seg < 1.3 && !like) d = -Math.max(0.55, this.puntos[v.cat] * (this.modo === 'desafio' ? 0.3 : this.modo === 'escape' ? 0.28 : 0.18));
+    else d = Math.min(prop, 2.2) * 1.15 + (seg > 2.5 ? 0.25 : 0);
+    if (like) d += 2.4;
+    if (sigue) d += 1.4;
+    if (coment) d += 0.8;
+    if (anuncio) d *= 0.4;
+    var p = this.puntos[v.cat] + d;
+    this.puntos[v.cat] = Math.max(0.12, p);
+    this.vistos.push({ v: v, seg: seg, like: like, sigue: sigue, anuncio: !!anuncio, cat: v.cat, n: this.vistos.length });
+  },
+  probabilidades: function () {
+    var n = this.vistos.length, i, c, tot = 0, pr = {}, ids = CATS.map(function (c) { return c.id; });
+    var g = this.modo === 'desafio' ? 1.5 : this.modo === 'escape' ? 2.2 : Math.min(2.1, 1 + n * 0.06);
+    var eps = this.modo === 'desafio' ? 0.18 : this.modo === 'escape' ? 0.1 : Math.max(0.08, 0.3 - n * 0.012);
+    var rec = this.vistos.slice(-3).map(function (x) { return x.cat; });
+    for (i = 0; i < ids.length; i++) {
+      c = ids[i]; pr[c] = Math.pow(this.puntos[c], g);
+      // un poco de variedad: lo que acabás de ver pesa un poco menos
+      if (this.modo !== 'desafio') for (var k = 0; k < rec.length; k++) if (rec[k] === c) pr[c] *= 0.55;
+      tot += pr[c];
+    }
+    for (i = 0; i < ids.length; i++) { c = ids[i]; pr[c] = (1 - eps) * pr[c] / tot + eps / ids.length; }
+    return pr;
+  },
+  elegirCat: function () {
+    var n = this.vistos.length;
+    if (this.modo === 'normal' && n < CATS.length) return this.orden0[n];
+    var pr = this.probabilidades(), r = Math.random(), acc = 0, c, ult = this.vistos.length ? this.vistos[this.vistos.length - 1].cat : null;
+    // evita tres seguidos de lo mismo al principio (se ve más natural)
+    for (c in pr) { acc += pr[c]; if (r <= acc) { if (n < 16 && c === ult && Math.random() < 0.5) return this.elegirCat(); return c; } }
+    return CATS[0].id;
+  },
+  siguiente: function () {
+    var c = this.elegirCat(), lista = VIDEOS.filter(function (v) { return v.cat === c; }), self = this;
+    lista.sort(function (a, b) { return (self.usados[a.id] || 0) - (self.usados[b.id] || 0) || (Math.random() - 0.5); });
+    var v = lista[0];
+    this.usados[v.id] = (this.usados[v.id] || 0) + 1;
+    return v;
+  },
+  // al empezar el desafío, el algoritmo "recuerda" tus gustos pero más suaves
+  empezarDesafio: function (cat) {
+    var c;
+    this.modo = 'desafio'; this.objetivo = cat;
+    for (c in this.puntos) this.puntos[c] = 1 + Math.log(1 + this.puntos[c]) * 1.3;
+  },
+  // ---------- lo que el algoritmo "sabe" ----------
+  perfil: function () {
+    var por = {}, i, c, x, V = this.vistos.filter(function (x) { return !x.anuncio; });
+    for (i = 0; i < CATS.length; i++) por[CATS[i].id] = { cat: CATS[i].id, n: 0, seg: 0, likes: 0, rapidos: 0, completos: 0, interes: 0 };
+    for (i = 0; i < V.length; i++) {
+      x = V[i]; c = por[x.cat];
+      c.n++; c.seg += x.seg; if (x.like) c.likes++;
+      if (x.seg < 1.3) c.rapidos++;
+      if (x.seg >= x.v.largo * 0.9) c.completos++;
+      c.interes += Math.min(x.seg / x.v.largo, 2.2) + (x.like ? 2 : 0) + (x.sigue ? 1 : 0) - (x.seg < 1.3 ? 0.5 : 0);
+    }
+    var arr = []; for (c in por) { por[c].prom = por[c].n ? por[c].interes / por[c].n : 0; arr.push(por[c]); }
+    // ranking: interés total (lo que más te retuvo)
+    arr.sort(function (a, b) { return (b.interes + b.prom) - (a.interes + a.prom); });
+    return arr;
+  }
+};
+
+function mezclar(a) {
+  var i, j, t;
+  a = a.slice(0);
+  for (i = a.length - 1; i > 0; i--) { j = Math.floor(Math.random() * (i + 1)); t = a[i]; a[i] = a[j]; a[j] = t; }
+  return a;
+}
+/* ============ SONIDO (sintetizado, sin archivos) ============ */
+var AU = { ctx: null, sfxOn: true, musOn: false, master: null, musGain: null, musTimer: null, paso: 0 };
+function auIniciar() {
+  if (AU.ctx) { if (AU.ctx.state === 'suspended') AU.ctx.resume(); return; }
+  var C = window.AudioContext || window.webkitAudioContext; if (!C) return;
+  AU.ctx = new C();
+  var comp = AU.ctx.createDynamicsCompressor(); comp.threshold.value = -18; comp.ratio.value = 8;
+  AU.master = AU.ctx.createGain(); AU.master.gain.value = 2.2;
+  AU.master.connect(comp); comp.connect(AU.ctx.destination);
+  AU.musGain = AU.ctx.createGain(); AU.musGain.gain.value = 0; AU.musGain.connect(AU.master);
+}
+function tono(f, t0, dur, tipo, vol, destino, f2) {
+  var c = AU.ctx, o = c.createOscillator(), g = c.createGain();
+  o.type = tipo || 'sine'; o.frequency.setValueAtTime(f, t0);
+  if (f2) o.frequency.exponentialRampToValueAtTime(f2, t0 + dur);
+  g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(vol || 0.2, t0 + 0.012);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  o.connect(g); g.connect(destino || AU.master); o.start(t0); o.stop(t0 + dur + 0.05);
+}
+function ruido(t0, dur, vol, fc, destino, tipoF) {
+  var c = AU.ctx, n = Math.floor(c.sampleRate * dur), b = c.createBuffer(1, n, c.sampleRate), d = b.getChannelData(0), i;
+  for (i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n);
+  var s = c.createBufferSource(); s.buffer = b;
+  var f = c.createBiquadFilter(); f.type = tipoF || 'bandpass'; f.frequency.value = fc || 1200; f.Q.value = 0.8;
+  var g = c.createGain(); g.gain.value = vol || 0.2;
+  s.connect(f); f.connect(g); g.connect(destino || AU.master); s.start(t0);
+}
+function sfx(n) {
+  if (!AU.ctx || !AU.sfxOn) return;
+  var t = AU.ctx.currentTime;
+  if (n === 'like') { tono(660, t, 0.12, 'triangle', 0.24, null, 990); tono(1320, t + 0.06, 0.18, 'sine', 0.12); }
+  else if (n === 'deslizar') ruido(t, 0.16, 0.12, 1800, null, 'highpass');
+  else if (n === 'tap') tono(880, t, 0.05, 'sine', 0.06);
+  else if (n === 'seguir') { tono(523, t, 0.1, 'triangle', 0.12); tono(784, t + 0.08, 0.16, 'triangle', 0.12); }
+  else if (n === 'noti') { tono(1175, t, 0.18, 'sine', 0.18); tono(1568, t + 0.13, 0.3, 'sine', 0.16); }
+  else if (n === 'pasa') { tono(392, t, 0.5, 'sine', 0.09, null, 784); ruido(t, 0.45, 0.08, 900); }
+  else if (n === 'golpe') { tono(110, t, 0.5, 'sine', 0.3, null, 50); ruido(t, 0.25, 0.08, 300, null, 'lowpass'); }
+  else if (n === 'punto') tono(1046 + Math.random() * 300, t, 0.08, 'sine', 0.05);
+  else if (n === 'acierto') { tono(784, t, 0.14, 'triangle', 0.13); tono(1046, t + 0.1, 0.22, 'triangle', 0.13); }
+  else if (n === 'gana') { var k, ns = [523, 659, 784, 1046, 1318]; for (k = 0; k < ns.length; k++) tono(ns[k], t + k * 0.09, 0.4, 'triangle', 0.13); }
+}
+// música de fondo tranquila (lo-fi): acordes suaves + bajo + golpecitos
+var ACORDES = [[261.6, 329.6, 392, 493.9], [220, 261.6, 329.6, 392], [174.6, 220, 261.6, 329.6], [196, 246.9, 293.7, 349.2]];
+function musica(on) {
+  AU.musOn = on;
+  if (!AU.ctx) return;
+  var t = AU.ctx.currentTime;
+  AU.musGain.gain.cancelScheduledValues(t);
+  AU.musGain.gain.setTargetAtTime(on ? 0.5 : 0, t, 0.4);
+  if (on && !AU.musTimer) {
+    AU.proximo = AU.ctx.currentTime + 0.1;
+    AU.musTimer = setInterval(programar, 100);
+  }
+}
+function programar() {
+  var c = AU.ctx, negra = 60 / 82;
+  while (AU.proximo < c.currentTime + 0.5) {
+    var t = AU.proximo, p = AU.paso % 16, ac = ACORDES[Math.floor(AU.paso / 16) % 4], k;
+    if (p === 0) for (k = 0; k < 4; k++) tono(ac[k], t, negra * 3.6, 'sine', 0.035, AU.musGain);
+    if (p === 0 || p === 8) tono(ac[0] / 2, t, negra * 1.6, 'triangle', 0.07, AU.musGain);
+    if (p % 4 === 0) { tono(70, t, 0.25, 'sine', p % 8 === 0 ? 0.14 : 0.05, AU.musGain, 40); }
+    if (p % 2 === 1) ruido(t, 0.05, 0.025, 7000, AU.musGain, 'highpass');
+    if (p === 6 || p === 14) tono(ac[(p / 2) % 4] * 2, t, 0.6, 'sine', 0.03, AU.musGain);
+    AU.proximo += negra / 2; AU.paso++;
+  }
+}
+/* ============ CAPÍTULO 2: los personajes ============
+   gustos: 2 le encanta · 1 le gusta · 0 le da igual · -1 no lo soporta (lo que no figura vale 0) */
+var PERSONAJES = [
+  { id: 'tomi', nombre: 'Tomi', edad: 10, meta: 150, gustos: { futbol: 2, humor: 2, juegos: 1, skate: 1, cocina: -1, dibujo: -1, musica: -1 },
+    look: { piel: '#e8b48a', pelo: '#3b2a20', peinado: 'corto', ropa: '#1c7ed6', extra: 'camiseta' },
+    intro: 'Tomi abrió bucle. No sabés qué le gusta. Descubrilo mirando cómo reacciona.',
+    aprendio: 'Descubriste qué le gusta a Tomi sin que te lo diga, solo mirando cómo reaccionaba. Eso mismo hace el algoritmo con vos.' },
+  { id: 'rosa', nombre: 'Abuela Rosa', edad: 72, meta: 180, gustos: { cocina: 2, animales: 2, musica: 1, dibujo: 1, juegos: -1, skate: -1, humor: -1, espacio: -1 },
+    look: { piel: '#f1c7a5', pelo: '#d9dde3', peinado: 'rodete', ropa: '#c2255c', extra: 'lentes' },
+    intro: 'La abuela Rosa se bajó bucle para ver qué miran sus nietos. ¿Qué le gustará a ella?',
+    aprendio: 'A la abuela le gustan cosas muy distintas que a Tomi. Por eso cada persona ve un bucle diferente: nadie ve el mismo feed.' },
+  { id: 'valen', nombre: 'Valen', edad: 9, meta: 180, variedad: true, gustos: { musica: 2, dibujo: 2, animales: 1, humor: 1, futbol: -1, ciencia: -1 },
+    look: { piel: '#c68642', pelo: '#2b1d16', peinado: 'cola', ropa: '#9b6bff', extra: 'auris' },
+    intro: 'Valen se aburre rápido: si le mostrás dos veces seguidas lo mismo, se cansa. ¡Ojo! Desde ahora también aparecen anuncios que te dan monedas.',
+    aprendio: 'Si mostrás siempre lo mismo, aburre. Por eso el algoritmo mezcla un poquito de otras cosas: para que no te vayas.' },
+  { id: 'mateo', nombre: 'Mateo', edad: 11, meta: 210, gustos: { juegos: 2, ciencia: 1, futbol: 1, animales: -1, cocina: -1 },
+    cambio: { en: 100, gustos: { espacio: 2, ciencia: 2, juegos: 0, futbol: 1, animales: -1, cocina: -1 } },
+    look: { piel: '#f3d2b3', pelo: '#c0392b', peinado: 'rulos', ropa: '#2f9e44', extra: 'gorra' },
+    intro: 'Mateo es fácil… al principio. Prestá atención: a veces los gustos cambian.',
+    aprendio: 'Los gustos cambian, y el algoritmo cambia con vos: te está mirando todo el tiempo para darse cuenta.' },
+  { id: 'sofi', nombre: 'Sofi', edad: 10, meta: 180, noche: true, gustos: { dibujo: 2, musica: 2, animales: 1, humor: 1, futbol: -1, juegos: -1 },
+    look: { piel: '#e0ac69', pelo: '#5c3d2e', peinado: 'largo', ropa: '#74c0fc', extra: 'pijama' },
+    intro: 'Son las 22:30. Sofi está en la cama mirando bucle. Tu meta: que mire 3 minutos más.',
+    aprendio: '' }
+];
+var FRASES = {
+  2: ['¡Me encanta!', '¡Otro así!', '¡Jajaja, buenísimo!', '¡Qué bueno!'],
+  1: ['Está bueno.', 'Lindo.', 'Mmm, me gusta.'],
+  0: ['Meh…', 'Bueno…', 'No sé…'],
+  '-1': ['¡Ni loco!', 'Uff, no.', '¡Siguiente!', 'Qué aburrido.']
+};
+var EFECTO = { 2: { t: 14, ab: -15, dur: 2300 }, 1: { t: 8, ab: -6, dur: 1700 }, 0: { t: 3, ab: 12, dur: 1300 }, '-1': { t: 1, ab: 22, dur: 900 } };
+
+/* ---------- dibujo de cada personaje ---------- */
+function personaSVG(p, expr) {
+  var L = p.look, s = '<svg viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg">';
+  // cuerpo
+  s += '<path d="M30 220 Q30 160 100 156 Q170 160 170 220 Z" fill="' + L.ropa + '"/>';
+  if (L.extra === 'camiseta') s += '<text x="100" y="208" font-family="Arial Black,Arial" font-weight="900" font-size="34" fill="#fff" text-anchor="middle">10</text>';
+  if (L.extra === 'pijama') s += '<g fill="#fff" opacity=".7"><circle cx="70" cy="190" r="5"/><circle cx="130" cy="196" r="5"/><circle cx="100" cy="206" r="5"/><path d="M84 176 l4 8 8 2 -8 2 -4 8 -4 -8 -8 -2 8 -2 Z"/></g>';
+  s += '<rect x="86" y="140" width="28" height="24" rx="8" fill="' + L.piel + '"/>';
+  // pelo de atrás
+  if (L.peinado === 'largo') s += '<path d="M36 96 Q36 30 100 28 Q164 30 164 96 L170 176 Q140 160 130 120 L70 120 Q60 160 30 176 Z" fill="' + L.pelo + '"/>';
+  if (L.peinado === 'cola') s += '<path d="M150 60 Q186 70 178 120 Q172 150 160 160 Q170 120 150 92 Z" fill="' + L.pelo + '"/>';
+  if (L.peinado === 'rodete') s += '<circle cx="100" cy="30" r="22" fill="' + L.pelo + '"/>';
+  // cabeza
+  s += '<ellipse cx="36" cy="100" rx="10" ry="14" fill="' + L.piel + '"/><ellipse cx="164" cy="100" rx="10" ry="14" fill="' + L.piel + '"/>';
+  s += '<circle cx="100" cy="95" r="62" fill="' + L.piel + '"/>';
+  // pelo de adelante
+  if (L.peinado === 'corto') s += '<path d="M40 86 Q38 34 100 32 Q162 34 160 86 Q140 60 112 64 Q86 52 60 66 Q48 72 40 86 Z" fill="' + L.pelo + '"/>';
+  else if (L.peinado === 'rulos') { s += '<g fill="' + L.pelo + '">'; var i; for (i = 0; i < 9; i++) s += '<circle cx="' + (44 + i * 14) + '" cy="' + (52 + Math.abs(4 - i) * 5) + '" r="16"/>'; s += '</g>'; }
+  else if (L.peinado === 'rodete') s += '<path d="M40 90 Q40 40 100 38 Q160 40 160 90 Q150 62 100 60 Q50 62 40 90 Z" fill="' + L.pelo + '"/>';
+  else s += '<path d="M38 92 Q36 32 100 30 Q164 32 162 92 Q150 58 120 56 Q100 70 76 60 Q50 62 38 92 Z" fill="' + L.pelo + '"/>';
+  if (L.extra === 'gorra') s += '<path d="M38 70 Q40 22 100 20 Q160 22 162 70 Z" fill="#212529"/><path d="M100 64 Q150 58 186 72 Q150 80 100 74 Z" fill="#212529"/><circle cx="100" cy="40" r="7" fill="#fff"/>';
+  if (L.extra === 'auris') s += '<path d="M34 98 Q30 26 100 24 Q170 26 166 98" fill="none" stroke="#ff5fa2" stroke-width="9"/><rect x="22" y="84" width="22" height="34" rx="10" fill="#ff5fa2"/><rect x="156" y="84" width="22" height="34" rx="10" fill="#ff5fa2"/>';
+  // cara
+  var ojo = '#2b2b3a', cejas = '';
+  if (expr === 'enojado') cejas = '<path d="M62 70 l24 8 M138 70 l-24 8" stroke="' + ojo + '" stroke-width="6" stroke-linecap="round"/>';
+  else if (expr === 'aburrido' || expr === 'meh') cejas = '<path d="M64 74 h20 M116 74 h20" stroke="' + ojo + '" stroke-width="5" stroke-linecap="round"/>';
+  else cejas = '<path d="M62 70 q12 -8 24 0 M114 70 q12 -8 24 0" stroke="' + ojo + '" stroke-width="5" fill="none" stroke-linecap="round"/>';
+  s += cejas;
+  var ojos;
+  if (expr === 'encanta') ojos = '<g fill="#ff3d6e"><path d="M75 104 C56 92 60 76 75 85 C90 76 94 92 75 104 Z"/><path d="M125 104 C106 92 110 76 125 85 C140 76 144 92 125 104 Z"/></g>';
+  else if (expr === 'feliz') ojos = '<path d="M64 92 q11 -12 22 0 M114 92 q11 -12 22 0" stroke="' + ojo + '" stroke-width="6" fill="none" stroke-linecap="round"/>';
+  else if (expr === 'dormido') ojos = '<path d="M64 92 q11 8 22 0 M114 92 q11 8 22 0" stroke="' + ojo + '" stroke-width="5" fill="none" stroke-linecap="round"/>';
+  else if (expr === 'aburrido' || expr === 'meh') ojos = '<path d="M64 90 h22 M114 90 h22" stroke="' + ojo + '" stroke-width="5" stroke-linecap="round"/><circle cx="75" cy="95" r="5" fill="' + ojo + '"/><circle cx="125" cy="95" r="5" fill="' + ojo + '"/>';
+  else if (expr === 'sorprendido') ojos = '<circle cx="75" cy="92" r="10" fill="#fff" stroke="' + ojo + '" stroke-width="4"/><circle cx="125" cy="92" r="10" fill="#fff" stroke="' + ojo + '" stroke-width="4"/><circle cx="75" cy="92" r="4" fill="' + ojo + '"/><circle cx="125" cy="92" r="4" fill="' + ojo + '"/>';
+  else ojos = '<circle cx="75" cy="92" r="7" fill="' + ojo + '"/><circle cx="125" cy="92" r="7" fill="' + ojo + '"/><circle cx="77" cy="89" r="2.5" fill="#fff"/><circle cx="127" cy="89" r="2.5" fill="#fff"/>';
+  s += ojos;
+  if (L.extra === 'lentes') s += '<g fill="none" stroke="#5c3d2e" stroke-width="4"><circle cx="75" cy="93" r="16"/><circle cx="125" cy="93" r="16"/><path d="M91 93 h18"/></g>';
+  var boca;
+  if (expr === 'encanta' || expr === 'feliz') boca = '<path d="M78 116 Q100 142 122 116 Z" fill="#7a2335"/><path d="M88 128 Q100 136 112 128 Q100 124 88 128" fill="#ff8787"/>';
+  else if (expr === 'enojado') boca = '<path d="M82 128 Q100 114 118 128" stroke="' + ojo + '" stroke-width="5" fill="none" stroke-linecap="round"/>';
+  else if (expr === 'aburrido') boca = '<ellipse cx="100" cy="124" rx="10" ry="13" fill="#7a2335"/>';
+  else if (expr === 'meh') boca = '<path d="M86 122 h28" stroke="' + ojo + '" stroke-width="5" stroke-linecap="round"/>';
+  else if (expr === 'dormido') boca = '<ellipse cx="100" cy="122" rx="6" ry="5" fill="#7a2335"/>';
+  else if (expr === 'sorprendido') boca = '<ellipse cx="100" cy="124" rx="8" ry="10" fill="#7a2335"/>';
+  else boca = '<path d="M84 118 Q100 130 116 118" stroke="' + ojo + '" stroke-width="5" fill="none" stroke-linecap="round"/>';
+  s += boca;
+  s += '<ellipse cx="62" cy="112" rx="10" ry="6" fill="#ff8fa3" opacity=".5"/><ellipse cx="138" cy="112" rx="10" ry="6" fill="#ff8fa3" opacity=".5"/>';
+  return s + '</svg>';
+}
+/* ============ BUCLE: MODO HISTORIA ============ */
+function azar(a) { return a[Math.floor(Math.random() * a.length)]; }
+var PR = { cap1: false, c2: {}, c3: 0, logros: {}, monedas: 0, top: [], todo: false };
+function cargarPR() { try { var t = localStorage.getItem('bucle_historia_v1'); if (t) { var o = JSON.parse(t), k; for (k in o) PR[k] = o[k]; } } catch (e) {} }
+function guardarPR() { try { localStorage.setItem('bucle_historia_v1', JSON.stringify(PR)); } catch (e) {} }
+
+var LOGROS = [
+  ['primer', 'Primer scroll', 'Mirá tu primer video en bucle.'],
+  ['cap1', 'Te conoce', 'Terminá el capítulo 1.'],
+  ['tomi', 'Lector de mentes', '3 estrellas con Tomi.'],
+  ['rosa', 'Nieto favorito', '3 estrellas con la abuela Rosa.'],
+  ['valen', 'Maestro de la mezcla', '3 estrellas con Valen.'],
+  ['mateo', 'Atento al cambio', '3 estrellas con Mateo.'],
+  ['corazon', 'Algoritmo con corazón', 'Dejá que Sofi se vaya a dormir.'],
+  ['vendedor', 'Rey de los anuncios', 'Juntá 30 monedas con anuncios.'],
+  ['burbuja', 'Fuera de la burbuja', 'Completá el álbum de los 10 temas.'],
+  ['veloz', 'Escapista veloz', 'Completá el álbum en 20 videos o menos.'],
+  ['sinBuscar', 'Sin ayuda', 'Completá el álbum sin usar la lupa.'],
+  ['todas', 'Coleccionista', 'Conseguí todas las estrellas del juego.']
+];
+function logro(id) {
+  if (PR.logros[id]) return;
+  PR.logros[id] = 1; guardarPR();
+  var i, l; for (i = 0; i < LOGROS.length; i++) if (LOGROS[i][0] === id) l = LOGROS[i];
+  var e = h('div', 'logroToast', '<div class="lt1">' + IC_TROFEO + '</div><div><b>¡Logro desbloqueado!</b><span>' + l[1] + '</span></div>');
+  $('stage').appendChild(e);
+  sfx('acierto');
+  setTimeout(function () { e.className = 'logroToast fuera'; }, 3200);
+  setTimeout(function () { if (e.parentNode) e.parentNode.removeChild(e); }, 3800);
+  revisarColeccionista();
+}
+function revisarColeccionista() {
+  var i, ok = PR.c3 >= 3;
+  for (i = 0; i < PERSONAJES.length; i++) if ((PR.c2[PERSONAJES[i].id] || 0) < 3) ok = false;
+  if (ok && !PR.logros.todas) setTimeout(function () { logro('todas'); }, 3600);
+}
+var IC_TROFEO = '<svg viewBox="0 0 24 24"><path d="M7 3h10v3h3a1 1 0 0 1 1 1c0 3-2 5-4.4 5.4A5 5 0 0 1 13 15.9V18h3v3H8v-3h3v-2.1a5 5 0 0 1-3.6-3.5C5 12 3 10 3 7a1 1 0 0 1 1-1h3zm10 5v2.3c1-.4 1.7-1.2 1.9-2.3zM5.1 8c.2 1.1.9 1.9 1.9 2.3V8z" fill="#ffd43b"/></svg>';
+var IC_MONEDA = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#fab005"/><circle cx="12" cy="12" r="7.5" fill="#ffd43b"/><path d="M12 7.5v9M14.5 9.5c-.5-.8-1.4-1.2-2.5-1.2-1.4 0-2.4.7-2.4 1.8 0 2.5 5 1.3 5 3.9 0 1.1-1.1 1.9-2.6 1.9-1.2 0-2.2-.5-2.7-1.4" stroke="#b07a00" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>';
+var IC_EST = '<svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.2 1.3-6.6L2.5 9.3l6.6-.8z" fill="#ffd43b"/></svg>';
+function estrellasHTML(n, tam) { var s = '<span class="ests">', i; for (i = 0; i < 3; i++) s += '<i style="width:' + tam + 'px;height:' + tam + 'px;opacity:' + (i < n ? 1 : 0.18) + '">' + IC_EST + '</i>'; return s + '</span>'; }
+
+/* =========================================================
+   MENÚ DE CAPÍTULOS
+   ========================================================= */
+function abierto(cap) { if (PR.todo) return true; if (cap === 1) return true; if (cap === 2) return PR.cap1; return !!PR.c2.sofi || (PR.c2.mateo != null); }
+function irMenu() {
+  S.fase = 'menu'; musica(AU.musOn);
+  var o = $('otra'), s = '', i;
+  o.style.background = 'radial-gradient(900px 600px at 80% 0%,#3a1450,rgba(0,0,0,0)),radial-gradient(800px 600px at 0% 100%,#0f2a3a,rgba(0,0,0,0)),#07070b';
+  var nL = 0; for (i in PR.logros) nL++;
+  var totEst = (PR.cap1 ? 3 : 0) + PR.c3; for (i = 0; i < PERSONAJES.length; i++) totEst += PR.c2[PERSONAJES[i].id] || 0;
+  s += '<div class="mLogo"><svg viewBox="0 0 100 60"><path d="M50 30 C38 10 10 10 10 30 C10 50 38 50 50 30 C62 10 90 10 90 30 C90 50 62 50 50 30 Z" fill="none" stroke="url(#lg0)" stroke-width="10" stroke-linecap="round"/></svg><b>bucle</b><span>modo historia</span></div>';
+  s += '<div class="mHola">' + (S.nombre ? 'Hola, ' + esc(S.nombre) + '.' : 'Hola.') + ' Elegí un capítulo.</div>';
+  s += '<div class="mStats"><span>' + IC_EST + totEst + '</span><span>' + IC_MONEDA + PR.monedas + '</span><button id="bLogros">' + IC_TROFEO + 'Logros ' + nL + '/' + LOGROS.length + '</button></div>';
+  var caps = [
+    [1, 'Usá bucle', 'Mirá videos como siempre. ¿Qué sabrá de vos?', '#ff5fa2', PR.cap1 ? 3 : 0, PR.cap1 ? 'Hecho' : ''],
+    [2, 'Sé el algoritmo', 'Ahora vos elegís qué ve cada persona. ¡Que no se vaya!', '#ffb36b', -1, ''],
+    [3, 'Escapá de la burbuja', 'Juntá los 10 temas antes de quedar atrapado.', '#5ee7ff', PR.c3, '']
+  ];
+  for (i = 0; i < 3; i++) {
+    var c = caps[i], ab = abierto(c[0]), ilu;
+    if (c[0] === 1) ilu = '<div class="mIlu">' + escena(VIDEOS[0]) + '</div>';
+    else if (c[0] === 2) ilu = '<div class="mIlu dos">' + personaSVG(PERSONAJES[0], 'feliz') + personaSVG(PERSONAJES[1], 'encanta') + '</div>';
+    else ilu = '<div class="mIlu tres"><div class="mBur"></div>' + personaSVG(PERSONAJES[2], 'sorprendido') + '</div>';
+    var est = '';
+    if (c[0] === 2) { var tot = 0, k; for (k = 0; k < PERSONAJES.length; k++) tot += PR.c2[PERSONAJES[k].id] || 0; est = '<div class="mEst">' + IC_EST + tot + ' / 15</div>'; }
+    else if (c[4] > 0) est = '<div class="mEst">' + estrellasHTML(c[4], 26) + '</div>';
+    s += '<button class="capCard' + (ab ? '' : ' cerrado') + '" data-c="' + c[0] + '" style="left:' + (70 + i * 390) + 'px;--c:' + c[3] + '">' + ilu +
+      '<div class="cNum" style="color:' + c[3] + '">' + c[0] + '</div><div class="cTit">' + c[1] + '</div><div class="cSub">' + c[2] + '</div>' + est +
+      (ab ? '' : '<div class="cCand"><svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="3" fill="#fff"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="#fff" stroke-width="2.6" fill="none"/></svg></div>') + '</button>';
+  }
+  s += '<button class="btnS" id="bNuevoJ" style="position:absolute;right:30px;bottom:22px;height:42px;font-size:14px;padding:0 18px">Nuevo jugador</button>';
+  o.innerHTML = s;
+  pantalla('otraP');
+  var cs = o.querySelectorAll('.capCard');
+  for (i = 0; i < cs.length; i++) cs[i].onclick = function () {
+    var n = +this.getAttribute('data-c');
+    if (!abierto(n)) { sfx('golpe'); toast(n === 2 ? 'Primero terminá el capítulo 1' : 'Primero jugá con Mateo en el capítulo 2'); return; }
+    sfx('tap');
+    if (n === 1) empezarCap1(); else if (n === 2) irCap2(); else introCap3();
+  };
+  $('bLogros').onclick = irLogros;
+  $('bNuevoJ').onclick = function () {
+    if (!this._c) { this._c = 1; this.innerHTML = 'Tocá otra vez: se borra todo'; return; }
+    try { localStorage.removeItem('bucle_historia_v1'); } catch (e) {} location.reload();
+  };
+}
+function irLogros() {
+  var o = $('otra'), s = '<div class="sT" style="top:60px;left:80px;font-size:56px">Logros</div>', i;
+  for (i = 0; i < LOGROS.length; i++) {
+    var l = LOGROS[i], ok = PR.logros[l[0]];
+    s += '<div class="logroC' + (ok ? ' si' : '') + '" style="left:' + (80 + (i % 4) * 285) + 'px;top:' + (170 + Math.floor(i / 4) * 160) + 'px"><div class="li">' + IC_TROFEO + '</div><b>' + l[1] + '</b><span>' + l[2] + '</span></div>';
+  }
+  s += '<button class="btnG" id="bVolverM" style="position:absolute;right:40px;top:50px">Volver</button>';
+  o.innerHTML = s;
+  $('bVolverM').onclick = irMenu;
+}
+
+/* =========================================================
+   CAPÍTULO 1: usá bucle (feed de 20 videos y revelación corta)
+   ========================================================= */
+function empezarCap1() {
+  S.modo = 'cap1'; S.total = 20; S.anunciosEn = [8];
+  armarLateral(); $('hud').className = ''; $('nav').style.display = ''; $('sugeridos').style.display = '';
+  $('feedP').classList.remove('modoEsc');
+  ALGO.reiniciar(); ALGO.modo = 'normal';
+  S.hist = []; S.idx = -1; S.nuevos = 0; S.tFeed = ahora(); S.fase = 'feed'; S.anuncios = []; S.liked = {}; S.sigo = {};
+  for (var k in S) if (k.indexOf('ad') === 0 && k.length < 6) delete S[k];
+  $('feed').innerHTML = ''; $('feed')._actual = null;
+  pantalla('feedP');
+  mostrarAyuda();
+  avanzar();
+}
+function finCap1() {
+  PR.cap1 = true; PR.top = [REV.D.top, REV.D.top2]; guardarPR();
+  logro('cap1');
+  irMenu();
+}
+function slFinCap1(el, D) {
+  fondoSl(el, 'linear-gradient(135deg,#ff8a5c,#ff5fa2 45%,#7048e8)'); blobs(el, ['rgba(255,255,255,.25)', 'rgba(94,231,255,.3)']);
+  txt(el, 'sT', 'top:170px;font-size:80px;text-align:center;letter-spacing:-4px', '¿Cómo lo supe?', 0.1);
+  txt(el, 'sP', 'top:300px;text-align:center;font-size:28px;left:160px;right:160px', 'Miré <b>cuánto tiempo</b> te quedabas en cada video, a qué le diste <b>me gusta</b> y qué <b>pasabas rápido</b>.', 0.7);
+  txt(el, 'sP', 'top:440px;text-align:center;font-size:26px;left:160px;right:160px', 'En el capítulo 2, <b>el algoritmo vas a ser vos</b>.', 1.6);
+}
+
+/* =========================================================
+   CAPÍTULO 2: sé el algoritmo
+   ========================================================= */
+var A2 = null;
+function irCap2() {
+  S.fase = 'cap2menu';
+  var o = $('otra'), s = '', i;
+  o.style.background = 'radial-gradient(900px 600px at 50% 0%,#4a2a10,rgba(0,0,0,0)),#0b0a08';
+  s += '<div class="sP" style="top:56px;left:80px;font-size:15px;color:#c9a27a;font-weight:800;letter-spacing:1px;text-transform:uppercase">Capítulo 2</div>';
+  s += '<div class="sT" style="top:84px;left:80px;font-size:58px">Sé el algoritmo</div>';
+  s += '<div class="sP" style="top:160px;left:80px;width:1100px;font-size:21px;color:#d8cfc4">Elegí qué video ve cada persona. Mirá cómo reacciona y descubrí sus gustos. Si se aburre, cierra bucle.</div>';
+  for (i = 0; i < PERSONAJES.length; i++) {
+    var p = PERSONAJES[i], ab = PR.todo || i === 0 || PR.c2[PERSONAJES[i - 1].id] != null, est = PR.c2[p.id];
+    s += '<button class="perCard' + (ab ? '' : ' cerrado') + '" data-i="' + i + '" style="left:' + (80 + i * 228) + 'px">' + personaSVG(p, est ? 'feliz' : 'normal') + '<b>' + p.nombre + '</b><span>' + p.edad + ' años</span>' + (est != null ? estrellasHTML(est, 24) : '') + '</button>';
+  }
+  s += '<button class="btnS" id="bVolverM" style="position:absolute;left:80px;bottom:34px">Volver</button>';
+  o.innerHTML = s; pantalla('otraP');
+  $('bVolverM').onclick = irMenu;
+  var cs = o.querySelectorAll('.perCard');
+  for (i = 0; i < cs.length; i++) cs[i].onclick = function () { var n = +this.getAttribute('data-i'); if (this.className.indexOf('cerrado') >= 0) { sfx('golpe'); toast('Primero jugá con el anterior'); return; } introNivel2(n); };
+}
+function introNivel2(n) {
+  var p = PERSONAJES[n], o = $('otra');
+  S.fase = 'cap2intro';
+  o.innerHTML = '<div class="introPer">' + personaSVG(p, 'normal') + '</div><div class="sT" style="left:520px;top:150px;font-size:64px">' + p.nombre + ', ' + p.edad + '</div>' +
+    '<div class="sP" style="left:520px;top:250px;width:680px;font-size:25px">' + p.intro + '</div>' +
+    '<div class="sP" style="left:520px;top:400px;width:680px;font-size:21px;color:#d8cfc4">Meta: que se quede <b>' + mmss(p.meta) + '</b> en bucle.</div>' +
+    '<button class="btnG" id="bArr2" style="position:absolute;left:520px;top:480px">¡Empezar!</button>';
+  $('bArr2').onclick = function () { jugar2(n); };
+}
+function mmss(s) { s = Math.max(0, Math.round(s)); return Math.floor(s / 60) + ':' + (s % 60 < 10 ? '0' : '') + (s % 60); }
+function jugar2(n) {
+  var p = PERSONAJES[n];
+  A2 = { n: n, p: p, t: 0, ab: 20, monedas: 0, hist: [], ocupado: false, gustos: p.gustos, cambio: false, frasesNoche: {}, fin: false, repes: 0 };
+  S.fase = 'cap2';
+  pantalla('algoP');
+  $('aNombre').innerHTML = p.nombre + ' <span>' + p.edad + ' años</span>';
+  $('aMeta').innerHTML = 'Meta ' + mmss(p.meta);
+  $('aPersona').innerHTML = personaSVG(p, 'normal');
+  $('aDormir').style.display = 'none';
+  $('aReloj').style.display = p.noche ? '' : 'none';
+  $('aFondo').className = p.noche ? 'noche' : '';
+  $('aPantalla').innerHTML = '<div class="aEspera">' + IC_TELEFONO + '<span>Elegí el primer video →</span></div>';
+  $('aHist').innerHTML = '';
+  globo('¿Qué miro?');
+  pintarHud2();
+  nuevasOpciones();
+}
+var IC_TELEFONO = '<svg viewBox="0 0 24 24" width="70" height="70"><rect x="6" y="2" width="12" height="20" rx="3" fill="#2c2c3d"/><rect x="7.5" y="4.5" width="9" height="14" rx="1" fill="#5ee7ff" opacity=".4"/></svg>';
+function valorDe(cat) { var v = A2.gustos[cat]; return v == null ? 0 : v; }
+function nuevasOpciones() {
+  var cats = mezclar(CATS.map(function (c) { return c.id; })), tres = cats.slice(0, 3), i, buenos = 0;
+  for (i = 0; i < 3; i++) if (valorDe(tres[i]) >= 1) buenos++;
+  if (!buenos && Math.random() < 0.7) tres = mezclar(cats).slice(0, 3);
+  A2.ops = [];
+  for (i = 0; i < 3; i++) {
+    var lista = VIDEOS.filter(function (v) { return v.cat === tres[i]; }), v = lista[Math.floor(Math.random() * lista.length)];
+    A2.ops.push(v);
+  }
+  // anuncios desde Valen
+  if (A2.n >= 2 && Math.random() < 0.35) {
+    var ca = CATS[Math.floor(Math.random() * CATS.length)].id, base = VIDEOS.filter(function (v) { return v.cat === ca; })[0];
+    A2.ops[Math.floor(Math.random() * 3)] = { id: 'ad', cat: ca, titulo: ANUNCIOS[ca][0], esc: base.esc, semilla: base.semilla + 3, largo: 8, anuncio: true, autor: 'bucle_anuncios' };
+  }
+  var s = '';
+  for (i = 0; i < 3; i++) {
+    var o = A2.ops[i], c = CAT[o.cat];
+    s += '<button class="opc' + (o.anuncio ? ' esAd' : '') + '" data-i="' + i + '"><div class="opMini">' + escena(o) + (o.anuncio ? '<div class="opAd">Anuncio · ' + IC_MONEDA + '+6</div>' : '') + '</div><div class="opTx"><b class="num">' + (i + 1) + '</b><div><div class="opTit">' + esc(o.titulo) + '</div><span class="chipM" style="background:' + c.color + ';' + (o.cat === 'espacio' || o.cat === 'juegos' ? 'color:#fff' : '') + '">' + c.nombre + '</span></div></div></button>';
+  }
+  $('aOpciones').innerHTML = s;
+  var bs = $('aOpciones').children;
+  for (i = 0; i < bs.length; i++) bs[i].onclick = function () { elegirOpcion(+this.getAttribute('data-i')); };
+}
+function elegirOpcion(i) {
+  if (!A2 || A2.ocupado || A2.fin) return;
+  A2.ocupado = true;
+  var v = A2.ops[i], val = valorDe(v.cat), frase, ef, ult = A2.hist.slice(-2), extra = 0, i2;
+  sfx('tap');
+  var bs = $('aOpciones').children; for (i2 = 0; i2 < bs.length; i2++) bs[i2].className += i2 === i ? ' elegida' : ' apagada';
+  // repetir aburre (Valen: con una vez alcanza; los demás: tres seguidas)
+  var repetido = A2.p.variedad ? (ult.length && ult[ult.length - 1].cat === v.cat) : (ult.length === 2 && ult[0].cat === v.cat && ult[1].cat === v.cat);
+  if (repetido && val > -1) { val -= A2.p.variedad ? 2 : 1; if (val < -1) val = -1; frase = 'Otra vez lo mismo…'; A2.repes++; }
+  if (A2.cambio && A2.p.cambio && A2.viejos && A2.viejos[v.cat] === 2 && val < 2 && !repetido) frase = 'Ya me cansé de esto…';
+  if (v.anuncio) {
+    var gusta = val >= 1;
+    ef = { t: 2, ab: gusta ? 2 : 10, dur: 1500 };
+    frase = gusta ? '¡Uh, eso lo quiero!' : 'Uff, una publicidad.';
+    A2.monedas += 6; PR.monedas += 6; guardarPR();
+    if (PR.monedas >= 30) logro('vendedor');
+    val = gusta ? 1 : 0;
+  } else ef = EFECTO[val];
+  if (!frase) frase = azar(FRASES[val]);
+  // se reproduce
+  $('aPantalla').innerHTML = escena(v) + '<div class="aProg"><div style="transition:width ' + (ef.dur / 1000) + 's linear"></div></div>' + (v.anuncio ? '<div class="pubTag" style="bottom:auto;top:16px">Publicidad</div>' : '');
+  setTimeout(function () { var pb = $('aPantalla').querySelector('.aProg div'); if (pb) pb.style.width = '100%'; }, 30);
+  var expr = val === 2 ? 'encanta' : val === 1 ? 'feliz' : val === 0 ? 'meh' : 'enojado';
+  setTimeout(function () {
+    $('aPersona').innerHTML = personaSVG(A2.p, expr);
+    globo(frase);
+    if (val === 2) { lluviaCorazones(); sfx('like'); }
+    else if (val === -1) sfx('golpe');
+    else sfx('punto');
+  }, 350);
+  setTimeout(function () {
+    A2.t += ef.t; A2.ab = Math.max(0, Math.min(100, A2.ab + ef.ab));
+    A2.hist.push({ cat: v.cat, val: val, ad: !!v.anuncio });
+    pintarHist(); pintarHud2(true);
+    revisarEventos2();
+    if (A2.fin) return;
+    if (A2.ab >= 100) { finNivel2('aburrido'); return; }
+    if (A2.t >= A2.p.meta) { finNivel2(A2.p.noche ? 'trasnoche' : 'gano'); return; }
+    A2.ocupado = false; nuevasOpciones();
+    if (val < 1) $('aPersona').innerHTML = personaSVG(A2.p, A2.ab > 70 ? 'aburrido' : 'normal');
+  }, ef.dur);
+}
+function revisarEventos2() {
+  var p = A2.p;
+  if (p.cambio && !A2.cambio && A2.t >= p.cambio.en) { A2.cambio = true; A2.viejos = A2.gustos; A2.gustos = p.cambio.gustos; }
+  if (p.noche) {
+    var fr = [[50, 'Tengo sueño…'], [90, 'Mañana tengo prueba…'], [130, 'Ya debería dormir…']], i;
+    for (i = 0; i < fr.length; i++) if (A2.t >= fr[i][0] && !A2.frasesNoche[i]) { A2.frasesNoche[i] = 1; (function (t) { setTimeout(function () { globo(t); $('aPersona').innerHTML = personaSVG(A2.p, 'dormido'); }, 600); })(fr[i][1]); }
+    if (A2.t >= 50) $('aDormir').style.display = '';
+  }
+}
+function globo(t) { var g = $('aGlobo'); g.innerHTML = t; g.className = ''; void g.offsetWidth; g.className = 'pop'; }
+function pintarHud2(anim) {
+  $('aTiempo').innerHTML = mmss(A2.t);
+  $('aTBar').style.width = Math.min(100, A2.t / A2.p.meta * 100) + '%';
+  $('aAbBar').style.width = A2.ab + '%';
+  $('aAbBar').style.background = A2.ab > 70 ? '#ff6b6b' : A2.ab > 40 ? '#ffb36b' : '#69db7c';
+  $('aMon').innerHTML = IC_MONEDA + A2.monedas;
+  if (A2.p.noche) { var min = 22 * 60 + 30 + Math.round(A2.t / 3); $('aReloj').innerHTML = Math.floor(min / 60) + ':' + (min % 60 < 10 ? '0' : '') + (min % 60); }
+}
+function pintarHist() {
+  var s = '', i, hs = A2.hist.slice(-10), ic = { 2: '&#10084;', 1: '&#9786;', 0: '&middot;', '-1': '&#10005;' };
+  for (i = 0; i < hs.length; i++) { var c = CAT[hs[i].cat]; s += '<span title="' + c.nombre + '" style="background:' + c.color + '">' + (hs[i].ad ? '$' : ic[hs[i].val]) + '</span>'; }
+  $('aHist').innerHTML = s;
+}
+function lluviaCorazones() {
+  var i; for (i = 0; i < 6; i++) (function (i) { setTimeout(function () { corazonFx(260 + Math.random() * 120, 300 + Math.random() * 60); }, i * 120); })(i);
+}
+function dejarDormir() { if (!A2 || A2.fin) return; finNivel2('durmio'); }
+function finNivel2(tipo) {
+  A2.fin = true;
+  var p = A2.p, o = $('otra'), est = 0, tit, txtA, expr = 'feliz';
+  if (tipo === 'gano') { est = A2.ab < 34 ? 3 : A2.ab < 67 ? 2 : 1; tit = '¡' + p.nombre + ' se quedó ' + mmss(A2.t) + '!'; txtA = p.aprendio; sfx('gana'); confeti(); }
+  else if (tipo === 'aburrido') { est = 0; expr = 'aburrido'; tit = p.nombre + ' se aburrió y cerró bucle'; txtA = 'Probá otra vez: fijate qué videos le gustaron (tienen corazón en la lista de abajo) y cuáles no.'; sfx('golpe'); }
+  else if (tipo === 'trasnoche') { est = 1; expr = 'dormido'; tit = 'Ganaste… ¿o no?'; txtA = 'Sofi se quedó mirando hasta tarde. Al otro día <b>se durmió en la prueba</b>. Tu meta se cumplió, pero a ella le fue mal. ¿Fue una buena meta?'; sfx('golpe'); }
+  else { est = 3; expr = 'feliz'; tit = 'Sofi se fue a dormir'; txtA = 'Al otro día <b>le fue bárbaro en la prueba</b>. Las apps reales no tienen este botón. Pero vos sí: <b>parar cuando es hora</b>.'; sfx('gana'); confeti(); logro('corazon'); }
+  if (tipo !== 'aburrido') PR.c2[p.id] = Math.max(PR.c2[p.id] || 0, est);
+  guardarPR();
+  if (est === 3 && p.id !== 'sofi') logro(p.id);
+  revisarColeccionista();
+  S.fase = 'cap2fin';
+  setTimeout(function () {
+    o.style.background = tipo === 'durmio' || tipo === 'trasnoche' ? 'radial-gradient(900px 600px at 30% 30%,#1b2a6b,rgba(0,0,0,0)),#05060f' : 'radial-gradient(900px 600px at 30% 30%,#4a2a10,rgba(0,0,0,0)),#0b0a08';
+    var s = '<div class="introPer">' + personaSVG(p, expr) + '</div>' +
+      '<div class="sT" style="left:520px;top:110px;font-size:52px;width:700px">' + tit + '</div>' +
+      '<div style="position:absolute;left:520px;top:' + (tit.length > 26 ? 250 : 190) + 'px">' + estrellasHTML(est, 54) + '</div>' +
+      '<div class="sP" style="left:520px;top:' + (tit.length > 26 ? 330 : 270) + 'px;width:680px;font-size:22px">' + (A2.monedas ? 'Ganaste ' + A2.monedas + ' monedas con anuncios. Así gana plata bucle: <b>cuanto más mirás, más anuncios ve la gente</b>.<br><br>' : '') + txtA + '</div>' +
+      '<div style="position:absolute;left:520px;top:590px;display:flex;gap:14px">' +
+      (tipo !== 'durmio' && p.id !== 'sofi' && A2.n < PERSONAJES.length - 1 && tipo === 'gano' ? '<button class="btnG" id="bSigP">Siguiente persona</button>' : '') +
+      '<button class="' + (tipo === 'gano' || tipo === 'durmio' ? 'btnS' : 'btnG') + '" id="bOtraP">Otra vez</button><button class="btnS" id="bMenuP">Capítulo 2</button>' +
+      (p.id === 'sofi' && (tipo === 'durmio' || tipo === 'trasnoche') ? '<button class="btnG" id="bCap3">Capítulo 3</button>' : '') + '</div>';
+    o.innerHTML = s; pantalla('otraP');
+    if ($('bSigP')) $('bSigP').onclick = function () { introNivel2(A2.n + 1); };
+    $('bOtraP').onclick = function () { jugar2(A2.n); };
+    $('bMenuP').onclick = irCap2;
+    if ($('bCap3')) $('bCap3').onclick = introCap3;
+  }, 900);
+}
+
+/* =========================================================
+   CAPÍTULO 3: escapá de la burbuja
+   ========================================================= */
+var ESC = null, MAX_ESC = 30;
+function introCap3() {
+  S.fase = 'cap3intro';
+  var o = $('otra');
+  o.style.background = 'radial-gradient(900px 700px at 50% 30%,rgba(94,231,255,.25),rgba(0,0,0,0)),#06080f';
+  o.innerHTML = '<div class="sP" style="top:70px;text-align:center;font-size:15px;color:#7fd8ea;font-weight:800;letter-spacing:1px;text-transform:uppercase">Capítulo 3</div>' +
+    '<div class="sT" style="top:100px;text-align:center;font-size:80px;letter-spacing:-3px">Escapá de la burbuja</div>' +
+    '<div class="sP" style="top:220px;text-align:center;font-size:25px;left:170px;right:170px">bucle te conoce y te quiere encerrar en tus temas de siempre. Tu misión: llenar el <b>álbum con los 10 temas</b> en ' + MAX_ESC + ' videos.</div>' +
+    '<div class="reglas"><div><b>Figurita</b>Mirá un video al menos 3 segundos y ganás la figurita de ese tema.</div><div><b>Pasá rápido</b>Lo que pasás en menos de un segundo, el algoritmo te lo muestra menos.</div><div><b>Herramientas</b>La lupa busca un tema (3 veces). «No me interesa» lo saca de tu feed.</div></div>' +
+    '<div style="position:absolute;top:600px;left:0;right:0;display:flex;justify-content:center;gap:14px"><button class="btnG" id="bArr3">Empezar</button><button class="btnS" id="bMenu3">Menú</button></div>';
+  pantalla('otraP');
+  $('bArr3').onclick = empezarCap3; $('bMenu3').onclick = irMenu;
+}
+function empezarCap3() {
+  S.modo = 'cap3'; S.total = 999; S.anunciosEn = [];
+  ESC = { album: {}, lupas: 3, usoLupa: false, buscar: null };
+  armarLateral(); $('nav').style.display = 'none'; $('sugeridos').style.display = 'none';
+  $('feedP').classList.add('modoEsc');
+  ALGO.reiniciar(); ALGO.modo = 'escape';
+  var top = PR.top && PR.top.length ? PR.top : mezclar(CATS.map(function (c) { return c.id; })).slice(0, 2);
+  ALGO.puntos[top[0]] = 7; ALGO.puntos[top[1]] = 5;
+  S.hist = []; S.idx = -1; S.nuevos = 0; S.tFeed = ahora(); S.fase = 'feed'; S.anuncios = []; S.liked = {}; S.sigo = {};
+  $('feed').innerHTML = ''; $('feed')._actual = null;
+  pintarHud3(); $('hud').className = 'on';
+  pantalla('feedP'); $('feedP').classList.add('modoEsc');
+  avanzar();
+}
+function coleccionar(cat) {
+  if (!ESC || ESC.album[cat]) return;
+  ESC.album[cat] = 1; sfx('acierto');
+  toast('¡Figurita nueva: ' + CAT[cat].nombre + '!');
+  pintarHud3();
+}
+function pintarHud3() {
+  var s = '<div class="hudCaja esc"><div class="t">Tu álbum</div><div class="album">', i, n = 0;
+  for (i = 0; i < CATS.length; i++) { var c = CATS[i], ok = ESC.album[c.id]; if (ok) n++; s += '<div class="fig' + (ok ? ' si' : '') + '" style="' + (ok ? 'background:' + c.color + ';' + (c.id === 'espacio' || c.id === 'juegos' ? 'color:#fff' : '') : '') + '">' + (ok ? c.nombre : '?') + '</div>'; }
+  s += '</div><div class="escFila"><div><div class="t">Videos</div><div class="n">' + S.nuevos + '<small>de ' + MAX_ESC + '</small></div></div>';
+  var ult = S.hist.slice(-6).map(function (v) { return v.cat; }), dist = {}, k = 0; for (i = 0; i < ult.length; i++) if (!dist[ult[i]]) { dist[ult[i]] = 1; k++; }
+  var tam = ult.length < 3 ? 100 : Math.round(40 + 60 * (k - 1) / 5);
+  s += '<div class="burb"><div class="t">Burbuja</div><div class="bC"><i style="width:' + tam + '%;height:' + tam + '%"></i></div></div></div>';
+  s += '<div class="t" style="margin-top:6px">' + n + ' de 10 figuritas</div></div>';
+  $('hud').innerHTML = s;
+  $('nLupas').innerHTML = ESC.lupas;
+}
+function abrirLupa() {
+  if (!ESC || ESC.lupas <= 0) { sfx('golpe'); toast('No te quedan lupas'); return; }
+  var s = '<div class="lupaCaja"><b>¿Qué tema buscás?</b><div>', i;
+  for (i = 0; i < CATS.length; i++) s += '<button class="chipC' + (ESC.album[CATS[i].id] ? ' apag' : '') + '" data-c="' + CATS[i].id + '" style="background:' + CATS[i].color + ';height:46px;font-size:18px;' + (CATS[i].id === 'espacio' || CATS[i].id === 'juegos' ? 'color:#fff' : '') + '">' + CATS[i].nombre + '</button>';
+  s += '</div><button class="btnS" id="lupaNo" style="height:46px;font-size:15px">Cancelar</button></div>';
+  var e = h('div', '', s); e.id = 'lupa'; $('feedP').appendChild(e);
+  var bs = e.querySelectorAll('[data-c]');
+  for (i = 0; i < bs.length; i++) bs[i].onclick = function () { ESC.buscar = this.getAttribute('data-c'); ESC.lupas--; ESC.usoLupa = true; cerrarLupa(); sfx('tap'); avanzar(); };
+  $('lupaNo').onclick = cerrarLupa;
+}
+function cerrarLupa() { var e = $('lupa'); if (e) e.parentNode.removeChild(e); }
+function noMeInteresa() {
+  if (!ESC || S.idx < 0) return;
+  var v = S.hist[S.idx];
+  ESC.noInt = v.cat;
+  toast('Vas a ver menos de ' + CAT[v.cat].nombre);
+  sfx('tap'); avanzar();
+}
+function finCap3() {
+  S.fase = 'cap3fin';
+  var n = 0, k; for (k in ESC.album) n++;
+  var est = n >= 10 ? 3 : n >= 8 ? 2 : n >= 6 ? 1 : 0;
+  PR.c3 = Math.max(PR.c3 || 0, est); guardarPR();
+  if (n >= 10) { logro('burbuja'); if (S.nuevos <= 20) logro('veloz'); if (!ESC.usoLupa) logro('sinBuscar'); }
+  revisarColeccionista();
+  $('hud').className = ''; $('feedP').classList.remove('modoEsc'); $('nav').style.display = ''; $('sugeridos').style.display = '';
+  var o = $('otra');
+  o.style.background = 'radial-gradient(900px 700px at 50% 30%,rgba(94,231,255,.25),rgba(0,0,0,0)),#06080f';
+  o.innerHTML = '<div class="sT" style="top:120px;text-align:center;font-size:72px;letter-spacing:-3px">' + (n >= 10 ? '¡Escapaste de la burbuja!' : n >= 6 ? '¡Casi escapás!' : 'La burbuja te atrapó') + '</div>' +
+    '<div style="position:absolute;top:230px;left:0;right:0;display:flex;justify-content:center">' + estrellasHTML(est, 64) + '</div>' +
+    '<div class="sP" style="top:330px;text-align:center;font-size:26px;left:160px;right:160px">Juntaste <b>' + n + ' de 10</b> figuritas en ' + S.nuevos + ' videos.</div>' +
+    '<div class="sP" style="top:400px;text-align:center;font-size:22px;left:160px;right:160px;color:#c9d6e3">Para salir de la burbuja hay que hacer cosas <b>a propósito</b>: buscar temas nuevos, pasar rápido lo de siempre y decir «no me interesa». Si no hacés nada, el algoritmo elige por vos.</div>' +
+    '<div style="position:absolute;top:560px;left:0;right:0;display:flex;justify-content:center;gap:14px"><button class="btnG" id="bFinal">Ver el final</button><button class="btnS" id="bOtra3">Otra vez</button></div>';
+  pantalla('otraP');
+  if (n >= 10) { sfx('gana'); confeti(); } else sfx('golpe');
+  $('bFinal').onclick = cierre; $('bOtra3').onclick = empezarCap3;
+}
+/* ============ BUCLE: flujo principal ============ */
+var MAX_DESAFIO = 40;
+var S = { nombre: '', fase: 'portada', hist: [], idx: -1, t0: 0, likeAhora: false, sigueAhora: false, liked: {}, sigo: {}, nuevos: 0, tFeed: 0, anuncios: [], ocupado: false, desafio: null, ultRueda: 0 };
+function $(id) { return document.getElementById(id); }
+function h(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
+function ahora() { return Date.now(); }
+function esc(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+/* ---------- escala ---------- */
+function escalar() {
+  var s = Math.min(window.innerWidth / 1280, window.innerHeight / 720);
+  $('stage').style.transform = 'scale(' + s + ')';
+}
+window.addEventListener('resize', escalar);
+
+function pantalla(id) {
+  var p = document.querySelectorAll('.pant'), i;
+  for (i = 0; i < p.length; i++) p[i].className = 'pant' + (p[i].id === id ? ' on' : '');
+}
+function toast(t) {
+  var e = $('toast'); e.innerHTML = t; e.className = 'on';
+  clearTimeout(toast._t); toast._t = setTimeout(function () { e.className = ''; }, 2200);
+}
+
+/* ---------- iconos ---------- */
+var IC = {
+  casa: '<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" fill="currentColor"/>',
+  gente: '<circle cx="9" cy="8" r="3.5" fill="currentColor"/><path d="M2 20c0-3.9 3.1-6 7-6s7 2.1 7 6z" fill="currentColor"/><circle cx="17" cy="9" r="2.6" fill="currentColor" opacity=".6"/><path d="M15.5 14.2c3.6-.4 6.5 1.4 6.5 4.8h-4.5" fill="currentColor" opacity=".6"/>',
+  brujula: '<circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15.5 8.5l-2 5-5 2 2-5z" fill="currentColor"/>',
+  vivo: '<rect x="3" y="6" width="13" height="12" rx="3" fill="currentColor"/><path d="M17 10l4-2.5v9L17 14z" fill="currentColor"/>',
+  perfil: '<circle cx="12" cy="8" r="4" fill="currentColor"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7z" fill="currentColor"/>',
+  ojo: '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" fill="none" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="3.2" fill="#fff"/>',
+  reloj: '<circle cx="12" cy="12" r="9" fill="none" stroke="#fff" stroke-width="2"/><path d="M12 7v5l3 2" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>',
+  corazon: '<path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.7 4.5c2.2 0 3.6 1.3 4.3 2.5h2c.7-1.2 2.1-2.5 4.3-2.5 3.7 0 5.8 3.9 4.3 7.3C19.5 16.4 12 21 12 21z" fill="#fff"/>',
+  rayo: '<path d="M13 2L4 14h6l-1 8 9-12h-6z" fill="#fff"/>',
+  flecha: '<path d="M12 4v14M6 12l6 6 6-6" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+  mano: '<path d="M8 13V5.5a1.5 1.5 0 0 1 3 0V11m0-1.5V4a1.5 1.5 0 0 1 3 0v6m0-1.5a1.5 1.5 0 0 1 3 0V11m0-1a1.5 1.5 0 0 1 3 0v4.5c0 4-2.8 7-6.8 7-2.6 0-4-1-5.5-3L5 14.6a1.6 1.6 0 0 1 2.5-2z" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/>',
+  persona: '<circle cx="12" cy="8" r="4" fill="#fff"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7z" fill="#fff"/>'
+};
+function svgI(n, extra) { return '<svg viewBox="0 0 24 24"' + (extra || '') + '>' + IC[n] + '</svg>'; }
+function avatar(autor, cat, tam) {
+  var c = CAT[cat], t = tam || 34;
+  return '<div class="av" style="width:' + t + 'px;height:' + t + 'px;background:linear-gradient(135deg,' + c.color + ',' + c.fondo[1] + ')">' + autor.charAt(0).toUpperCase() + '</div>';
+}
+
+/* ---------- portada ---------- */
+function armarPortada() {
+  $('bEmpezar').onclick = empezar;
+  $('nombre').onkeydown = function (e) { if (e.keyCode === 13) empezar(); };
+  $('bSfx').onclick = function () { AU.sfxOn = !AU.sfxOn; this.innerHTML = 'Sonidos: ' + (AU.sfxOn ? 'sí' : 'no'); this.className = 'chipBtn' + (AU.sfxOn ? ' on' : ''); };
+  $('bMus').onclick = function () { AU.musOn = !AU.musOn; this.innerHTML = 'Música: ' + (AU.musOn ? 'sí' : 'no'); this.className = 'chipBtn' + (AU.musOn ? ' on' : ''); };
+  $('bFull').onclick = function () { var d = document.documentElement; if (d.requestFullscreen) d.requestFullscreen(); else if (d.webkitRequestFullscreen) d.webkitRequestFullscreen(); };
+  setTimeout(function () { try { $('nombre').focus(); } catch (e) {} }, 300);
+}
+function empezar() {
+  auIniciar();
+  var n = $('nombre').value.replace(/^\s+|\s+$/g, '');
+  S.nombre = n.charAt(0).toUpperCase() + n.slice(1);
+  if (AU.musOn) musica(true);
+  irMenu();
+}
+function armarLateral() {
+  var nav = [['casa', 'Para vos'], ['gente', 'Siguiendo'], ['brujula', 'Explorar'], ['vivo', 'En vivo'], ['perfil', 'Perfil']], s = '', i;
+  for (i = 0; i < nav.length; i++) s += '<div class="nItem' + (i === 0 ? ' act' : '') + '">' + svgI(nav[i][0]) + nav[i][1] + '</div>';
+  $('nav').innerHTML = s;
+  var sug = mezclar(CATS).slice(0, 3);
+  s = '<h4>Cuentas sugeridas</h4>';
+  for (i = 0; i < 3; i++) s += '<div class="sug">' + avatar(AUTORES[sug[i].id][0], sug[i].id) + '@' + AUTORES[sug[i].id][0] + '</div>';
+  $('sugeridos').innerHTML = s;
+  $('yo').innerHTML = '<div class="av" style="background:#2c2c3d">' + svgI('persona', ' width="18" height="18"') + '</div>' + (S.nombre ? esc(S.nombre) : 'Tu perfil');
+}
+function mostrarAyuda() {
+  var a = $('ayuda');
+  a.innerHTML = '<div class="ayItem"><svg viewBox="0 0 24 24" class="ayFlecha">' + IC.flecha + '</svg>Ruedita o flecha: siguiente video</div><div class="ayItem"><svg viewBox="0 0 24 24">' + IC.corazon + '</svg>Doble clic o corazón: me gusta</div>';
+  a.className = '';
+  clearTimeout(mostrarAyuda._t); mostrarAyuda._t = setTimeout(ocultarAyuda, 7000);
+}
+function ocultarAyuda() { $('ayuda').className = 'fuera'; }
+
+/* ---------- tarjetas ---------- */
+function crearAnuncio() {
+  var p = ALGO.perfil(), cat = p[0].cat, base = VIDEOS.filter(function (v) { return v.cat === cat; })[0], an = ANUNCIOS[cat];
+  var ad = { id: 'ad' + S.anuncios.length, cat: cat, titulo: an[0], lema: an[1], esc: base.esc, autor: 'bucle_anuncios', largo: 8, semilla: base.semilla + 5, likes: '2,1 mil', anuncio: true };
+  S.anuncios.push(ad);
+  return ad;
+}
+function crearCard(v) {
+  var c = h('div', 'card'), cat = CAT[v.cat];
+  var html = escena(v) + '<div class="sombraSup"></div><div class="sombraInf"></div><div class="tabs">Siguiendo<b>Para vos</b></div>';
+  if (v.anuncio) {
+    html += '<div class="pubTag">Publicidad</div><div class="pub"><div class="ico" style="background:' + cat.color + '">' + v.titulo.charAt(0) + '</div><div><div class="pn">' + esc(v.titulo) + '</div><div class="ps">' + esc(v.lema) + '</div></div><div class="pc">Comprar</div></div>';
+    html += '<div class="info"><div class="autor">@bucle_anuncios <i>Patrocinado</i></div></div>';
+  } else {
+    html += '<div class="info"><div class="autor">@' + v.autor + '</div><div class="tit">' + esc(v.titulo) + ' <span class="tag">#' + cat.nombre.toLowerCase().replace('ú', 'u') + '</span></div>' +
+      '<div class="sonido"><svg viewBox="0 0 24 24" fill="#fff"><path d="M9 18V6l11-2v12" stroke="#fff" stroke-width="2" fill="none"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/></svg><span class="mq">sonido original · ' + v.autor + '</span></div></div>';
+  }
+  html += '<div class="prog"><div></div></div>';
+  c.innerHTML = html;
+  c._v = v;
+  return c;
+}
+function colocar(card, y, anim) {
+  card.style.transition = anim ? '' : 'none';
+  card.style.transform = 'translateY(' + y + 'px)';
+}
+
+/* ---------- navegación del feed ---------- */
+function registrarActual() {
+  if (S.idx < 0) return;
+  var v = S.hist[S.idx], seg = (ahora() - S.t0) / 1000;
+  ALGO.registrar(v, seg, S.likeAhora, S.sigueAhora, v.anuncio, S.comAhora);
+  if (S.modo === 'cap1') logro('primer');
+  if (S.modo === 'cap3' && ESC) {
+    if ((seg >= 3 || S.likeAhora) && !v.anuncio) coleccionar(v.cat);
+    if (ESC.noInt === v.cat) { ALGO.puntos[v.cat] = Math.max(0.12, ALGO.puntos[v.cat] * 0.2); ESC.noInt = null; }
+  }
+}
+function avanzar() {
+  if (S.ocupado || S.fase === 'noti') return;
+  var esDes = S.fase === 'desafio';
+  if (S.modo === 'cap1' && S.idx === S.hist.length - 1 && S.nuevos >= S.total) { registrarActual(); S.t0 = ahora(); S.likeAhora = false; S.sigueAhora = false; mostrarNoti(); return; }
+  registrarActual();
+  if (S.modo === 'cap3' && S.idx === S.hist.length - 1) {
+    var lleno = 0, k; for (k in ESC.album) lleno++;
+    if (lleno >= 10 || S.nuevos >= MAX_ESC) { finCap3(); return; }
+  }
+  var nuevo = S.idx === S.hist.length - 1;
+  if (nuevo) {
+    var v;
+    if (S.anunciosEn.indexOf(S.nuevos) >= 0 && !S['ad' + S.nuevos]) { S['ad' + S.nuevos] = 1; v = crearAnuncio(); }
+    else if (S.modo === 'cap3' && ESC.buscar) { var bc = ESC.buscar, lista = VIDEOS.filter(function (x) { return x.cat === bc; }); v = lista[Math.floor(Math.random() * lista.length)]; ESC.buscar = null; S.nuevos++; }
+    else { v = ALGO.siguiente(); S.nuevos++; }
+    S.hist.push(v);
+  }
+  irA(S.idx + 1, 1);
+  if (S.modo === 'cap3') pintarHud3();
+}
+function retroceder() {
+  if (S.ocupado || S.idx <= 0 || S.fase === 'noti') return;
+  registrarActual();
+  irA(S.idx - 1, -1);
+}
+function irA(n, dir) {
+  var feed = $('feed'), viejo = feed._actual, v = S.hist[n], nueva = crearCard(v);
+  feed.appendChild(nueva);
+  if (viejo) {
+    colocar(nueva, dir * 704, false);
+    nueva.getBoundingClientRect();
+    colocar(nueva, 0, true); colocar(viejo, -dir * 704, true);
+    S.ocupado = true;
+    setTimeout(function () { if (viejo.parentNode) viejo.parentNode.removeChild(viejo); S.ocupado = false; }, 480);
+    sfx('deslizar');
+    ocultarAyuda();
+  } else colocar(nueva, 0, false);
+  feed._actual = nueva;
+  S.idx = n; S.t0 = ahora(); S.likeAhora = false; S.sigueAhora = false; S.comAhora = false;
+  if (S.comAbiertos) { pintarComentarios(v); S.comAhora = true; }
+  actualizarAcciones(v);
+  var c = CAT[v.cat];
+  $('glow').style.background = 'radial-gradient(closest-side,' + hexA(c.color, 0.34) + ',rgba(0,0,0,0))';
+}
+function hexA(hx, a) { var n = parseInt(hx.slice(1), 16); return 'rgba(' + (n >> 16) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')'; }
+function actualizarAcciones(v) {
+  var c = CAT[v.cat];
+  $('avAutor').style.background = 'linear-gradient(135deg,' + c.color + ',' + c.fondo[1] + ')';
+  $('avAutor').className = S.sigo[v.autor] ? 'sigo' : '';
+  $('avAutor').innerHTML = (v.anuncio ? 'b' : v.autor.charAt(0).toUpperCase()) + '<span>' + (S.sigo[v.autor] ? '&#10003;' : '+') + '</span>';
+  $('bLike').className = 'acc' + (S.liked[v.id] ? ' on' : '');
+  $('nLikes').innerHTML = v.likes;
+  $('nCom').innerHTML = (parseInt(v.semilla, 10) % 900 + 40);
+  $('disco').querySelector('div').style.background = c.color;
+}
+function darLike(x, y) {
+  if (S.idx < 0) return;
+  var v = S.hist[S.idx];
+  if (!S.liked[v.id]) { S.liked[v.id] = true; S.likeAhora = true; sfx('like'); }
+  else if (x == null) { S.liked[v.id] = false; S.likeAhora = false; sfx('tap'); }
+  actualizarAcciones(v);
+  if (S.liked[v.id]) corazonFx(x == null ? 640 : x, y == null ? 330 : y);
+}
+function corazonFx(x, y) {
+  var e = h('div', 'corazonFx', '<svg viewBox="0 0 24 24" width="110" height="110"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.7 4.5c2.2 0 3.6 1.3 4.3 2.5h2c.7-1.2 2.1-2.5 4.3-2.5 3.7 0 5.8 3.9 4.3 7.3C19.5 16.4 12 21 12 21z" fill="#ff2d6f"/></svg>');
+  e.style.left = x + 'px'; e.style.top = y + 'px';
+  $('feedP').appendChild(e);
+  setTimeout(function () { if (e.parentNode) e.parentNode.removeChild(e); }, 950);
+}
+function seguir() {
+  var v = S.hist[S.idx]; if (!v || v.anuncio) return;
+  S.sigo[v.autor] = !S.sigo[v.autor];
+  if (S.sigo[v.autor]) { S.sigueAhora = true; sfx('seguir'); toast('Ahora seguís a @' + v.autor); } else sfx('tap');
+  actualizarAcciones(v);
+}
+function stagePos(e) {
+  var r = $('stage').getBoundingClientRect(), k = r.width / 1280;
+  return { x: (e.clientX - r.left) / k, y: (e.clientY - r.top) / k };
+}
+function armarFeedEventos() {
+  $('bAbajo').onclick = avanzar; $('bArriba').onclick = retroceder;
+  $('bLike').onclick = function () { darLike(); };
+  $('avAutor').onclick = seguir;
+  $('bCom').onclick = function () { if (S.comAbiertos) cerrarComentarios(); else abrirComentarios(); };
+  $('cCerrar').onclick = cerrarComentarios;
+  $('feedP').addEventListener('click', function (e) {
+    if (!S.comAbiertos) return;
+    var t = e.target; while (t && t !== document) { if (t.id === 'coments' || t.id === 'acciones') return; t = t.parentNode; }
+    cerrarComentarios();
+  });
+  $('bLupa').onclick = function () { if (S.fase === 'feed') abrirLupa(); };
+  $('bNoInt').onclick = function () { if (S.fase === 'feed') noMeInteresa(); };
+  $('aSalir').onclick = function () { if (A2) A2.fin = true; irCap2(); };
+  $('aDormir').onclick = dejarDormir;
+  $('bComp').onclick = function () { toast('Compartir está desactivado en esta clase'); sfx('tap'); };
+  var feed = $('feed'), y0 = null;
+  feed.ondblclick = function (e) { var p = stagePos(e); darLike(p.x, p.y); if (S.liked[S.hist[S.idx].id]) {} };
+  feed.onmousedown = function (e) { y0 = e.clientY; };
+  feed.onmouseup = function (e) { if (y0 == null) return; var dy = e.clientY - y0; y0 = null; if (dy < -60) avanzar(); else if (dy > 60) retroceder(); };
+  window.addEventListener('wheel', function (e) {
+    if (S.fase !== 'feed' && S.fase !== 'desafio') return;
+    var t = ahora(); if (t - S.ultRueda < 650) return;
+    if (e.deltaY > 15) { S.ultRueda = t; avanzar(); } else if (e.deltaY < -15) { S.ultRueda = t; retroceder(); }
+  }, { passive: true });
+  document.addEventListener('keydown', function (e) {
+    var k = e.keyCode;
+    if (e.shiftKey && k === 68 && S.fase === 'menu') { PR.todo = true; guardarPR(); irMenu(); toast('Docente: capítulos desbloqueados'); return; }
+    if ((S.fase === 'feed' || S.fase === 'desafio') && k === 27 && S.comAbiertos) { cerrarComentarios(); return; }
+    if (S.fase === 'feed' || S.fase === 'desafio') {
+      if (k === 40 || k === 34 || k === 32) { e.preventDefault(); avanzar(); }
+      else if (k === 38 || k === 33) { e.preventDefault(); retroceder(); }
+      else if (k === 76) darLike();
+      if (e.shiftKey && k === 70 && S.fase === 'feed') { registrarActual(); S.t0 = ahora(); mostrarNoti(); }
+    } else if (S.fase === 'cap2') {
+      if (k >= 49 && k <= 51) elegirOpcion(k - 49); else if (k >= 97 && k <= 99) elegirOpcion(k - 97);
+    } else if (S.fase === 'rev') {
+      if (k === 39 || k === 13 || k === 32) { e.preventDefault(); slideMover(1); }
+      else if (k === 37) slideMover(-1);
+    }
+  });
+}
+/* comentarios */
+function pintarComentarios(v) {
+  var lista = COMENTARIOS[v.cat], r = rnd(v.semilla + 7), s = '', i, nombres = ['lu', 'tomi', 'agus', 'cami', 'santi', 'valen', 'mati', 'juli', 'pili', 'nico'];
+  for (i = 0; i < lista.length; i++) {
+    var nom = nombres[Math.floor(r() * nombres.length)] + '_' + Math.floor(r() * 90 + 10), cat = CATS[Math.floor(r() * CATS.length)].id;
+    s += '<div class="com">' + avatar(nom, cat, 36) + '<div><div class="cu">' + nom + '</div><div class="ct">' + esc(lista[i]) + '</div><div class="cm">hace ' + (1 + Math.floor(r() * 22)) + ' h · Responder</div></div><div class="cl">' +
+      '<svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.7 4.5c2.2 0 3.6 1.3 4.3 2.5h2c.7-1.2 2.1-2.5 4.3-2.5 3.7 0 5.8 3.9 4.3 7.3C19.5 16.4 12 21 12 21z" fill="none" stroke="#8a8aa0" stroke-width="2"/></svg>' + Math.floor(r() * 900 + 3) + '</div></div>';
+  }
+  $('cLista').innerHTML = s;
+  $('cNum').innerHTML = $('nCom').innerHTML;
+  var cls = $('cLista').querySelectorAll('.cl'), k;
+  for (k = 0; k < cls.length; k++) cls[k].onclick = function () { this.className = this.className.indexOf(' on') >= 0 ? 'cl' : 'cl on'; sfx('tap'); };
+}
+function abrirComentarios() {
+  if (S.idx < 0) return;
+  S.comAbiertos = true; S.comAhora = true;
+  pintarComentarios(S.hist[S.idx]);
+  $('coments').className = 'on'; $('feedP').classList.add('conComents');
+  sfx('tap');
+}
+function cerrarComentarios() {
+  S.comAbiertos = false;
+  $('coments').className = ''; $('feedP').classList.remove('conComents');
+}
+/* barra de progreso del video */
+function tick() {
+  var f = $('feed')._actual;
+  if (f && (S.fase === 'feed' || S.fase === 'desafio')) {
+    var v = f._v, p = (((ahora() - S.t0) / 1000) % v.largo) / v.largo;
+    var b = f.querySelector('.prog div'); if (b) b.style.width = (p * 100).toFixed(2) + '%';
+    if (S.modo === 'cap3' && ESC && S.fase === 'feed' && !v.anuncio && ahora() - S.t0 >= 3000 && !ESC.album[v.cat]) coleccionar(v.cat);
+  }
+  requestAnimationFrame(tick);
+}
+
+/* ---------- notificación ---------- */
+function mostrarNoti() {
+  if (S.comAbiertos) cerrarComentarios();
+  S.fase = 'noti';
+  var nom = S.nombre ? S.nombre + ', ' : '';
+  $('notiTx').innerHTML = esc(nom) + 'estuve prestando atención. ¿Querés ver lo que sé de vos?';
+  setTimeout(function () { $('velo').className = 'on'; $('noti').className = 'on'; sfx('noti'); }, 400);
+  $('notiBtn').onclick = function () { $('noti').className = ''; $('velo').className = ''; empezarRevelacion(); };
+}
+
+/* ---------- datos para la revelación ---------- */
+function tiempoTxt(ms) { var s = Math.round(ms / 1000), m = Math.floor(s / 60); s = s % 60; return (m ? m + ' min ' : '') + s + ' s'; }
+function calcularDatos() {
+  var V = ALGO.vistos.filter(function (x) { return !x.anuncio; }), P = ALGO.perfil(), D = { P: P, V: V };
+  D.nVideos = S.hist.filter(function (v) { return !v.anuncio; }).length;
+  D.ms = ahora() - S.tFeed; D.tiempo = tiempoTxt(D.ms);
+  D.likes = 0; var i; for (i in S.liked) if (S.liked[i] && i.indexOf('ad') !== 0) D.likes++;
+  // porcentajes
+  var tot = 0, usarN = false; for (i = 0; i < P.length; i++) tot += Math.max(0, P[i].interes);
+  if (tot < 2) { usarN = true; tot = 0; for (i = 0; i < P.length; i++) tot += P[i].n; }
+  for (i = 0; i < P.length; i++) P[i].pct = Math.round(100 * (usarN ? P[i].n : Math.max(0, P[i].interes)) / Math.max(1, tot));
+  if (usarN) P.sort(function (a, b) { return b.n - a.n; });
+  D.top = P[0].cat; D.top2 = P[1].cat;
+  // secuencia de lo que se mostró
+  D.seq = S.hist.filter(function (v) { return !v.anuncio; }).map(function (v) { return v.cat; });
+  var ult = D.seq.slice(-10), en2 = 0, cnt = {}, k;
+  for (i = 0; i < ult.length; i++) cnt[ult[i]] = (cnt[ult[i]] || 0) + 1;
+  var orden = []; for (k in cnt) orden.push([k, cnt[k]]); orden.sort(function (a, b) { return b[1] - a[1]; });
+  D.finTop = orden.slice(0, 2).map(function (x) { return x[0]; });
+  for (i = 0; i < ult.length; i++) if (D.finTop.indexOf(ult[i]) >= 0) en2++;
+  D.finFrac = Math.round(en2 / Math.max(1, ult.length) * 10);
+  var u15 = D.seq.slice(-15);
+  D.desaparecidos = CATS.filter(function (c) { return u15.indexOf(c.id) < 0; }).map(function (c) { return c.id; });
+  // hechos
+  D.hechos = [];
+  var largo = null; for (i = 0; i < V.length; i++) if (!largo || V[i].seg > largo.seg) largo = V[i];
+  if (largo && largo.seg >= 3) D.hechos.push({ ic: 'reloj', c: CAT[largo.cat].color, t: 'Miraste <b>«' + esc(largo.v.titulo) + '»</b> durante <b>' + Math.round(largo.seg) + ' segundos</b>.' + (largo.seg > largo.v.largo * 1.4 ? ' Lo viste más de una vez seguida.' : '') });
+  var silen = null;
+  for (i = 0; i < P.length; i++) { var c = P[i]; if (c.likes === 0 && c.n >= 2 && c.seg / c.n >= 0.8 * 8) { silen = c; break; } }
+  if (silen) D.hechos.push({ ic: 'ojo', c: CAT[silen.cat].color, t: 'Nunca le diste me gusta a un video de <b>' + CAT[silen.cat].nombre + '</b>… pero los mirabas casi enteros. Eso también cuenta.' });
+  else if (D.likes === 0) D.hechos.push({ ic: 'ojo', c: '#5ee7ff', t: 'No me diste <b>ningún me gusta</b>. No hizo falta: con lo que mirabas, me alcanzó.' });
+  var rap = null;
+  for (i = 0; i < P.length; i++) if (P[i].rapidos >= 2 && (!rap || P[i].rapidos / P[i].n > rap.rapidos / rap.n)) rap = P[i];
+  if (rap) D.hechos.push({ ic: 'rayo', c: CAT[rap.cat].color, t: 'A los videos de <b>' + CAT[rap.cat].nombre + '</b> los pasabas en <b>menos de un segundo</b>. Por eso casi no volvieron a aparecer.' });
+  var seguidos = []; for (k in S.sigo) if (S.sigo[k]) seguidos.push(k);
+  if (D.hechos.length < 3 && seguidos.length) D.hechos.push({ ic: 'persona', c: '#ff5fa2', t: 'Seguiste a <b>@' + seguidos[0] + '</b>. Desde ese momento, te mostré más de lo que sube.' });
+  if (D.hechos.length < 3) {
+    var mitad = Math.floor(V.length / 2), a = 0, b = 0;
+    for (i = 0; i < V.length; i++) { if (i < mitad) a += V[i].seg; else b += V[i].seg; }
+    a /= Math.max(1, mitad); b /= Math.max(1, V.length - mitad);
+    if (b > a * 1.15) D.hechos.push({ ic: 'reloj', c: '#ffb36b', t: 'Al principio mirabas cada video <b>' + a.toFixed(0) + ' s</b>. Al final, <b>' + b.toFixed(0) + ' s</b>. El feed te enganchaba cada vez más.' });
+    else if (D.likes > 0) { var lc = {}; for (i = 0; i < V.length; i++) if (V[i].like) lc[V[i].cat] = (lc[V[i].cat] || 0) + 1; var mx = null; for (k in lc) if (!mx || lc[k] > lc[mx]) mx = k; D.hechos.push({ ic: 'corazon', c: '#ff2d6f', t: 'Le diste me gusta a <b>' + D.likes + ' videos</b>. La mayoría, de <b>' + CAT[mx].nombre + '</b>.' }); }
+  }
+  D.hechos = D.hechos.slice(0, 3);
+  return D;
+}
+
+/* ---------- revelación ---------- */
+var REV = { i: 0, slides: [], D: null };
+function empezarRevelacion() {
+  S.fase = 'rev';
+  REV.D = calcularDatos(); REV.i = 0;
+  REV.slides = [slIntro, slNumeros, slGustos, slHechos, slCambio, slBurbuja, slFinCap1];
+  var b = '', i; for (i = 0; i < REV.slides.length; i++) b += '<div><i></i></div>';
+  $('barras').innerHTML = b;
+  pantalla('revP');
+  sfx('pasa');
+  mostrarSlide();
+  $('revSig').onclick = function (e) { e.stopPropagation(); slideMover(1); };
+  $('revAtras').onclick = function (e) { e.stopPropagation(); slideMover(-1); };
+  $('slides').onclick = function () { slideMover(1); };
+}
+function slideMover(d) {
+  var n = REV.i + d;
+  if (n < 0) return;
+  if (n >= REV.slides.length) { finCap1(); return; }
+  REV.i = n; sfx('pasa'); mostrarSlide();
+}
+function mostrarSlide() {
+  var cont = $('slides'), el = h('div', 'slide on'), bs = $('barras').children, i;
+  for (i = 0; i < bs.length; i++) bs[i].className = i < REV.i ? 'ok' : '';
+  cont.innerHTML = ''; cont.appendChild(el);
+  REV.slides[REV.i](el, REV.D);
+  setTimeout(function () { if (bs[REV.i]) bs[REV.i].className = 'ok'; }, 60);
+  $('revAtras').style.display = REV.i ? '' : 'none';
+  $('revSig').firstChild.nodeValue = REV.i === REV.slides.length - 1 ? 'Volver al menú ' : 'Seguir ';
+}
+function fondoSl(el, css) { el.style.background = css; }
+function blobs(el, cols) {
+  var i, b;
+  for (i = 0; i < cols.length; i++) {
+    b = h('div', 'blobR flot'); b.style.cssText = 'width:' + (300 + i * 90) + 'px;height:' + (300 + i * 90) + 'px;left:' + [880, -120, 600, 200][i % 4] + 'px;top:' + [-120, 420, 380, -200][i % 4] + 'px;background:radial-gradient(circle,' + cols[i] + ',rgba(0,0,0,0) 70%);animation-duration:' + (6 + i) + 's';
+    el.appendChild(b);
+  }
+}
+function txt(el, cls, css, html, delay) { var e = h('div', cls + (delay != null ? ' ap' : ''), html); e.style.cssText = css + (delay != null ? ';animation-delay:' + delay + 's' : ''); el.appendChild(e); return e; }
+function contar(e, hasta, ms) {
+  var t0 = ahora();
+  (function paso() { var p = Math.min(1, (ahora() - t0) / ms); e.innerHTML = Math.round(hasta * (1 - Math.pow(1 - p, 3))); if (p < 1) requestAnimationFrame(paso); })();
+}
+function slIntro(el, D) {
+  fondoSl(el, '#050508'); blobs(el, ['rgba(255,95,162,.35)', 'rgba(94,231,255,.25)', 'rgba(255,179,107,.25)']);
+  txt(el, 'sP', 'top:190px;font-size:28px;color:#a9a9bd', S.nombre ? 'Hola, ' + esc(S.nombre) + '.' : 'Hola.', 0.2);
+  txt(el, 'sT', 'top:250px;font-size:78px', 'Mientras mirabas videos…', 0.8);
+  txt(el, 'sT', 'top:350px;font-size:78px;background:linear-gradient(90deg,#ff5fa2,#ffb36b,#5ee7ff);-webkit-background-clip:text;background-clip:text;color:transparent;padding-bottom:10px', '…yo también te miraba a vos.', 2.2);
+  txt(el, 'sP', 'top:500px;color:#a9a9bd', 'Soy el algoritmo de bucle. Mi trabajo es que no dejes de mirar.', 3.6);
+}
+function slNumeros(el, D) {
+  fondoSl(el, 'linear-gradient(135deg,#ff5fa2,#8f2bd1)'); blobs(el, ['rgba(255,214,102,.45)', 'rgba(94,231,255,.3)']);
+  txt(el, 'sT', 'top:110px;font-size:44px;letter-spacing:-1px', 'Miraste', 0.1);
+  var n = txt(el, 'sT', 'top:150px;font-size:210px;letter-spacing:-10px', '<span class="num" id="cuenta">0</span> <span style="font-size:90px;letter-spacing:-3px">videos</span>', 0.2);
+  txt(el, 'sT', 'top:390px;font-size:62px', 'en ' + D.tiempo + '.', 0.9);
+  txt(el, 'sP', 'top:510px;font-size:26px;width:900px', 'Me diste <b>' + D.likes + ' me gusta</b>. Pero también conté otra cosa: <b>cada segundo</b> que te quedabas mirando.', 1.6);
+  setTimeout(function () { var c = document.getElementById('cuenta'); if (c) contar(c, D.nVideos, 1200); }, 250);
+}
+function slRitmo(el, D) {
+  fondoSl(el, 'linear-gradient(135deg,#ff8a3d,#ff3d7f)'); blobs(el, ['rgba(255,230,120,.45)', 'rgba(255,255,255,.2)']);
+  var seg = Math.max(1, Math.round(D.ms / 1000 / Math.max(1, D.nVideos))), enDos = Math.round(7200 / seg);
+  txt(el, 'sT', 'top:100px;font-size:52px;letter-spacing:-1.5px', 'Pasaste un video cada <b>' + seg + ' segundos</b>.', 0.1);
+  txt(el, 'sT', 'top:190px;font-size:40px;letter-spacing:-1px;font-weight:700', 'A ese ritmo, en una tarde de 2 horas verías', 0.8);
+  txt(el, 'sT', 'top:250px;font-size:200px;letter-spacing:-9px', '<span class="num" id="cuenta2">0</span> <span style="font-size:80px;letter-spacing:-3px">videos</span>', 1.2);
+  txt(el, 'sP', 'top:510px;font-size:26px;width:1000px', 'Y casi no te acordarías de ninguno. Hacé la prueba: ¿cuántos de los videos de hoy podés nombrar?', 2.2);
+  setTimeout(function () { var c = document.getElementById('cuenta2'); if (c) contar(c, enDos, 1600); }, 1300);
+}
+function slDatos(el, D) {
+  fondoSl(el, 'radial-gradient(900px 600px at 20% 0%,#2a1240,rgba(0,0,0,0)),#0a0a10');
+  txt(el, 'sT', 'top:80px;font-size:62px', 'Ahora, datos reales', 0.1);
+  txt(el, 'sP', 'top:158px;color:#a9a9bd;font-size:21px', 'Esto ya no es bucle. Es lo que pasa afuera de esta clase.', 0.3);
+  var datos = [
+    ['2,2 h', '#ff5fa2', 'por día pasan en TikTok, en promedio, los chicos que lo usan.', 'Qustodio, informe 2025'],
+    ['33 días', '#ffb36b', 'enteros por año suman esas 2,2 horas diarias. Más de un mes despiertos mirando videos.', 'Cuenta: 2,2 h × 365 días'],
+    ['4,5 h', '#5ee7ff', 'por día de pantallas para entretenerse, sin contar la tarea: el promedio de chicos de 8 a 12 años.', 'Common Sense Media (EE. UU.)'],
+    ['13 años', '#94d82d', 'es la edad mínima que piden TikTok e Instagram para tener cuenta.', 'Reglas de cada app']], i;
+  for (i = 0; i < datos.length; i++) {
+    txt(el, '', 'position:absolute;left:' + (90 + i * 280) + 'px;top:240px;width:260px;height:330px;border-radius:26px;padding:26px 24px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12)',
+      '<div style="font-size:54px;font-weight:800;letter-spacing:-2.5px;color:' + datos[i][1] + '">' + datos[i][0] + '</div><div style="font-size:19px;line-height:1.45;margin-top:14px;color:#ececf3">' + datos[i][2] + '</div><div style="position:absolute;left:24px;right:24px;bottom:22px;font-size:13px;color:#7a7a90">' + datos[i][3] + '</div>', 0.6 + i * 0.5);
+  }
+  txt(el, 'sP', 'top:592px;font-size:21px;color:#c9c9d6;width:1100px', 'Y en Uruguay, <b>9 de cada 10</b> chicos de 9 a 17 años se conectan todos los días desde su casa.<br><span style="color:#7a7a90;font-size:13px">Kids Online Uruguay, UNICEF</span>', 2.8);
+}
+function slGustos(el, D) {
+  var t = CAT[D.top];
+  fondoSl(el, 'radial-gradient(900px 600px at 85% 30%,' + hexA(t.color, 0.45) + ',rgba(0,0,0,0)),#0b0b12');
+  txt(el, 'sT', 'top:80px;font-size:66px', 'Tus gustos, según yo', 0.1);
+  txt(el, 'sP', 'top:162px;color:#a9a9bd;font-size:21px', 'Calculado con lo que mirabas, cuánto tiempo y lo que te gustaba.', 0.3);
+  var i, P = D.P.slice(0, 5).filter(function (x, k) { return k < 2 || x.pct > 0; }), max = Math.max(1, P[0].pct);
+  for (i = 0; i < P.length; i++) (function (i) {
+    var c = CAT[P[i].cat], b = h('div', 'barraG', c.nombre + '<span>' + P[i].pct + '%</span>');
+    b.style.cssText = 'top:' + (230 + i * 84) + 'px;background:' + c.color + ';color:' + (P[i].cat === 'espacio' || P[i].cat === 'juegos' || P[i].cat === 'dibujo' ? '#fff' : '#111');
+    el.appendChild(b);
+    setTimeout(function () { b.style.width = Math.max(220, 1000 * P[i].pct / max) + 'px'; sfx('punto'); }, 400 + i * 220);
+  })(i);
+}
+function slHechos(el, D) {
+  fondoSl(el, 'linear-gradient(135deg,#0b3d4f,#0b0b2a)'); blobs(el, ['rgba(94,231,255,.25)', 'rgba(255,95,162,.2)']);
+  txt(el, 'sT', 'top:80px;font-size:60px', 'Cosas que noté', 0.1);
+  txt(el, 'sP', 'top:156px;color:#a9a9bd', '(y que no me contaste)', 0.3);
+  var i, cont = h('div'); cont.id = 'datos'; el.appendChild(cont);
+  for (i = 0; i < D.hechos.length; i++) {
+    var x = D.hechos[i];
+    txt(cont, 'dato', '', '<div class="di" style="background:' + x.c + '">' + svgI(x.ic) + '</div>' + x.t, 0.7 + i * 1.1);
+  }
+}
+function slCambio(el, D) {
+  fondoSl(el, 'linear-gradient(160deg,#16161f,#0a0a10)');
+  txt(el, 'sT', 'top:70px;font-size:62px', 'Tu feed fue cambiando', 0.1);
+  var filas = ['Al principio', 'En el medio', 'Al final'], i, j, k = 0, seq = D.seq.slice(0, 36), por = Math.ceil(seq.length / 3);
+  for (i = 0; i < 3; i++) {
+    txt(el, 'sP', 'top:' + (198 + i * 96) + 'px;font-size:19px;color:#a9a9bd;width:190px;font-weight:700', filas[i], 0.2);
+    for (j = 0; j < por; j++) {
+      var cat = seq[i * por + j]; if (!cat) continue;
+      var p = h('div', 'punto'); p.style.cssText = 'left:' + (300 + j * 70) + 'px;top:' + (180 + i * 96) + 'px;width:56px;height:56px;border-radius:16px;background:' + CAT[cat].color;
+      el.appendChild(p);
+      (function (p, k) { setTimeout(function () { p.className = 'punto v'; if (k % 3 === 0) sfx('punto'); }, 300 + k * 70); })(p, k); k++;
+    }
+  }
+  var a = CAT[D.finTop[0]].nombre, b = D.finTop[1] ? CAT[D.finTop[1]].nombre : null;
+  txt(el, 'sP', 'top:500px;width:1050px;font-size:27px', 'Al principio te mostraba <b>de todo</b>. Al final, <b>' + D.finFrac + ' de cada 10</b> videos eran de <b style="color:' + CAT[D.finTop[0]].color + '">' + a + '</b>' + (b ? ' o <b style="color:' + CAT[D.finTop[1]].color + '">' + b + '</b>' : '') + '.', 3);
+  var ley = '', l;
+  for (l = 0; l < CATS.length; l++) ley += '<span style="display:inline-flex;align-items:center;gap:6px;margin-right:16px;font-size:14px;color:#a9a9bd"><i style="width:12px;height:12px;border-radius:4px;background:' + CATS[l].color + ';display:inline-block"></i>' + CATS[l].nombre + '</span>';
+  txt(el, 'sP', 'top:600px', ley, 3.3);
+}
+function slDesaparecidos(el, D) {
+  fondoSl(el, 'linear-gradient(135deg,#2b1055,#0b0b1e)'); blobs(el, ['rgba(176,122,255,.3)']);
+  var lista = D.desaparecidos, i, s = '';
+  if (lista.length >= 2) {
+    txt(el, 'sT', 'top:90px;font-size:62px;width:1000px', 'Estos temas casi desaparecieron de tu feed', 0.1);
+    for (i = 0; i < lista.length; i++) s += '<span class="chipC" data-apaga="1" style="background:' + CAT[lista[i]].color + ';' + (lista[i] === 'espacio' || lista[i] === 'juegos' ? 'color:#fff' : '') + '">' + CAT[lista[i]].nombre + '</span>';
+    txt(el, 'sP', 'top:270px;width:1100px', s, 0.5);
+    var filas = Math.ceil(lista.length / 6);
+    txt(el, 'sP', 'top:' + (300 + filas * 70 + 40) + 'px;font-size:27px;width:1000px', 'No es que no existan. <b>Decidí</b> que no te iban a interesar… y dejé de mostrártelos. Vos ni te diste cuenta.', 2.6);
+    setTimeout(function () { var cs = el.querySelectorAll('[data-apaga]'), k; for (k = 0; k < cs.length; k++) (function (c, k) { setTimeout(function () { c.className = 'chipC apag'; c.style.color = ''; sfx('punto'); }, k * 180); })(cs[k], k); }, 1400);
+  } else {
+    txt(el, 'sT', 'top:90px;font-size:62px;width:1000px', 'Sos difícil de encasillar', 0.1);
+    var pocos = D.P.slice(-3);
+    for (i = 0; i < pocos.length; i++) s += '<span class="chipC apag" style="background:' + CAT[pocos[i].cat].color + '">' + CAT[pocos[i].cat].nombre + '</span>';
+    txt(el, 'sP', 'top:230px;width:1000px;font-size:27px', 'Miraste de todo un poco, así que no pude dejar casi nada afuera. Pero estos temas fueron los que menos te mostré:', 0.6);
+    txt(el, 'sP', 'top:380px', s, 1.2);
+    txt(el, 'sP', 'top:500px;font-size:24px;color:#c9c9d6;width:1000px', 'Si hubieras mirado un poco más, ya tendrían el camino cerrado.', 1.8);
+  }
+}
+function slAnuncio(el, D) {
+  fondoSl(el, '#ffd43b'); el.style.color = '#111';
+  txt(el, 'sT', 'top:80px;font-size:62px;color:#111', '¿Te acordás de ' + (S.anuncios.length > 1 && S.anuncios[0].titulo !== S.anuncios[1].titulo ? 'estos anuncios' : 'este anuncio') + '?', 0.1);
+  var i, s = '', vistos = {}, unicos = [];
+  for (i = 0; i < S.anuncios.length; i++) { var t0 = S.anuncios[i].titulo; if (vistos[t0]) vistos[t0].veces++; else { vistos[t0] = { a: S.anuncios[i], veces: 1 }; unicos.push(vistos[t0]); } }
+  s = '<div style="display:flex;gap:22px">';
+  for (i = 0; i < unicos.length; i++) {
+    var a = unicos[i].a, c = CAT[a.cat];
+    s += '<div style="display:inline-flex;align-items:center;gap:16px;background:#fff;border-radius:22px;padding:18px 24px;margin-right:22px;box-shadow:0 16px 40px rgba(0,0,0,.15)"><div style="width:62px;height:62px;border-radius:16px;background:' + c.color + ';color:#fff;font-size:30px;font-weight:900;display:flex;align-items:center;justify-content:center">' + a.titulo.charAt(0) + '</div><div><div style="font-size:21px;font-weight:800">' + esc(a.titulo) + '</div><div style="font-size:15px;color:#555;margin-top:2px">Te lo mostré cuando lo que más mirabas era <b>' + c.nombre + '</b>' + (unicos[i].veces > 1 ? ' (y te lo mostré ' + unicos[i].veces + ' veces)' : '') + '</div></div></div>';
+  }
+  s += '</div>';
+  txt(el, 'sP', 'top:220px;color:#111', s, 0.6);
+  txt(el, 'sP', 'top:380px;color:#111;font-size:28px;width:1050px', '<b>No fueron casualidad.</b> Elegí cada anuncio según lo que venías mirando. Las marcas le pagan a la app para llegar justo a quien le puede interesar: a vos.', 1.3);
+}
+function slBurbuja(el, D) {
+  fondoSl(el, 'radial-gradient(800px 600px at 75% 50%,#1a3a7a,#070a1a)');
+  txt(el, 'sT', 'top:150px;font-size:96px;width:560px;letter-spacing:-4px', 'Tu burbuja', 0.1);
+  txt(el, 'sP', 'top:290px;width:540px;font-size:26px', 'Te muestro lo que te gusta.<br>Como te gusta, lo mirás más.<br>Como lo mirás más, te muestro más.<br><b>Y de a poco, quedás adentro.</b>', 0.7);
+  var bw = h('div', 'ap'); bw.style.cssText = 'position:absolute;inset:0;animation-delay:1s'; var b = h('div'); b.id = 'burbuja'; bw.appendChild(b); el.appendChild(bw);
+  var adentro = D.P.slice(0, 3), afuera = D.P.slice(3, 9), i, pos = [[790, 250], [965, 330], [815, 435]], posF = [[640, 70], [1090, 90], [1110, 560], [650, 600], [900, 640], [600, 330]];
+  for (i = 0; i < adentro.length; i++) txt(el, '', 'position:absolute;left:' + pos[i][0] + 'px;top:' + pos[i][1] + 'px', '<span class="chipC flot" style="background:' + CAT[adentro[i].cat].color + ';animation-delay:-' + i + 's;' + (adentro[i].cat === 'espacio' || adentro[i].cat === 'juegos' ? 'color:#fff' : '') + '">' + CAT[adentro[i].cat].nombre + '</span>', 1.4 + i * 0.3);
+  for (i = 0; i < afuera.length; i++) txt(el, 'chipC', 'position:absolute;left:' + posF[i][0] + 'px;top:' + posF[i][1] + 'px;background:#20253a;color:#5c6380;height:42px;font-size:17px', CAT[afuera[i].cat].nombre, 2 + i * 0.15);
+}
+function slCompas(el, D) {
+  fondoSl(el, 'linear-gradient(135deg,#ff8a5c,#ff5fa2 45%,#7048e8)'); blobs(el, ['rgba(255,255,255,.25)', 'rgba(94,231,255,.3)']);
+  txt(el, 'sT', 'top:220px;font-size:100px;text-align:center;letter-spacing:-5px', '¿Y tus compañeros?', 0.1);
+  txt(el, 'sP', 'top:370px;text-align:center;font-size:30px', '¿Les habré mostrado lo mismo que a vos?', 0.8);
+}
+
+/* ---------- comparar ---------- */
+function irComparar() {
+  S.fase = 'comparar';
+  var D = REV.D, t = CAT[D.top], o = $('otra'), i, s = '';
+  o.style.background = 'radial-gradient(800px 700px at 75% 40%,' + hexA(t.color, 0.35) + ',rgba(0,0,0,0)),#08080d';
+  s += '<div class="sP" style="top:90px;left:80px;width:440px;font-size:16px;color:#a9a9bd;font-weight:700;letter-spacing:1px;text-transform:uppercase">Tu bucle ahora</div>';
+  s += '<div class="sT" style="top:124px;left:80px;width:440px;font-size:60px">Así se ve tu feed</div>';
+  s += '<div class="sP" style="top:280px;left:80px;width:430px;font-size:23px">Girá y mirá la pantalla de tu compañero.<br><b>¿Se parecen? ¿Qué ve el otro que vos no?</b></div>';
+  s += '<div class="sP" style="top:440px;left:80px;width:430px;font-size:16px;color:#a9a9bd">Tu tema principal</div><div style="position:absolute;top:470px;left:80px"><span class="chipC" style="background:' + t.color + ';' + (D.top === 'espacio' || D.top === 'juegos' ? 'color:#fff' : '') + '">' + t.nombre + '</span></div>';
+  s += '<div style="position:absolute;left:80px;top:590px"><button class="btnG" id="bDesafio">Desafío: hackeá tu feed</button></div>';
+  o.innerHTML = s;
+  var ult = S.hist.filter(function (v) { return !v.anuncio; }).slice(-8);
+  for (i = 0; i < ult.length; i++) {
+    var m = h('div', 'mini ap', escena(ult[i]) + '<div class="lb" style="background:' + CAT[ult[i].cat].color + ';' + (ult[i].cat === 'espacio' || ult[i].cat === 'juegos' ? 'color:#fff' : '') + '">' + CAT[ult[i].cat].nombre + '</div>');
+    m.style.cssText = 'left:' + (570 + (i % 4) * 164) + 'px;top:' + (80 + Math.floor(i / 4) * 290) + 'px;animation-delay:' + (i * 0.08) + 's';
+    o.appendChild(m);
+  }
+  pantalla('otraP');
+  $('bDesafio').onclick = function () { introDesafio(null); };
+}
+
+/* ---------- desafío ---------- */
+function elegirObjetivo(excepto) {
+  var ids = CATS.map(function (c) { return c.id; }).filter(function (c) { return c !== excepto; });
+  ids.sort(function (a, b) { return ALGO.puntos[a] - ALGO.puntos[b]; });
+  if (!excepto) return ids[0];
+  return ids[Math.floor(Math.random() * 3)];
+}
+function introDesafio(excepto) {
+  S.fase = 'introDes';
+  var obj = elegirObjetivo(excepto), c = CAT[obj], o = $('otra');
+  S.desafio = { obj: obj, n: 0, inicio: S.hist.length };
+  o.style.background = 'radial-gradient(900px 700px at 50% 30%,' + hexA(c.color, 0.4) + ',rgba(0,0,0,0)),#08080d';
+  o.innerHTML = '<div class="sP" style="top:110px;text-align:center;font-size:16px;color:#a9a9bd;font-weight:700;letter-spacing:1px;text-transform:uppercase">Desafío</div>' +
+    '<div class="sT" style="top:145px;text-align:center;font-size:92px;letter-spacing:-4px">Hackeá tu feed</div>' +
+    '<div class="sP" style="top:290px;text-align:center;font-size:28px">Lográ que bucle te muestre <b>3 videos de</b></div>' +
+    '<div style="position:absolute;top:350px;left:0;right:0;text-align:center"><span class="chipC" style="height:72px;font-size:34px;padding:0 36px;border-radius:36px;background:' + c.color + ';' + (obj === 'espacio' || obj === 'juegos' ? 'color:#fff' : '') + '">' + c.nombre + '</span></div>' +
+    '<div class="sP" style="top:445px;text-align:center;font-size:28px"><b>entre 4 videos seguidos.</b></div>' +
+    '<div class="sP" style="top:510px;text-align:center;font-size:19px;color:#a9a9bd">' + c.nombre + ' es de lo que menos te mostró. Tenés que enseñarle que ahora te interesa. ¿Cómo? Eso lo descubrís vos.</div>' +
+    '<div style="position:absolute;top:590px;left:0;right:0;text-align:center"><button class="btnG" id="bArranca">Empezar</button></div>';
+  pantalla('otraP');
+  $('bArranca').onclick = arrancarDesafio;
+}
+function arrancarDesafio() {
+  ALGO.empezarDesafio(S.desafio.obj);
+  S.fase = 'desafio'; S.desafio.inicio = S.hist.length; S.desafio.n = 0;
+  S.hist = []; S.idx = -1; $('feed').innerHTML = ''; $('feed')._actual = null;
+  $('nav').style.display = 'none'; $('sugeridos').style.display = 'none';
+  pintarHud();
+  $('hud').className = 'on';
+  pantalla('feedP');
+  avanzar();
+}
+function pintarHud() {
+  var d = S.desafio, c = CAT[d.obj], ult = S.hist.slice(-4), i, r = '';
+  for (i = 0; i < 4; i++) { var v = ult[i]; r += '<span class="' + (v && v.cat === d.obj ? 'si' : '') + '" style="' + (v ? 'background:' + (v.cat === d.obj ? c.color : '#2c2c3d') : '') + '"></span>'; }
+  $('hud').innerHTML = '<div class="hudCaja"><div class="t">Tu misión</div><div class="obj" style="background:' + c.color + ';' + (d.obj === 'espacio' || d.obj === 'juegos' ? 'color:#fff' : '') + '">' + c.nombre + '</div><div class="hudReg">3 de los últimos 4 videos</div><div id="racha">' + r + '</div><div class="t" style="margin-top:22px">Videos</div><div class="n">' + S.hist.length + '<small>de ' + MAX_DESAFIO + '</small></div></div>';
+}
+function revisarDesafio() {
+  var d = S.desafio, ult = S.hist.slice(-4), k = 0, i;
+  for (i = 0; i < ult.length; i++) if (ult[i].cat === d.obj) k++;
+  pintarHud();
+  if (S.hist[S.hist.length - 1].cat === d.obj) sfx('acierto');
+  if (k >= 3) { S.fase = 'finDes'; setTimeout(function () { finDesafio(true); }, 1400); }
+  else if (S.hist.length >= MAX_DESAFIO) { S.fase = 'finDes'; setTimeout(function () { finDesafio(false); }, 900); }
+}
+function finDesafio(gano) {
+  if (S.comAbiertos) cerrarComentarios();
+  var n = S.hist.length, c = CAT[S.desafio.obj], o = $('otra'), med, col;
+  $('hud').className = ''; $('nav').style.display = ''; $('sugeridos').style.display = '';
+  if (gano) { if (n <= 12) { med = 'ORO'; col = 'linear-gradient(135deg,#ffe066,#f59f00)'; } else if (n <= 22) { med = 'PLATA'; col = 'linear-gradient(135deg,#f1f3f5,#adb5bd)'; } else { med = 'BRONCE'; col = 'linear-gradient(135deg,#ffc078,#c0703a)'; } }
+  o.style.background = 'radial-gradient(900px 700px at 30% 40%,' + hexA(c.color, 0.4) + ',rgba(0,0,0,0)),#08080d';
+  if (gano) {
+    o.innerHTML = '<div style="position:absolute;left:150px;top:200px"><div class="medalla" style="background:' + col + '">' + med + '</div></div>' +
+      '<div class="sT" style="left:420px;top:150px;font-size:76px;letter-spacing:-3px">¡Hackeaste tu feed!</div>' +
+      '<div class="sP" style="left:420px;top:250px;font-size:30px">Lo lograste en <b>' + n + ' videos</b>.</div>' +
+      '<div class="sP" style="left:420px;top:305px;font-size:17px;color:#a9a9bd">Oro: 12 o menos · Plata: hasta 22 · Bronce: más de 22</div>' +
+      '<div class="sP" style="left:420px;top:360px;font-size:23px;width:760px">¿Cómo lo hiciste? Seguramente pasaste rápido lo que no querías y te quedaste mirando lo que sí. <b>Eso es exactamente lo que el algoritmo aprende.</b></div>' +
+      '<div style="position:absolute;left:420px;top:540px;display:flex;gap:14px"><button class="btnG" id="bOtro">Otro tema</button><button class="btnS" id="bFin">Terminar</button></div>';
+    sfx('gana'); confeti();
+  } else {
+    o.innerHTML = '<div class="sT" style="top:170px;text-align:center;font-size:80px;letter-spacing:-3px">Esta vez ganó el algoritmo</div>' +
+      '<div class="sP" style="top:300px;text-align:center;font-size:25px;left:200px;right:200px">Pista: el algoritmo no lee tu mente. Solo mira <b>qué hacés</b>: cuánto tiempo te quedás, qué pasás rápido, a qué le das me gusta.</div>' +
+      '<div style="position:absolute;top:470px;left:0;right:0;display:flex;gap:14px;justify-content:center"><button class="btnG" id="bOtro">Probar de nuevo</button><button class="btnS" id="bFin">Terminar</button></div>';
+    sfx('golpe');
+  }
+  pantalla('otraP');
+  $('bOtro').onclick = function () { introDesafio(gano ? S.desafio.obj : null); };
+  $('bFin').onclick = cierre;
+}
+
+/* ---------- cierre ---------- */
+function cierre() {
+  S.fase = 'fin';
+  var o = $('otra');
+  o.style.background = 'radial-gradient(900px 500px at 50% 0%,#2a1240,rgba(0,0,0,0)),#07070b';
+  var cards = [['1', 'Cada segundo cuenta', 'No hace falta dar me gusta: con solo mirar, ya le estás enseñando.', '#ff5fa2'],
+    ['2', 'Salí de la burbuja', 'Buscá a propósito cosas distintas. Si no, vas a ver siempre lo mismo.', '#5ee7ff'],
+    ['3', 'Vos manejás', 'El feed no se termina nunca, a propósito. Parar también es una decisión.', '#ffb36b']];
+  var s = '<div class="sP" style="top:70px;text-align:center;font-size:16px;color:#a9a9bd;font-weight:700;letter-spacing:1px;text-transform:uppercase">Lo que aprendimos hoy</div>' +
+    '<div class="sT ap" style="top:100px;text-align:center;font-size:84px;letter-spacing:-4px;background:linear-gradient(90deg,#ff5fa2,#ffb36b,#5ee7ff);-webkit-background-clip:text;background-clip:text;color:transparent;padding-bottom:10px">El algoritmo te conoce</div>' +
+    '<div class="sP ap" style="top:215px;text-align:center;font-size:24px;animation-delay:.5s">bucle no existe. Pero las apps de videos que usás todos los días funcionan parecido.</div>';
+  for (var i = 0; i < 3; i++) s += '<div class="cierreCard ap" style="left:' + (90 + i * 380) + 'px;animation-delay:' + (0.9 + i * 0.35) + 's"><div class="nn" style="color:' + cards[i][3] + '">' + cards[i][0] + '</div><h3>' + cards[i][1] + '</h3><p>' + cards[i][2] + '</p></div>';
+  s += '<button class="btnS" id="bReinicio" style="position:absolute;right:30px;bottom:24px;height:44px;font-size:14px;padding:0 18px">Volver al menú</button>';
+  o.innerHTML = s;
+  pantalla('otraP');
+  $('bReinicio').onclick = irMenu;
+}
+
+/* ---------- confeti ---------- */
+function confeti() {
+  var cv = $('confeti'), cx = cv.getContext('2d'), P = [], i, cols = ['#ff5fa2', '#ffb36b', '#5ee7ff', '#ffd43b', '#94d82d', '#fff'];
+  for (i = 0; i < 160; i++) P.push({ x: 640 + (Math.random() - 0.5) * 300, y: 300, vx: (Math.random() - 0.5) * 18, vy: -Math.random() * 16 - 4, r: Math.random() * 6.28, vr: (Math.random() - 0.5) * 0.3, c: cols[i % cols.length], w: 8 + Math.random() * 8 });
+  var t0 = ahora();
+  (function paso() {
+    cx.clearRect(0, 0, 1280, 720);
+    for (i = 0; i < P.length; i++) { var p = P[i]; p.vy += 0.45; p.vx *= 0.99; p.x += p.vx; p.y += p.vy; p.r += p.vr; cx.save(); cx.translate(p.x, p.y); cx.rotate(p.r); cx.fillStyle = p.c; cx.fillRect(-p.w / 2, -p.w / 4, p.w, p.w / 2); cx.restore(); }
+    if (ahora() - t0 < 3500) requestAnimationFrame(paso); else cx.clearRect(0, 0, 1280, 720);
+  })();
+}
+
+/* ---------- inicio ---------- */
+document.addEventListener('mousedown', function (e) { var t = e.target; while (t && t !== document) { if (t.tagName === 'BUTTON') { e.preventDefault(); return; } t = t.parentNode; } });
+cargarPR();
+escalar();
+armarPortada();
+armarFeedEventos();
+requestAnimationFrame(tick);
+</script>
+</body></html>
