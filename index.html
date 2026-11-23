@@ -77,17 +77,21 @@ h2{font-size:clamp(22px,3vw,28px);margin:30px 0 12px;font-weight:800}
 .game:hover .play{opacity:1;transform:scale(1)}
 .play svg{width:20px;height:20px;margin-left:3px}
 .empty{color:var(--dim);font-size:18px;padding:20px 0}
-.rin{grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr))}
-.panel{background:#fff;border-radius:24px;padding:20px 22px;box-shadow:0 7px 0 var(--line);display:flex;flex-direction:column;gap:12px}
-.panel h3{margin:0;font-size:22px;font-weight:800}
-.panel select,.panel textarea{font:600 16px Nunito,'Segoe UI',sans-serif;color:var(--ink);border:2px solid var(--line);border-radius:14px;padding:10px 12px;background:#f7f9ff;outline:none;width:100%}
-.panel select:focus,.panel textarea:focus{border-color:#9b7bff}
-.panel textarea{min-height:96px;resize:vertical}
-.stars{display:flex;gap:6px}
-.stars button{border:0;background:none;padding:0;cursor:pointer;width:42px;height:42px;transition:transform .15s}
-.stars button:hover{transform:scale(1.15)}
-.stars svg{width:100%;height:100%}
-.seg{display:flex;gap:8px;flex-wrap:wrap}
+.ideaBtn{position:fixed;right:20px;bottom:20px;z-index:8;display:flex;align-items:center;gap:8px;border:0;cursor:pointer;font:800 17px Nunito,'Segoe UI',sans-serif;color:var(--ink);background:#fff;padding:10px 18px 10px 12px;border-radius:999px;box-shadow:0 5px 0 var(--line),0 10px 24px rgba(36,32,74,.15);transition:transform .18s cubic-bezier(.34,1.56,.64,1)}
+.ideaBtn:hover{transform:translateY(-3px) rotate(-2deg)}
+.ideaBtn svg{width:30px;height:30px}
+.ideaBtn[hidden],.toast[hidden],.modal[hidden]{display:none}
+.toast{position:fixed;right:20px;bottom:84px;z-index:8;width:min(340px,calc(100vw - 40px));background:#24204a;color:#fff;border-radius:22px;padding:16px 18px;box-shadow:0 14px 30px rgba(36,32,74,.3);animation:up .4s cubic-bezier(.34,1.56,.64,1)}
+.toast b{display:block;font-size:17px;line-height:1.3;margin-bottom:12px}
+@keyframes up{from{opacity:0;transform:translateY(20px) scale(.95)}}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.ghost{font:800 16px Nunito,'Segoe UI',sans-serif;border:0;background:none;color:inherit;opacity:.8;cursor:pointer;padding:10px}
+.modal{position:fixed;inset:0;z-index:9;background:rgba(36,32,74,.45);display:grid;place-items:center;padding:16px}
+.modal .box{position:relative;width:min(520px,100%);background:#fff;border-radius:26px;padding:24px;display:flex;flex-direction:column;gap:14px;box-shadow:0 20px 50px rgba(0,0,0,.25);animation:up .35s cubic-bezier(.34,1.56,.64,1)}
+.modal h3{margin:0;font-size:26px;font-weight:800}
+.modal textarea{font:600 17px Nunito,'Segoe UI',sans-serif;color:var(--ink);border:2px solid var(--line);border-radius:16px;padding:12px 14px;background:#f7f9ff;outline:none;min-height:130px;resize:vertical}
+.modal textarea:focus{border-color:#9b7bff}
+.x{position:absolute;top:12px;right:14px;width:40px;height:40px;border:0;border-radius:50%;background:#eef3ff;font:800 24px Nunito,sans-serif;color:var(--ink);cursor:pointer}.seg{display:flex;gap:8px;flex-wrap:wrap}
 .seg label{cursor:pointer}
 .seg input{position:absolute;opacity:0}
 .seg span{display:inline-block;padding:8px 14px;border-radius:999px;background:#eef3ff;font-weight:800}
@@ -179,7 +183,6 @@ footer{position:relative;z-index:1;text-align:center;color:var(--dim);font-size:
       var n = c.clases.reduce(function (s, k) { return s + k.juegos.length; }, 0);
       return '<a class="tile school" href="#/' + c.id + '" data-colegio="' + c.id + '" style="background:' + c.color + '"><div class="big">' + esc(c.nombre) + '</div><div class="place">' + esc(c.lugar) + '</div><span class="count">' + plural(n) + '</span>' + schoolArt(c.color) + '</a>';
     }).join('') + '</div>';
-    if (R.form) html += rincon();
     app.innerHTML = html;
     var q = document.getElementById('q'), res = document.getElementById('results'), sch = document.getElementById('schools');
     q.addEventListener('input', function () {
@@ -189,7 +192,6 @@ footer{position:relative;z-index:1;text-align:center;color:var(--dim);font-size:
       sch.style.display = 'none';
       res.innerHTML = hits.length ? '<div class="grid games" style="margin-bottom:22px">' + hits.map(function (x) { return card(x, { where: true }); }).join('') + '</div>' : '<p class="empty">No hay juegos con ese nombre.</p>';
     });
-    if (R.form) wireRincon();
     document.title = 'Juegos de Informática';
   }
   function school(c) {
@@ -208,46 +210,50 @@ footer{position:relative;z-index:1;text-align:center;color:var(--dim);font-size:
     document.title = c.nombre + ' ' + k.nombre + ' · Juegos de Informática';
   }
 
-  // ----- Rincón de reseñas e ideas (va a un formulario privado del profe).
-  function rincon() {
-    var opts = D.colegios.map(function (c) { return c.clases.map(function (k) { return '<optgroup label="' + esc(c.nombre + ' · ' + k.nombre) + '">' + k.juegos.map(function (j) { return '<option value="' + esc(j.titulo + ' (' + c.nombre + ' ' + k.nombre + ')') + '">' + esc(j.titulo) + '</option>'; }).join('') + '</optgroup>'; }).join(''); }).join('');
-    return '<h2 id="rincon">Rincón de reseñas e ideas</h2><p class="sub">Lo lee el profe. No hace falta que pongas tu nombre.</p><div class="grid rin">' +
-      '<form class="panel" id="fRes"><h3>¿Qué te pareció un juego?</h3><select name="juego" required><option value="">Elegí el juego</option>' + opts + '</select>' +
-      '<div class="stars" id="stars">' + [1, 2, 3, 4, 5].map(function (n) { return '<button type="button" data-n="' + n + '" aria-label="' + n + ' estrellas">' + STAR(false) + '</button>'; }).join('') + '</div>' +
-      '<textarea name="mensaje" maxlength="300" placeholder="Lo que más te gustó, lo que cambiarías…"></textarea><button class="send" type="submit">Enviar reseña</button><div class="thanks" aria-live="polite"></div></form>' +
-      '<form class="panel" id="fIdea"><h3>Tengo una idea</h3><div class="seg"><label><input type="radio" name="tipo" value="Idea de juego" checked><span>Un juego nuevo</span></label><label><input type="radio" name="tipo" value="Algo para aprender"><span>Algo para aprender</span></label></div>' +
-      '<textarea name="mensaje" maxlength="400" required placeholder="Contá tu idea…"></textarea><button class="send" type="submit">Enviar idea</button><div class="thanks" aria-live="polite"></div></form></div>' +
-      '<p class="note">Se pueden mandar hasta 5 mensajes por día desde cada compu.</p>';
-  }
-  function send(fields, form) {
-    var today = new Date().toDateString(), q = ls.get('portalEnvios', { d: today, n: 0 });
-    if (q.d !== today) q = { d: today, n: 0 };
-    var out = form.querySelector('.thanks'), btn = form.querySelector('.send');
-    if (q.n >= 5) { out.textContent = 'Por hoy ya está. ¡Gracias!'; return; }
-    var fd = new FormData(), last = ls.get('portalClase', '');
-    fields.clase = last ? last.replace('/', ' ') : '';
-    Object.keys(R.campos).forEach(function (k) { if (R.campos[k] && fields[k] != null) fd.append('entry.' + R.campos[k], fields[k]); });
-    btn.disabled = true; out.textContent = 'Enviando…';
-    fetch('https://docs.google.com/forms/d/e/' + R.form + '/formResponse', { method: 'POST', mode: 'no-cors', body: fd }).then(function () {
-      q.n++; ls.set('portalEnvios', q);
-      out.textContent = '¡Gracias! Le llegó al profe.'; form.reset(); setStars(0);
-      setTimeout(function () { btn.disabled = false; out.textContent = ''; }, 6000);
-    }, function () { btn.disabled = false; out.textContent = 'No se pudo enviar. Probá de nuevo.'; });
-  }
-  var stars = 0;
-  function setStars(n) { stars = n; var b = document.querySelectorAll('#stars button'); for (var i = 0; i < b.length; i++) b[i].innerHTML = STAR(i < n); }
-  function wireRincon() {
-    var s = document.getElementById('stars');
-    s.addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) setStars(+b.dataset.n); });
-    document.getElementById('fRes').addEventListener('submit', function (e) {
-      e.preventDefault(); var f = e.target, out = f.querySelector('.thanks');
-      if (!stars) { out.textContent = 'Tocá las estrellas para puntuar.'; return; }
-      send({ tipo: 'Reseña', juego: f.juego.value, estrellas: String(stars), mensaje: f.mensaje.value.trim() }, f);
+  // ----- Ideas: ventana que aparece en el inicio. Las ideas van a un formulario privado del profe.
+  var ideaUI = null;
+  function ideas() {
+    if (ideaUI || !R.form) return;
+    var wrap = document.createElement('div');
+    wrap.innerHTML = '<button class="ideaBtn" id="ideaBtn" type="button"><svg viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.7.5 1.1 1.3 1.1 2.2h5c0-.9.4-1.7 1.1-2.2A6 6 0 0 0 12 3z" fill="#ffd23f" stroke="#24204a" stroke-width="1.8" stroke-linejoin="round"/></svg><span>¿Tenés una idea?</span></button>' +
+      '<div class="toast" id="ideaToast" hidden><b>¿Se te ocurre un juego nuevo o algo que te gustaría aprender?</b><div class="row"><button class="send" type="button" data-open>Contar mi idea</button><button class="ghost" type="button" data-close>Ahora no</button></div></div>' +
+      '<div class="modal" id="ideaModal" hidden><form class="box" id="fIdea"><button class="x" type="button" data-close aria-label="Cerrar">×</button><h3>Tengo una idea</h3>' +
+      '<div class="seg"><label><input type="radio" name="tipo" value="Juego nuevo" checked><span>Un juego nuevo</span></label><label><input type="radio" name="tipo" value="Algo para aprender"><span>Algo para aprender</span></label></div>' +
+      '<textarea name="idea" maxlength="500" required placeholder="Contá tu idea: de qué se trata, qué habría que hacer…"></textarea>' +
+      '<div class="row"><button class="send" type="submit">Mandar idea</button><span class="thanks" aria-live="polite"></span></div><p class="note">La lee el profe. No hace falta que pongas tu nombre.</p></form></div>';
+    document.body.appendChild(wrap);
+    var btn = document.getElementById('ideaBtn'), toast = document.getElementById('ideaToast'), modal = document.getElementById('ideaModal'), form = document.getElementById('fIdea');
+    var open = function () { toast.hidden = true; modal.hidden = false; setTimeout(function () { form.idea.focus(); }, 50); };
+    var close = function () { modal.hidden = true; toast.hidden = true; };
+    btn.addEventListener('click', open);
+    wrap.addEventListener('click', function (e) { if (e.target.closest('[data-open]')) open(); else if (e.target.closest('[data-close]') || e.target === modal) close(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !modal.hidden) { e.stopImmediatePropagation(); close(); } }, true);
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var out = form.querySelector('.thanks'), send = form.querySelector('.send');
+      var today = new Date().toDateString(), q = ls.get('portalEnvios', { d: today, n: 0 });
+      if (q.d !== today) q = { d: today, n: 0 };
+      if (q.n >= 5) { out.textContent = 'Por hoy ya está. ¡Gracias!'; return; }
+      var fd = new FormData(), last = ls.get('portalClase', '');
+      var val = { tipo: form.querySelector('input[name=tipo]:checked').value, clase: last ? last.replace('/', ' ') : 'sin elegir', idea: form.idea.value.trim() };
+      if (!val.idea) return;
+      Object.keys(R.campos).forEach(function (k) { if (R.campos[k]) fd.append('entry.' + R.campos[k], val[k] || ''); });
+      send.disabled = true; out.textContent = 'Mandando…';
+      fetch('https://docs.google.com/forms/d/e/' + R.form + '/formResponse', { method: 'POST', mode: 'no-cors', body: fd }).then(function () {
+        q.n++; ls.set('portalEnvios', q);
+        out.textContent = '¡Gracias! Le llegó al profe.'; form.idea.value = '';
+        setTimeout(function () { send.disabled = false; out.textContent = ''; close(); }, 2200);
+      }, function () { send.disabled = false; out.textContent = 'No se pudo mandar. Probá de nuevo.'; });
     });
-    document.getElementById('fIdea').addEventListener('submit', function (e) {
-      e.preventDefault(); var f = e.target;
-      send({ tipo: f.querySelector('input[name=tipo]:checked').value, juego: '', estrellas: '', mensaje: f.mensaje.value.trim() }, f);
-    });
+    ideaUI = { btn: btn, toast: toast, modal: modal };
+  }
+  function showIdeas(onHome) {
+    ideas(); if (!ideaUI) return;
+    ideaUI.btn.hidden = !onHome;
+    if (!onHome) { ideaUI.toast.hidden = true; ideaUI.modal.hidden = true; return; }
+    // La invitación aparece sola una vez por día en cada compu.
+    var today = new Date().toDateString();
+    if (ls.get('portalInvitacion', '') !== today) setTimeout(function () { if (!location.hash.replace(/^#\/?/, '') && ideaUI.modal.hidden) { ideaUI.toast.hidden = false; ls.set('portalInvitacion', today); } }, 3500);
   }
 
   function render() {
@@ -256,6 +262,7 @@ footer{position:relative;z-index:1;text-align:center;color:var(--dim);font-size:
     var k = c && c.clases.filter(function (x) { return x.id === parts[1]; })[0];
     window.scrollTo(0, 0);
     if (k) klass(c, k); else if (c) school(c); else home();
+    showIdeas(!k && !c);
     pop();
   }
   // Atajos de teclado: "/" busca; en una clase, 1 a 9 abren cada juego; Escape vuelve atrás.

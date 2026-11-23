@@ -32,4 +32,26 @@ for (const [w, h] of [[1366, 768], [1024, 600], [390, 844]]) {
   errs.forEach(e => fail(`${w}x${h} consola: ${e}`));
   await ctx.close();
 }
+// Ideas: con un formulario simulado, la invitación aparece sola, se abre la ventana y se envía la idea.
+{
+  const ctx = await b.newContext({ viewport: { width: 1366, height: 768 } }); const p = await ctx.newPage();
+  await p.addInitScript(() => { window.RINCON = { form: 'PRUEBA', campos: { tipo: '111', clase: '222', idea: '333' } }; localStorage.setItem('portalClase', JSON.stringify('scjm/6')); });
+  let body = null;
+  await p.route('https://docs.google.com/**', async r => { body = r.request().postData() || ''; await r.fulfill({ status: 200, body: 'ok' }); });
+  await p.goto(base.split('#')[0]); await p.waitForTimeout(4300);
+  if (!(await p.isVisible('#ideaToast'))) fail('ideas: no aparece la invitación');
+  await p.screenshot({ path: path.join(out, 'ideas-invitacion.png') });
+  await p.click('#ideaToast [data-open]'); await p.waitForTimeout(400);
+  await p.fill('#fIdea textarea', 'Un juego de detectives en el espacio');
+  await p.screenshot({ path: path.join(out, 'ideas-ventana.png') });
+  await p.click('#fIdea .send'); await p.waitForTimeout(800);
+  if (!body || !body.includes('Un juego de detectives') || !body.includes('entry.222') || !body.includes('scjm 6')) fail('ideas: no se envió bien: ' + body);
+  await p.goto(base.split('#')[0] + '#/scjm/6'); await p.waitForTimeout(500);
+  if (await p.isVisible('#ideaBtn')) fail('ideas: el botón aparece fuera del inicio');
+  await ctx.close();
+  const c2 = await b.newContext({ viewport: { width: 1366, height: 768 } }); const p2 = await c2.newPage();
+  await p2.goto(base.split('#')[0]); await p2.waitForTimeout(800);
+  if (await p2.locator('#ideaBtn').count()) fail('ideas: aparece sin formulario configurado');
+  await c2.close();
+}
 await b.close(); console.log(fails ? fails + ' problema(s)' : 'Todo en orden.'); process.exit(fails ? 1 : 0);
