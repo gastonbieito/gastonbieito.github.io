@@ -39,9 +39,9 @@ h2{font-size:clamp(22px,3vw,28px);margin:30px 0 12px;font-weight:800}
 .schools{grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr))}
 .classes{grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}
 .games{grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr))}
-.recent{grid-template-columns:repeat(auto-fill,minmax(min(100%,220px),1fr))}
+.recent{grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr))}
 .tile{position:relative;display:block;border-radius:28px;text-decoration:none;color:#fff;overflow:hidden;transition:transform .18s cubic-bezier(.34,1.56,.64,1),box-shadow .18s;box-shadow:0 8px 0 rgba(0,0,0,.14)}
-.tile:hover,.tile:focus-visible{transform:translateY(-6px) rotate(-.6deg);box-shadow:0 14px 0 rgba(0,0,0,.14);outline:none}
+.tile:hover,.tile:focus-visible{transform:translateY(-4px);box-shadow:0 14px 0 rgba(0,0,0,.14);outline:none}
 .tile:active{transform:translateY(2px) scale(.98)}
 .school{min-height:280px;padding:28px}
 .school .big{font-size:clamp(56px,8vw,86px);font-weight:800;line-height:1;letter-spacing:-1px;text-shadow:0 4px 0 rgba(0,0,0,.12)}
@@ -64,21 +64,24 @@ h2{font-size:clamp(22px,3vw,28px);margin:30px 0 12px;font-weight:800}
 .game .cover{position:relative;aspect-ratio:16/9;border-radius:22px 22px 0 0;overflow:hidden;display:grid;place-items:center;padding:0 8%;container-type:inline-size;background:radial-gradient(circle at 18% 12%,rgba(255,255,255,.28),transparent 46%),linear-gradient(140deg,var(--c),color-mix(in srgb,var(--c) 70%,#1e1550))}
 .game .cover::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.16) 2px,transparent 2.5px);background-size:22px 22px}
 .game .cover::after{content:'';position:absolute;right:-12%;bottom:-38%;width:55%;aspect-ratio:1;border-radius:50%;background:rgba(255,255,255,.12)}
-.game .ct{position:relative;z-index:1;color:#fff;font-weight:800;text-align:center;line-height:1.04;letter-spacing:-.02em;font-size:calc(var(--k) * 1cqw);text-shadow:0 .07em 0 rgba(0,0,0,.2);transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
-.game:hover .ct{transform:scale(1.07) rotate(-2deg)}
-.game .info .d{color:var(--ink);font-size:16px;margin-top:0}.game .info{padding:12px 44px 16px 16px}
+.game .ct{position:relative;z-index:1;color:#fff;font-weight:800;text-align:center;line-height:1.04;letter-spacing:-.02em;font-size:calc(var(--k) * 1cqw);text-shadow:0 .07em 0 rgba(0,0,0,.2)}
+.game .info .d{color:var(--ink);font-size:16px;margin-top:0}.game .info{padding:12px 16px 14px}
 .game .t{font-weight:800;font-size:19px;line-height:1.2}
 .game .d{color:var(--dim);font-size:15px;margin-top:3px}
 .game .where{display:inline-block;margin-top:8px;font-size:13px;font-weight:800;color:#fff;padding:2px 10px;border-radius:999px}
-.game .key{position:absolute;bottom:12px;right:12px;font:800 13px Nunito,sans-serif;color:var(--dim);background:#eef3ff;border-radius:6px;padding:1px 7px}
+.game .key{position:absolute;bottom:14px;right:14px;transition:opacity .15s;font:800 13px Nunito,sans-serif;color:var(--dim);background:#eef3ff;border-radius:6px;padding:1px 7px}
 .badge{position:absolute;top:12px;left:12px;background:#ffd23f;color:var(--ink);font-weight:800;font-size:13px;padding:4px 10px;border-radius:999px;box-shadow:0 3px 0 #d6a800;letter-spacing:.5px}
 .badge.go{background:#2fbf8f;color:#fff;box-shadow:0 3px 0 #1d8a66}
-.play{position:absolute;top:12px;right:12px;width:44px;height:44px;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 3px 0 rgba(0,0,0,.15);opacity:0;transform:scale(.6);transition:.18s}
+.play{position:absolute;bottom:9px;right:10px;width:36px;height:36px;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 3px 0 rgba(0,0,0,.15);opacity:0;transform:scale(.6);transition:.18s}
 .game:hover .play{opacity:1;transform:scale(1)}
-.play svg{width:20px;height:20px;margin-left:3px}
+.play svg{width:16px;height:16px;margin-left:3px}
+.game:hover .key,.game:focus-visible .key{opacity:0}
+.game .tags{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:9px;padding-right:38px}
+.game .tags .badge{position:static;font-size:12px;padding:2px 9px;box-shadow:inset 0 1px 0 rgba(255,255,255,.6)}
+.game .tags .where{margin-top:0}
 .empty{color:var(--dim);font-size:18px;padding:20px 0}
 .ideaBtn{position:fixed;right:20px;bottom:20px;z-index:8;display:flex;align-items:center;gap:8px;border:0;cursor:pointer;font:800 17px Nunito,'Segoe UI',sans-serif;color:var(--ink);background:#fff;padding:10px 18px 10px 12px;border-radius:999px;box-shadow:0 5px 0 var(--line),0 10px 24px rgba(36,32,74,.15);transition:transform .18s cubic-bezier(.34,1.56,.64,1)}
-.ideaBtn:hover{transform:translateY(-3px) rotate(-2deg)}
+.ideaBtn:hover{transform:translateY(-3px)}
 .ideaBtn svg{width:30px;height:30px}
 .ideaBtn[hidden],.toast[hidden],.modal[hidden]{display:none}
 .toast{position:fixed;right:20px;bottom:84px;z-index:8;width:min(340px,calc(100vw - 40px));background:#24204a;color:#fff;border-radius:22px;padding:16px 18px;box-shadow:0 14px 30px rgba(36,32,74,.3);animation:up .4s cubic-bezier(.34,1.56,.64,1)}
@@ -163,14 +166,13 @@ header{background:rgba(233,238,252,.35);backdrop-filter:blur(22px) saturate(180%
 .game .key,.search kbd{background:rgba(255,255,255,.6);box-shadow:var(--rim)}
 /* ---------- Escudos ---------- */
 .school{padding-right:calc(min(40%,220px) + 36px)}
-.school .medal{position:absolute;right:26px;top:50%;width:min(40%,220px);aspect-ratio:1;border-radius:50%;display:grid;place-items:center;transform:translateY(-50%) rotate(5deg);background:radial-gradient(circle at 32% 24%,rgba(255,255,255,.97),rgba(255,255,255,.72) 60%,rgba(255,255,255,.5));backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:inset 0 2px 0 #fff,inset 0 0 0 1.5px rgba(255,255,255,.75),inset 0 -10px 24px rgba(36,32,74,.08),0 16px 34px rgba(0,0,0,.2);transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
+.school .medal{position:absolute;right:26px;top:0;bottom:0;margin:auto 0;width:min(40%,220px);height:auto;aspect-ratio:1;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 32% 24%,rgba(255,255,255,.97),rgba(255,255,255,.72) 60%,rgba(255,255,255,.5));backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:inset 0 2px 0 #fff,inset 0 0 0 1.5px rgba(255,255,255,.75),inset 0 -10px 24px rgba(36,32,74,.08),0 16px 34px rgba(0,0,0,.2)}
 .school .medal::after{content:'';position:absolute;left:14%;top:7%;width:46%;height:22%;border-radius:50%;background:linear-gradient(180deg,rgba(255,255,255,.85),rgba(255,255,255,0));pointer-events:none}
 .school .esc{width:64%;height:64%;object-fit:contain;filter:drop-shadow(0 5px 8px rgba(36,32,74,.22))}
-.school:hover .medal,.school:focus-visible .medal{transform:translateY(-50%) rotate(-4deg) scale(1.07)}
 .tit{display:flex;align-items:center;gap:14px}
 .tit .te{height:1.25em;width:auto;filter:drop-shadow(0 4px 6px rgba(36,32,74,.2))}
 .crumb .ce,.seg .ce{height:1.25em;width:auto;vertical-align:-.3em;margin-right:6px}
-@media (max-width:560px){.school{padding-right:28px}.school .medal{width:112px;top:20px;right:18px;transform:rotate(5deg)}.school:hover .medal{transform:rotate(-4deg) scale(1.07)}}
+@media (max-width:560px){.school{padding-right:28px}.school .medal{width:112px;top:20px;bottom:auto;right:18px}}
 /* ---------- Perfil ---------- */
 .av{position:relative;display:block;width:100%;aspect-ratio:1;border-radius:50%;padding:var(--pad,6%);background:var(--ring,transparent);box-shadow:var(--glow,none)}
 .av>b{display:block;width:100%;height:100%;border-radius:50%;overflow:hidden;background:var(--bg,#fff);box-shadow:inset 0 2px 6px rgba(36,32,74,.12)}
@@ -178,13 +180,13 @@ header{background:rgba(233,238,252,.35);backdrop-filter:blur(22px) saturate(180%
 .av .ins{position:absolute;right:-6%;bottom:-4%;width:38%;aspect-ratio:1;border-radius:50%;background:linear-gradient(135deg,#fff,#f1f4ff);box-shadow:0 3px 8px rgba(36,32,74,.25),inset 0 1px 0 #fff;display:grid;place-items:center}
 .av .ins svg{width:68%;height:68%}
 .me{margin-left:auto;display:flex;align-items:center;gap:9px;border:0;cursor:pointer;font:800 17px Nunito,'Segoe UI',sans-serif;color:var(--ink);padding:4px 16px 4px 4px;border-radius:999px;background:var(--glass);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);box-shadow:var(--rim),var(--soft);transition:transform .18s cubic-bezier(.34,1.56,.64,1)}
-.me:hover{transform:translateY(-2px) rotate(-1.5deg)}
+.me:hover{transform:translateY(-2px)}
 .me .aw{width:40px;flex:none}
 .me .mn{max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .me+.mute{margin-left:0}
 .hola{display:flex;align-items:center;gap:16px}
 .hola .yo{flex:none;width:clamp(66px,9vw,96px);border:0;padding:0;background:none;cursor:pointer;animation:bob 3.2s ease-in-out infinite;transition:transform .2s cubic-bezier(.34,1.56,.64,1)}
-.hola .yo:hover{transform:scale(1.08) rotate(-4deg)}
+.hola .yo:hover{transform:translateY(-3px)}
 @keyframes bob{50%{translate:0 -5px}}
 .hola mark{color:inherit;background:linear-gradient(transparent 58%,color-mix(in srgb,var(--fav) 45%,transparent) 58%);border-radius:4px;padding:0 2px}
 .modal .box.pfb{width:min(980px,100%);height:min(660px,calc(100dvh - 32px));padding:0;gap:0;display:grid;grid-template-columns:310px 1fr;overflow:hidden}
@@ -210,7 +212,7 @@ header{background:rgba(233,238,252,.35);backdrop-filter:blur(22px) saturate(180%
 .tabs button.on{background:linear-gradient(135deg,#9b7bff,#7b5cf0);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 4px 12px rgba(155,123,255,.4)}
 .opts{flex:1;min-height:0;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:12px;align-content:start;padding:4px 4px 20px}
 .opts button{position:relative;border:0;padding:6px;cursor:pointer;border-radius:20px;background:rgba(255,255,255,.55);box-shadow:var(--rim),0 3px 8px rgba(36,32,74,.08);transition:transform .15s cubic-bezier(.34,1.56,.64,1)}
-.opts button:hover{transform:translateY(-3px) scale(1.04)}
+.opts button:hover{transform:translateY(-3px)}
 .opts button.on{box-shadow:0 0 0 3px #9b7bff,0 6px 16px rgba(155,123,255,.35);background:#fff}
 .opts button.on::after{content:'';position:absolute;top:-6px;right:-6px;width:24px;height:24px;border-radius:50%;background:#9b7bff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6.5 12.5l3.5 3.5 7.5-8' stroke='%23fff' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/80% no-repeat;box-shadow:0 2px 6px rgba(0,0,0,.2)}
 .opts .th{display:block;width:100%;aspect-ratio:1;border-radius:15px;overflow:hidden;background:var(--bg)}
@@ -265,9 +267,10 @@ footer a{color:inherit}
     o = o || {};
     var j = x.j;
     return '<a class="tile game" href="' + esc(j.href) + '" data-slug="' + esc(j.slug) + '" data-where="' + x.c.id + '/' + x.k.id + '">' + cover(j) +
-      (o.go ? '<span class="badge go">SEGUIR</span>' : j.nuevo ? '<span class="badge">NUEVO</span>' : '') + '<span class="play"><svg viewBox="0 0 20 20"><path d="M4 2 L18 10 L4 18Z" fill="#24204a"/></svg></span>' +
+      '<span class="play"><svg viewBox="0 0 20 20"><path d="M4 2 L18 10 L4 18Z" fill="#24204a"/></svg></span>' +
       '<div class="info"><div class="d">' + esc(j.desc) + '</div>' +
-      (o.where ? '<span class="where" style="background:' + x.k.color + '">' + esc(x.c.nombre + ' · ' + x.k.nombre) + '</span>' : '') + '</div>' +
+      ((j.nuevo && !o.go) || o.where ? '<div class="tags">' + (o.go ? '' : j.nuevo ? '<span class="badge">NUEVO</span>' : '') +
+      (o.where ? '<span class="where" style="background:' + x.k.color + '">' + esc(x.c.nombre + ' · ' + x.k.nombre) + '</span>' : '') + '</div>' : '') + '</div>' +
       (o.key ? '<span class="key">' + o.key + '</span>' : '') + '</a>';
   }
   // Portada tipográfica: un color fuerte por juego y el título lo más grande que entre en la tarjeta.
