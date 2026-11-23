@@ -117,7 +117,35 @@ h2{font-size:clamp(22px,3vw,28px);margin:30px 0 12px;font-weight:800}
 .note{color:var(--dim);font-size:14px}
 footer{position:relative;z-index:1;text-align:center;color:var(--dim);font-size:14px;padding:0 20px 30px}
 @media (max-width:560px){header{padding:10px 12px}.logo span{display:none}.school{min-height:220px}.search kbd{display:none}}
-</style>
+/* ---------- Liquid glass ---------- */
+.search svg,.search kbd{z-index:2}
+:root{--glass:linear-gradient(135deg,rgba(255,255,255,.62),rgba(255,255,255,.28));--rim:inset 0 1px 0 rgba(255,255,255,.95),inset 0 -1px 0 rgba(255,255,255,.35),inset 0 0 0 1px rgba(255,255,255,.45);--soft:0 10px 30px rgba(36,32,74,.12),0 2px 6px rgba(36,32,74,.06)}
+body{background:#e9eefc}
+.blobs i{opacity:.85;filter:blur(40px)}
+.blobs i:nth-child(1){background:#ffb59e!important;width:560px!important;height:560px!important}
+.blobs i:nth-child(2){background:#9fd3ff!important;width:520px!important;height:520px!important}
+.blobs i:nth-child(3){background:#c7b4ff!important;width:520px!important;height:520px!important}
+.blobs i:nth-child(4){background:#a8ecd0!important;width:380px!important;height:380px!important}
+header{background:rgba(233,238,252,.35);backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);border-bottom:1px solid rgba(255,255,255,.55)}
+.logo,.crumb,.chip,.search input,.mute,.ideaBtn,.game,.resume{background:var(--glass);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);box-shadow:var(--rim),var(--soft)}
+.crumb.on{background:linear-gradient(135deg,rgba(36,32,74,.88),rgba(36,32,74,.7));box-shadow:inset 0 1px 0 rgba(255,255,255,.25),var(--soft)}
+.search input:focus{box-shadow:var(--rim),0 0 0 4px rgba(155,123,255,.25),var(--soft)}
+.game:hover,.game:focus-visible{box-shadow:var(--rim),0 18px 40px rgba(36,32,74,.18)}
+.tile{box-shadow:0 14px 34px rgba(36,32,74,.16),0 2px 6px rgba(36,32,74,.08)}
+.tile:hover,.tile:focus-visible{box-shadow:0 22px 46px rgba(36,32,74,.22),0 3px 8px rgba(36,32,74,.1)}
+.school::before,.klass::before,.game .cover::before{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(180deg,rgba(255,255,255,.38),rgba(255,255,255,0) 42%),radial-gradient(rgba(255,255,255,.16) 2px,transparent 2.5px) 0 0/22px 22px;box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 0 0 1px rgba(255,255,255,.25)}
+.school .count,.klass .count{background:rgba(255,255,255,.28);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:inset 0 1px 0 rgba(255,255,255,.6)}
+.badge{box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 4px 10px rgba(0,0,0,.15)}
+.play{background:rgba(255,255,255,.75);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:var(--rim),0 6px 16px rgba(0,0,0,.18)}
+.toast{background:linear-gradient(135deg,rgba(36,32,74,.82),rgba(36,32,74,.62));backdrop-filter:blur(24px) saturate(160%);-webkit-backdrop-filter:blur(24px) saturate(160%);box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 20px 44px rgba(36,32,74,.3)}
+.modal{background:rgba(36,32,74,.22);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.modal .box{background:linear-gradient(135deg,rgba(255,255,255,.82),rgba(255,255,255,.6));backdrop-filter:blur(30px) saturate(180%);-webkit-backdrop-filter:blur(30px) saturate(180%);box-shadow:var(--rim),0 30px 60px rgba(36,32,74,.28)}
+.modal textarea{background:rgba(255,255,255,.6);border-color:rgba(255,255,255,.8);box-shadow:inset 0 1px 3px rgba(36,32,74,.08)}
+.done{background:linear-gradient(135deg,rgba(255,255,255,.92),rgba(255,255,255,.78))}
+.seg span{background:rgba(255,255,255,.6);box-shadow:var(--rim)}
+.send{box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 8px 18px rgba(255,122,89,.35);background:linear-gradient(180deg,#ff8f70,#ff6a45)}
+.x{background:rgba(255,255,255,.7);box-shadow:var(--rim)}
+.game .key,.search kbd{background:rgba(255,255,255,.6);box-shadow:var(--rim)}</style>
 </head>
 <body>
 <div class="blobs" aria-hidden="true"><i style="width:420px;height:420px;background:#ffd6c9;left:-120px;top:-80px"></i><i style="width:360px;height:360px;background:#cfe9ff;right:-100px;top:120px;animation-delay:-6s"></i><i style="width:300px;height:300px;background:#e3d9ff;left:30%;bottom:-120px;animation-delay:-12s"></i><i style="width:220px;height:220px;background:#d4f5e6;right:20%;top:-60px;animation-delay:-3s"></i></div>
@@ -224,23 +252,60 @@ footer{position:relative;z-index:1;text-align:center;color:var(--dim);font-size:
     document.title = c.nombre + ' ' + k.nombre + ' · Juegos de Informática';
   }
 
-  // ----- Sonidos suaves generados en el momento (sin archivos). Se pueden apagar con el parlante.
+  // Sonidos propios del portal, cortos y suaves: un "tic" de vidrio al tocar, un deslizamiento al abrir
+  // y cerrar, una campanita cristalina y un "fiuu" de envío. Todo pasa por un filtro y un compresor para que suene limpio.
   var Snd = {
-    ac: null, off: ls.get('portalMute', false),
-    ctx: function () { if (this.off) return null; try { if (!this.ac) this.ac = new (window.AudioContext || window.webkitAudioContext)(); if (this.ac.state === 'suspended') this.ac.resume(); } catch (e) { return null; } return this.ac; },
-    tone: function (f, t, d, v, type, to) {
-      var a = this.ctx(); if (!a) return;
-      var o = a.createOscillator(), g = a.createGain(), s = a.currentTime + (t || 0);
-      o.type = type || 'sine'; o.frequency.setValueAtTime(f, s); if (to) o.frequency.exponentialRampToValueAtTime(to, s + d * .8);
-      g.gain.setValueAtTime(.0001, s); g.gain.exponentialRampToValueAtTime(v || .12, s + .01); g.gain.exponentialRampToValueAtTime(.0001, s + d);
-      o.connect(g); g.connect(a.destination); o.start(s); o.stop(s + d + .05);
+    ac: null, bus: null, nb: null, off: ls.get('portalMute', false),
+    ctx: function () {
+      if (this.off) return null;
+      try {
+        if (!this.ac) {
+          var a = this.ac = new (window.AudioContext || window.webkitAudioContext)();
+          var lp = a.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 9000;
+          var comp = a.createDynamicsCompressor(); comp.threshold.value = -20; comp.ratio.value = 3;
+          this.bus = a.createGain(); this.bus.gain.value = .9;
+          this.bus.connect(lp); lp.connect(comp); comp.connect(a.destination);
+          var n = a.createBuffer(1, a.sampleRate * .5, a.sampleRate), d = n.getChannelData(0);
+          for (var i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+          this.nb = n;
+        }
+        if (this.ac.state === 'suspended') this.ac.resume();
+      } catch (e) { return null; }
+      return this.ac;
     },
-    pop: function () { this.tone(520, 0, .12, .1, 'sine', 900); },
-    open: function () { this.tone(392, 0, .18, .08); this.tone(587, .07, .22, .08); },
-    close: function () { this.tone(587, 0, .14, .06); this.tone(392, .06, .18, .06); },
-    ding: function () { this.tone(988, 0, .35, .07); this.tone(1319, .09, .45, .05); },
-    ok: function () { [523, 659, 784, 1047, 1319].forEach(function (f, i) { Snd.tone(f, i * .08, .5, .1); }); this.tone(2093, .45, .6, .03, 'triangle'); },
-    no: function () { this.tone(300, 0, .22, .1, 'sine', 200); },
+    // Nota con ataque suave y cola de campana (dos parciales).
+    bell: function (f, t, d, v) {
+      var a = this.ctx(); if (!a) return;
+      var s = a.currentTime + (t || 0);
+      [[1, 1], [2.76, .18], [5.4, .05]].forEach(function (p) {
+        var o = a.createOscillator(), g = a.createGain();
+        o.type = 'sine'; o.frequency.value = f * p[0];
+        g.gain.setValueAtTime(.0001, s); g.gain.linearRampToValueAtTime(v * p[1], s + .006); g.gain.exponentialRampToValueAtTime(.0001, s + d / p[0] * 1.2);
+        o.connect(g); g.connect(Snd.bus); o.start(s); o.stop(s + d + .05);
+      });
+    },
+    // Ruido filtrado: el "tic" de vidrio y el "fiuu".
+    air: function (t, d, f0, f1, v, q) {
+      var a = this.ctx(); if (!a) return;
+      var s = a.currentTime + (t || 0), src = a.createBufferSource(), bp = a.createBiquadFilter(), g = a.createGain();
+      src.buffer = this.nb; bp.type = 'bandpass'; bp.Q.value = q || 1.4;
+      bp.frequency.setValueAtTime(f0, s); bp.frequency.exponentialRampToValueAtTime(f1, s + d);
+      g.gain.setValueAtTime(.0001, s); g.gain.linearRampToValueAtTime(v, s + Math.min(.01, d / 3)); g.gain.exponentialRampToValueAtTime(.0001, s + d);
+      src.connect(bp); bp.connect(g); g.connect(this.bus); src.start(s); src.stop(s + d + .05);
+    },
+    glide: function (f0, f1, t, d, v) {
+      var a = this.ctx(); if (!a) return;
+      var s = a.currentTime + (t || 0), o = a.createOscillator(), g = a.createGain();
+      o.type = 'sine'; o.frequency.setValueAtTime(f0, s); o.frequency.exponentialRampToValueAtTime(f1, s + d);
+      g.gain.setValueAtTime(.0001, s); g.gain.linearRampToValueAtTime(v, s + .015); g.gain.exponentialRampToValueAtTime(.0001, s + d);
+      o.connect(g); g.connect(this.bus); o.start(s); o.stop(s + d + .05);
+    },
+    pop: function () { this.air(0, .035, 4200, 2600, .22, 2.5); this.bell(2350, 0, .07, .035); },
+    open: function () { this.glide(520, 980, 0, .16, .05); this.air(0, .18, 900, 3800, .05, .8); },
+    close: function () { this.glide(900, 480, 0, .14, .045); this.air(0, .14, 3200, 800, .04, .8); },
+    ding: function () { this.bell(1568, 0, .9, .07); this.bell(2093, .11, 1.1, .055); },
+    ok: function () { this.air(0, .32, 600, 6000, .09, .7); this.glide(660, 1320, .04, .2, .05); this.bell(1760, .24, 1.2, .07); this.bell(2637, .33, 1.4, .045); },
+    no: function () { this.bell(330, 0, .25, .07); this.bell(294, .12, .3, .06); },
   };
   var muteBtn = document.createElement('button');
   muteBtn.className = 'mute'; muteBtn.type = 'button'; muteBtn.setAttribute('aria-label', 'Sonido');
