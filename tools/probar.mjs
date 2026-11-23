@@ -112,6 +112,17 @@ for (const [w, h] of [[1366, 768], [1024, 600], [390, 844]]) {
   if (body) fail('ideas: mandó una idea vacía');
   await p.screenshot({ path: path.join(out, 'ideas-vacia.png') });
   await p.fill('#fIdea textarea', 'Un juego de detectives en el espacio');
+  // La clase: el colegio viene elegido (la última clase abierta fue de SCJM), el grado hay que tocarlo.
+  if (!(await p.isChecked('#fIdea input[name=col][value=scjm]'))) fail('ideas: no viene elegido el colegio');
+  const grados = async () => (await p.locator('#fIdea .grados span').allTextContents()).join(' ');
+  if ((await grados()) !== 'Inicial 1.º 2.º 3.º 4.º 5.º 6.º') fail('ideas: grados de SCJM: ' + await grados());
+  await p.click('#fIdea .send'); await p.waitForTimeout(300);
+  if (!(await p.textContent('#fIdea .thanks')).includes('clase')) fail('ideas: deja mandar sin elegir la clase');
+  if (body) fail('ideas: mandó una idea sin clase');
+  await p.screenshot({ path: path.join(out, 'ideas-sin-clase.png') });
+  await p.click('#fIdea .cls label:has-text("MTA")'); await p.waitForTimeout(150);
+  if ((await grados()) !== '5.º 6.º') fail('ideas: grados de MTA: ' + await grados());
+  await p.click('#fIdea .cls label:has-text("SCJM")'); await p.click('#fIdea .grados label:has-text("4.º")'); await p.waitForTimeout(150);
   await p.screenshot({ path: path.join(out, 'ideas-ventana.png') });
   await p.route('https://docs.google.com/**', async r => { body = r.request().postData() || ''; await new Promise(x => setTimeout(x, 900)); await r.fulfill({ status: 200, body: 'ok' }); });
   await p.click('#fIdea .send'); await p.waitForTimeout(700);
@@ -120,7 +131,7 @@ for (const [w, h] of [[1366, 768], [1024, 600], [390, 844]]) {
   await p.waitForTimeout(2600);
   if (!(await p.isVisible('#fIdea .done'))) fail('ideas: no aparece la animación de enviado');
   await p.screenshot({ path: path.join(out, 'ideas-enviada.png') }); await p.waitForTimeout(400);
-  if (!body || !body.includes('Un juego de detectives') || !body.includes('entry.222') || !body.includes('scjm 6') || body.includes('Juli')) fail('ideas: no se envió bien: ' + body);
+  if (!body || !body.includes('Un juego de detectives') || !body.includes('entry.222') || !body.includes('SCJM 4.º') || body.includes('Juli')) fail('ideas: no se envió bien: ' + body);
   await p.goto(base.split('#')[0] + '#/scjm/6'); await p.waitForTimeout(500);
   if (await p.isVisible('#ideaBtn')) fail('ideas: el botón aparece fuera del inicio');
   await ctx.close();

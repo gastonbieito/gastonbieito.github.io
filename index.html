@@ -126,6 +126,11 @@ footer{position:relative;z-index:1;text-align:center;color:var(--dim);font-size:
 .fill{height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,#9b7bff,#4fc3f7,#2fbf8f);box-shadow:0 0 12px rgba(79,195,247,.6)}
 .done{z-index:3}
 .thanks.warn{color:#d6456a}
+.cls{display:flex;flex-direction:column;gap:8px}
+.cls>b{font-size:17px}
+.cls .grados:empty{display:none}
+.cls .grados span{min-width:52px;text-align:center}
+.cls.shake{animation:shake .45s ease}
 .modal textarea.shake{animation:shake .45s ease;border-color:#ef8aa3}
 @keyframes shake{20%{transform:translateX(-8px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(3px)}}
 .search svg,.search kbd{z-index:2}
@@ -613,11 +618,19 @@ footer a{color:inherit}
   var ideaUI = null;
   function ideas() {
     if (ideaUI || !R.form) return;
+    // Grados de cada colegio, sacados de los nombres de sus clases (p. ej. "Inicial, 1.º y 2.º").
+    var GRADOS = {}, gnum = function (g) { return g === 'Inicial' ? 0 : parseInt(g, 10); };
+    D.colegios.forEach(function (c) {
+      var g = [];
+      c.clases.forEach(function (k) { (k.nombre + ' ' + k.detalle).replace(/Inicial|\d\.º/g, function (m) { if (g.indexOf(m) < 0) g.push(m); return m; }); });
+      GRADOS[c.id] = g.sort(function (a, b) { return gnum(a) - gnum(b); });
+    });
     var wrap = document.createElement('div');
     wrap.innerHTML = '<button class="ideaBtn" id="ideaBtn" type="button"><svg viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.7.5 1.1 1.3 1.1 2.2h5c0-.9.4-1.7 1.1-2.2A6 6 0 0 0 12 3z" fill="#ffd23f" stroke="#24204a" stroke-width="1.8" stroke-linejoin="round"/></svg><span>¿Tenés una idea?</span></button>' +
       '<div class="toast" id="ideaToast" hidden><b>¿Se te ocurre un juego nuevo o algo que te gustaría aprender?</b><div class="row"><button class="send" type="button" data-open>Contar mi idea</button><button class="ghost" type="button" data-close>Ahora no</button></div></div>' +
       '<div class="modal" id="ideaModal" hidden><form class="box" id="fIdea" novalidate><button class="x" type="button" data-close aria-label="Cerrar">×</button><h3>Tengo una idea</h3>' +
       '<div class="seg"><label><input type="radio" name="tipo" value="Juego nuevo" checked><span>Un juego nuevo</span></label><label><input type="radio" name="tipo" value="Algo para aprender"><span>Algo para aprender</span></label></div>' +
+      '<div class="cls"><b>¿De qué colegio y clase sos?</b><div class="seg">' + D.colegios.map(function (c) { return '<label><input type="radio" name="col" value="' + c.id + '"><span>' + esc(c.nombre) + '</span></label>'; }).join('') + '</div><div class="seg grados"></div></div>' +
       '<textarea name="idea" maxlength="500" required placeholder="Contá tu idea: de qué se trata, qué habría que hacer…"></textarea>' +
       '<div class="row"><button class="send" type="submit">Mandar idea</button><span class="thanks" aria-live="polite"></span></div><p class="note">La lee el profe. No hace falta que pongas tu nombre.</p>' +
 '<div class="viaje" hidden><svg viewBox="0 0 360 150" aria-hidden="true"><path id="ruta" d="M58 66 Q180 -16 302 66" fill="none" stroke="#c9bdf5" stroke-width="3" stroke-dasharray="2 9" stroke-linecap="round"/>' +
@@ -662,7 +675,23 @@ footer a{color:inherit}
         parar: function () { stop = true; },
       };
     }
-    var open = function () { toast.hidden = true; done.hidden = true; modal.hidden = false; Snd.open(); setTimeout(function () { form.idea.focus(); }, 50); };
+    var cls = form.querySelector('.cls'), grados = form.querySelector('.grados');
+    var drawGrados = function () {
+      var c = form.querySelector('input[name=col]:checked');
+      grados.innerHTML = c ? GRADOS[c.value].map(function (g) { return '<label><input type="radio" name="grado" value="' + g + '"><span>' + g + '</span></label>'; }).join('') : '';
+    };
+    form.idea.addEventListener('input', function () { form.idea.classList.remove('shake'); });
+    form.addEventListener('change', function (e) {
+      if (e.target.name === 'col') drawGrados();
+      if (e.target.name === 'col' || e.target.name === 'grado') { Snd.pop(); var o = form.querySelector('.thanks'); if (o.className.indexOf('warn') >= 0) { o.textContent = ''; o.className = 'thanks'; } }
+    });
+    // El colegio queda elegido (cada compu está en un colegio); el grado se elige cada vez, porque la compu la usan varias clases.
+    var prepClase = function () {
+      var id = ls.get('portalColegio', '') || ls.get('portalClase', '').split('/')[0];
+      [].forEach.call(form.querySelectorAll('input[name=col]'), function (r) { r.checked = r.value === id; });
+      drawGrados();
+    };
+    var open = function () { prepClase(); toast.hidden = true; done.hidden = true; modal.hidden = false; Snd.open(); setTimeout(function () { form.idea.focus(); }, 50); };
     var close = function () { if (!modal.hidden) Snd.close(); modal.hidden = true; toast.hidden = true; };
     btn.addEventListener('click', open);
     wrap.addEventListener('click', function (e) { if (e.target.closest('[data-open]')) open(); else if (e.target.closest('[data-close]') || e.target === modal) close(); });
@@ -673,13 +702,20 @@ footer a{color:inherit}
       var today = new Date().toDateString(), q = ls.get('portalEnvios', { d: today, n: 0 });
       if (q.d !== today) q = { d: today, n: 0 };
       if (q.n >= 5) { out.textContent = 'Por hoy ya está. ¡Gracias!'; return; }
-      var fd = new FormData(), last = ls.get('portalClase', '');
-      var val = { tipo: form.querySelector('input[name=tipo]:checked').value, clase: last ? last.replace('/', ' ') : 'sin elegir', idea: form.idea.value.trim() };
+      var fd = new FormData(), col = form.querySelector('input[name=col]:checked'), gr = form.querySelector('input[name=grado]:checked');
+      var colegio = col && D.colegios.filter(function (c) { return c.id === col.value; })[0];
+      var val = { tipo: form.querySelector('input[name=tipo]:checked').value, clase: colegio && gr ? colegio.nombre + ' ' + gr.value : '', idea: form.idea.value.trim() };
       if (!val.idea) {
         out.textContent = 'Escribí tu idea antes de mandarla.'; out.className = 'thanks warn'; Snd.no();
         form.idea.classList.remove('shake'); void form.idea.offsetWidth; form.idea.classList.add('shake'); form.idea.focus();
         return;
       }
+      if (!val.clase) {
+        out.textContent = col ? 'Tocá tu clase.' : 'Tocá tu colegio y tu clase.'; out.className = 'thanks warn'; Snd.no();
+        cls.classList.remove('shake'); void cls.offsetWidth; cls.classList.add('shake');
+        return;
+      }
+      ls.set('portalColegio', colegio.id);
       out.className = 'thanks';
       Object.keys(R.campos).forEach(function (k) { if (R.campos[k]) fd.append('entry.' + R.campos[k], val[k] || ''); });
       send.disabled = true; out.textContent = '';
