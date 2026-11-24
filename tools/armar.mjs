@@ -32,7 +32,7 @@ for (const j of M.minijuegos || []) {
   const from = path.join(M.origen, j.src);
   fs.mkdirSync(path.join(root, 'j', j.slug), { recursive: true });
   let html = fs.readFileSync(from, 'utf8');
-  const tag = '<script src="/volver.js" data-pos="bl"></script>\n<script src="/idea.js"></script>', at = html.lastIndexOf('</body>');
+  const tag = '<script src="/volver.js" data-pos="bl" data-dest="/#/"></script>\n<script src="/idea.js"></script>', at = html.lastIndexOf('</body>');
   html = at >= 0 ? html.slice(0, at) + tag + '\n' + html.slice(at) : html + '\n' + tag + '\n';
   fs.writeFileSync(path.join(root, 'j', j.slug, 'index.html'), html);
   j.href = `j/${j.slug}/`; juegos.push(j);

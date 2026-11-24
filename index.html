@@ -75,6 +75,9 @@ h2{font-size:clamp(22px,3vw,28px);margin:30px 0 12px;font-weight:800}
 .game .key{position:absolute;bottom:14px;right:14px;transition:opacity .15s;font:800 13px Nunito,sans-serif;color:var(--dim);background:#eef3ff;border-radius:6px;padding:1px 7px}
 .badge{position:absolute;top:12px;left:12px;background:#ffd23f;color:var(--ink);font-weight:800;font-size:13px;padding:4px 10px;border-radius:999px;box-shadow:0 3px 0 #d6a800;letter-spacing:.5px}
 .badge.go{background:#2fbf8f;color:#fff;box-shadow:0 3px 0 #1d8a66}
+.badge:not(.go){color:#24204a;background:linear-gradient(135deg,#ffe36b,#ffc61a);animation:nuevoBrillo 2.4s ease-in-out infinite}
+@keyframes nuevoBrillo{0%,100%{filter:brightness(1)}50%{filter:brightness(1.15)}}
+html.oscuro .badge:not(.go){box-shadow:0 0 0 1px #ffe36b,0 0 12px rgba(255,210,63,.75),0 0 24px rgba(255,198,26,.35)!important}
 .play{position:absolute;bottom:9px;right:10px;width:36px;height:36px;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 3px 0 rgba(0,0,0,.15);opacity:0;transform:scale(.6);transition:.18s}
 .game:hover .play{opacity:1;transform:scale(1)}
 .play svg{width:16px;height:16px;margin-left:3px}

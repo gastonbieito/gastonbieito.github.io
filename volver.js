@@ -8,6 +8,7 @@
   var me = document.currentScript || {}, ds = me.dataset || {};
   var pos = ds.pos || 'bl', mx = (ds.x || 12) + 'px', my = (ds.y || 12) + 'px';
   function destino() {
+    if (ds.dest) return ds.dest; // minijuegos: vuelven al inicio
     var c = '';
     try { c = JSON.parse(localStorage.getItem('portalClase') || '""'); } catch (e) { }
     return '/' + (c ? '#/' + c : '');
