@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Las teclas de Bit</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+html,body{margin:0;height:100%;background:#1a1640;overflow:hidden;font-family:"Segoe UI",Nunito,Arial,sans-serif;color:#24204a;-webkit-user-select:none;user-select:none}
+#st{position:absolute;left:0;top:0;width:1280px;height:720px;transform-origin:0 0;overflow:hidden;background:linear-gradient(160deg,#eef1ff,#e6e0ff 55%,#dff3ff)}
+.pant{position:absolute;left:0;top:0;width:1280px;height:720px;display:none}
+.pant.on{display:block}
+button{font-family:inherit;cursor:pointer;border:0;border-radius:16px;font-weight:800}
+.btn{background:#7b5cff;color:#fff;font-size:28px;padding:16px 36px;box-shadow:0 6px 0 #5639d6}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #5639d6}
+.btn2{background:#fff;color:#24204a;font-size:20px;padding:10px 20px;box-shadow:0 4px 0 #c9c2ee}
+.btn2:active{transform:translateY(3px);box-shadow:0 1px 0 #c9c2ee}
+h1{margin:0}
+/* menú */
+#menu h1{position:absolute;left:0;right:0;top:250px;text-align:center;font-size:74px;color:#2b2160}
+#menu .sub{position:absolute;left:0;right:0;top:345px;text-align:center;font-size:26px;color:#6b6790}
+#menu .bts{position:absolute;left:0;right:0;top:420px;text-align:center}
+#menu .bts button{margin:0 12px;width:330px}
+#menu .bts .lluvia{background:#22b583;box-shadow:0 6px 0 #178a62}
+#menu .rec{position:absolute;left:0;right:0;top:530px;text-align:center;font-size:20px;color:#6b6790}
+#bitMenu{position:absolute;left:575px;top:70px;width:130px;height:130px}
+/* mapa */
+#mapa h1{position:absolute;left:0;right:0;top:40px;text-align:center;font-size:44px;color:#2b2160}
+#lecs{position:absolute;left:140px;top:130px;width:1000px}
+.lec{display:inline-block;width:225px;height:110px;margin:0 12px 18px 0;border-radius:20px;background:#fff;box-shadow:0 5px 0 #d6d0f5;vertical-align:top;text-align:left;padding:12px 16px;box-sizing:border-box;color:#24204a}
+.lec b{display:block;font-size:15px;color:#7b5cff}
+.lec span{display:block;font-size:21px;margin-top:2px}
+.lec i{display:block;font-style:normal;font-size:22px;margin-top:6px;letter-spacing:2px;color:#ffc61a}
+.lec.cerr{background:#ece9fb;color:#a9a3cc;box-shadow:none;cursor:default}
+.lec.cerr b{color:#a9a3cc}
+#bMapaVolver{position:absolute;right:30px;top:36px}
+/* lección */
+#leccion .top{position:absolute;left:0;top:0;width:1280px;height:90px}
+#lTit{position:absolute;left:150px;top:16px;font-size:18px;color:#7b5cff;font-weight:800}
+#lCons{position:absolute;left:150px;top:40px;font-size:28px;font-weight:800}
+#lMapa{position:absolute;right:30px;top:22px}
+#texto{position:absolute;left:90px;top:100px;width:1100px;height:190px;background:#fff;border-radius:24px;box-shadow:0 8px 24px rgba(60,40,140,.12);overflow:hidden}
+#tIn{position:absolute;left:40px;right:40px;top:22px;font:600 44px/62px Consolas,"Courier New",monospace;white-space:pre-wrap;word-break:break-word;transition:top .25s}
+#tIn span{border-radius:6px}
+#tIn .ok{color:#22b583}
+#tIn .mal{color:#fff;background:#ff6b6b}
+#tIn .ya{color:#ef8a8a}
+#tIn .ac{background:#ffe680;box-shadow:0 0 0 3px #ffd23f;animation:cur 1s ease-in-out infinite}
+#tIn .esp{display:inline-block;min-width:.6em}
+@keyframes cur{50%{background:#fff3b0}}
+#stats{position:absolute;left:90px;top:300px;width:1100px;height:40px;font-size:20px;color:#6b6790;font-weight:700}
+#stats b{color:#24204a;font-size:24px}
+#dedo{position:absolute;right:0;top:0}
+#teclado{position:absolute;left:0;top:350px;width:1280px;height:360px}
+.fila{position:absolute;height:64px}
+.tec{position:absolute;width:66px;height:62px;border-radius:12px;background:#fff;box-shadow:0 4px 0 rgba(0,0,0,.12);font:800 24px "Segoe UI",sans-serif;display:flex;align-items:center;justify-content:center;color:#24204a;transition:transform .08s,box-shadow .08s}
+.tec small{position:absolute;bottom:4px;width:22px;height:4px;border-radius:2px;left:22px;background:rgba(0,0,0,.25)}
+.tec.sig{transform:translateY(-4px);box-shadow:0 0 0 4px #24204a,0 10px 18px rgba(0,0,0,.2)}
+.tec.pres{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.12)}
+.tec.err{animation:err .3s}
+@keyframes err{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+#bitL{position:absolute;right:46px;top:300px;width:60px;height:60px}
+/* resultado */
+.capa{position:absolute;left:0;top:0;width:1280px;height:720px;background:rgba(30,20,80,.55);display:none}
+.capa.on{display:block}
+.tarj{position:absolute;left:350px;top:130px;width:580px;padding:26px 0 30px;background:#fff;border-radius:30px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.tarj h2{font-size:42px;margin:8px 0}
+.tarj .est{font-size:56px;letter-spacing:8px;color:#ffc61a}
+.tarj .est .no{color:#e3dff6}
+.tarj p{font-size:22px;margin:8px 30px;color:#4a4570}
+.tarj .bts{margin-top:22px}
+.tarj .bts button{margin:0 8px}
+/* lluvia */
+#lluvia{background:linear-gradient(180deg,#2b2160,#4a3aa8 70%,#6f5ae0)}
+#cielo{position:absolute;left:0;top:0;width:1280px;height:640px;overflow:hidden}
+.gota{position:absolute;padding:8px 16px;border-radius:16px;background:#fff;color:#24204a;font:800 30px Consolas,"Courier New",monospace;box-shadow:0 6px 16px rgba(0,0,0,.25);white-space:nowrap}
+.gota u{text-decoration:none;color:#22b583}
+.gota.pop{animation:pop .3s forwards}
+@keyframes pop{to{transform:scale(1.6);opacity:0}}
+#suelo{position:absolute;left:0;top:640px;width:1280px;height:80px;background:#22b583}
+#buffer{position:absolute;left:0;right:0;top:655px;text-align:center;font:800 34px Consolas,"Courier New",monospace;color:#fff;letter-spacing:2px}
+#llHud{position:absolute;left:30px;top:20px;font-size:24px;color:#fff;font-weight:800}
+#llHud span{margin-right:28px}
+#llSalir{position:absolute;right:30px;top:16px}
+</style>
+</head>
+<body>
+<div id="st">
+
+  <div id="menu" class="pant on">
+    <svg id="bitMenu" viewBox="0 0 52 52"></svg>
+    <h1>Las teclas de Bit</h1>
+    <div class="sub">Escribí sin mirar el teclado.</div>
+    <div class="bts"><button class="btn" id="bLec">Lecciones</button><button class="btn lluvia" id="bLlu">Lluvia de palabras</button></div>
+    <div class="rec" id="mRec"></div>
+  </div>
+
+  <div id="mapa" class="pant">
+    <h1>Lecciones</h1>
+    <button class="btn2" id="bMapaVolver">Volver</button>
+    <div id="lecs"></div>
+  </div>
+
+  <div id="leccion" class="pant">
+    <div class="top"><div id="lTit"></div><div id="lCons"></div><button class="btn2" id="lMapa">Lecciones</button></div>
+    <div id="texto"><div id="tIn"></div></div>
+    <div id="stats"><span id="sProg"></span> &nbsp;·&nbsp; <span id="sPrec"></span> &nbsp;·&nbsp; <span id="sVel"></span><span id="dedo"></span></div>
+    <div id="teclado"></div>
+  </div>
+
+  <div id="lluvia" class="pant">
+    <div id="cielo"></div><div id="suelo"></div><div id="buffer"></div>
+    <div id="llHud"><span id="llPts"></span><span id="llVidas"></span><span id="llNiv"></span></div>
+    <button class="btn2" id="llSalir">Salir</button>
+  </div>
+
+  <div id="capaRes" class="capa"><div class="tarj">
+    <h2 id="rTit"></h2><div class="est" id="rEst"></div><p id="rTxt"></p>
+    <div class="bts"><button class="btn2" id="rOtra">Repetir</button><button class="btn" id="rSig">Siguiente</button></div>
+  </div></div>
+
+</div>
+<script>
+(function () {
+'use strict';
+var st = document.getElementById('st');
+function escalar() {
+  var w = innerWidth, h = innerHeight, s = Math.min(w / 1280, h / 720);
+  st.style.transform = 'scale(' + s + ')'; st.style.left = Math.round((w - 1280 * s) / 2) + 'px'; st.style.top = Math.round((h - 720 * s) / 2) + 'px';
+}
+addEventListener('resize', escalar); escalar();
+function $(id) { return document.getElementById(id); }
+function ver(id) { ['menu', 'mapa', 'leccion', 'lluvia'].forEach(function (p) { $(p).className = 'pant' + (p === id ? ' on' : ''); }); }
+
+/* ---------- sonido ---------- */
+var AC = null;
+function tono(f, d, tp, v, dl) {
+  try {
+    AC = AC || new (window.AudioContext || window.webkitAudioContext)();
+    var t = AC.currentTime + (dl || 0), o = AC.createOscillator(), g = AC.createGain();
+    o.type = tp || 'sine'; o.frequency.value = f; g.gain.setValueAtTime(.0001, t); g.gain.linearRampToValueAtTime(v || .05, t + .005);
+    g.gain.exponentialRampToValueAtTime(.0001, t + d); o.connect(g); g.connect(AC.destination); o.start(t); o.stop(t + d + .05);
+  } catch (e) { }
+}
+function sOk() { tono(900 + Math.random() * 120, .05, 'triangle', .03); }
+function sMal() { tono(160, .15, 'square', .035); }
+function sFin() { [523, 659, 784, 1046].forEach(function (f, i) { tono(f, .3, 'triangle', .07, i * .1); }); }
+function sPop() { tono(700, .08, 'sine', .05); tono(1050, .1, 'sine', .04, .05); }
+
+/* ---------- Bit ---------- */
+var BIT = '<rect x="8" y="12" width="36" height="28" rx="11" fill="#7b5cff" stroke="#24204a" stroke-width="2.5"/><rect x="13" y="17" width="26" height="17" rx="7" fill="#fff"/><circle cx="20" cy="25.5" r="3.6" fill="#24204a"/><circle cx="32" cy="25.5" r="3.6" fill="#24204a"/><line x1="26" y1="12" x2="26" y2="4" stroke="#24204a" stroke-width="2.5" stroke-linecap="round"/><circle cx="26" cy="4" r="3.2" fill="#ffd23f" stroke="#24204a" stroke-width="1.5"/><rect x="5" y="22" width="4" height="9" rx="2" fill="#ffd23f" stroke="#24204a" stroke-width="1.5"/><rect x="43" y="22" width="4" height="9" rx="2" fill="#ffd23f" stroke="#24204a" stroke-width="1.5"/><path d="M21 40 v5 M31 40 v5" stroke="#24204a" stroke-width="2.5" stroke-linecap="round"/>';
+$('bitMenu').innerHTML = BIT;
+
+/* ---------- teclado (distribución latinoamericana) y dedos ---------- */
+var DEDOS = [
+  { n: 'meñique izquierdo', c: '#ff9ac1', t: '1qaz' }, { n: 'anular izquierdo', c: '#ffb36b', t: '2wsx' },
+  { n: 'mayor izquierdo', c: '#ffe066', t: '3edc' }, { n: 'índice izquierdo', c: '#8ee59b', t: '45rtfgvb' },
+  { n: 'índice derecho', c: '#7fd3ff', t: '67yuhjnm' }, { n: 'mayor derecho', c: '#b9a2ff', t: '8ik,' },
+  { n: 'anular derecho', c: '#7fe3d0', t: '9ol.' }, { n: 'meñique derecho', c: '#ff8f8f', t: '0pñ-' }
+];
+function dedoDe(ch) { ch = ch.toLowerCase(); for (var i = 0; i < DEDOS.length; i++) if (DEDOS[i].t.indexOf(ch) >= 0) return DEDOS[i]; return null; }
+var FILAS = [['1234567890', 40], ['qwertyuiop', 70], ['asdfghjklñ', 88], ['zxcvbnm,.-', 120]];
+var TEC = {};
+(function () {
+  var h = '', W = 74, x0 = 245;
+  FILAS.forEach(function (f, r) {
+    for (var i = 0; i < f[0].length; i++) {
+      var ch = f[0].charAt(i), d = dedoDe(ch);
+      h += '<div class="tec" data-k="' + ch + '" style="left:' + (x0 + f[1] - 40 + i * W) + 'px;top:' + (r * 70) + 'px;background:' + d.c + '">' + ch.toUpperCase() + (ch === 'f' || ch === 'j' ? '<small></small>' : '') + '</div>';
+    }
+  });
+  h += '<div class="tec" data-k="shift" style="left:' + (x0 - 70) + 'px;top:210px;width:118px;background:#e3dff6;font-size:17px">Shift</div>';
+  h += '<div class="tec" data-k="shiftd" style="left:' + (x0 + 120 - 40 + 10 * 74) + 'px;top:210px;width:118px;background:#e3dff6;font-size:17px">Shift</div>';
+  h += '<div class="tec" data-k=" " style="left:' + (x0 + 150) + 'px;top:280px;width:440px;background:#e3dff6;font-size:17px">espacio</div>';
+  $('teclado').innerHTML = h + '<svg id="bitL" viewBox="0 0 52 52">' + BIT + '</svg>';
+  [].forEach.call(document.querySelectorAll('.tec'), function (t) { TEC[t.getAttribute('data-k')] = t; });
+})();
+
+/* ---------- palabras y oraciones ---------- */
+var PAL = ('sal sala ala alas falda hada gala dad dada daga jala fallas salsa lado lago hago haga gaja ' +
+  'dedo sed seda fila filas idea ideas dejar lejos jefe seis hijas hilo dile fideo sello ' +
+  'rio risa rueda ruido regla tierra tren tres ruta sur sur tela tejer ' +
+  'yogur yate yeso playa rey ley hoy muy ' +
+  'oso osos ola olas lobo loro polo pato perro papa pera pelota pala pipa ' +
+  'queso quiso quieto agua guerra walter wifi ' +
+  'casa cosa coco cama camino mano mono mesa mapa mamá nube nene nido noche luna lima limón ' +
+  'vaca vaso vela vino bebe bote bola bici barco zapato zorro taza pez luz xilofón ' +
+  'gato gata perro sol mar flor arbol libro lapiz goma tijera mochila escuela clase recreo amigo amiga ' +
+  'compu teclado raton pantalla juego robot codigo bucle orden datos archivo carpeta internet').split(' ').filter(Boolean);
+var ORA = ['Bit es un robot muy curioso.', 'Me gusta jugar en el recreo.', 'El gato duerme en la silla.', 'Hoy aprendemos a escribir sin mirar.',
+  'La luna sale de noche.', 'Mi amiga tiene una bici roja.', 'El teclado tiene muchas teclas.', 'Uruguay tiene playas lindas.',
+  'Los robots siguen instrucciones.', 'Guardá tu archivo con un buen nombre.', 'El perro corre por el parque.', 'Un bucle repite pasos.',
+  'La compu guarda todo con unos y ceros.', 'Mañana vamos a la plaza.', 'El sol calienta la arena.', 'Leer un libro es viajar.',
+  'Rosario y Nueva Helvecia son vecinas.', 'Escribir rápido es practicar mucho.', 'La lluvia moja las flores.', 'Mi contraseña es un secreto.'];
+
+/* ---------- lecciones ---------- */
+var LEC = [
+  { t: 'F y J', n: 'fj', c: 'Apoyá los índices en la F y la J. Tienen una rayita.' },
+  { t: 'D y K', n: 'dk', c: 'Los dedos mayores van en la D y la K.' },
+  { t: 'S y L', n: 'sl', c: 'Los anulares van en la S y la L.' },
+  { t: 'A y Ñ', n: 'añ', c: 'Los meñiques van en la A y la Ñ.' },
+  { t: 'G y H', n: 'gh', c: 'Los índices se estiran a la G y la H.' },
+  { t: 'Fila del medio', n: '', pal: 1, c: 'Palabras con la fila del medio.' },
+  { t: 'E e I', n: 'ei', c: 'Los mayores suben a la E y la I.' },
+  { t: 'R y U', n: 'ru', c: 'Los índices suben a la R y la U.' },
+  { t: 'T e Y', n: 'ty', c: 'Los índices se estiran a la T y la Y.' },
+  { t: 'W y O', n: 'wo', c: 'Los anulares suben a la W y la O.' },
+  { t: 'Q y P', n: 'qp', c: 'Los meñiques suben a la Q y la P.' },
+  { t: 'Fila de arriba', n: '', pal: 1, c: 'Palabras con las filas de arriba y del medio.' },
+  { t: 'V, B, N y M', n: 'vbnm', c: 'Los índices bajan a la V, B, N y M.' },
+  { t: 'C, X, Z y coma', n: 'cxz,.', c: 'Las últimas teclas de abajo.' },
+  { t: 'Palabras', n: '', pal: 2, c: 'Todas las letras. ¡Sin mirar!' },
+  { t: 'Oraciones', n: '', ora: 1, c: 'Mayúsculas con Shift y punto final.' }
+];
+function letrasHasta(i) { var s = ''; for (var k = 0; k <= i; k++) s += LEC[k].n; return s; }
+function azar(a) { return a[Math.floor(Math.random() * a.length)]; }
+function generar(i) {
+  var L = LEC[i], todas = letrasHasta(i), out = [], len = i < 5 ? 46 : 64;
+  if (L.ora) { var o = ORA.slice().sort(function () { return Math.random() - .5; }); return o[0] + ' ' + o[1]; }
+  var pals = PAL.filter(function (p) { for (var k = 0; k < p.length; k++) if (todas.indexOf(p.charAt(k)) < 0 && 'áéíóú'.indexOf(p.charAt(k)) < 0) return false; return p.length >= 2; });
+  while (out.join(' ').length < len) {
+    if (L.n && (Math.random() < .65 || pals.length < 3)) {
+      var g = '', n = 2 + Math.floor(Math.random() * 3), base = Math.random() < .7 ? L.n : todas;
+      for (var k = 0; k < n; k++) g += base.charAt(Math.floor(Math.random() * base.length));
+      out.push(g);
+    } else if (pals.length) out.push(azar(pals));
+    else { var gg = ''; for (var j = 0; j < 3; j++) gg += todas.charAt(Math.floor(Math.random() * todas.length)); out.push(gg); }
+  }
+  return out.join(' ');
+}
+
+/* ---------- guardado ---------- */
+var G = { est: [], rec: 0 };
+try { var gg = JSON.parse(localStorage.getItem('teclasBit') || 'null'); if (gg) G = { est: gg.est || [], rec: gg.rec || 0 }; } catch (e) { }
+function guardar() { try { localStorage.setItem('teclasBit', JSON.stringify(G)); } catch (e) { } }
+function abierta(i) { return i === 0 || G.est[i - 1] > 0 || G.est[i] > 0; }
+function pintarMenu() {
+  var hechas = G.est.filter(function (x) { return x > 0; }).length;
+  $('mRec').textContent = (hechas ? hechas + ' de ' + LEC.length + ' lecciones' : 'Empezá por las lecciones') + (G.rec ? ' · récord en la lluvia: ' + G.rec : '');
+}
+pintarMenu();
+$('bLec').onclick = function () { tono(600, .08, 'triangle', .05); mapa(); };
+$('bLlu').onclick = function () { tono(600, .08, 'triangle', .05); lluvia(); };
+$('bMapaVolver').onclick = function () { ver('menu'); pintarMenu(); };
+function mapa() {
+  ver('mapa'); modo = '';
+  $('lecs').innerHTML = LEC.map(function (L, i) {
+    var e = G.est[i] || 0;
+    return '<button class="lec' + (abierta(i) ? '' : ' cerr') + '" data-i="' + i + '"><b>Lección ' + (i + 1) + '</b><span>' + L.t + '</span><i>' + (e ? '★★★'.slice(0, e) + '<span style="display:inline;color:#e3dff6;font-size:22px">' + '★★★'.slice(e) + '</span>' : '') + '</i></button>';
+  }).join('');
+}
+$('lecs').onclick = function (e) {
+  var b = e.target.closest('[data-i]'); if (!b) return; var i = +b.getAttribute('data-i');
+  if (!abierta(i)) { sMal(); return; } empezar(i);
+};
+var clave = '';
+document.addEventListener('keydown', function (e) {
+  if (modo) return;
+  clave = (clave + e.key).slice(-4);
+  if (clave === '2026' && $('mapa').className.indexOf('on') >= 0) { LEC.forEach(function (x, i) { if (!G.est[i]) G.est[i] = 1; }); guardar(); mapa(); }
+});
+
+/* ---------- lección ---------- */
+var modo = '', L = null, li = 0, txt = '', pos = 0, errAqui = false, errores = 0, t0 = 0, malPos = {};
+function empezar(i) {
+  li = i; L = LEC[i]; txt = generar(i); pos = 0; errores = 0; t0 = 0; malPos = {}; errAqui = false;
+  $('lTit').textContent = 'Lección ' + (i + 1) + ' · ' + L.t; $('lCons').textContent = L.c;
+  $('capaRes').className = 'capa'; ver('leccion'); modo = 'lec'; pintarTexto(); stats();
+}
+$('lMapa').onclick = function () { mapa(); };
+function esc(c) { return c === '<' ? '&lt;' : c === '&' ? '&amp;' : c; }
+function pintarTexto() {
+  var h = '';
+  for (var i = 0; i < txt.length; i++) {
+    var c = txt.charAt(i), cl = i < pos ? (malPos[i] ? 'ya' : 'ok') : i === pos ? (errAqui ? 'mal ac' : 'ac') : '';
+    h += '<span' + (cl ? ' class="' + cl + (c === ' ' ? ' esp' : '') + '"' : (c === ' ' ? ' class="esp"' : '')) + '>' + (c === ' ' ? ' ' : esc(c)) + '</span>';
+  }
+  var t = $('tIn'); t.innerHTML = h;
+  var ac = t.querySelector('.ac');
+  if (ac) { var linea = Math.floor(ac.offsetTop / 62); t.style.top = (22 - Math.max(0, linea - 1) * 62) + 'px'; }
+  marcarTecla();
+}
+function marcarTecla() {
+  [].forEach.call(document.querySelectorAll('.tec.sig'), function (t) { t.classList.remove('sig'); });
+  var c = txt.charAt(pos); if (!c) { $('dedo').textContent = ''; return; }
+  var k = c === ' ' ? ' ' : quitarTilde(c.toLowerCase());
+  if (TEC[k]) TEC[k].classList.add('sig');
+  if (c !== c.toLowerCase()) { var d0 = dedoDe(k); var izq = d0 && DEDOS.indexOf(d0) < 4; if (TEC[izq ? 'shiftd' : 'shift']) TEC[izq ? 'shiftd' : 'shift'].classList.add('sig'); }
+  var d = c === ' ' ? null : dedoDe(k);
+  $('dedo').innerHTML = c === ' ' ? 'Espacio: con el <b>pulgar</b>' : d ? 'Dedo: <b style="color:#24204a;background:' + d.c + ';padding:2px 10px;border-radius:8px">' + d.n + '</b>' : '';
+}
+function quitarTilde(c) { var i = 'áéíóú'.indexOf(c); return i >= 0 ? 'aeiou'.charAt(i) : c; }
+function stats() {
+  var hechos = pos, prec = hechos ? Math.round(100 * (hechos - Object.keys(malPos).length) / hechos) : 100;
+  var min = t0 ? (Date.now() - t0) / 60000 : 0, ppm = min > .05 ? Math.round(hechos / 5 / min) : 0;
+  $('sProg').innerHTML = 'Vas <b>' + hechos + '</b> de ' + txt.length;
+  $('sPrec').innerHTML = 'Precisión <b>' + prec + '%</b>';
+  $('sVel').innerHTML = 'Velocidad <b>' + ppm + '</b> palabras por minuto';
+  return { prec: prec, ppm: ppm };
+}
+function presionar(k) { var t = TEC[k]; if (!t) return; t.classList.add('pres'); setTimeout(function () { t.classList.remove('pres'); }, 90); }
+document.addEventListener('keydown', function (e) {
+  if (modo === 'lec') teclaLec(e); else if (modo === 'llu') teclaLlu(e);
+});
+function teclaLec(e) {
+  if (e.ctrlKey || e.altKey || e.metaKey) return;
+  if (e.key === 'Shift') { presionar(e.location === 2 ? 'shiftd' : 'shift'); return; }
+  if (e.key.length !== 1) return;
+  e.preventDefault();
+  if (!t0) t0 = Date.now();
+  var esp = txt.charAt(pos), k = e.key;
+  presionar(k === ' ' ? ' ' : quitarTilde(k.toLowerCase()));
+  // Vale escribir sin tilde.
+  if (k === esp || (quitarTilde(esp) === k && esp !== k)) {
+    pos++; errAqui = false; sOk();
+    if (pos >= txt.length) { pintarTexto(); terminar(); return; }
+  } else {
+    malPos[pos] = 1; errAqui = true; errores++; sMal();
+    var t = TEC[quitarTilde(k.toLowerCase())]; if (t) { t.classList.remove('err'); void t.offsetWidth; t.classList.add('err'); }
+  }
+  pintarTexto(); stats();
+}
+function terminar() {
+  modo = '';
+  var s = stats(), est = s.prec >= 97 ? 3 : s.prec >= 90 ? 2 : 1;
+  if (est > (G.est[li] || 0)) G.est[li] = est; guardar(); sFin();
+  $('rTit').textContent = est === 3 ? '¡Impecable!' : est === 2 ? '¡Muy bien!' : '¡Lo lograste!';
+  $('rEst').innerHTML = '★★★'.slice(0, est) + '<span class="no">' + '★★★'.slice(est) + '</span>';
+  $('rTxt').innerHTML = 'Precisión <b>' + s.prec + '%</b> · <b>' + s.ppm + '</b> palabras por minuto' + (est < 3 ? '<br><small style="color:#7b5cff">Para 3 estrellas, equivocate menos de 3 veces cada 100 letras.</small>' : '');
+  var ult = li === LEC.length - 1;
+  $('rSig').textContent = ult ? 'Lluvia de palabras' : 'Siguiente';
+  setTimeout(function () { $('capaRes').className = 'capa on'; }, 500);
+  if (ult && window.portalIdea) window.portalIdea('fin');
+}
+$('rOtra').onclick = function () { empezar(li); };
+$('rSig').onclick = function () { $('capaRes').className = 'capa'; if (li === LEC.length - 1) lluvia(); else empezar(li + 1); };
+
+/* ---------- lluvia de palabras ---------- */
+var gotas = [], buf = '', pts = 0, vidas = 3, nivel = 1, hechas = 0, raf = 0, tUlt = 0, tGota = 0;
+function lluvia() {
+  ver('lluvia'); modo = 'llu'; $('capaRes').className = 'capa';
+  $('cielo').innerHTML = ''; gotas = []; buf = ''; pts = 0; vidas = 3; nivel = 1; hechas = 0; tGota = 0; tUlt = performance.now();
+  hud(); cancelAnimationFrame(raf); raf = requestAnimationFrame(paso);
+}
+function hud() {
+  $('llPts').textContent = pts + ' puntos'; $('llVidas').textContent = '♥♥♥'.slice(0, vidas) + '♡♡♡'.slice(0, 3 - vidas); $('llNiv').textContent = 'nivel ' + nivel;
+  $('buffer').textContent = buf || ' ';
+}
+function nuevaGota() {
+  var maxLen = 3 + nivel, lista = PAL.filter(function (p) { return p.length <= maxLen && p.length >= Math.min(3, maxLen); });
+  var w = azar(lista), el = document.createElement('div'); el.className = 'gota'; el.textContent = w;
+  $('cielo').appendChild(el);
+  var x = 40 + Math.random() * (1280 - 80 - el.offsetWidth);
+  var g = { w: w, el: el, x: x, y: -50, v: 46 + nivel * 11 + Math.random() * 12 };
+  el.style.left = x + 'px'; el.style.top = g.y + 'px'; gotas.push(g);
+}
+function paso(t) {
+  if (modo !== 'llu') return;
+  var dt = Math.min(.05, (t - tUlt) / 1000); tUlt = t; tGota -= dt;
+  if (tGota <= 0) { nuevaGota(); tGota = Math.max(1, 2.4 - nivel * .2); }
+  for (var i = gotas.length - 1; i >= 0; i--) {
+    var g = gotas[i]; g.y += g.v * dt; g.el.style.top = g.y + 'px';
+    if (g.y > 600) {
+      g.el.remove(); gotas.splice(i, 1); vidas--; sMal(); hud();
+      if (vidas <= 0) { finLluvia(); return; }
+    }
+  }
+  raf = requestAnimationFrame(paso);
+}
+function pintarGotas() {
+  gotas.forEach(function (g) { g.el.innerHTML = g.w.indexOf(buf) === 0 && buf ? '<u>' + esc2(buf) + '</u>' + esc2(g.w.slice(buf.length)) : esc2(g.w); });
+}
+function esc2(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
+function norm(s) { return s.replace(/[áéíóú]/g, function (c) { return quitarTilde(c); }); }
+function teclaLlu(e) {
+  if (e.ctrlKey || e.altKey || e.metaKey) return;
+  if (e.key === 'Backspace') { buf = buf.slice(0, -1); hud(); pintarGotas(); e.preventDefault(); return; }
+  if (e.key.length !== 1 || e.key === ' ') return;
+  e.preventDefault();
+  var prueba = buf + e.key.toLowerCase();
+  var hay = gotas.some(function (g) { return norm(g.w).indexOf(norm(prueba)) === 0; });
+  if (!hay) { sMal(); buf = ''; hud(); pintarGotas(); return; }
+  buf = prueba; sOk();
+  for (var i = 0; i < gotas.length; i++) if (norm(gotas[i].w) === norm(buf)) {
+    var g = gotas[i]; g.el.classList.add('pop'); setTimeout(function (el) { return function () { el.remove(); }; }(g.el), 300);
+    gotas.splice(i, 1); pts += g.w.length * nivel; hechas++; buf = ''; sPop();
+    if (hechas % 8 === 0) { nivel++; tono(1200, .2, 'triangle', .05); }
+    break;
+  }
+  hud(); pintarGotas();
+}
+function finLluvia() {
+  modo = ''; cancelAnimationFrame(raf);
+  var rec = pts > G.rec; if (rec) { G.rec = pts; guardar(); }
+  sFin();
+  $('rTit').textContent = rec ? '¡Nuevo récord!' : '¡Se terminó la lluvia!';
+  $('rEst').innerHTML = '';
+  $('rTxt').innerHTML = '<b>' + pts + '</b> puntos · llegaste al nivel <b>' + nivel + '</b>' + (G.rec ? '<br>Récord: ' + G.rec : '');
+  $('rSig').textContent = 'Otra vez'; $('rOtra').textContent = 'Menú';
+  $('rOtra').onclick = function () { $('capaRes').className = 'capa'; $('rOtra').textContent = 'Repetir'; $('rOtra').onclick = function () { empezar(li); }; $('rSig').onclick = sigLec; ver('menu'); pintarMenu(); };
+  $('rSig').onclick = function () { $('rOtra').textContent = 'Repetir'; $('rOtra').onclick = function () { empezar(li); }; $('rSig').onclick = sigLec; lluvia(); };
+  $('capaRes').className = 'capa on';
+}
+function sigLec() { $('capaRes').className = 'capa'; if (li === LEC.length - 1) lluvia(); else empezar(li + 1); }
+$('rSig').onclick = sigLec;
+$('llSalir').onclick = function () { modo = ''; cancelAnimationFrame(raf); ver('menu'); pintarMenu(); };
+
+window.__teclas = { get txt() { return txt; }, get pos() { return pos; }, get modo() { return modo; }, get gotas() { return gotas.map(function (g) { return g.w; }); }, LEC: LEC, G: G };
+})();
+</script>
+<script src="/volver.js" data-pos="bl"></script>
+<script src="/idea.js"></script>
+</body>
+</html>

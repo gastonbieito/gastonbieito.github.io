@@ -1,5 +1,8 @@
 {
   "origen": "C:/Users/gasto/OneDrive/Escritorio/Clases de Informatica",
+  "minijuegos": [
+    { "slug": "teclas-bit", "titulo": "Las teclas de Bit", "desc": "Escribí sin mirar el teclado y superá tu récord.", "src": "Mecanografia/Las_Teclas_De_Bit.html", "nuevo": "2026-11-24" }
+  ],
   "colegios": [
     {
       "id": "scjm", "nombre": "SCJM", "lugar": "Rosario", "color": "#2a5fc4",

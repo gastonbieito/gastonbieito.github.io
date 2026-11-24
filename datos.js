@@ -1,5 +1,14 @@
 // Generado por tools/armar.mjs a partir de tools/juegos.json
 window.JUEGOS = {
+ "minijuegos": [
+  {
+   "slug": "teclas-bit",
+   "titulo": "Las teclas de Bit",
+   "desc": "Escribí sin mirar el teclado y superá tu récord.",
+   "href": "j/teclas-bit/",
+   "nuevo": "2026-11-24"
+  }
+ ],
  "colegios": [
   {
    "id": "scjm",

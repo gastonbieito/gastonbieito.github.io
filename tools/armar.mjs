@@ -27,7 +27,18 @@ for (const c of M.colegios) for (const k of c.clases) for (const j of k.juegos) 
   } else { j.href = j.url; j.file = path.join(root, local[j.slug]); }
   juegos.push(j);
 }
-const datos = { colegios: M.colegios.map(c => ({ ...c, clases: c.clases.map(k => ({ ...k, juegos: k.juegos.map(({ slug, titulo, desc, href, nuevo }) => ({ slug, titulo, desc, href, nuevo: nuevo || false })) })) })) };
+// Minijuegos: van en el inicio, debajo de las clases, para todos los colegios (ej. Las teclas de Bit).
+for (const j of M.minijuegos || []) {
+  const from = path.join(M.origen, j.src);
+  fs.mkdirSync(path.join(root, 'j', j.slug), { recursive: true });
+  let html = fs.readFileSync(from, 'utf8');
+  const tag = '<script src="/volver.js" data-pos="bl"></script>\n<script src="/idea.js"></script>', at = html.lastIndexOf('</body>');
+  html = at >= 0 ? html.slice(0, at) + tag + '\n' + html.slice(at) : html + '\n' + tag + '\n';
+  fs.writeFileSync(path.join(root, 'j', j.slug, 'index.html'), html);
+  j.href = `j/${j.slug}/`; juegos.push(j);
+}
+const minijuegos = (M.minijuegos || []).map(({ slug, titulo, desc, href, nuevo }) => ({ slug, titulo, desc, href, nuevo: nuevo || false }));
+const datos = { minijuegos, colegios: M.colegios.map(c => ({ ...c, clases: c.clases.map(k => ({ ...k, juegos: k.juegos.map(({ slug, titulo, desc, href, nuevo }) => ({ slug, titulo, desc, href, nuevo: nuevo || false })) })) })) };
 fs.writeFileSync(path.join(root, 'datos.js'), '// Generado por tools/armar.mjs a partir de tools/juegos.json\nwindow.JUEGOS = ' + JSON.stringify(datos, null, 1) + ';\n');
 console.log(`${juegos.length} juegos copiados y datos.js generado.`);
 

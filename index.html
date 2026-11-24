@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex">
 <title>Rincón Digital</title>
+<script>try{if(JSON.parse(localStorage.getItem('portalOscuro')||'false'))document.documentElement.classList.add('oscuro')}catch(e){}</script>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='6' y='14' width='52' height='36' rx='14' fill='%23ff7a59'/%3E%3Ccircle cx='22' cy='32' r='5' fill='%23fff'/%3E%3Ccircle cx='44' cy='27' r='4' fill='%23ffd23f'/%3E%3Ccircle cx='44' cy='37' r='4' fill='%234fc3f7'/%3E%3C/svg%3E">
 <style>
 @font-face{font-family:Nunito;font-weight:600;font-display:swap;src:url(fonts/nunito-latin-600-normal.woff2) format('woff2')}
@@ -52,6 +53,7 @@ h2{font-size:clamp(22px,3vw,28px);margin:30px 0 12px;font-weight:800}
 .klass{min-height:230px;padding:22px}
 .klass .big{font-size:clamp(40px,6vw,58px);font-weight:800;line-height:1.05;text-shadow:0 3px 0 rgba(0,0,0,.12)}
 .klass .det{font-size:18px;opacity:.95}
+.klass.largo .big{font-size:clamp(28px,3.1vw,58px);white-space:nowrap}
 .klass .stack{position:absolute;right:16px;bottom:16px;display:flex}
 .klass .stack i{display:grid;place-items:center;width:64px;height:64px;border-radius:16px;border:3px solid #fff;margin-left:-22px;box-shadow:0 4px 10px rgba(0,0,0,.2);color:#fff;font:800 32px Nunito,'Segoe UI',sans-serif;font-style:normal}
 .klass .stack i:nth-child(1){transform:rotate(-8deg)}.klass .stack i:nth-child(3){transform:rotate(7deg)}
@@ -240,7 +242,68 @@ footer{display:flex;align-items:center}
   .tabs{flex-wrap:nowrap;overflow-x:auto;padding:2px 2px 12px;scrollbar-width:none}
   .opts{grid-template-columns:repeat(auto-fill,minmax(74px,1fr));gap:10px}
 }
-@media (max-width:560px){.me{padding:3px}.me .mn{display:none}.hola{gap:12px}}</style>
+@media (max-width:560px){.me{padding:3px}.me .mn{display:none}.hola{gap:12px}}
+/* ---------- Modo oscuro (botón de luna; se guarda en portalOscuro) ---------- */
+html.oscuro{--ink:#eef0ff;--dim:#a9a6d6;--bg:#120f2c;--card:rgba(48,42,100,.6);--line:#2a2552;--glass:linear-gradient(135deg,rgba(70,60,140,.55),rgba(40,34,92,.4));--rim:inset 0 1px 0 rgba(255,255,255,.16),inset 0 0 0 1px rgba(255,255,255,.08);--soft:0 10px 30px rgba(0,0,0,.4),0 2px 6px rgba(0,0,0,.25);color-scheme:dark}
+html.oscuro body{background:#110e28}
+html.oscuro .blobs i{opacity:.4}
+html.oscuro .blobs i:nth-child(1){background:#c2410c!important}html.oscuro .blobs i:nth-child(2){background:#1d4ed8!important}html.oscuro .blobs i:nth-child(3){background:#6d28d9!important}html.oscuro .blobs i:nth-child(4){background:#047857!important}
+html.oscuro header{background:rgba(17,14,40,.55);border-bottom-color:rgba(255,255,255,.08)}
+html.oscuro .crumb.on{background:linear-gradient(135deg,#9b7bff,#7b5cf0)}
+html.oscuro .search input::placeholder{color:var(--dim)}
+html.oscuro .mute svg path[fill="#24204a"],html.oscuro .luna svg path{fill:#eef0ff}
+html.oscuro .mute svg path[stroke="#24204a"]{stroke:#eef0ff}
+html.oscuro .modal{background:rgba(5,4,15,.5)}
+html.oscuro .modal .box{background:linear-gradient(135deg,rgba(44,38,98,.94),rgba(30,26,72,.9))}
+html.oscuro .modal textarea{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.14);color:var(--ink)}
+html.oscuro .modal textarea::placeholder{color:var(--dim)}
+html.oscuro .seg span{background:rgba(255,255,255,.1)}
+html.oscuro .done,html.oscuro .viaje,html.oscuro .pfd{background:linear-gradient(135deg,#2a2462,#1c1846)}
+html.oscuro .x{background:rgba(255,255,255,.12);color:var(--ink)}
+html.oscuro .game .key,html.oscuro .search kbd{background:rgba(255,255,255,.12)}
+html.oscuro #cambiarCole{background:rgba(255,255,255,.1);box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+html.oscuro #cambiarCole:hover{background:rgba(255,255,255,.2)}
+html.oscuro .pfl{background:rgba(255,255,255,.04)}
+html.oscuro .pfn input{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.16);color:var(--ink)}
+html.oscuro .tabs button{background:rgba(255,255,255,.1)}
+html.oscuro .opts button{background:rgba(255,255,255,.08)}
+html.oscuro .opts button.on{background:rgba(255,255,255,.2)}
+html.oscuro .opts .no{background:rgba(255,255,255,.1)}
+html.oscuro .pfload{background:rgba(17,14,40,.75)}
+.luna{margin-left:0;width:46px;height:46px;border:0;border-radius:50%;cursor:pointer;display:grid;place-items:center;background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:var(--rim),var(--soft);transition:transform .18s cubic-bezier(.34,1.56,.64,1)}
+.luna:hover{transform:translateY(-2px) rotate(-12deg)}
+.luna + .mute{margin-left:0}
+/* ---------- Minijuegos (inicio, debajo de las clases) ---------- */
+.minis{display:grid;gap:16px;margin-top:22px}
+.mini{position:relative;display:flex;align-items:center;gap:22px;padding:18px 24px;border-radius:26px;text-decoration:none;color:var(--ink);border:2px solid transparent;background:linear-gradient(135deg,rgba(255,255,255,.92),rgba(246,243,255,.86)) padding-box,linear-gradient(100deg,#9b7bff,#4fc3f7,#22b583,#ffc61a) border-box;backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);box-shadow:var(--soft);transition:transform .18s cubic-bezier(.34,1.56,.64,1),box-shadow .18s}
+.mini:hover,.mini:focus-visible{transform:translateY(-3px);box-shadow:0 18px 40px rgba(123,92,255,.25);outline:none}
+.mini .ico{flex:none;width:70px;height:70px;animation:bob 3.2s ease-in-out infinite}
+.mini .tx{flex:1;min-width:0}
+.mini .et{font-size:13px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#7b5cff}
+.mini h3{margin:2px 0 3px;font-size:26px;font-weight:800}
+.mini .ds{color:var(--dim);font-size:16px}
+.mini .teclas{display:flex;gap:6px;flex:none}
+.mini .teclas i{display:grid;place-items:center;width:38px;height:38px;border-radius:9px;font:800 17px Nunito,'Segoe UI',sans-serif;font-style:normal;color:#24204a;box-shadow:0 3px 0 rgba(0,0,0,.15)}
+.mini .rec{flex:none;text-align:center;padding:8px 14px;border-radius:16px;background:rgba(255,255,255,.5);box-shadow:var(--rim);font-weight:800;font-size:14px;color:var(--dim);line-height:1.25}
+.mini .rec b{display:block;font-size:22px;color:var(--ink)}
+.mini .jugar{flex:none;padding:12px 22px;border-radius:999px;background:linear-gradient(135deg,#9b7bff,#7b5cf0);color:#fff;font-weight:800;font-size:17px;box-shadow:0 8px 18px rgba(123,92,255,.35)}
+@media (max-width:1100px){.mini .teclas{display:none}}
+/* ---------- Modo oscuro: cards en neón ---------- */
+html.oscuro .tile.klass,html.oscuro .tile.school{background:linear-gradient(160deg,color-mix(in srgb,var(--k) 24%,#17133a),color-mix(in srgb,var(--k) 9%,#0f0c28))!important;box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--k) 70%,transparent),0 0 24px color-mix(in srgb,var(--k) 35%,transparent),0 12px 30px rgba(0,0,0,.45)!important}
+html.oscuro .tile.klass:hover,html.oscuro .tile.school:hover{box-shadow:inset 0 0 0 2px var(--k),0 0 38px color-mix(in srgb,var(--k) 55%,transparent),0 16px 36px rgba(0,0,0,.5)!important}
+html.oscuro .tile .big{color:color-mix(in srgb,var(--k) 45%,#fff);text-shadow:0 0 16px color-mix(in srgb,var(--k) 75%,transparent),0 0 3px color-mix(in srgb,var(--k) 90%,transparent)}
+html.oscuro .tile .det,html.oscuro .tile .place{color:#d6d3f2}
+html.oscuro .school::before,html.oscuro .klass::before{opacity:.18}
+html.oscuro .klass .count,html.oscuro .school .count{background:color-mix(in srgb,var(--k) 16%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--k) 55%,transparent);color:#eef0ff}
+html.oscuro .klass .stack i{filter:saturate(.85) brightness(.8)}
+html.oscuro .game .cover{box-shadow:inset 0 0 0 999px rgba(16,12,44,.24)}
+html.oscuro .mini{background:linear-gradient(135deg,#231d55,#17133d) padding-box,linear-gradient(100deg,#9b7bff,#4fc3f7,#22b583,#ffc61a) border-box;box-shadow:0 0 26px rgba(123,92,255,.35),0 12px 30px rgba(0,0,0,.4)}
+html.oscuro .mini .et{color:#b9a2ff}
+html.oscuro .mini .rec{background:rgba(255,255,255,.08)}
+html.oscuro .mini .teclas i{filter:saturate(.85) brightness(.85)}
+
+.luna svg{width:22px;height:22px}
+</style>
 </head>
 <body>
 <div class="blobs" aria-hidden="true"><i style="width:420px;height:420px;background:#ffd6c9;left:-120px;top:-80px"></i><i style="width:360px;height:360px;background:#cfe9ff;right:-100px;top:120px;animation-delay:-6s"></i><i style="width:300px;height:300px;background:#e3d9ff;left:30%;bottom:-120px;animation-delay:-12s"></i><i style="width:220px;height:220px;background:#d4f5e6;right:20%;top:-60px;animation-delay:-3s"></i></div>
@@ -312,13 +375,25 @@ footer{display:flex;align-items:center}
   function miColegio() { var id = ls.get('portalMiColegio', ''); return D.colegios.filter(function (c) { return c.id === id; })[0] || null; }
   function clasesHTML(c) {
     return '<div class="grid classes">' + c.clases.map(function (k) {
-      return '<a class="tile klass" href="#/' + c.id + '/' + k.id + '" data-clase="' + c.id + '/' + k.id + '" style="background:' + k.color + '"><div class="big">' + esc(k.nombre) + '</div><div class="det">' + esc(k.detalle) + '</div>' +
+      return '<a class="tile klass' + (k.nombre.length > 8 ? ' largo' : '') + '" href="#/' + c.id + '/' + k.id + '" data-clase="' + c.id + '/' + k.id + '" style="background:' + k.color + ';--k:' + k.color + '"><div class="big">' + esc(k.nombre) + '</div><div class="det">' + esc(k.detalle) + '</div>' +
         '<span class="count">' + plural(k.juegos.length) + '</span><div class="stack">' + k.juegos.slice(0, 3).map(function (j) { return '<i style="background:' + j.color + '">' + esc(j.titulo.charAt(0)) + '</i>'; }).join('') + '</div></a>';
     }).join('') + '</div>';
   }
   // Saludo del inicio: cambia cada día.
   var SALUDOS = ['¿A qué jugamos?', '¿Qué aprendemos hoy?', '¿Listo para un desafío?', '¡A darle!', '¿Qué vamos a descubrir hoy?', '¡Qué bueno verte!', '¿Arrancamos?'];
   function saludo() { var d = new Date(), n = Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 864e5); return SALUDOS[n % SALUDOS.length]; }
+  // Minijuegos para todos (debajo de las clases), con el avance guardado en esta compu.
+  function minisHTML() {
+    var M = D.minijuegos || []; if (!M.length) return '';
+    var T = [['F', '#8ee59b'], ['J', '#7fd3ff'], ['K', '#b9a2ff'], ['D', '#ffe066']];
+    return '<div class="minis">' + M.map(function (j) {
+      var g = ls.get('teclasBit', null), hechas = g && g.est ? g.est.filter(function (x) { return x > 0; }).length : 0, rec = g && g.rec || 0;
+      var stat = hechas || rec ? '<span class="rec"><b>' + hechas + '/16</b>lecciones' + (rec ? ' · récord ' + rec : '') + '</span>' : '<span class="rec"><b>¡Probalo!</b>también en casa</span>';
+      return '<a class="mini" href="' + esc(j.href) + '"><svg class="ico" viewBox="0 0 52 52"><g><line x1="26" y1="12" x2="26" y2="4" stroke="#24204a" stroke-width="2.5" stroke-linecap="round"/><circle cx="26" cy="4" r="3.2" fill="#ffd23f" stroke="#24204a" stroke-width="1.5"/></g><rect x="8" y="12" width="36" height="28" rx="11" fill="#9b7bff" stroke="#24204a" stroke-width="2.5"/><rect x="13" y="17" width="26" height="17" rx="7" fill="#fff"/><circle cx="20" cy="25.5" r="3.6" fill="#24204a"/><circle cx="32" cy="25.5" r="3.6" fill="#24204a"/><rect x="5" y="22" width="4" height="9" rx="2" fill="#ffd23f" stroke="#24204a" stroke-width="1.5"/><rect x="43" y="22" width="4" height="9" rx="2" fill="#ffd23f" stroke="#24204a" stroke-width="1.5"/><path d="M21 40 v5 M31 40 v5" stroke="#24204a" stroke-width="2.5" stroke-linecap="round"/></svg>' +
+        '<span class="tx"><span class="et">Minijuego · para practicar donde quieras</span><h3>' + esc(j.titulo) + '</h3><span class="ds">' + esc(j.desc) + '</span></span>' +
+        '<span class="teclas">' + T.map(function (t) { return '<i style="background:' + t[1] + '">' + t[0] + '</i>'; }).join('') + '</span>' + stat + '<span class="jugar">Jugar</span></a>';
+    }).join('') + '</div>';
+  }
   function home() {
     setCrumbs([['Inicio', '#/']]);
     var MIO = miColegio(), mio = function (x) { return !MIO || x.c.id === MIO.id; };
@@ -327,10 +402,10 @@ footer{display:flex;align-items:center}
     if (rec.length) html += '<h2 style="margin-top:6px">Seguir jugando</h2><div class="grid recent">' + rec.map(function (x) { return card(x, { go: true, where: true }); }).join('') + '</div><h2>Atajos</h2>';
     if (MIO) html += '<div class="bar"><label class="search"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="#6b6790" stroke-width="2.6"/><path d="M15.5 15.5 L21 21" stroke="#6b6790" stroke-width="2.6" stroke-linecap="round"/></svg><input id="q" type="search" placeholder="Buscar un juego" autocomplete="off" aria-label="Buscar un juego"><kbd>/</kbd></label>' +
       D.colegios.filter(function (c) { return !MIO || c.id === MIO.id; }).map(function (c) { return c.clases.map(function (k) { return '<a class="chip" href="#/' + c.id + '/' + k.id + '" data-clase="' + c.id + '/' + k.id + '"><i style="background:' + k.color + '"></i>' + esc(c.nombre + ' · ' + k.nombre) + '</a>'; }).join(''); }).join('') + '</div>';
-    if (MIO) html += '<div id="results"></div><div id="schools">' + clasesHTML(MIO) + '</div>';
+    if (MIO) html += '<div id="results"></div><div id="schools">' + clasesHTML(MIO) + minisHTML() + '</div>';
     else html += '<div id="results"></div><div id="schools" class="grid schools">' + D.colegios.map(function (c) {
       var n = c.clases.reduce(function (s, k) { return s + k.juegos.length; }, 0);
-      return '<a class="tile school" href="#/' + c.id + '" data-colegio="' + c.id + '" style="background:' + c.color + '"><div class="big">' + esc(c.nombre) + '</div><div class="place">' + esc(c.lugar) + '</div><span class="count">' + plural(n) + '</span>' + (ESCUDOS[c.id] ? '<span class="medal">' + escudo(c, 'esc') + '</span>' : '') + '</a>';
+      return '<a class="tile school" href="#/' + c.id + '" data-colegio="' + c.id + '" style="background:' + c.color + ';--k:' + c.color + '"><div class="big">' + esc(c.nombre) + '</div><div class="place">' + esc(c.lugar) + '</div><span class="count">' + plural(n) + '</span>' + (ESCUDOS[c.id] ? '<span class="medal">' + escudo(c, 'esc') + '</span>' : '') + '</a>';
     }).join('') + '</div>';
     app.innerHTML = html;
     var yo = app.querySelector('[data-perfil]'); if (yo) yo.addEventListener('click', function () { abrirPerfil(); });
@@ -817,6 +892,23 @@ footer{display:flex;align-items:center}
   // La primera vez que se entra en esta compu aparece el editor del perfil.
   var luego = false; try { luego = !!sessionStorage.getItem('portalPerfilLuego'); } catch (e) { }
   if (!PERFIL && !luego) setTimeout(abrirPerfil, 500);
+})();
+</script>
+<script>
+// Botón de modo oscuro (luna / sol), al lado del sonido.
+(function () {
+  var b = document.createElement('button'), mute = document.querySelector('header .mute');
+  b.type = 'button'; b.className = 'luna';
+  var LUNA = '<svg viewBox="0 0 24 24"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z" fill="#24204a"/></svg>';
+  var SOL = '<svg viewBox="0 0 24 24"><path d="M12 7a5 5 0 1 0 0 10a5 5 0 0 0 0-10zM12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1" fill="#ffd23f" stroke="#ffd23f" stroke-width="2" stroke-linecap="round"/></svg>';
+  function pintar() { var o = document.documentElement.classList.contains('oscuro'); b.innerHTML = o ? SOL : LUNA; b.setAttribute('aria-label', o ? 'Modo claro' : 'Modo oscuro'); b.title = o ? 'Modo claro' : 'Modo oscuro'; }
+  b.addEventListener('click', function () {
+    var o = document.documentElement.classList.toggle('oscuro');
+    try { localStorage.setItem('portalOscuro', JSON.stringify(o)); } catch (e) { }
+    pintar();
+  });
+  pintar();
+  if (mute) mute.parentNode.insertBefore(b, mute); else document.querySelector('header').appendChild(b);
 })();
 </script>
 <script src="bit-datos.js"></script>
