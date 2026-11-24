@@ -106,7 +106,7 @@ for (const [w, h] of [[1366, 768], [1024, 600], [390, 844]]) {
   await p.addInitScript(() => { window.RINCON = { form: 'PRUEBA', campos: { tipo: '111', clase: '222', idea: '333' } }; localStorage.setItem('portalClase', JSON.stringify('scjm/6')); });
   let body = null;
   await p.route('https://docs.google.com/**', async r => { body = r.request().postData() || ''; await r.fulfill({ status: 200, body: 'ok' }); });
-  await p.goto(base.split('#')[0]); await p.waitForTimeout(4300);
+  await p.goto(base.split('#')[0]); await p.waitForTimeout(21500); // la invitación sale a los 20 s, después del saludo de Bit
   if (!(await p.isVisible('#ideaToast'))) fail('ideas: no aparece la invitación');
   await p.screenshot({ path: path.join(out, 'ideas-invitacion.png') });
   await p.click('#ideaToast [data-open]'); await p.waitForTimeout(400);

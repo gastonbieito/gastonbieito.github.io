@@ -778,7 +778,13 @@ footer{display:flex;align-items:center}
     if (!onHome) { ideaUI.toast.hidden = true; ideaUI.modal.hidden = true; return; }
     // La invitación aparece sola una vez por día en cada compu.
     var today = new Date().toDateString();
-    if (ls.get('portalInvitacion', '') !== today) setTimeout(function () { if (!location.hash.replace(/^#\/?/, '') && !document.querySelector('.modal:not([hidden])')) { ideaUI.toast.hidden = false; Snd.ding(); ls.set('portalInvitacion', today); } }, 3500);
+    // Sale a los 20 segundos, después del saludo de Bit; si el globo de Bit sigue abierto, espera a que se cierre.
+    var intentos = 0;
+    if (ls.get('portalInvitacion', '') !== today) setTimeout(function invitar() {
+      if (location.hash.replace(/^#\/?/, '') || document.querySelector('.modal:not([hidden])')) return;
+      if (document.querySelector('.globo')) { if (++intentos < 10) setTimeout(invitar, 4000); return; }
+      ideaUI.toast.hidden = false; Snd.ding(); ls.set('portalInvitacion', today);
+    }, 20000);
   }
 
   function render() {

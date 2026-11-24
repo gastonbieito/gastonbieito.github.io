@@ -35,8 +35,8 @@
     '.globo{position:absolute;top:60px;right:-10px;width:290px;padding:14px 18px 15px;border-radius:18px;background:#fff;color:#24204a;font:700 15px/1.45 Nunito,"Segoe UI",sans-serif;text-wrap:pretty;text-align:left;box-shadow:0 10px 30px rgba(36,32,74,.2);cursor:default;animation:globo .35s cubic-bezier(.34,1.56,.64,1);z-index:6}' +
     '.globo::before{content:"";position:absolute;top:-7px;right:30px;width:14px;height:14px;background:#fff;transform:rotate(45deg)}' +
     '.globo b{display:block;color:#7b5cff;font-size:15px;font-weight:800;margin-bottom:5px}' +
-    '.globo .pa{display:inline-block;white-space:nowrap}.globo .le{display:inline-block;animation:tiembla 1.1s ease-in-out infinite}' +
-    '@keyframes tiembla{0%,100%{transform:translate(0,0) rotate(0)}25%{transform:translate(.5px,-.6px) rotate(1.2deg)}50%{transform:translate(-.4px,.4px) rotate(-1deg)}75%{transform:translate(.3px,.5px) rotate(.8deg)}}' +
+    '.globo .pa{display:inline-block;white-space:nowrap}.globo .le{display:inline-block;animation:tiembla 1.8s ease-in-out infinite}' +
+    '@keyframes tiembla{0%,100%{transform:translate(0,0) rotate(0)}25%{transform:translate(.2px,-.25px) rotate(.4deg)}50%{transform:translate(-.15px,.15px) rotate(-.35deg)}75%{transform:translate(.1px,.2px) rotate(.3deg)}}' +
     '@keyframes globo{from{opacity:0;transform:translateY(-8px) scale(.9)}}' +
     '.estrellas{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}' +
     '.estrellas i{position:absolute;top:-30px;font-style:normal;animation:cae linear infinite;opacity:.8}' +
@@ -161,7 +161,8 @@
   window.addEventListener('hashchange', pintarBit);
   document.addEventListener('click', function () { setTimeout(pintarBit, 60); });
   document.addEventListener('click', function (e) { if (globo && !e.target.closest('.robo')) cerrarGlobo(); });
-  // En el inicio, el robot cuenta el dato del día una vez por día en cada compu.
+  // En el inicio, a los 5 segundos Bit saluda solo (una vez por día en cada compu) y avisa que tocándolo cuenta datos.
+  // La invitación a contar una idea sale después (index.html), cuando el globo de Bit ya se cerró.
   var hoyTxt = HOY.toDateString();
   var intentos = 0;
   setTimeout(function contar() {
@@ -172,11 +173,10 @@
     var visto = ''; try { visto = localStorage.getItem('portalDato'); } catch (e) { }
     if (visto === hoyTxt && !m) return;
     try { localStorage.setItem('portalDato', hoyTxt); } catch (e) { }
-    var fiesta = DIC && HOY.getDate() >= 15 ? ['¡Felices fiestas!', 'Gracias por jugar y aprender todo el año.'] : PATRIA ? ['¡Viva la patria!', 'Hoy es un día patrio en Uruguay.'] : null;
-    var yaLoConocen = ''; try { yaLoConocen = localStorage.getItem('portalBit'); localStorage.setItem('portalBit', '1'); } catch (x) { }
-    if (!yaLoConocen) decir('¡Hola!', 'Soy Bit, el robot del Rincón Digital. Tocame cuando quieras y te cuento un dato curioso.');
-    else if (fiesta) decir(fiesta[0], fiesta[1]); else { decir('¿Sabías que…?', unDato()); }
-    saltar(robo);
+    var titulo = DIC && HOY.getDate() >= 15 ? '¡Felices fiestas!' : PATRIA ? '¡Viva la patria!' : '¡Hola!';
+    try { localStorage.setItem('portalBit', '1'); } catch (x) { }
+    decir(titulo, 'Soy Bit, el robot del Rincón Digital. Hacé clic en mí cuando quieras y te cuento un dato curioso.');
+    saltar(robo); if (!silencio()) { tono(880, .12, .04); tono(1320, .14, .03, .09); }
   }, 5000);
 
   /* ---------- Sorpresas según la fecha ---------- */
