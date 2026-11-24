@@ -21,7 +21,7 @@
   css.textContent =
     '.glare{position:absolute;inset:0;pointer-events:none;border-radius:inherit;opacity:0;transition:opacity .25s;background:radial-gradient(circle at var(--gx,50%) var(--gy,50%),rgba(255,255,255,.45),rgba(255,255,255,0) 55%);mix-blend-mode:soft-light;z-index:2}' +
     '.tile:hover .glare{opacity:1}' +
-    '.blobs{transition:transform 1.2s cubic-bezier(.2,.8,.2,1)}' +
+    '.blobs{inset:-60px!important;transition:transform 1.2s cubic-bezier(.2,.8,.2,1)}' +
     '@keyframes drift2{0%{transform:translate(0,0) scale(1)}50%{transform:translate(70px,-50px) scale(1.12)}100%{transform:translate(-40px,40px) scale(.95)}}' +
     '.blobs i{animation:drift2 26s ease-in-out infinite alternate}.blobs i:nth-child(2){animation-duration:31s;animation-delay:-8s}.blobs i:nth-child(3){animation-duration:36s;animation-delay:-15s}.blobs i:nth-child(4){animation-duration:22s;animation-delay:-4s}' +
     '.robo{position:relative;flex:none;margin-left:auto;width:52px;height:52px;border:0;padding:0;background:none;cursor:pointer}' +
