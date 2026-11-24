@@ -26,7 +26,8 @@ for (const [w, h] of [[1366, 768], [1024, 600], [390, 844]]) {
   const n = await p.locator('.game').count(); if (n !== 3) fail(`${w}x${h}: MTA 6.º muestra ${n} juegos`);
   await p.evaluate(() => localStorage.setItem('portalRecientes', JSON.stringify([{ s: 'rumor', w: 'scjm/6', t: 1 }, { s: 'helvecio-boveda', w: 'mta/5', t: 0 }])));
   await p.click('.crumb >> text=Inicio'); await p.waitForTimeout(700);
-  if ((await p.locator('.recent .game').count()) !== 2) fail(`${w}x${h}: no aparece Seguir jugando`);
+  // Con MTA elegido en esta compu, "Seguir jugando" muestra solo el juego de MTA.
+  if ((await p.locator('.recent .game').count()) !== 1) fail(`${w}x${h}: Seguir jugando no muestra solo el juego de su colegio`);
   await p.screenshot({ path: path.join(out, `${w}x${h}-inicio-seguir.png`), fullPage: w < 600 });
   await p.fill('#q', 'helvecio'); await p.waitForTimeout(300);
   const hits = await p.locator('#results .game').count(); if (hits !== 4) fail(`${w}x${h}: buscar helvecio dio ${hits}`);
