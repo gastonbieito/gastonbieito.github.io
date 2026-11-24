@@ -30,9 +30,13 @@
     '.robo:hover svg{transform:rotate(-6deg)}.robo.salta svg{animation:roboSalta .6s cubic-bezier(.34,1.56,.64,1)}' +
     '@keyframes roboSalta{40%{transform:translateY(-14px) rotate(8deg)}}' +
     '.robo .ant{animation:ant 2.4s ease-in-out infinite;transform-origin:26px 12px}@keyframes ant{50%{transform:rotate(12deg)}}' +
-    '.globo{position:absolute;top:60px;right:-10px;width:260px;padding:12px 14px 12px;border-radius:16px;background:#fff;color:#24204a;font:700 14px/1.35 Nunito,"Segoe UI",sans-serif;text-align:left;box-shadow:0 10px 30px rgba(36,32,74,.2);cursor:default;animation:globo .35s cubic-bezier(.34,1.56,.64,1);z-index:6}' +
+    '.robo .ojos{animation:parpadeo 4.6s infinite;transform-box:fill-box;transform-origin:center}@keyframes parpadeo{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.12)}}' +
+    '.robo .cuerpo{transition:fill .4s}' +
+    '.globo{position:absolute;top:60px;right:-10px;width:290px;padding:14px 18px 15px;border-radius:18px;background:#fff;color:#24204a;font:700 15px/1.45 Nunito,"Segoe UI",sans-serif;text-wrap:pretty;text-align:left;box-shadow:0 10px 30px rgba(36,32,74,.2);cursor:default;animation:globo .35s cubic-bezier(.34,1.56,.64,1);z-index:6}' +
     '.globo::before{content:"";position:absolute;top:-7px;right:30px;width:14px;height:14px;background:#fff;transform:rotate(45deg)}' +
-    '.globo b{display:block;color:#7b5cff;font-size:13px;margin-bottom:3px}' +
+    '.globo b{display:block;color:#7b5cff;font-size:15px;font-weight:800;margin-bottom:5px}' +
+    '.globo .pa{display:inline-block;white-space:nowrap}.globo .le{display:inline-block;animation:tiembla 1.1s ease-in-out infinite}' +
+    '@keyframes tiembla{0%,100%{transform:translate(0,0) rotate(0)}25%{transform:translate(.5px,-.6px) rotate(1.2deg)}50%{transform:translate(-.4px,.4px) rotate(-1deg)}75%{transform:translate(.3px,.5px) rotate(.8deg)}}' +
     '@keyframes globo{from{opacity:0;transform:translateY(-8px) scale(.9)}}' +
     '.estrellas{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}' +
     '.estrellas i{position:absolute;top:-30px;font-style:normal;animation:cae linear infinite;opacity:.8}' +
@@ -99,11 +103,11 @@
   var DIC = HOY.getMonth() === 11, PATRIA = { '5-19': 1, '6-18': 1, '7-25': 1 }[HOY.getMonth() + '-' + HOY.getDate()];
   var GORRO = DIC ? '<path d="M14 13 Q24 -6 40 8 L36 14 Z" fill="#ef476f"/><circle cx="41" cy="7" r="3.4" fill="#fff"/><rect x="12" y="12" width="28" height="5" rx="2.5" fill="#fff"/>' : '';
   var ROBO = '<svg viewBox="0 0 52 52"><g class="ant"><line x1="26" y1="12" x2="26" y2="4" stroke="#24204a" stroke-width="2.5" stroke-linecap="round"/><circle cx="26" cy="4" r="3.2" fill="#ffd23f" stroke="#24204a" stroke-width="1.5"/></g>' +
-    '<rect x="8" y="12" width="36" height="28" rx="11" fill="#9b7bff" stroke="#24204a" stroke-width="2.5"/><rect x="13" y="17" width="26" height="17" rx="7" fill="#fff"/>' +
-    '<circle class="ojo" cx="20" cy="25.5" r="3.6" fill="#24204a"/><circle class="ojo" cx="32" cy="25.5" r="3.6" fill="#24204a"/>' +
+    '<rect class="cuerpo" x="8" y="12" width="36" height="28" rx="11" fill="#9b7bff" stroke="#24204a" stroke-width="2.5"/><rect x="13" y="17" width="26" height="17" rx="7" fill="#fff"/>' +
+    '<g class="ojos"><circle class="ojo" cx="20" cy="25.5" r="3.6" fill="#24204a"/><circle class="ojo" cx="32" cy="25.5" r="3.6" fill="#24204a"/></g>' +
     '<rect x="5" y="22" width="4" height="9" rx="2" fill="#ffd23f" stroke="#24204a" stroke-width="1.5"/><rect x="43" y="22" width="4" height="9" rx="2" fill="#ffd23f" stroke="#24204a" stroke-width="1.5"/>' +
     '<path d="M21 40 v5 M31 40 v5" stroke="#24204a" stroke-width="2.5" stroke-linecap="round"/>' + GORRO + '</svg>';
-  var robo = document.createElement('button'); robo.type = 'button'; robo.className = 'robo'; robo.setAttribute('aria-label', 'Robotito: tocalo para un dato curioso');
+  var robo = document.createElement('button'); robo.type = 'button'; robo.className = 'robo'; robo.setAttribute('aria-label', 'Bit, el robot: tocalo para un dato curioso'); robo.title = 'Bit';
   robo.innerHTML = ROBO;
   var me = document.querySelector('header .me'), header = document.querySelector('header');
   if (header) header.insertBefore(robo, me || null);
@@ -113,10 +117,27 @@
     var dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2), d = Math.sqrt(dx * dx + dy * dy) || 1, k = Math.min(1, d / 120);
     for (var i = 0; i < ojos.length; i++) ojos[i].setAttribute('transform', 'translate(' + (dx / d * 2.4 * k).toFixed(2) + ',' + (dy / d * 2.4 * k).toFixed(2) + ')');
   });
-  var globo = null, nDato = DIA % DATOS.length, tGlobo = 0;
+  var globo = null, tGlobo = 0, recientes = [];
+  // Elige un dato al azar sin repetir los últimos; a veces uno de la ciudad del colegio de la compu.
+  function unDato() {
+    var B = window.BIT_DATOS || { general: DATOS }, cole = '';
+    try { cole = JSON.parse(localStorage.getItem('portalMiColegio') || '""'); } catch (x) { }
+    var local = cole === 'mta' ? B.helvecia : cole === 'scjm' ? B.rosario : null;
+    var lista = local && local.length && Math.random() < .2 ? local : (B.general || DATOS), d, n = 0;
+    do { d = lista[Math.floor(Math.random() * lista.length)]; } while (recientes.indexOf(d) >= 0 && ++n < 30);
+    recientes.push(d); if (recientes.length > 40) recientes.shift();
+    return d;
+  }
+  // Cada letra tiembla apenas, con su propio ritmo (las palabras no se cortan).
+  function temblar(t) {
+    if (QUIETO) return t;
+    return t.split(' ').map(function (p) {
+      return '<span class="pa">' + Array.from(p).map(function (c) { return '<span class="le" style="animation-delay:-' + (Math.random() * 1.1).toFixed(2) + 's">' + c + '</span>'; }).join('') + '</span>';
+    }).join(' ');
+  }
   function decir(titulo, texto, ms) {
     cerrarGlobo();
-    globo = document.createElement('div'); globo.className = 'globo'; globo.innerHTML = '<b>' + titulo + '</b>' + texto;
+    globo = document.createElement('div'); globo.className = 'globo'; globo.innerHTML = '<b>' + temblar(titulo) + '</b>' + temblar(texto);
     globo.addEventListener('click', function (e) { e.stopPropagation(); cerrarGlobo(); });
     robo.appendChild(globo);
     clearTimeout(tGlobo); tGlobo = setTimeout(cerrarGlobo, ms || 9000);
@@ -128,8 +149,17 @@
     saltar(robo);
     if (!silencio()) { tono(880, .12, .04); tono(1320, .14, .03, .09); }
     if (globo) { cerrarGlobo(); return; }
-    decir('¿Sabías que…?', DATOS[nDato]); nDato = (nDato + 1) % DATOS.length;
+    // La primera vez en cada compu, Bit se presenta.
+    var conocido = ''; try { conocido = localStorage.getItem('portalBit'); localStorage.setItem('portalBit', '1'); } catch (x) { }
+    if (!conocido) { decir('¡Hola!', 'Soy Bit, el robot del Rincón Digital. Tocame cuando quieras y te cuento un dato curioso.'); return; }
+    decir('¿Sabías que…?', unDato());
   });
+  // Bit toma el color del colegio de la compu (azul en SCJM, naranja en MTA).
+  var COLORES = { scjm: '#2a5fc4', mta: '#e0731f' }, cuerpo = robo.querySelector('.cuerpo');
+  function pintarBit() { var c = ''; try { c = JSON.parse(localStorage.getItem('portalMiColegio') || '""'); } catch (x) { } cuerpo.setAttribute('fill', COLORES[c] || '#9b7bff'); }
+  pintarBit();
+  window.addEventListener('hashchange', pintarBit);
+  document.addEventListener('click', function () { setTimeout(pintarBit, 60); });
   document.addEventListener('click', function (e) { if (globo && !e.target.closest('.robo')) cerrarGlobo(); });
   // En el inicio, el robot cuenta el dato del día una vez por día en cada compu.
   var hoyTxt = HOY.toDateString();
@@ -143,7 +173,9 @@
     if (visto === hoyTxt && !m) return;
     try { localStorage.setItem('portalDato', hoyTxt); } catch (e) { }
     var fiesta = DIC && HOY.getDate() >= 15 ? ['¡Felices fiestas!', 'Gracias por jugar y aprender todo el año.'] : PATRIA ? ['¡Viva la patria!', 'Hoy es un día patrio en Uruguay.'] : null;
-    if (fiesta) decir(fiesta[0], fiesta[1]); else { decir('¿Sabías que…?', DATOS[nDato]); nDato = (nDato + 1) % DATOS.length; }
+    var yaLoConocen = ''; try { yaLoConocen = localStorage.getItem('portalBit'); localStorage.setItem('portalBit', '1'); } catch (x) { }
+    if (!yaLoConocen) decir('¡Hola!', 'Soy Bit, el robot del Rincón Digital. Tocame cuando quieras y te cuento un dato curioso.');
+    else if (fiesta) decir(fiesta[0], fiesta[1]); else { decir('¿Sabías que…?', unDato()); }
     saltar(robo);
   }, 5000);
 
