@@ -316,11 +316,14 @@ footer{display:flex;align-items:center}
         '<span class="count">' + plural(k.juegos.length) + '</span><div class="stack">' + k.juegos.slice(0, 3).map(function (j) { return '<i style="background:' + j.color + '">' + esc(j.titulo.charAt(0)) + '</i>'; }).join('') + '</div></a>';
     }).join('') + '</div>';
   }
+  // Saludo del inicio: cambia cada día.
+  var SALUDOS = ['¿A qué jugamos?', '¿Qué aprendemos hoy?', '¿Listo para un desafío?', '¡A darle!', '¿Qué vamos a descubrir hoy?', '¡Qué bueno verte!', '¿Arrancamos?'];
+  function saludo() { var d = new Date(), n = Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 864e5); return SALUDOS[n % SALUDOS.length]; }
   function home() {
     setCrumbs([['Inicio', '#/']]);
     var MIO = miColegio(), mio = function (x) { return !MIO || x.c.id === MIO.id; };
     var rec = ls.get('portalRecientes', []).map(function (r) { return find(r.s, r.w); }).filter(Boolean).filter(mio).slice(0, 4);
-    var html = (PERFIL && PERFIL.img ? '<h1 class="hola" style="--fav:' + PERFIL.color + '"><button class="yo" type="button" data-perfil aria-label="Cambiar mi perfil">' + avHTML(PERFIL) + '</button><span>¡Hola, <mark>' + esc(PERFIL.n) + '</mark>! ¿A qué jugamos?</span></h1>' : '<h1>¡Hola! ¿A qué jugamos?</h1>') + '<p class="sub">' + (MIO ? 'Elegí tu clase, o seguí donde lo dejaste.' : 'Para empezar, elegí tu colegio.') + '</p>';
+    var html = (PERFIL && PERFIL.img ? '<h1 class="hola" style="--fav:' + PERFIL.color + '"><button class="yo" type="button" data-perfil aria-label="Cambiar mi perfil">' + avHTML(PERFIL) + '</button><span>¡Hola, <mark>' + esc(PERFIL.n) + '</mark>! ' + esc(saludo()) + '</span></h1>' : '<h1>¡Hola! ' + esc(saludo()) + '</h1>') + '<p class="sub">' + (MIO ? 'Elegí tu clase, o seguí donde lo dejaste.' : 'Para empezar, elegí tu colegio.') + '</p>';
     if (rec.length) html += '<h2 style="margin-top:6px">Seguir jugando</h2><div class="grid recent">' + rec.map(function (x) { return card(x, { go: true, where: true }); }).join('') + '</div><h2>Atajos</h2>';
     if (MIO) html += '<div class="bar"><label class="search"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="#6b6790" stroke-width="2.6"/><path d="M15.5 15.5 L21 21" stroke="#6b6790" stroke-width="2.6" stroke-linecap="round"/></svg><input id="q" type="search" placeholder="Buscar un juego" autocomplete="off" aria-label="Buscar un juego"><kbd>/</kbd></label>' +
       D.colegios.filter(function (c) { return !MIO || c.id === MIO.id; }).map(function (c) { return c.clases.map(function (k) { return '<a class="chip" href="#/' + c.id + '/' + k.id + '" data-clase="' + c.id + '/' + k.id + '"><i style="background:' + k.color + '"></i>' + esc(c.nombre + ' · ' + k.nombre) + '</a>'; }).join(''); }).join('') + '</div>';
@@ -810,5 +813,6 @@ footer{display:flex;align-items:center}
   if (!PERFIL && !luego) setTimeout(abrirPerfil, 500);
 })();
 </script>
+<script src="deco.js"></script>
 </body>
 </html>
