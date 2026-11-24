@@ -22,7 +22,8 @@ header{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:12px;
 .crumbs{display:flex;gap:8px;flex-wrap:wrap}
 .crumb{font-weight:800;font-size:16px;padding:9px 16px;border-radius:999px;background:#fff;color:var(--ink);text-decoration:none;box-shadow:0 4px 0 var(--line)}
 .crumb.on{background:var(--ink);color:#fff;box-shadow:0 4px 0 #0f0c26}
-main{position:relative;z-index:1;max-width:1240px;margin:0 auto;padding:18px 20px 60px}
+body{min-height:100vh;display:flex;flex-direction:column}
+main{position:relative;z-index:1;max-width:1240px;width:100%;box-sizing:border-box;margin:0 auto;padding:18px 20px 60px;flex:1 0 auto}
 h1{font-size:clamp(28px,4.5vw,46px);margin:10px 0 4px;font-weight:800;letter-spacing:-.5px}
 h2{font-size:clamp(22px,3vw,28px);margin:30px 0 12px;font-weight:800}
 .sub{color:var(--dim);margin:0 0 18px;font-size:18px}
