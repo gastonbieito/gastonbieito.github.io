@@ -66,6 +66,13 @@ window.JUEGOS = {
      "color": "#4fc3f7",
      "juegos": [
       {
+       "slug": "recreo-al-aire",
+       "titulo": "Recreo al aire",
+       "desc": "Mía te entrevista: grabá tu parte del podcast.",
+       "href": "j/recreo-al-aire/",
+       "nuevo": "2026-11-24"
+      },
+      {
        "slug": "fabrica-luces",
        "titulo": "La fábrica de luces",
        "desc": "Interruptores, AND, OR y NOT: cómo piensa una compu.",

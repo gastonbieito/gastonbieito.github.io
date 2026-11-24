@@ -15,6 +15,7 @@
           { "slug": "teclado-magico", "titulo": "Teclado mágico", "desc": "Cada tecla trae un animal.", "src": "2026-11-06_Jornada_Integracion_Stand_Informatica/Teclado_Magico.html" }
         ] },
         { "id": "345", "nombre": "3.º, 4.º y 5.º", "detalle": "Martes y miércoles", "color": "#4fc3f7", "juegos": [
+          { "slug": "recreo-al-aire", "titulo": "Recreo al aire", "desc": "Mía te entrevista: grabá tu parte del podcast.", "src": "2026-11-25_Rosario_345_Recreo_Al_Aire/Recreo_al_aire.html", "nuevo": "2026-11-24" },
           { "slug": "fabrica-luces", "titulo": "La fábrica de luces", "desc": "Interruptores, AND, OR y NOT: cómo piensa una compu.", "src": "2026-11-24_Rosario_345_La_Fabrica_De_Luces/La_Fabrica_De_Luces.html", "nuevo": "2026-11-23" },
           { "slug": "rumor", "titulo": "El rumor", "desc": "Cómo se difunde un mensaje y cómo se frena.", "url": "/rumor/", "nuevo": "2026-11-23" },
           { "slug": "mi-canal", "titulo": "Mi Canal", "desc": "Tu canal de videos: portadas, contraseñas y estafas.", "src": "Mi Canal/Mi_Canal.html" },
