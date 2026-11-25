@@ -224,6 +224,13 @@ window.JUEGOS = {
      "color": "#ff6b9a",
      "juegos": [
       {
+       "slug": "estacion-helvecia",
+       "titulo": "Estación Helvecia",
+       "desc": "Misiones con micro:bit: programá la placa de verdad.",
+       "href": "j/estacion-helvecia/",
+       "nuevo": "2026-11-24"
+      },
+      {
        "slug": "helvecio-fabrica",
        "titulo": "Helvecio y la fábrica cerrada",
        "desc": "Pisos de colores y decisiones.",

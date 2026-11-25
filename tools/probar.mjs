@@ -23,7 +23,7 @@ for (const [w, h] of [[1366, 768], [1024, 600], [390, 844]]) {
   }
   // Navegación: inicio -> colegio -> clase -> volver con "Seguir en".
   await p.goto(base.split('#')[0]); await p.click('[data-colegio="mta"]'); await p.waitForTimeout(500); await p.click('[data-clase="mta/6"]'); await p.waitForTimeout(500);
-  const n = await p.locator('.game').count(); if (n !== 3) fail(`${w}x${h}: MTA 6.º muestra ${n} juegos`);
+  const n = await p.locator('.game').count(); if (n !== 4) fail(`${w}x${h}: MTA 6.º muestra ${n} juegos`);
   await p.evaluate(() => localStorage.setItem('portalRecientes', JSON.stringify([{ s: 'rumor', w: 'scjm/6', t: 1 }, { s: 'helvecio-boveda', w: 'mta/5', t: 0 }])));
   await p.click('.crumb >> text=Inicio'); await p.waitForTimeout(700);
   // Con MTA elegido en esta compu, "Seguir jugando" muestra solo el juego de MTA.
