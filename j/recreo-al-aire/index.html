@@ -813,7 +813,117 @@ function unir(lista) {
 }
 
 // --- Cortina musical generada (sin archivos) ---
+function estiloMusica() { var e = window.GUION && window.GUION.edicion; return (e && e.musica) || ''; }
+
+// Cortina lo-fi tranquila (6.º, "Pensar en voz alta"): piano eléctrico, bajo redondo, batería suave y disco de vinilo
+async function sintetizarLofi(tipo) {
+  var negra = 60 / 84, corch = negra / 2;
+  var compas = negra * 4;
+  var nComp = tipo === 'entrada' ? 3 : tipo === 'salida' ? 2 : 0;
+  var dur = tipo === 'pase' ? 2.6 : nComp * compas + 3.2;
+  var off = new OfflineAudioContext(1, Math.round(SR * dur), SR);
+  var master = off.createGain(); master.gain.value = 0.62;
+  var tibio = off.createBiquadFilter(); tibio.type = 'lowpass'; tibio.frequency.value = 5200; tibio.Q.value = 0.4;
+  var comp = off.createDynamicsCompressor(); comp.threshold.value = -18; comp.ratio.value = 3;
+  master.connect(tibio); tibio.connect(comp); comp.connect(off.destination);
+  // eco para la melodía
+  var eco = off.createDelay(1); eco.delayTime.value = corch * 1.5;
+  var vuelta = off.createGain(); vuelta.gain.value = 0.32;
+  var ecoLp = off.createBiquadFilter(); ecoLp.type = 'lowpass'; ecoLp.frequency.value = 2200;
+  eco.connect(ecoLp); ecoLp.connect(vuelta); vuelta.connect(eco); ecoLp.connect(master);
+  var mf = function (m) { return 440 * Math.pow(2, (m - 69) / 12); };
+  var ruido = off.createBuffer(1, SR * 2, SR), rd = ruido.getChannelData(0);
+  for (var i = 0; i < rd.length; i++) rd[i] = Math.random() * 2 - 1;
+
+  function rhodes(m, t, d, vol) { // piano eléctrico: fundamental + brillo que se apaga + trémolo
+    var f = mf(m), g = off.createGain(), trem = off.createGain(), lfo = off.createOscillator(), lfoG = off.createGain();
+    var o1 = off.createOscillator(), o2 = off.createOscillator(), g2 = off.createGain();
+    o1.type = 'sine'; o1.frequency.value = f; o2.type = 'sine'; o2.frequency.value = f * 2.001;
+    o1.detune.value = (Math.random() - 0.5) * 8;
+    g2.gain.setValueAtTime(0.5, t); g2.gain.exponentialRampToValueAtTime(0.02, t + 0.35);
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + 0.012); g.gain.setTargetAtTime(vol * 0.55, t + 0.05, 0.25);
+    g.gain.setTargetAtTime(0, t + d, 0.18);
+    lfo.frequency.value = 4.6; lfoG.gain.value = 0.18; trem.gain.value = 0.82; lfo.connect(lfoG); lfoG.connect(trem.gain);
+    o1.connect(g); o2.connect(g2); g2.connect(g); g.connect(trem); trem.connect(master);
+    [o1, o2, lfo].forEach(function (o) { o.start(t); o.stop(t + d + 1.2); });
+  }
+  function kalimba(m, t, vol, conEco) { // campanita de madera para la melodía
+    var f = mf(m), g = off.createGain(), o = off.createOscillator(), o3 = off.createOscillator(), g3 = off.createGain();
+    o.type = 'sine'; o.frequency.value = f; o3.type = 'sine'; o3.frequency.value = f * 5.4;
+    g3.gain.setValueAtTime(0.25, t); g3.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + 0.004); g.gain.exponentialRampToValueAtTime(0.0008, t + 1.4);
+    o.connect(g); o3.connect(g3); g3.connect(g); g.connect(master); if (conEco) g.connect(eco);
+    o.start(t); o3.start(t); o.stop(t + 1.5); o3.stop(t + 0.1);
+  }
+  function bajo(m, t, d, vol) {
+    var o = off.createOscillator(), g = off.createGain(), lp = off.createBiquadFilter();
+    o.type = 'triangle'; o.frequency.value = mf(m); lp.type = 'lowpass'; lp.frequency.value = 320;
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + 0.02); g.gain.setTargetAtTime(0, t + d, 0.08);
+    o.connect(lp); lp.connect(g); g.connect(master); o.start(t); o.stop(t + d + 0.5);
+  }
+  function bombo(t, vol) {
+    var o = off.createOscillator(), g = off.createGain();
+    o.frequency.setValueAtTime(95, t); o.frequency.exponentialRampToValueAtTime(40, t + 0.14);
+    g.gain.setValueAtTime(vol || 0.7, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.32);
+    o.connect(g); g.connect(master); o.start(t); o.stop(t + 0.34);
+  }
+  function caja(t, vol) { // tambor con escobilla
+    var s = off.createBufferSource(), bp = off.createBiquadFilter(), g = off.createGain();
+    s.buffer = ruido; bp.type = 'bandpass'; bp.frequency.value = 1700; bp.Q.value = 0.7;
+    g.gain.setValueAtTime(vol || 0.32, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
+    s.connect(bp); bp.connect(g); g.connect(master); s.start(t, Math.random()); s.stop(t + 0.24);
+    var o = off.createOscillator(), go = off.createGain(); o.frequency.value = 185;
+    go.gain.setValueAtTime(0.12, t); go.gain.exponentialRampToValueAtTime(0.001, t + 0.09);
+    o.connect(go); go.connect(master); o.start(t); o.stop(t + 0.1);
+  }
+  function hat(t, vol) {
+    var s = off.createBufferSource(), hp = off.createBiquadFilter(), lp = off.createBiquadFilter(), g = off.createGain();
+    s.buffer = ruido; hp.type = 'highpass'; hp.frequency.value = 6000; lp.type = 'lowpass'; lp.frequency.value = 9000;
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.045);
+    s.connect(hp); hp.connect(lp); lp.connect(g); g.connect(master); s.start(t, Math.random()); s.stop(t + 0.05);
+  }
+  function vinilo(desde, hasta) { // soplido suave y chasquidos de disco
+    var s = off.createBufferSource(), lp = off.createBiquadFilter(), g = off.createGain();
+    s.buffer = ruido; s.loop = true; lp.type = 'lowpass'; lp.frequency.value = 1100; g.gain.value = 0.018;
+    s.connect(lp); lp.connect(g); g.connect(master); s.start(desde); s.stop(hasta);
+    for (var t = desde; t < hasta; t += 0.04 + Math.random() * 0.22) {
+      var c = off.createBufferSource(), hp = off.createBiquadFilter(), gc = off.createGain();
+      c.buffer = ruido; hp.type = 'highpass'; hp.frequency.value = 2500;
+      gc.gain.setValueAtTime(0.05 + Math.random() * 0.12, t); gc.gain.exponentialRampToValueAtTime(0.001, t + 0.006);
+      c.connect(hp); hp.connect(gc); gc.connect(master); c.start(t, Math.random()); c.stop(t + 0.008);
+    }
+  }
+  var sw = corch * 0.16; // swing
+  // acordes de jazz suaves: Rem9 - Sol9 - Do maj9 - La m7
+  var acordes = [[53, 57, 60, 64], [53, 57, 59, 64], [52, 55, 59, 62], [52, 55, 60, 64]];
+  var bajos = [38, 43, 36, 45];
+  vinilo(0, dur);
+  if (tipo === 'pase') {
+    [62, 65, 69, 72, 76].forEach(function (m, k) { kalimba(m, 0.05 + k * 0.11, 0.2, true); });
+    rhodes(53, 0.02, 1.6, 0.11); rhodes(57, 0.02, 1.6, 0.1); rhodes(60, 0.02, 1.6, 0.09); rhodes(64, 0.02, 1.6, 0.08);
+    bajo(38, 0.02, 1.4, 0.32); bombo(0.02, 0.5);
+  } else {
+    var mel = tipo === 'entrada'
+      ? [[0, 74], [1.5, 72], [2, 69], [3, 72], [3.5, 74], [6, 71], [6.5, 72], [7, 74], [8, 76], [9.5, 74], [10, 72], [11, 69], [11.5, 67]]
+      : [[0, 72], [1, 74], [1.5, 76], [3, 74], [4, 72], [5.5, 69], [6, 67], [7, 69]];
+    for (var c = 0; c < nComp; c++) {
+      var t0 = c * compas, ac = acordes[c % 4];
+      // piano: golpe en el 1 y anticipo en el "y" del 2
+      ac.forEach(function (m) { rhodes(m, t0 + 0.01, negra * 1.4, 0.075); rhodes(m, t0 + negra * 1.5 + sw, negra * 2.3, 0.06); });
+      bajo(bajos[c % 4], t0, negra * 1.3, 0.42); bajo(bajos[c % 4] + 7, t0 + negra * 2.5 + sw, negra * 0.9, 0.3); bajo(bajos[c % 4], t0 + negra * 3, negra * 0.9, 0.34);
+      bombo(t0); bombo(t0 + negra * 2.5 + sw, 0.5); caja(t0 + negra); caja(t0 + negra * 3);
+      for (var k = 0; k < 8; k++) hat(t0 + k * corch + (k % 2 ? sw : 0), k % 2 ? 0.05 : 0.08);
+    }
+    mel.forEach(function (n) { kalimba(n[1], n[0] * negra + (n[0] % 1 ? sw : 0), 0.22, true); });
+    var tf = nComp * compas; // acorde final que queda sonando
+    [50, 57, 60, 64, 69].forEach(function (m) { rhodes(m, tf, 2.2, 0.075); });
+    bajo(38, tf, 2, 0.4); kalimba(74, tf + 0.02, 0.18, true); bombo(tf, 0.5);
+  }
+  return (await off.startRendering()).getChannelData(0);
+}
+
 async function sintetizarCortina(tipo) {
+  if (estiloMusica() === 'lofi') return sintetizarLofi(tipo);
   // tipo: 'entrada' (7 s), 'pase' (1,8 s), 'salida' (6 s)
   var dur = tipo === 'pase' ? 1.9 : tipo === 'entrada' ? 7.5 : 6.5;
   var off = new OfflineAudioContext(1, Math.round(SR * dur), SR);
@@ -908,6 +1018,7 @@ var TEMAS = [{ id: 'hola', nombre: 'Presentate', e: '👋', c: '#ffc93c', pregun
 var EMOJI = ED.emoji || { escuela: '🏫', libros: '📚', imagina: '💭', compu: '💻', vos: '⭐' };
 var COLOR = ED.color || { escuela: '#2ec4b6', libros: '#ff8fab', imagina: '#7b61ff', compu: '#4cc9f0', vos: '#ff9f1c' };
 G.temas.forEach(function (t) { TEMAS.push({ id: t.id, nombre: t.nombre, e: EMOJI[t.id] || '•', c: COLOR[t.id] || '#fff', preguntas: t.preguntas }); });
+var PAL = ED.paleta || { rec: '#ff5a5f', acento: '#ffc93c', ok: '#2ec4b6', confeti: ['#ff5a5f', '#ffc93c', '#2ec4b6', '#7b61ff', '#4cc9f0', '#fff'] };
 var TEXTO = {}; // id -> texto
 G.especiales.forEach(function (s) { TEXTO[s.id] = s.texto; });
 G.temas.forEach(function (t) { t.preguntas.forEach(function (p) { TEXTO[p.id] = p.texto; }); });
@@ -941,7 +1052,7 @@ function toast(t) {
   clearTimeout(toast.t); toast.t = setTimeout(function () { el.classList.remove('on'); }, 2200);
 }
 function confeti() {
-  var cols = ['#ff5a5f', '#ffc93c', '#2ec4b6', '#7b61ff', '#4cc9f0', '#fff'];
+  var cols = PAL.confeti;
   for (var i = 0; i < 46; i++) {
     var d = document.createElement('div'); d.className = 'confeti';
     d.style.left = (Math.random() * 1280) + 'px'; d.style.background = cols[i % cols.length];
@@ -1053,7 +1164,7 @@ async function hablaMia(id) {
       var av = document.querySelector('.avatar'), c = av && av.dataset.c;
       if (fuenteMia) { var q = nivel > 0.5 ? 'habla2' : nivel > 0.15 ? 'habla1' : 'base'; if (c !== q && (q !== 'base' || c !== 'parpadeo')) cuadroAvatar(q); }
       else if (c === 'habla1' || c === 'habla2') cuadroAvatar('base');
-      document.querySelectorAll('.aroAv').forEach(function (a) { a.style.boxShadow = '0 0 0 ' + (nivel * 12).toFixed(1) + 'px #ffc93c'; });
+      document.querySelectorAll('.aroAv').forEach(function (a) { a.style.boxShadow = '0 0 0 ' + (nivel * 12).toFixed(1) + 'px ' + PAL.acento; });
     }
     requestAnimationFrame(paso);
   }
@@ -1227,6 +1338,16 @@ function sonido(tipo) {
     g.gain.setValueAtTime(0, t + (dt || 0)); g.gain.linearRampToValueAtTime(v, t + (dt || 0) + 0.01);
     g.gain.exponentialRampToValueAtTime(0.001, t + (dt || 0) + d); o.connect(g); g.connect(c.destination);
     o.start(t + (dt || 0)); o.stop(t + (dt || 0) + d + 0.02);
+  }
+  if (estiloMusica() === 'lofi') { // 6.º: sonidos suaves de madera y piano eléctrico
+    var madera = function (f, v, dt) { beep(f, 0.09, v, 'sine', dt); beep(f * 2.76, 0.03, v * 0.35, 'sine', dt); };
+    var piano = function (f, d, v, dt) { beep(f, d, v, 'sine', dt); beep(f * 2, d * 0.4, v * 0.3, 'sine', dt); };
+    if (tipo === 'clic') madera(620, 0.09);
+    if (tipo === 'rec') { piano(587, 0.35, 0.12); piano(880, 0.5, 0.11, 0.14); }
+    if (tipo === 'stop') { piano(880, 0.3, 0.1); piano(587, 0.45, 0.1, 0.13); }
+    if (tipo === 'guardado') [293.7, 440, 523.3, 659.3, 880].forEach(function (f, i) { piano(f, 0.9, 0.08, i * 0.07); });
+    if (tipo === 'borrar') { madera(330, 0.1); madera(220, 0.09, 0.11); }
+    return;
   }
   if (tipo === 'clic') beep(880, 0.06, 0.08, 'triangle');
   if (tipo === 'rec') { beep(660, 0.12, 0.15, 'sine'); beep(990, 0.18, 0.15, 'sine', 0.12); }
@@ -1468,7 +1589,7 @@ function dibujarOnda() {
   for (var i = 0; i < n; i++) {
     var v = historial[historial.length - n + i];
     var h = v === undefined ? 4 : Math.max(4, v * H * 0.95);
-    c.fillStyle = v === undefined ? '#ffffff18' : (grabando && !pausado ? '#ff5a5f' : '#ffc93c');
+    c.fillStyle = v === undefined ? '#ffffff18' : (grabando && !pausado ? PAL.rec : PAL.acento);
     c.fillRect(i * ancho + 2, (H - h) / 2, ancho - 4, h);
   }
 }
@@ -1478,7 +1599,7 @@ function dibujarOndaFija(m, progreso) {
   for (var i = 0; i < n; i++) {
     var mx = 0; for (var j = i * paso; j < (i + 1) * paso; j += 16) { var a = Math.abs(m[j]); if (a > mx) mx = a; }
     var h = Math.max(4, Math.min(1, mx * 1.3) * H * 0.95);
-    c.fillStyle = progreso !== undefined && i / n <= progreso ? '#2ec4b6' : '#ffc93c';
+    c.fillStyle = progreso !== undefined && i / n <= progreso ? PAL.ok : PAL.acento;
     c.fillRect(i * ancho + 2, (H - h) / 2, ancho - 4, h);
   }
 }
