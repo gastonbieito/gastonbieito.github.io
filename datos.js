@@ -130,6 +130,13 @@ window.JUEGOS = {
      "color": "#9b7bff",
      "juegos": [
       {
+       "slug": "pensar-en-voz-alta",
+       "titulo": "Pensar en voz alta",
+       "desc": "Nico te entrevista: preguntas para pensar.",
+       "href": "j/pensar-en-voz-alta/",
+       "nuevo": "2026-11-25"
+      },
+      {
        "slug": "rumor",
        "titulo": "El rumor",
        "desc": "Cómo se difunde un mensaje y cómo se frena.",

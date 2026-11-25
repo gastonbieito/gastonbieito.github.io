@@ -25,6 +25,7 @@
           { "slug": "atrapados", "titulo": "Atrapados en la compu", "desc": "Sala de escape con Polilla.", "src": "Polilla/Polilla.html" }
         ] },
         { "id": "6", "nombre": "6.º", "detalle": "Lunes y jueves", "color": "#9b7bff", "juegos": [
+          { "slug": "pensar-en-voz-alta", "titulo": "Pensar en voz alta", "desc": "Nico te entrevista: preguntas para pensar.", "src": "2026-11-26_Rosario_6_Pensar_En_Voz_Alta/Pensar_en_voz_alta.html", "nuevo": "2026-11-25" },
           { "slug": "rumor", "titulo": "El rumor", "desc": "Cómo se difunde un mensaje y cómo se frena.", "url": "/rumor/", "nuevo": "2026-11-22" },
           { "slug": "bucle", "volverY": 50, "titulo": "bucle", "desc": "El algoritmo te conoce.", "src": "2026-11-09_Rosario_6_El_Algoritmo_Te_Conoce/Bucle.html" },
           { "slug": "detective-pixel", "titulo": "Detective Pixel", "desc": "Casos disparatados para resolver con lógica.", "src": "2026-11-05_Rosario_6_Detective_Pixel/Detective_Pixel_Casos_Disparatados.html" },
