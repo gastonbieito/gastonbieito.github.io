@@ -231,6 +231,13 @@ window.JUEGOS = {
        "nuevo": "2026-11-24"
       },
       {
+       "slug": "rumor",
+       "titulo": "El rumor",
+       "desc": "Cómo se difunde un mensaje y cómo se frena.",
+       "href": "/rumor/",
+       "nuevo": "2026-11-24"
+      },
+      {
        "slug": "helvecio-fabrica",
        "titulo": "Helvecio y la fábrica cerrada",
        "desc": "Pisos de colores y decisiones.",
@@ -242,7 +249,7 @@ window.JUEGOS = {
        "titulo": "Detective Pixel",
        "desc": "Casos con corazonadas y diagramas.",
        "href": "j/detective-pixel-mta6/",
-       "nuevo": "2026-11-22"
+       "nuevo": false
       },
       {
        "slug": "helvecio-perdido",

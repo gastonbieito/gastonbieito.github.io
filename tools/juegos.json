@@ -45,8 +45,9 @@
         ] },
         { "id": "6", "nombre": "6.º", "detalle": "Taller de programación", "color": "#ff6b9a", "juegos": [
           { "slug": "estacion-helvecia", "titulo": "Estación Helvecia", "desc": "Misiones con micro:bit: programá la placa de verdad.", "src": "2026-11-25_MTA_6to_Estacion_Helvecia/Estacion_Helvecia.html", "nuevo": "2026-11-24" },
+          { "slug": "rumor", "titulo": "El rumor", "desc": "Cómo se difunde un mensaje y cómo se frena.", "url": "/rumor/", "nuevo": "2026-11-24" },
           { "slug": "helvecio-fabrica", "titulo": "Helvecio y la fábrica cerrada", "desc": "Pisos de colores y decisiones.", "src": "2026-10-27_MTA_6to_Helvecio_3_La_Fabrica_Cerrada/Helvecio_3_La_Fabrica_Cerrada.html" },
-          { "slug": "detective-pixel-mta6", "titulo": "Detective Pixel", "desc": "Casos con corazonadas y diagramas.", "src": "2026-11-11_MTA_6to_Detective_Pixel/Detective_Pixel_MTA.html", "nuevo": "2026-11-22" },
+          { "slug": "detective-pixel-mta6", "titulo": "Detective Pixel", "desc": "Casos con corazonadas y diagramas.", "src": "2026-11-11_MTA_6to_Detective_Pixel/Detective_Pixel_MTA.html" },
           { "slug": "helvecio-perdido", "titulo": "Helvecio, el robot perdido", "desc": "20 niveles para llevarlo a casa.", "src": "Juegos Colla y Helvecio/Helvecio_Sexto_MTA.html" }
         ] }
       ]
