@@ -82,7 +82,8 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.5;
 .mia{position:absolute;left:12px;top:18px;width:200px;height:200px}
 .globo{position:absolute;left:214px;top:30px;right:24px;min-height:120px;background:#fff;color:#1b1740;border-radius:24px 24px 24px 6px;padding:18px 22px;font-size:24px;font-weight:800;line-height:1.25;box-shadow:0 10px 24px #0006;display:flex;align-items:center}
 .globo.vacio{color:#7d76a8;font-weight:700;font-size:21px}
-.reEscuchar{position:absolute;right:30px;top:174px;font-size:15px;color:#c9c3ff;padding:6px 12px;border-radius:10px;background:#ffffff12}
+.globo{max-height:138px;overflow:hidden}
+.reEscuchar{position:absolute;right:30px;top:178px;font-size:15px;color:#c9c3ff;padding:6px 12px;border-radius:10px;background:#ffffff12}
 .reEscuchar:hover{background:#ffffff22}
 .consola{position:absolute;left:24px;right:24px;bottom:22px;top:236px;border-radius:24px;background:#0b0f29;border:2px solid #ffffff14;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
 #onda{width:520px;height:110px}
@@ -185,6 +186,30 @@ body.enPortal .colIzq{bottom:84px}
 .checklist span{font-size:34px;flex:none}
 .checklist p{margin:0;font-size:18px;line-height:1.35}
 .checklist b{color:#ffc93c}
+/* ---------- modo equipo ---------- */
+.modo{display:flex;gap:8px;margin-bottom:14px}
+.modo button{flex:1;font-size:18px;font-weight:800;padding:9px 0;border-radius:14px;background:#ffffff14;border:2px solid transparent}
+.modo button.si{background:#b388ff;color:#1b0f40}
+body.ed6 #portada .tarjeta{top:205px}
+body.ed6.modoEquipo #portada .tarjeta{top:196px;padding:20px 32px}
+body.ed6.modoEquipo #portada .modo{margin-bottom:10px}
+body.ed6.modoEquipo #portada .micro{margin-bottom:14px}
+.integrantes{margin:12px 0 4px}
+.filaInt{display:flex;gap:8px}
+.filaInt input{flex:1;font-size:18px;font-weight:700;padding:8px 14px;border-radius:12px;border:2px solid #ffffff30;background:#0d1230;color:#fff;outline:none}
+.filaInt input:focus{border-color:#b388ff}
+.filaInt button{width:46px;border-radius:12px;background:#b388ff;color:#1b0f40;font-size:24px;font-weight:900}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;min-height:32px}
+.chip{display:inline-flex;align-items:center;gap:4px;background:#ffffff1c;border-radius:20px;padding:4px 6px 4px 12px;font-weight:800;font-size:15px}
+.chip button{width:22px;height:22px;border-radius:50%;background:#ffffff22;font-size:14px;line-height:1}
+.chipVacio{font-size:14px;color:#8f88c4}
+.quien{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center}
+.consola:has(#quien:not([style*="none"])){gap:8px}
+.consola:has(#quien:not([style*="none"])) #onda{height:80px}
+.quien .et{font-size:15px;color:#c9c3ff;font-weight:700}
+.quien button{font-size:16px;font-weight:800;padding:6px 14px;border-radius:20px;background:#ffffff14;border:2px solid transparent}
+.quien button small{font-size:12px;opacity:.7;margin-left:3px}
+.quien button.si{background:#ffc93c;color:#2a1d00;border-color:#fff3}
 /* ---------- avatar del conductor (DiceBear) ---------- */
 .avatar{position:relative;width:100%;height:100%;border-radius:50%;background:radial-gradient(circle at 50% 40%,var(--f1),var(--f2));overflow:visible}
 .avatar .aroAv{position:absolute;inset:0;border-radius:50%;transition:box-shadow .05s}
@@ -211,8 +236,13 @@ body.enPortal .opciones{bottom:84px}
     <div class="miaPortada" id="miaPortada"></div>
     <div class="burbuja" id="burbujaPortada">¡Hola! Soy Mía. ¿Me ayudás a hacer mi podcast?</div>
     <div class="tarjeta">
-      <label for="nombre">¿Cómo te llamás?</label>
+      <div class="modo" id="modo" style="display:none"><button data-m="solo" class="si">👤 Solo</button><button data-m="equipo">👥 En equipo</button></div>
+      <label for="nombre" id="etiqNombre">¿Cómo te llamás?</label>
       <input id="nombre" maxlength="18" autocomplete="off" spellcheck="false" placeholder="Tu nombre">
+      <div class="integrantes" id="integrantes" style="display:none">
+        <div class="filaInt"><input id="nuevoInt" maxlength="14" autocomplete="off" spellcheck="false" placeholder="Nombre de un integrante"><button id="sumarInt" title="Sumar">＋</button></div>
+        <div class="chips" id="chipsInt"></div>
+      </div>
       <div class="grados" id="grados">
         <button data-g="3ro">3.º</button><button data-g="4to">4.º</button><button data-g="5to">5.º</button>
       </div>
@@ -247,6 +277,7 @@ body.enPortal .opciones{bottom:84px}
       <div class="globo vacio" id="globo">Elegí una pregunta y te la hago.</div>
       <button class="reEscuchar" id="reEscuchar" style="display:none">🔁 Escuchar otra vez</button>
       <div class="consola" id="consola">
+        <div class="quien" id="quien" style="display:none"></div>
         <canvas id="onda" width="1040" height="220"></canvas>
         <div class="reloj" id="reloj">0:00 <small>/ 1:30</small></div>
         <div class="controles">
@@ -1119,6 +1150,37 @@ async function cargarPartes() { partes = (await tx('readonly', function (s) { re
 
 // ---------- portada ----------
 var alumno = JSON.parse(localStorage.getItem('recreoAlumno' + CLAVE) || 'null');
+var modo = alumno && alumno.equipo ? 'equipo' : 'solo', integrantes = alumno && alumno.equipo ? alumno.equipo.slice() : [];
+function enEquipo() { return !!(alumno && alumno.equipo); }
+if (ED.equipos) {
+  $('modo').style.display = '';
+  document.querySelectorAll('#modo button').forEach(function (b) {
+    b.onclick = function () { modo = b.dataset.m; sonido('clic'); pintarModo(); validar(); };
+  });
+}
+function pintarModo() {
+  document.querySelectorAll('#modo button').forEach(function (b) { b.classList.toggle('si', b.dataset.m === modo); });
+  var eq = modo === 'equipo';
+  $('etiqNombre').textContent = eq ? 'Nombre del equipo' : '¿Cómo te llamás?';
+  $('nombre').placeholder = eq ? 'Ej.: Los Pensadores' : 'Tu nombre';
+  $('integrantes').style.display = eq ? '' : 'none';
+  document.body.classList.toggle('modoEquipo', eq);
+  pintarChips();
+}
+function pintarChips() {
+  $('chipsInt').innerHTML = integrantes.length ? integrantes.map(function (n, i) { return '<span class="chip">' + escapar(n) + '<button data-i="' + i + '" title="Sacar">×</button></span>'; }).join('') : '<span class="chipVacio">Sumá a cada integrante (de 2 a 6)</span>';
+  $('chipsInt').querySelectorAll('button').forEach(function (b) { b.onclick = function () { integrantes.splice(+b.dataset.i, 1); pintarChips(); validar(); }; });
+  $('nuevoInt').disabled = $('sumarInt').disabled = integrantes.length >= 6;
+}
+function sumarIntegrante() {
+  var n = $('nuevoInt').value.trim().replace(/\s+/g, ' ');
+  if (n.length < 2 || integrantes.length >= 6) return;
+  n = n.charAt(0).toUpperCase() + n.slice(1);
+  if (integrantes.indexOf(n) < 0) integrantes.push(n);
+  $('nuevoInt').value = ''; sonido('clic'); pintarChips(); validar(); $('nuevoInt').focus();
+}
+$('sumarInt').onclick = sumarIntegrante;
+$('nuevoInt').onkeydown = function (e) { if (e.key === 'Enter') { e.preventDefault(); sumarIntegrante(); } };
 var gradoElegido = alumno ? alumno.grado : (GRADOS.length === 1 ? GRADOS[0] : '');
 if (alumno) $('nombre').value = alumno.nombre;
 document.querySelectorAll('#grados button').forEach(function (b) {
@@ -1131,16 +1193,18 @@ document.querySelectorAll('#grados button').forEach(function (b) {
 });
 $('nombre').oninput = validar;
 $('nombre').onkeydown = function (e) { if (e.key === 'Enter' && !$('entrar').disabled) $('entrar').click(); };
-function validar() { $('entrar').disabled = !($('nombre').value.trim().length >= 2 && gradoElegido && micListo); }
+function validar() { $('entrar').disabled = !($('nombre').value.trim().length >= 2 && gradoElegido && micListo && (modo !== 'equipo' || integrantes.length >= 2)); }
 $('entrar').onclick = async function () {
   audioCtx(); sonido('clic');
   var nuevo = { nombre: $('nombre').value.trim().replace(/\s+/g, ' '), grado: gradoElegido };
+  if (modo === 'equipo') nuevo.equipo = integrantes.slice();
   await cargarPartes();
   if (partes.length && alumno && limpiarNombre(alumno.nombre) !== limpiarNombre(nuevo.nombre)) {
     var r = await ventana('<h3>Esta compu tiene un episodio guardado</h3><p>Es de <b>' + escapar(alumno.nombre) + '</b> (' + partes.length + ' respuestas). ¿Qué hacemos?</p>',
       [{ t: 'Seguir el de ' + alumno.nombre, v: 'seguir', clase: 'gris' }, { t: 'Borrarlo y empezar', v: 'borrar' }]);
     if (r === 'borrar') { await tx('readwrite', function (s) { return s.clear(); }); partes = []; alumno = nuevo; }
-  } else alumno = nuevo;
+  } else if (alumno && limpiarNombre(alumno.nombre) === limpiarNombre(nuevo.nombre)) { alumno.equipo = nuevo.equipo; alumno.grado = nuevo.grado; }
+  else alumno = nuevo;
   localStorage.setItem('recreoAlumno' + CLAVE, JSON.stringify(alumno));
   if (ED.auriculares) await avisoAuriculares();
   entrarEstudio();
@@ -1177,7 +1241,10 @@ function presentado() { return partes.some(function (p) { return p.tema === 'hol
 function respondidas() { var m = {}; partes.forEach(function (p) { m[p.pregunta] = true; }); return m; }
 
 function entrarEstudio() {
-  $('yoNombre').textContent = alumno.nombre; $('yoGrado').textContent = alumno.grado.replace('ro', '.º').replace('to', '.º');
+  $('yoNombre').textContent = (enEquipo() ? '👥 ' : '') + alumno.nombre;
+  $('salir').textContent = enEquipo() ? 'Cambiar de equipo' : 'Cambiar de chico';
+  TEMAS[0].preguntas[0].texto = enEquipo() ? 'Presenten al equipo: sus nombres y algo que les guste hacer juntos.' : (ED.grados ? '¿Cómo te llamás? Y contame algo que te guste mucho.' : '¿Cómo te llamás y en qué grado estás?');
+  $('quien').style.display = enEquipo() ? '' : 'none'; $('yoGrado').textContent = alumno.grado.replace('ro', '.º').replace('to', '.º');
   temaActual = presentado() ? PRIMER_TEMA : 'hola';
   pregActual = null; resetConsola();
   pintarTemas(); pintarPreguntas(); pintarEpisodio();
@@ -1218,7 +1285,8 @@ function pintarPreguntas() {
 async function elegirPregunta(p) {
   if (grabando) return;
   pregActual = p; resetConsola(); pintarPreguntas();
-  idAudioPreg = p.id === 'hola' ? 'hola' + (1 + Math.floor(Math.random() * 3)) : p.id;
+  idAudioPreg = p.id === 'hola' ? (enEquipo() && G.audio.holaE ? 'holaE' : 'hola' + (1 + Math.floor(Math.random() * 3))) : p.id;
+  elegirQuien(p);
   var g = $('globo'); g.classList.remove('vacio'); g.textContent = TEXTO[idAudioPreg];
   $('reEscuchar').style.display = '';
   $('grabar').disabled = true; $('aviso').textContent = 'Escuchá a ' + HOST + '…';
@@ -1232,8 +1300,16 @@ async function elegirPregunta(p) {
     }
   }
   $('grabar').disabled = false; $('grabar').classList.add('pulsa');
-  $('aviso').innerHTML = ED.pensar && p.id !== 'hola' ? '<b>¡Tu turno!</b> Respondé con lo que pensás y contá el porqué.' : '<b>¡Tu turno!</b> Tocá el botón rojo y respondé.';
+  $('aviso').innerHTML = enEquipo() ? (p.id === 'hola' ? '<b>¡Su turno!</b> Preséntense todos, uno por uno.' : 'Le toca a <b>' + escapar(quien) + '</b>: empezá diciendo «Soy ' + escapar(quien) + '».')
+    : ED.pensar && p.id !== 'hola' ? '<b>¡Tu turno!</b> Respondé con lo que pensás y contá el porqué.' : '<b>¡Tu turno!</b> Tocá el botón rojo y respondé.';
 }
+// Si la pregunta es larga, la letra del globo se achica para que no tape "Escuchar otra vez".
+function ajustarGlobo() {
+  var g = $('globo'); g.style.fontSize = '';
+  var t = parseFloat(getComputedStyle(g).fontSize);
+  while (g.scrollHeight > g.clientHeight + 1 && t > 15) { t -= 1; g.style.fontSize = t + 'px'; }
+}
+new MutationObserver(ajustarGlobo).observe($('globo'), { childList: true, characterData: true, subtree: true });
 $('reEscuchar').onclick = function () { if (!grabando && idAudioPreg) hablaMia(idAudioPreg); };
 $('sorpresa').onclick = function () {
   if (grabando) return;
@@ -1337,7 +1413,7 @@ $('guardar').onclick = async function () {
   var vieja = partes.filter(function (x) { return x.pregunta === p.id; })[0];
   var registro = {
     pregunta: p.id, tema: tema, audioPregunta: idAudioPreg, texto: TEXTO[idAudioPreg],
-    dur: todo.length / SR, wav: wavDesdeMuestras(todo), orden: vieja ? vieja.orden : (partes.length ? partes[partes.length - 1].orden + 1 : 1)
+    dur: todo.length / SR, wav: wavDesdeMuestras(todo), quien: enEquipo() ? quien : undefined, orden: vieja ? vieja.orden : (partes.length ? partes[partes.length - 1].orden + 1 : 1)
   };
   if (p.id === 'hola') registro.orden = 0;
   if (vieja) registro.id = vieja.id;
@@ -1349,10 +1425,38 @@ $('guardar').onclick = async function () {
   toast(eraPresentacion ? '¡Bienvenido al programa, ' + alumno.nombre + '!' : '¡Guardado en tu episodio!');
   pregActual = null; resetConsola();
   if (eraPresentacion) temaActual = PRIMER_TEMA;
-  pintarTemas(); pintarPreguntas(); pintarEpisodio();
-  $('globo').textContent = eraPresentacion ? '¡Encantada! Ahora elegí la pregunta que quieras.' : siguienteFrase();
+  pintarTemas(); pintarPreguntas(); pintarEpisodio(); pintarQuien();
+  $('globo').textContent = eraPresentacion ? (enEquipo() ? '¡Qué buen equipo! Ahora elijan una pregunta.' : '¡Encantada! Ahora elegí la pregunta que quieras.') : siguienteFrase();
   $('globo').classList.add('vacio'); $('reEscuchar').style.display = 'none';
 };
+// ¿Quién del equipo responde? Se propone al que menos respondió; se puede cambiar tocando otro nombre.
+var quien = '';
+function cuentaDe(n) { return partes.filter(function (x) { return x.quien === n; }).length; }
+function elegirQuien(p) {
+  if (!enEquipo()) { quien = ''; return; }
+  if (p.id === 'hola') quien = 'Todos';
+  else {
+    var vieja = partes.filter(function (x) { return x.pregunta === p.id; })[0];
+    if (vieja && vieja.quien && vieja.quien !== 'Todos') quien = vieja.quien;
+    else quien = alumno.equipo.slice().sort(function (a, b) { return cuentaDe(a) - cuentaDe(b) || alumno.equipo.indexOf(a) - alumno.equipo.indexOf(b); })[0];
+  }
+  pintarQuien();
+}
+function pintarQuien() {
+  if (!enEquipo()) return;
+  var nombres = pregActual && pregActual.id === 'hola' ? ['Todos'] : alumno.equipo;
+  $('quien').innerHTML = '<span class="et">¿Quién responde?</span>' + nombres.map(function (n) {
+    var c = n === 'Todos' ? '' : ' <small>' + cuentaDe(n) + '</small>';
+    return '<button class="' + (n === quien ? 'si' : '') + '" data-n="' + escapar(n) + '">' + escapar(n) + c + '</button>';
+  }).join('');
+  $('quien').querySelectorAll('button').forEach(function (b) {
+    b.onclick = function () {
+      if (grabando || b.dataset.n === 'Todos') return;
+      quien = b.dataset.n; sonido('clic'); pintarQuien();
+      if (!$('grabar').disabled) $('aviso').innerHTML = 'Le toca a <b>' + escapar(quien) + '</b>: empezá diciendo «Soy ' + escapar(quien) + '».';
+    };
+  });
+}
 var FRASES = ['¡Qué buena respuesta! ¿Seguimos con otra?', '¡Me encantó! Elegí la próxima.', '¡Sos un genio del micrófono! ¿Otra?', 'Anotado. ¿Qué más me contás?', '¡Excelente! Tu episodio va creciendo.'];
 function siguienteFrase() { return FRASES[Math.floor(Math.random() * FRASES.length)]; }
 
@@ -1414,7 +1518,7 @@ function pintarEpisodio() {
   if (!partes.length) { cont.innerHTML = '<div class="vacia">Tus respuestas<br>van a aparecer acá.</div>'; return; }
   partes.forEach(function (p, i) {
     var d = document.createElement('div'); d.className = 'parte' + (p.tema === 'hola' ? ' fija' : ''); d.dataset.id = p.id;
-    d.innerHTML = '<span class="mango" title="' + (p.tema === 'hola' ? 'La presentación va siempre primero' : 'Arrastrá para cambiar el orden') + '">' + (p.tema === 'hola' ? '📌' : '⠿') + '</span><button class="play" title="Escuchar">▶</button><div class="t" title="' + escapar(p.texto) + '"><span class="q">' + escapar(p.texto) + '</span><small>' + nombreTema(p.tema) + ' · ' + mmss(p.dur) + '</small></div>' +
+    d.innerHTML = '<span class="mango" title="' + (p.tema === 'hola' ? 'La presentación va siempre primero' : 'Arrastrá para cambiar el orden') + '">' + (p.tema === 'hola' ? '📌' : '⠿') + '</span><button class="play" title="Escuchar">▶</button><div class="t" title="' + escapar(p.texto) + '"><span class="q">' + escapar(p.texto) + '</span><small>' + nombreTema(p.tema) + (p.quien ? ' · 🎙️ ' + escapar(p.quien) : '') + ' · ' + mmss(p.dur) + '</small></div>' +
       '<div class="acc"><button class="baja" title="Descargar">⬇</button><button class="borra" title="Borrar">🗑</button></div>';
     d.querySelector('.play').onclick = async function () {
       if (d.classList.contains('sonando')) { pararReproduccion(); return; }
@@ -1519,6 +1623,7 @@ $('salir').onclick = async function () {
   pararReproduccion(); callarMia();
   await tx('readwrite', function (s) { return s.clear(); }); partes = [];
   localStorage.removeItem('recreoAlumno' + CLAVE); alumno = null; gradoElegido = GRADOS.length === 1 ? GRADOS[0] : '';
+  integrantes = []; modo = 'solo'; pintarModo();
   $('nombre').value = ''; document.querySelectorAll('#grados button').forEach(function (x) { x.classList.remove('si'); });
   validar(); mostrar('portada'); probarMic();
 };
@@ -1528,6 +1633,7 @@ document.addEventListener('keydown', function (e) {
   if (!$('estudio').classList.contains('activa') || $('velo').classList.contains('on')) return;
   if (e.code === 'Space' && document.activeElement.tagName !== 'INPUT') { e.preventDefault(); if (!$('grabar').disabled) $('grabar').click(); }
 });
+if (ED.equipos) pintarModo();
 abrirDB().then(cargarPartes).then(function () {
   if (alumno && partes.length) $('burbujaPortada').textContent = '¡Hola de nuevo, ' + alumno.nombre + '! Tu episodio está guardado.';
 });

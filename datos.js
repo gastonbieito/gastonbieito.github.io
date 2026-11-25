@@ -132,7 +132,7 @@ window.JUEGOS = {
       {
        "slug": "pensar-en-voz-alta",
        "titulo": "Pensar en voz alta",
-       "desc": "Nico te entrevista: preguntas para pensar.",
+       "desc": "Lola te entrevista: solo o en equipo.",
        "href": "j/pensar-en-voz-alta/",
        "nuevo": "2026-11-25"
       },
