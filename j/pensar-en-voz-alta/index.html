@@ -157,7 +157,13 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.5;
 .progreso.on{display:block}
 #resultado{display:none;margin-top:12px;background:#2ec4b622;border:2px solid #2ec4b6;border-radius:16px;padding:12px 16px;align-items:center;gap:12px}
 #resultado.on{display:flex}
-#resultado audio{flex:1}
+#resultado audio{display:none}
+.repro{flex:1;display:flex;align-items:center;gap:12px;background:#0d1230;border-radius:14px;padding:8px 14px}
+.rpPlay{width:44px;height:44px;border-radius:50%;background:#2ec4b6;color:#062b28;font-size:17px;font-weight:900;flex:none;display:grid;place-items:center}
+.rpT{font-size:15px;font-weight:700;color:#c9c3ff;font-variant-numeric:tabular-nums;min-width:38px;text-align:center}
+.rpBarra{position:relative;flex:1;height:10px;border-radius:6px;background:#ffffff1c;cursor:pointer;touch-action:none}
+.rpBarra i{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:6px;background:#2ec4b6}
+.rpBarra b{position:absolute;top:50%;left:0;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;background:#fff;box-shadow:0 2px 6px #0008}
 
 /* ---------- ventanitas ---------- */
 .velo{position:absolute;inset:0;background:#05081cdd;display:none;align-items:center;justify-content:center;z-index:50}
@@ -314,6 +320,12 @@ body::before{opacity:.55;background-image:repeating-linear-gradient(0deg,#ffffff
 .opciones .fila button.si,.alu .num{background:#ff7a5c;color:#2a0d05}
 .progreso i{background:linear-gradient(90deg,#7fd1b9,#f2c14e)}
 #resultado{background:#7fd1b922;border-color:#7fd1b9}
+.repro{background:#0a1a1c}
+.rpPlay,.rpBarra i{background:#7fd1b9;color:#0b2a22}
+.rpT{color:#b7cbc4}
+.rpBarra{background:#f6efe31c}
+.rpBarra b{background:#fbf5ea}
+.opciones>div[style],.opciones .resumen{color:#b7cbc4!important}
 </style>
 </head>
 <body>
@@ -427,7 +439,7 @@ body::before{opacity:.55;background-image:repeating-linear-gradient(0deg,#ffffff
         <div class="progreso" id="progreso"><i></i></div>
         <button class="boton" id="armar" disabled>🎧 Armar podcast</button>
       </div>
-      <div id="resultado"><audio id="audioFinal" controls></audio><button class="boton verde" id="bajarFinal" style="font-size:18px;padding:10px 16px">⬇ Descargar MP3</button></div>
+      <div id="resultado"><audio id="audioFinal"></audio><div class="repro"><button id="rpPlay" class="rpPlay">▶</button><span class="rpT" id="rpT">0:00</span><div class="rpBarra" id="rpBarra"><i id="rpLleno"></i><b id="rpBola"></b></div><span class="rpT" id="rpD">0:00</span></div><button class="boton verde" id="bajarFinal" style="font-size:18px;padding:10px 16px">⬇ Descargar MP3</button></div>
     </div>
   </section>
 
@@ -2010,6 +2022,23 @@ $('armar').onclick = async function () {
   $('armar').disabled = false; setTimeout(function () { $('progreso').classList.remove('on'); barra.style.width = '0'; }, 800);
 };
 $('bajarFinal').onclick = function () { if (mp3Final) bajar(mp3Final, (window.GUION.edicion && window.GUION.edicion.mp3) || 'Recreo_al_aire_Rosario_345.mp3'); };
+
+// ---------- reproductor propio del podcast final (en vez del del navegador) ----------
+(function () {
+  var au = $('audioFinal'), barra = $('rpBarra');
+  function t(s) { return isFinite(s) ? mmss(s) : '0:00'; }
+  function pintar() {
+    var d = au.duration || 0, f = d ? au.currentTime / d : 0;
+    $('rpLleno').style.width = (f * 100) + '%'; $('rpBola').style.left = (f * 100) + '%';
+    $('rpT').textContent = t(au.currentTime); $('rpD').textContent = t(d);
+    $('rpPlay').textContent = au.paused ? '▶' : '❚❚';
+  }
+  ['timeupdate', 'loadedmetadata', 'play', 'pause', 'ended', 'emptied'].forEach(function (e) { au.addEventListener(e, pintar); });
+  $('rpPlay').onclick = function () { if (au.paused) au.play(); else au.pause(); };
+  function ir(ev) { var r = barra.getBoundingClientRect(), f = Math.max(0, Math.min(1, (ev.clientX - r.left) / r.width)); if (au.duration) { au.currentTime = f * au.duration; pintar(); } }
+  barra.addEventListener('pointerdown', function (ev) { barra.setPointerCapture(ev.pointerId); ir(ev); barra.onpointermove = ir; });
+  barra.addEventListener('pointerup', function () { barra.onpointermove = null; });
+})();
 </script>
 <script src="/volver.js" data-pos="bl"></script>
 <script src="/idea.js"></script>
